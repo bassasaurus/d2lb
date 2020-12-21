@@ -1,18 +1,18 @@
 import React from "react";
-import { View, StyleSheet, TouchableWithoutFeedback, Text } from "react-native";
+import { View, StyleSheet, Button } from "react-native";
 
 function AppButton({ title, onPress }) {
   return (
-    <TouchableWithoutFeedback onPress={onPress}>
-      <View style={styles.container}>
-        <Text>{title}</Text>
-      </View>
-    </TouchableWithoutFeedback>
+    <View style={styles.container}>
+      <Button title={title} style={styles.text} onPress={onPress} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    width: 100,
+  },
 });
 
 export default AppButton;
