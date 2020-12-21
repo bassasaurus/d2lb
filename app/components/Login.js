@@ -1,6 +1,11 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TextInput, Button } from "react-native";
+import { View, StyleSheet, TextInput } from "react-native";
+
+import AppButton from "../components/AppButton";
 import getToken from "../api/getToken";
+
+import "../asyncStorage/getData";
+import getData from "../asyncStorage/getData";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -17,7 +22,7 @@ function Login() {
         placeholder='Password'
         onChangeText={(text) => setPassword(text)}
       ></TextInput>
-      <Button title='Login' onPress={() => getToken(email, password)} />
+      <AppButton title='Login' onPress={() => getData("token")} />
     </View>
   );
 }
@@ -25,11 +30,6 @@ function Login() {
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-  },
-  input: {
-    alignItems: "center",
-    width: 200,
-    height: 30,
   },
 });
 
