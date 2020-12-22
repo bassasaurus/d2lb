@@ -9,14 +9,14 @@ import {
   View,
 } from "react-native";
 
-import Login from "./app/components/Login";
+import FlightListScreen from "./app/screens/FlightListScreen";
 
 export default function App() {
   return (
     <>
       <StatusBar style='auto' />
       <View style={styles.container}>
-        <Login />
+        <FlightListScreen />
       </View>
     </>
   );
