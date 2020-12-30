@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput } from "react-native";
 
 import AppButton from "../components/AppButton";
 import AppTextInput from "../components/AppTextInput";
-import getToken from "../api/getToken";
+import getApiToken from "../api/getToken";
 
 import getData from "../asyncStorage/getData";
 
@@ -25,7 +25,7 @@ function Login() {
         textContentType='password'
         secureTextEntry={true}
       />
-      <AppButton title='Login' onPress={() => getToken(email, password)} />
+      <AppButton title='Login' onPress={() => getApiToken(email, password)} />
     </View>
   );
 }

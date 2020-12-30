@@ -2,7 +2,7 @@ import api from "./apiClient";
 
 import storeData from "../asyncStorage/storeData";
 
-const getToken = (username, password) =>
+const getApiToken = (username, password) =>
   api({
     method: "post",
     url: "/api/token-auth/",
@@ -38,4 +38,4 @@ const getToken = (username, password) =>
       console.log(error.config);
     });
 
-export default getToken;
+export default getApiToken;
