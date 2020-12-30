@@ -5,9 +5,11 @@ const getData = async (key) => {
     const value = await AsyncStorage.getItem(key);
     if (value !== null) {
       // value previously stored
-      console.log(value);
+      console.log(value, "from getData.js");
+      return value;
     }
   } catch (e) {
+    console.log("error retrieving token");
     // error reading value
   }
 };

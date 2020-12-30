@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const removeValue = async (key) => {
+const removeAsyncData = async (key) => {
   try {
     await AsyncStorage.removeItem(key);
   } catch (e) {
@@ -10,4 +10,4 @@ const removeValue = async (key) => {
   console.log("Done.");
 };
 
-export default removeValue;
+export default removeAsyncData;

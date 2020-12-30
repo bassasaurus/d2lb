@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   View,
@@ -10,8 +10,6 @@ import {
 
 import getFlights from "../api/getFlights";
 
-const DATA = [getFlights()];
-
 const Item = ({ title }) => (
   <View style={styles.item}>
     <Text style={styles.title}>{title}</Text>
@@ -19,14 +17,15 @@ const Item = ({ title }) => (
 );
 
 const FlightListScreen = () => {
-  const renderItem = ({ item }) => <Item title={item.title} />;
+  const flightList = getFlights();
+  const renderItem = ({ item }) => <Item title={item.results.route} />;
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={DATA}
+        data={flightList}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.results.id}
       />
     </SafeAreaView>
   );
