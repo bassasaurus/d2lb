@@ -17,15 +17,17 @@ const Item = ({ title }) => (
 );
 
 const FlightListScreen = () => {
-  const flightList = getFlights();
-  const renderItem = ({ item }) => <Item title={item.results.route} />;
+  const [list, setList] = useState();
+  getFlights();
+
+  const renderItem = ({ item }) => <Item title={item.route} />;
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={flightList}
+        data={list}
         renderItem={renderItem}
-        keyExtractor={(item) => item.results.id}
+        keyExtractor={(item) => item.id}
       />
     </SafeAreaView>
   );

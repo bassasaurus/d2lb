@@ -1,10 +1,10 @@
-import api from "./apiClient";
+import instance from "./apiClient";
 
 import getAsyncData from "../asyncStorage/getAsyncData";
 
 const getFlights = async () => {
   const token = await getAsyncData("token");
-  api({
+  instance({
     method: "get",
     url: "/api/flights/",
     headers: {
@@ -12,12 +12,12 @@ const getFlights = async () => {
     },
   })
     .then(function (response) {
-      console.log(response.data);
+      console.log(response.data.results[2].route);
       // console.log(response.status);
       // console.log(response.statusText);
       // console.log(response.headers);
       // console.log(response.config);
-      return response.data;
+      return response.data["results"];
     })
     .catch(function (error) {
       if (error.response) {

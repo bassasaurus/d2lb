@@ -5,7 +5,7 @@ const getData = async (key) => {
     const value = await AsyncStorage.getItem(key);
     if (value !== null) {
       // value previously stored
-      console.log(value, "from getData.js");
+      console.log(value, "from getAsyncData.js");
       return value;
     }
   } catch (e) {
