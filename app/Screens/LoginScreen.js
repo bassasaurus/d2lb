@@ -5,7 +5,7 @@ import AppButton from "../components/AppButton";
 import AppTextInput from "../components/AppTextInput";
 import getApiToken from "../api/getToken";
 
-import getData from "../asyncStorage/getData";
+import getAsyncData from "../asyncStorage/getAsyncData";
 
 function Login() {
   const [email, setEmail] = useState("");

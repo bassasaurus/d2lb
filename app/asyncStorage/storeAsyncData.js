@@ -9,4 +9,4 @@ const storeAsyncData = async (key, value) => {
   // console.log(value);
 };
 
-export default storeData;
+export default storeAsyncData;
