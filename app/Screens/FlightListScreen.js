@@ -18,6 +18,7 @@ const Item = ({ title }) => (
 
 const FlightListScreen = () => {
   const [list, setList] = useState();
+
   getFlights();
 
   const renderItem = ({ item }) => <Item title={item.route} />;

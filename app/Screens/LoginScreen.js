@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput } from "react-native";
 
 import AppButton from "../components/AppButton";
 import AppTextInput from "../components/AppTextInput";
-import getApiToken from "../api/getToken";
+import getApiToken from "../api/getApiToken";
 
 import getAsyncData from "../asyncStorage/getAsyncData";
 

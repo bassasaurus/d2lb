@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import FlightListScreen from "./app/screens/FlightListScreen";
+import LoginScreen from "./app/screens/LoginScreen";
 
 export default function App() {
   return (

@@ -1,6 +1,6 @@
 import api from "./apiClient";
 
-import storeData from "../asyncStorage/storeData";
+import storeData from "../asyncStorage/storeAsyncData";
 
 const getApiToken = (username, password) =>
   api({

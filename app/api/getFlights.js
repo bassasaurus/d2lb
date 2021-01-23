@@ -11,13 +11,14 @@ const getFlights = async () => {
       Authorization: `Token ${token}`,
     },
   })
-    .then(function (response) {
-      console.log(response.data.results[2].route);
+    .then(async function (response) {
+      console.log(response.data.results);
       // console.log(response.status);
       // console.log(response.statusText);
       // console.log(response.headers);
       // console.log(response.config);
-      return response.data["results"];
+      const data = await response.data.results;
+      return data;
     })
     .catch(function (error) {
       if (error.response) {
@@ -26,6 +27,7 @@ const getFlights = async () => {
         // console.log(error.response.data);
         // console.log(error.response.status);
         // console.log(error.response.headers);
+        alert(error.response);
       } else if (error.request) {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
