@@ -4,6 +4,7 @@ import getAsyncData from "../asyncStorage/getAsyncData";
 
 const getFlights = async () => {
   const token = await getAsyncData("token");
+
   instance({
     method: "get",
     url: "/api/flights/",

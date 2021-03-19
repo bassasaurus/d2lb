@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SafeAreaView,
   View,
@@ -19,9 +19,10 @@ const Item = ({ title }) => (
 const FlightListScreen = () => {
   const [list, setList] = useState();
 
-  getFlights();
-
   const renderItem = ({ item }) => <Item title={item.route} />;
+
+  const response = getFlights();
+  // setList(response);
 
   return (
     <SafeAreaView style={styles.container}>
