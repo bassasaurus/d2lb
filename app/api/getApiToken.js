@@ -1,9 +1,9 @@
-import api from "./apiClient";
+import instance from "./axiosConfig";
 
 import storeData from "../asyncStorage/storeAsyncData";
 
 const getApiToken = (username, password) =>
-  api({
+  instance({
     method: "post",
     url: "/api/token-auth/",
     data: {
@@ -13,7 +13,7 @@ const getApiToken = (username, password) =>
   })
     .then(function (response) {
       storeData("token", response.data["token"]);
-      // console.log(response.data["token"]);
+      console.log(response.data["token"]);
       // console.log(response.status);
       // console.log(response.statusText);
       // console.log(response.headers);

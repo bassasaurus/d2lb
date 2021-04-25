@@ -7,8 +7,16 @@ import {
   Text,
   StatusBar,
 } from "react-native";
+import instance from "../api/axiosConfig";
 
-import getFlights from "../api/getFlights";
+const getFlights = instance
+  .get("/api/flights/")
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 
 const Item = ({ title }) => (
   <View style={styles.item}>
@@ -20,9 +28,6 @@ const FlightListScreen = () => {
   const [list, setList] = useState();
 
   const renderItem = ({ item }) => <Item title={item.route} />;
-
-  const response = getFlights();
-  // setList(response);
 
   return (
     <SafeAreaView style={styles.container}>
