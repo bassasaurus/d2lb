@@ -1,13 +1,14 @@
 import React from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 
-function AppTextInput({ title, placeholder }) {
+function AppTextInput({ title, placeholder, ...props }) {
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
         title={title}
         placeholder={placeholder}
+        {...props}
       ></TextInput>
     </View>
   );
