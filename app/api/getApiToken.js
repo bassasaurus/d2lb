@@ -14,7 +14,6 @@ const getApiToken = (username, password) => {
     },
   })
     .then(function (response) {
-      console.log(response);
       storeData("token", response.data["token"]);
       console.log(response.data["token"]);
       // console.log(response.status);
@@ -28,7 +27,7 @@ const getApiToken = (username, password) => {
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        console.log(error.response.data);
+        // console.log(error.response.data);
         // console.log(error.response.status);
         // console.log(error.response.headers);
       } else if (error.request) {
