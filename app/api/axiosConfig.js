@@ -2,7 +2,7 @@ import axios from "axios";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-axios.defaults.baseURL = "https://2a6e18fcf163.ngrok.io";
+axios.defaults.baseURL = "http://127.0.0.1:8000";
 
 axios.defaults.headers.get["Accept"] = "application/json";
 axios.defaults.headers.post["Accept"] = "application/json";
@@ -17,6 +17,7 @@ axios.interceptors.request.use(
     return config;
   },
   (error) => {
+    // console.log(error);
     return Promise.reject(error);
   }
 );
