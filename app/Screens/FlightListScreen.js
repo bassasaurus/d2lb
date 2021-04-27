@@ -10,35 +10,33 @@ import {
 import api from "../api/axiosConfig";
 import getAsyncData from "../asyncStorage/getAsyncData";
 
-const Item = ({ title }) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
-  </View>
-);
-
 const FlightListScreen = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const result = await api.get("/api/flights/");
-
+      console.log(result.data.results[0].id);
       setData(result.data);
     };
 
     fetchData();
   }, []);
 
-  const renderItem = ({ item }) => <Item title={item.route} />;
+  const Item = ({ title }) => (
+    <View style={styles.item}>
+      <Text style={styles.title}>{title}</Text>
+    </View>
+  );
 
-  getAsyncData("token");
+  const renderItem = ({ item }) => <Item title={item.route} />;
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={data}
+        data={data.results}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => id}
       />
     </SafeAreaView>
   );
