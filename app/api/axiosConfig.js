@@ -22,6 +22,6 @@ axios.interceptors.request.use(
   }
 );
 
-const instance = axios.create({});
+const api = axios.create({});
 
-export default instance;
+export default api;

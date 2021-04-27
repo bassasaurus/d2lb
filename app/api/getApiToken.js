@@ -1,11 +1,11 @@
-import instance from "./axiosConfig";
+import api from "./axiosConfig";
 
 import storeData from "../asyncStorage/storeAsyncData";
 
 const getApiToken = (username, password) => {
   console.log(username, password);
 
-  instance({
+  api({
     method: "post",
     url: "/api/token-auth/",
     data: {
@@ -33,7 +33,7 @@ const getApiToken = (username, password) => {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
         // http.ClientRequest in node.js
-        console.log(error.request);
+        // console.log(error.request);
       } else {
         // Something happened in setting up the request that triggered an Error
         // console.log("Error", error.message);

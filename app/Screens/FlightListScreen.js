@@ -7,16 +7,7 @@ import {
   Text,
   StatusBar,
 } from "react-native";
-import instance from "../api/axiosConfig";
-
-const getFlights = instance
-  .get("/api/flights/")
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
+import api from "../api/axiosConfig";
 
 const Item = ({ title }) => (
   <View style={styles.item}>

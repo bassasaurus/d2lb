@@ -17,7 +17,7 @@ export default function App() {
     <>
       <StatusBar style='auto' />
       <View style={styles.container}>
-        <LoginScreen />
+        <FlightListScreen />
       </View>
     </>
   );
