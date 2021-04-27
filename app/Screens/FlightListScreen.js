@@ -8,6 +8,7 @@ import {
   StatusBar,
 } from "react-native";
 import api from "../api/axiosConfig";
+import getAsyncData from "../asyncStorage/getAsyncData";
 
 const Item = ({ title }) => (
   <View style={styles.item}>
@@ -16,14 +17,26 @@ const Item = ({ title }) => (
 );
 
 const FlightListScreen = () => {
-  const [list, setList] = useState();
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await api.get("/api/flights/");
+
+      setData(result.data);
+    };
+
+    fetchData();
+  }, []);
 
   const renderItem = ({ item }) => <Item title={item.route} />;
+
+  getAsyncData("token");
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={list}
+        data={data}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
