@@ -22,13 +22,16 @@ const FlightListScreen = () => {
     fetchData();
   }, []);
 
-  const Item = ({ title }) => (
+  const Item = ({ title, subTitle }) => (
     <View style={styles.item}>
       <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>{subTitle}</Text>
     </View>
   );
 
-  const renderItem = ({ item }) => <Item title={item.route} />;
+  const renderItem = ({ item }) => (
+    <Item title={item.date + item.route} subTitle={item.aircraft_type} />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,7 +57,6 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     marginRight: 10,
     alignItems: "flex-start",
-    justifyContent: "flex-start",
   },
   title: {
     fontSize: 16,
