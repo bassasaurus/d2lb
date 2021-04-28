@@ -16,7 +16,6 @@ const FlightListScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       const result = await api.get("/api/flights/");
-      console.log(result.data.results[0].id);
       setData(result.data);
     };
 
@@ -36,7 +35,7 @@ const FlightListScreen = () => {
       <FlatList
         data={data.results}
         renderItem={renderItem}
-        keyExtractor={(item) => id}
+        keyExtractor={(item) => item.id.toString()}
       />
     </SafeAreaView>
   );
@@ -44,17 +43,21 @@ const FlightListScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
+    width: "100%",
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
   },
   item: {
+    width: "100%",
     backgroundColor: "#f9c2ff",
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    padding: 10,
+    marginVertical: 2,
+    marginRight: 10,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
   },
   title: {
-    fontSize: 32,
+    fontSize: 16,
   },
 });
 
