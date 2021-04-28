@@ -30,7 +30,10 @@ const FlightListScreen = () => {
   );
 
   const renderItem = ({ item }) => (
-    <Item title={item.date + item.route} subTitle={item.aircraft_type} />
+    <Item
+      title={item.date + " " + item.route}
+      subTitle={item.aircraft_type + " " + item.registration}
+    />
   );
 
   return (
@@ -56,10 +59,10 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 2,
     marginRight: 10,
-    alignItems: "flex-start",
   },
   title: {
     fontSize: 16,
+    justifyContent: "space-between",
   },
 });
 
