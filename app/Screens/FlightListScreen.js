@@ -6,6 +6,8 @@ import {
   StyleSheet,
   Text,
   StatusBar,
+  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import api from "../api/axiosConfig";
 import getAsyncData from "../asyncStorage/getAsyncData";
@@ -30,10 +32,12 @@ const FlightListScreen = () => {
   );
 
   const renderItem = ({ item }) => (
-    <Item
-      title={item.date + " " + item.route}
-      subTitle={item.aircraft_type + " " + item.registration}
-    />
+    <TouchableOpacity style={styles.button}>
+      <Item
+        title={item.date + " " + item.route}
+        subTitle={item.aircraft_type + " " + item.registration}
+      />
+    </TouchableOpacity>
   );
 
   return (
@@ -55,14 +59,22 @@ const styles = StyleSheet.create({
   },
   item: {
     width: "100%",
-    backgroundColor: "#f9c2ff",
+    backgroundColor: "gainsboro",
     padding: 10,
-    marginVertical: 2,
+    marginTop: 2,
     marginRight: 10,
+    marginLeft: 10,
   },
   title: {
     fontSize: 16,
     justifyContent: "space-between",
+    color: "mediumblue",
+  },
+  button: {
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 0,
+    marginTop: 2,
   },
 });
 
