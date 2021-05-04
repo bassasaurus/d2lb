@@ -7,11 +7,14 @@ import {
   Text,
   StatusBar,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import api from "../api/axiosConfig";
 
 const FlightListScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
+
+  const [refreshing, setRefreshing] = React.useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,6 +23,15 @@ const FlightListScreen = ({ navigation }) => {
     };
 
     fetchData();
+  }, []);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
   }, []);
 
   const Item = ({ title, subTitle }) => (
@@ -48,6 +60,9 @@ const FlightListScreen = ({ navigation }) => {
         data={data.results}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );
