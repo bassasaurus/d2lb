@@ -7,19 +7,11 @@ import {
   Text,
   StatusBar,
   TouchableOpacity,
-  TouchableHighlight,
 } from "react-native";
 import api from "../api/axiosConfig";
 
 const FlightListScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
-  const [count, setCount] = useState(0);
-  const [itemId, setItemId] = useState("");
-
-  // const onPress = () => setCount((prevCount) => prevCount + 1);
-  // console.log(count);
-
-  const onPress = (id) => console.log(itemId);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,12 +29,12 @@ const FlightListScreen = ({ navigation }) => {
     </View>
   );
 
-  const nav = () => {
-    return navigation.navigate("Detail");
-  };
-
   const renderItem = ({ item }) => (
-    <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={nav}>
+    <TouchableOpacity
+      activeOpacity={0.7}
+      style={styles.button}
+      onPress={() => navigation.navigate("Detail", { id: item.id })}
+    >
       <Item
         title={item.date + " " + item.route}
         subTitle={item.aircraft_type + " " + item.registration}

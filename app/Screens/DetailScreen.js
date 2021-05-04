@@ -1,10 +1,10 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 
-function DetailScreen({ id, ...props }) {
+function DetailScreen({ route }) {
   return (
     <View style={styles.container}>
-      <Text>{id}</Text>
+      <Text>{route.params.id}</Text>
     </View>
   );
 }
