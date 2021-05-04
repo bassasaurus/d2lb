@@ -33,7 +33,7 @@ const FlightListScreen = ({ navigation }) => {
     <TouchableOpacity
       activeOpacity={0.7}
       style={styles.button}
-      onPress={() => navigation.navigate("Detail", { id: item.id })}
+      onPress={() => navigation.navigate("Detail", { item: item })}
     >
       <Item
         title={item.date + " " + item.route}

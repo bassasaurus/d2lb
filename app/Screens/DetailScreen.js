@@ -4,13 +4,19 @@ import { View, StyleSheet, Text } from "react-native";
 function DetailScreen({ route }) {
   return (
     <View style={styles.container}>
-      <Text>{route.params.id}</Text>
+      <Text style={styles.title}>{route.params.item.id}</Text>
+      <Text style={styles.title}>{route.params.item.date}</Text>
+      <Text style={styles.title}>{route.params.item.route}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  title: {
+    fontSize: 16,
+    justifyContent: "space-between",
+    color: "mediumblue",
+  },
 });
 
 export default DetailScreen;
