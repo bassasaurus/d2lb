@@ -25,6 +25,20 @@ const FlightListScreen = ({ navigation }) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const refreshOnBack = navigation.addListener("focus", () => {
+      const fetchData = async () => {
+        const result = await api.get("/api/flights/");
+        setData(result.data);
+      };
+
+      fetchData();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return refreshOnBack;
+  }, [navigation]);
+
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
