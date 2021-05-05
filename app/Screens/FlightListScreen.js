@@ -30,6 +30,12 @@ const FlightListScreen = ({ navigation }) => {
   };
 
   const onRefresh = React.useCallback(() => {
+    const fetchData = async () => {
+      const result = await api.get("/api/flights/");
+      setData(result.data);
+    };
+
+    fetchData();
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
   }, []);
