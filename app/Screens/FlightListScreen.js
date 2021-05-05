@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
+
+import { COLORS } from "../styles/colors";
 import api from "../api/axiosConfig";
 
 const FlightListScreen = ({ navigation }) => {
@@ -64,7 +66,7 @@ const FlightListScreen = ({ navigation }) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.7}
-      style={styles.button}
+      style={styles.touchable}
       onPress={() => navigation.navigate("Detail", { item: item })}
     >
       <Item
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
   },
   item: {
     width: "100%",
-    backgroundColor: "gainsboro",
+    backgroundColor: COLORS.elementBackground,
     padding: 10,
     marginTop: 2,
     marginRight: 10,
@@ -105,9 +107,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     justifyContent: "space-between",
-    color: "mediumblue",
+    color: COLORS.blue,
   },
-  button: {
+  touchable: {
     alignItems: "center",
     backgroundColor: "#DDDDDD",
     padding: 0,

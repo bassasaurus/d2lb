@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
+import { COLORS } from "../styles/colors";
 
 function DetailScreen({ route }) {
   return (
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    color: "mediumblue",
+    color: COLORS.blue,
   },
 });
 
