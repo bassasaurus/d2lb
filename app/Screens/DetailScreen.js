@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import MapView from "react-native-maps";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import api from "../api/axiosConfig";
 import { COLORS } from "../styles/colors";
 
 function DetailScreen({ route }) {
   const [data, setData] = useState([]);
 
-  console.log(route);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await api.get("/geojson/airports/" + id);
-      setData(result.data);
-    };
-    console.log(data);
-    fetchData();
-  }, []);
+  // console.log(route);
 
   return (
     <View style={styles.container}>
@@ -25,6 +17,7 @@ function DetailScreen({ route }) {
       <Text style={styles.title}>{route.params.item.registration}</Text>
       <Text style={styles.title}>{route.params.item.route}</Text>
       <Text style={styles.title}>{route.params.item.remarks}</Text>
+      <MapView style={styles.map} />
     </View>
   );
 }
@@ -37,6 +30,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     color: COLORS.blue,
+  },
+  map: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
 });
 
