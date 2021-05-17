@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
-import api from "../api/axiosConfig";
+
 import { COLORS } from "../styles/colors";
 
 function DetailScreen({ route }) {
@@ -17,7 +17,11 @@ function DetailScreen({ route }) {
       <Text style={styles.title}>{route.params.item.registration}</Text>
       <Text style={styles.title}>{route.params.item.route}</Text>
       <Text style={styles.title}>{route.params.item.remarks}</Text>
-      <MapView style={styles.map} />
+      <MapView style={styles.map}>
+        <Marker
+          coordinate={{ latitude: -84.427864, longitude: 33.63669961111111 }}
+        />
+      </MapView>
     </View>
   );
 }
