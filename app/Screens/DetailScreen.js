@@ -19,7 +19,8 @@ function DetailScreen({ route }) {
       <Text style={styles.title}>{route.params.item.remarks}</Text>
       <MapView style={styles.map}>
         <Marker
-          coordinate={{ latitude: -84.427864, longitude: 33.63669961111111 }}
+          coordinate={{ longitude: -95.3368, latitude: 29.9902 }}
+          title='Home Sweet Home'
         />
       </MapView>
     </View>
