@@ -3,8 +3,11 @@ import React from "react";
 
 import { NavigationContainer } from "@react-navigation/native";
 
-import StackNavigator from "./app/navigation/StackNavigator";
+import platform from "./app/api/axiosConfig";
 
+import StackNavigator from "./app/navigation/StackNavigator";
+import LoginScreen from "./app/screens/LoginScreen";
+import { SafeAreaView, Platform } from "react-native";
 export default function App() {
   return (
     <>
@@ -13,5 +16,8 @@ export default function App() {
         <StackNavigator></StackNavigator>
       </NavigationContainer>
     </>
+    // <SafeAreaView>
+    //   <LoginScreen></LoginScreen>
+    // </SafeAreaView>
   );
 }
