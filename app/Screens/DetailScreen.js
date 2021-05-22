@@ -7,7 +7,9 @@ import { COLORS } from "../styles/colors";
 function DetailScreen({ route }) {
   const [data, setData] = useState([]);
 
-  // console.log(route);
+  const markers = route.params.item.app_markers;
+
+  console.log(route.params.item.app_markers);
 
   return (
     <View style={styles.container}>
@@ -17,11 +19,14 @@ function DetailScreen({ route }) {
       <Text style={styles.title}>{route.params.item.registration}</Text>
       <Text style={styles.title}>{route.params.item.route}</Text>
       <Text style={styles.title}>{route.params.item.remarks}</Text>
+
       <MapView style={styles.map}>
-        <Marker
-          coordinate={{ longitude: -95.3368, latitude: 29.9902 }}
-          title='Home Sweet Home'
-        />
+        {markers.map((marker) => (
+          <MapView.Marker
+            coordinate={marker.coordinates}
+            title={marker.title}
+          />
+        ))}
       </MapView>
     </View>
   );
