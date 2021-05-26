@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 
 import { COLORS } from "../styles/colors";
 
 function DetailScreen({ route }) {
-  const [data, setData] = useState([]);
-
   const markers = route.params.item.app_markers;
+  const polylines = route.params.item.app_polylines.coordinates;
 
-  console.log(route.params.item.app_markers);
+  console.log(route.params.item.app_polylines.coordinates);
 
   return (
     <View style={styles.container}>
@@ -22,11 +21,18 @@ function DetailScreen({ route }) {
 
       <MapView style={styles.map}>
         {markers.map((marker) => (
-          <MapView.Marker
+          <Marker
+            key={marker.key}
             coordinate={marker.coordinates}
             title={marker.title}
           />
         ))}
+        <Polyline
+          strokeColor={COLORS.blue}
+          strokeWidth={3}
+          geodesic={true}
+          coordinates={polylines}
+        />
       </MapView>
     </View>
   );
