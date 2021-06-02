@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 
@@ -7,8 +7,11 @@ import { COLORS } from "../styles/colors";
 function DetailScreen({ route }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
+  const mapRef = useRef(null);
 
-  console.log(route.params.item.app_polylines.coordinates);
+  useEffect(() => {
+    mapRef.current.fitToCoordinates(polylines);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -19,7 +22,7 @@ function DetailScreen({ route }) {
       <Text style={styles.title}>{route.params.item.route}</Text>
       <Text style={styles.title}>{route.params.item.remarks}</Text>
 
-      <MapView style={styles.map}>
+      <MapView style={styles.map} ref={mapRef}>
         {markers.map((marker) => (
           <Marker
             key={marker.key}
