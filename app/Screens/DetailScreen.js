@@ -40,7 +40,7 @@ function DetailScreen({ route }) {
           />
         ))}
         <Polyline
-          strokeColor={COLORS.blue}
+          strokeColor={STYLES.blue}
           strokeWidth={3}
           geodesic={true}
           coordinates={polylines}

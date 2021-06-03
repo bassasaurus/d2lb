@@ -10,7 +10,7 @@ import {
   RefreshControl,
 } from "react-native";
 
-import { COLORS } from "../styles/colors";
+import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
 
@@ -71,8 +71,11 @@ const FlightListScreen = ({ navigation }) => {
       onPress={() => navigation.navigate("Detail", { item: item })}
     >
       <FlightItem
-        date={item.date + " " + item.route}
-        subTitle={item.aircraft_type + " " + item.registration}
+        date={item.date}
+        route={item.route}
+        type={item.aircraft_type}
+        reg={item.registration}
+        dur={item.duration}
       />
     </TouchableOpacity>
   );
@@ -99,7 +102,7 @@ const styles = StyleSheet.create({
   },
   item: {
     width: "100%",
-    backgroundColor: COLORS.elementBackground,
+    backgroundColor: STYLES.elementBackground,
     padding: 10,
     marginTop: 2,
     marginRight: 10,
@@ -108,11 +111,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     justifyContent: "space-between",
-    color: COLORS.blue,
+    color: STYLES.blue,
   },
   touchable: {
     alignItems: "center",
-    backgroundColor: COLORS.highlight,
+    backgroundColor: STYLES.highlight,
     padding: 0,
     marginTop: 2,
   },
