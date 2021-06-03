@@ -12,6 +12,7 @@ import {
 
 import { COLORS } from "../styles/colors";
 import api from "../api/axiosConfig";
+import FlightItem from "../components/FlightItem";
 
 const FlightListScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
@@ -56,12 +57,12 @@ const FlightListScreen = ({ navigation }) => {
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
-  const Item = ({ title, subTitle }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.title}>{subTitle}</Text>
-    </View>
-  );
+  // const Item = ({ title, subTitle }) => (
+  //   <View style={styles.item}>
+  //     <Text style={styles.title}>{title}</Text>
+  //     <Text style={styles.title}>{subTitle}</Text>
+  //   </View>
+  // );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -69,8 +70,8 @@ const FlightListScreen = ({ navigation }) => {
       style={styles.touchable}
       onPress={() => navigation.navigate("Detail", { item: item })}
     >
-      <Item
-        title={item.date + " " + item.route}
+      <FlightItem
+        date={item.date + " " + item.route}
         subTitle={item.aircraft_type + " " + item.registration}
       />
     </TouchableOpacity>
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
   },
   touchable: {
     alignItems: "center",
-    backgroundColor: "#DDDDDD",
+    backgroundColor: COLORS.highlight,
     padding: 0,
     marginTop: 2,
   },

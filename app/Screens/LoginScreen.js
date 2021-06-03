@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 
-import { COLORS } from "../styles/colors";
+import { STYLES } from "../styles/styles";
 
 import AppButton from "../components/AppButton";
 import AppTextInput from "../components/AppTextInput";

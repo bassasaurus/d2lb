@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 
-import { COLORS } from "../styles/colors";
+import { STYLES } from "../styles/styles";
 
 function DetailScreen({ route }) {
   const markers = route.params.item.app_markers;
@@ -22,7 +22,16 @@ function DetailScreen({ route }) {
       <Text style={styles.title}>{route.params.item.route}</Text>
       <Text style={styles.title}>{route.params.item.remarks}</Text>
 
-      <MapView style={styles.map} ref={mapRef}>
+      <MapView
+        style={styles.map}
+        mapPadding={{
+          top: 60,
+          bottom: 10,
+          right: 40,
+          left: 40,
+        }}
+        ref={mapRef}
+      >
         {markers.map((marker) => (
           <Marker
             key={marker.key}
@@ -48,9 +57,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    color: COLORS.blue,
+    color: STYLES.blue,
   },
   map: {
+    flex: 1,
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
