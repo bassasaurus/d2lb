@@ -6,29 +6,22 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
   return (
     <View style={styles.container}>
       <View style={styles.rect}>
-        <View style={styles.firstRow}>
+        <View style={styles.firstColumn}>
           <Text style={styles.date}>{date}</Text>
           <Text style={styles.type}>{type}</Text>
           <Text style={styles.reg}>{reg}</Text>
+        </View>
+        <View style={styles.secondColumn}>
+          <Text style={styles.route}>{route}</Text>
+        </View>
+        <View style={styles.thirdColumn}>
           <Text style={styles.duration}>Block: {dur}</Text>
           <Text style={styles.crew}>{crew}</Text>
         </View>
-        <View style={styles.secondRow}>
-          <Text style={styles.route}>{route}</Text>
+
+        <View style={styles.fourthColumn}>
           <Text style={styles.dayLdg}>Day Ldg {dayL}</Text>
           <Text style={styles.nightLdg}>Night Ldg {nitL}</Text>
-        </View>
-        <View style={styles.thirdRow}>
-          <Text style={styles.crossCountry}>Cross Country</Text>
-          <Text style={styles.night}>Night</Text>
-          <Text style={styles.inst}>Inst</Text>
-        </View>
-        <View style={styles.fourthRow}>
-          <Text style={styles.cfi}>CFI</Text>
-          <Text style={styles.dual}>Dual</Text>
-          <Text style={styles.solo}>Solo</Text>
-          <Text style={styles.hood}>Hood</Text>
-          <Text style={styles.sim}>Sim</Text>
         </View>
       </View>
     </View>
@@ -41,25 +34,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   rect: {
-    flexDirection: "column",
+    flexDirection: "row",
     width: "100%",
     marginBottom: 5,
     paddingLeft: 5,
     paddingRight: 5,
-    paddingTop: 0,
+    paddingTop: 10,
+    paddingBottom: 10,
     backgroundColor: STYLES.white,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
   },
-  firstRow: {
-    flexDirection: "row",
+  firstColumn: {
+    flexDirection: "column",
+    flex: 1,
   },
-  secondRow: {
-    flexDirection: "row",
+  secondColumn: {
+    flexDirection: "column",
+    flex: 1,
   },
-  thirdRow: {
-    flexDirection: "row",
+  thirdColumn: {
+    flexDirection: "column",
+    flex: 1,
   },
-  fourthRow: {
-    flexDirection: "row",
+  fourthColumn: {
+    flexDirection: "column",
+    flex: 1,
   },
   date: {
     fontFamily: STYLES.font,
