@@ -15,12 +15,14 @@ function DetailScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{route.params.item.id}</Text>
-      <Text style={styles.title}>{route.params.item.date}</Text>
-      <Text style={styles.title}>{route.params.item.aircraft_type}</Text>
-      <Text style={styles.title}>{route.params.item.registration}</Text>
-      <Text style={styles.title}>{route.params.item.route}</Text>
-      <Text style={styles.title}>{route.params.item.remarks}</Text>
+      <View style={styles.details}>
+        <Text style={styles.title}>{route.params.item.id}</Text>
+        <Text style={styles.title}>{route.params.item.date}</Text>
+        <Text style={styles.title}>{route.params.item.aircraft_type}</Text>
+        <Text style={styles.title}>{route.params.item.registration}</Text>
+        <Text style={styles.title}>{route.params.item.route}</Text>
+        <Text style={styles.title}>{route.params.item.remarks}</Text>
+      </View>
 
       <MapView
         style={styles.map}
@@ -55,14 +57,22 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
   },
+  details: {
+    backgroundColor: STYLES.white,
+    borderRadius: STYLES.borderRadius,
+    margin: 5,
+    padding: 10,
+  },
   title: {
-    fontSize: 24,
+    fontSize: STYLES.fontSizeNormal,
+    fontWeight: STYLES.fontWeightNormal,
     color: STYLES.blue,
   },
   map: {
     flex: 1,
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+    borderRadius: STYLES.borderRadius,
   },
 });
 

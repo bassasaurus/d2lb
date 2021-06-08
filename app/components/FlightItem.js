@@ -13,11 +13,10 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
         </View>
         <View style={styles.secondColumn}>
           <Text style={styles.route}>{route}</Text>
-        </View>
-        <View style={styles.thirdColumn}>
           <Text style={styles.duration}>Block: {dur}</Text>
           <Text style={styles.crew}>{crew}</Text>
         </View>
+        <View style={styles.thirdColumn}></View>
 
         <View style={styles.fourthColumn}>
           <Text style={styles.dayLdg}>Day Ldg {dayL}</Text>
@@ -42,18 +41,15 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: STYLES.white,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    borderRadius: STYLES.borderRadius,
   },
   firstColumn: {
     flexDirection: "column",
-    flex: 1,
+    flex: 1.6,
   },
   secondColumn: {
     flexDirection: "column",
-    flex: 1,
+    flex: 1.7,
   },
   thirdColumn: {
     flexDirection: "column",
@@ -65,7 +61,7 @@ const styles = StyleSheet.create({
   },
   date: {
     fontFamily: STYLES.font,
-    fontWeight: STYLES.bold,
+    fontWeight: STYLES.fontWeightBold,
     color: STYLES.blue,
     alignSelf: "flex-start",
     flex: 1,

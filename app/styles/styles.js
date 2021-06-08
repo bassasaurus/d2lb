@@ -8,5 +8,9 @@ export const STYLES = {
   highlight: "#DDDDDD",
 
   font: Platform.OS === "android" ? "Roboto" : "Avenir",
-  bold: "800",
+  fontWeightBold: "800",
+  fontSizeNormal: 15,
+  fontWeightNormal: "500",
+
+  borderRadius: 8,
 };
