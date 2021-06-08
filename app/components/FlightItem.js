@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { STYLES } from "../styles/styles";
 
-function FlightItem({ date, route, type, reg, dur }) {
+function FlightItem({ date, route, type, reg, dur, crew }) {
   return (
     <View style={styles.container}>
       <View style={styles.rect}>
@@ -10,8 +10,8 @@ function FlightItem({ date, route, type, reg, dur }) {
           <Text style={styles.date}>{date}</Text>
           <Text style={styles.type}>{type}</Text>
           <Text style={styles.reg}>{reg}</Text>
-          <Text style={styles.duration}>{dur}</Text>
-          <Text style={styles.crew}>Crew</Text>
+          <Text style={styles.duration}>Block: {dur}</Text>
+          <Text style={styles.crew}>{crew}</Text>
         </View>
         <View style={styles.secondRow}>
           <Text style={styles.route}>{route}</Text>
@@ -38,89 +38,101 @@ function FlightItem({ date, route, type, reg, dur }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "row",
   },
   rect: {
+    flexDirection: "column",
     width: "100%",
-    marginTop: 20,
-    marginBottom: 10,
-    backgroundColor: STYLES.itemBackground,
-    marginTop: 0,
+    marginBottom: 5,
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingTop: 0,
+    backgroundColor: STYLES.white,
+  },
+  firstRow: {
+    flexDirection: "row",
+  },
+  secondRow: {
+    flexDirection: "row",
+  },
+  thirdRow: {
+    flexDirection: "row",
+  },
+  fourthRow: {
+    flexDirection: "row",
   },
   date: {
     fontFamily: STYLES.font,
+    fontWeight: STYLES.bold,
     color: STYLES.blue,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   type: {
     fontFamily: STYLES.font,
+    fontWeight: STYLES.bold,
     color: STYLES.blue,
-    marginLeft: 0,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   reg: {
     fontFamily: STYLES.font,
+    fontWeight: STYLES.bold,
     color: STYLES.blue,
     marginLeft: 0,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   duration: {
     fontFamily: STYLES.font,
+    fontWeight: STYLES.bold,
     color: STYLES.blue,
-    marginLeft: 0,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   crew: {
     fontFamily: STYLES.font,
+    fontWeight: STYLES.bold,
     color: STYLES.blue,
-    marginLeft: 0,
-  },
-  firstRow: {
-    height: 16,
-    flexDirection: "row",
-    marginLeft: 0,
-    marginRight: 0,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   route: {
     fontFamily: STYLES.font,
+    fontWeight: STYLES.bold,
     color: STYLES.blue,
-    marginRight: 0,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   dayLdg: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-    marginLeft: 0,
-  },
-  secondRow: {
-    height: 16,
-    flexDirection: "row",
-    marginTop: 3,
-    marginLeft: 5,
-    marginRight: 47,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   crossCountry: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-    marginTop: 1,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   night: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-    marginLeft: 41,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   inst: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-    fontSize: 14,
-    marginLeft: 35,
-    marginTop: 1,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   nightLdg: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-    marginLeft: 51,
-  },
-  thirdRow: {
-    height: 17,
-    flexDirection: "row",
-    marginTop: 4,
-    marginLeft: 5,
-    marginRight: 37,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   cfi: {
     fontFamily: STYLES.font,
@@ -129,33 +141,26 @@ const styles = StyleSheet.create({
   dual: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-    marginLeft: 24,
-    marginTop: 2,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   solo: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-    marginLeft: 30,
-    marginTop: 2,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   hood: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-    marginLeft: 69,
-    marginTop: 2,
+    alignSelf: "flex-start",
+    flex: 1,
   },
   sim: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-    marginLeft: 42,
-    marginTop: 2,
-  },
-  fourthRow: {
-    height: 18,
-    flexDirection: "row",
-    marginTop: 5,
-    marginLeft: 5,
-    marginRight: 72,
+    alignSelf: "flex-start",
+    flex: 1,
   },
 });
 

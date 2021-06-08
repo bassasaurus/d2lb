@@ -1,3 +1,5 @@
+import Platform from "react-native";
+
 export const STYLES = {
   blue: "mediumblue",
   itemBackground: "gainsboro",
@@ -6,4 +8,6 @@ export const STYLES = {
   highlight: "#DDDDDD",
 
   font: Platform.OS === "android" ? "Roboto" : "Avenir",
+  bold: "800",
+  large: "40",
 };

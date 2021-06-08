@@ -57,13 +57,6 @@ const FlightListScreen = ({ navigation }) => {
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
-  // const Item = ({ title, subTitle }) => (
-  //   <View style={styles.item}>
-  //     <Text style={styles.title}>{title}</Text>
-  //     <Text style={styles.title}>{subTitle}</Text>
-  //   </View>
-  // );
-
   const renderItem = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.7}
@@ -76,6 +69,7 @@ const FlightListScreen = ({ navigation }) => {
         type={item.aircraft_type}
         reg={item.registration}
         dur={item.duration}
+        crew={item.second_in_command ? "SIC" : "PIC"}
       />
     </TouchableOpacity>
   );
@@ -108,7 +102,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginLeft: 10,
   },
-  title: {
+  text: {
     fontSize: 16,
     justifyContent: "space-between",
     color: STYLES.blue,
