@@ -22,6 +22,7 @@ const FlightListScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       const result = await api.get("/api/flights/");
+      console.log(result);
       setData(result.data);
     };
 
@@ -70,6 +71,8 @@ const FlightListScreen = ({ navigation }) => {
         reg={item.registration}
         dur={item.duration}
         crew={item.second_in_command ? "SIC" : "PIC"}
+        dayL={item.landings_day ? item.landings_day : 0}
+        nitL={item.landings_night ? item.landings_night : 0}
       />
     </TouchableOpacity>
   );

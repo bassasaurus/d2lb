@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { STYLES } from "../styles/styles";
 
-function FlightItem({ date, route, type, reg, dur, crew }) {
+function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
   return (
     <View style={styles.container}>
       <View style={styles.rect}>
@@ -15,8 +15,8 @@ function FlightItem({ date, route, type, reg, dur, crew }) {
         </View>
         <View style={styles.secondRow}>
           <Text style={styles.route}>{route}</Text>
-          <Text style={styles.dayLdg}>Day Ldg</Text>
-          <Text style={styles.nightLdg}>Night Ldg</Text>
+          <Text style={styles.dayLdg}>Day Ldg {dayL}</Text>
+          <Text style={styles.nightLdg}>Night Ldg {nitL}</Text>
         </View>
         <View style={styles.thirdRow}>
           <Text style={styles.crossCountry}>Cross Country</Text>
