@@ -8,19 +8,20 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
       <View style={styles.rect}>
         <View style={styles.firstColumn}>
           <Text style={styles.date}>{date}</Text>
-          <Text style={styles.type}>{type}</Text>
-          <Text style={styles.reg}>{reg}</Text>
+          <Text style={styles.dayLdg}>Day Ldg {dayL}</Text>
+          <Text style={styles.nightLdg}>Night Ldg {nitL}</Text>
         </View>
         <View style={styles.secondColumn}>
           <Text style={styles.route}>{route}</Text>
           <Text style={styles.duration}>Block: {dur}</Text>
           <Text style={styles.crew}>{crew}</Text>
         </View>
-        <View style={styles.thirdColumn}></View>
+        <View style={styles.thirdColumn}>
+          <Text style={styles.type}>{type}</Text>
+        </View>
 
         <View style={styles.fourthColumn}>
-          <Text style={styles.dayLdg}>Day Ldg {dayL}</Text>
-          <Text style={styles.nightLdg}>Night Ldg {nitL}</Text>
+          <Text style={styles.reg}>{reg}</Text>
         </View>
       </View>
     </View>
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
   },
   secondColumn: {
     flexDirection: "column",
-    flex: 1.7,
+    flex: 3,
   },
   thirdColumn: {
     flexDirection: "column",
@@ -62,20 +63,23 @@ const styles = StyleSheet.create({
   date: {
     fontFamily: STYLES.font,
     fontWeight: STYLES.fontWeightBold,
+    fontSize: STYLES.fontSizeLarge,
     color: STYLES.blue,
     alignSelf: "flex-start",
     flex: 1,
   },
   type: {
     fontFamily: STYLES.font,
-    fontWeight: STYLES.bold,
+    fontWeight: STYLES.fontWeightBold,
+    fontSize: STYLES.fontSizeLarge,
     color: STYLES.blue,
     alignSelf: "flex-start",
     flex: 1,
   },
   reg: {
     fontFamily: STYLES.font,
-    fontWeight: STYLES.bold,
+    fontWeight: STYLES.fontWeightBold,
+    fontSize: STYLES.fontSizeLarge,
     color: STYLES.blue,
     marginLeft: 0,
     alignSelf: "flex-start",
@@ -83,27 +87,31 @@ const styles = StyleSheet.create({
   },
   duration: {
     fontFamily: STYLES.font,
-    fontWeight: STYLES.bold,
+    fontWeight: STYLES.fontWeightNormal,
+    fontSize: STYLES.fontSizeNormal,
     color: STYLES.blue,
     alignSelf: "flex-start",
     flex: 1,
   },
   crew: {
     fontFamily: STYLES.font,
-    fontWeight: STYLES.bold,
+    fontWeight: STYLES.fontWeightNormal,
+    fontSize: STYLES.fontSizeNormal,
     color: STYLES.blue,
     alignSelf: "flex-start",
     flex: 1,
   },
   route: {
     fontFamily: STYLES.font,
-    fontWeight: STYLES.bold,
+    fontWeight: STYLES.fontWeightBold,
     color: STYLES.blue,
     alignSelf: "flex-start",
     flex: 1,
   },
   dayLdg: {
     fontFamily: STYLES.font,
+    fontWeight: STYLES.fontWeightNormal,
+    fontSize: STYLES.fontSizeNormal,
     color: STYLES.blue,
     alignSelf: "flex-start",
     flex: 1,
@@ -128,6 +136,8 @@ const styles = StyleSheet.create({
   },
   nightLdg: {
     fontFamily: STYLES.font,
+    fontWeight: STYLES.fontWeightNormal,
+    fontSize: STYLES.fontSizeNormal,
     color: STYLES.blue,
     alignSelf: "flex-start",
     flex: 1,

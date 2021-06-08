@@ -9,8 +9,9 @@ export const STYLES = {
 
   font: Platform.OS === "android" ? "Roboto" : "Avenir",
   fontWeightBold: "800",
-  fontSizeNormal: 15,
-  fontWeightNormal: "500",
+  fontWeightNormal: "400",
+  fontSizeNormal: 13,
+  fontSizeLarge: 15,
 
   borderRadius: 8,
 };
