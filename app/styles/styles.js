@@ -13,5 +13,5 @@ export const STYLES = {
   fontSizeNormal: 13,
   fontSizeLarge: 15,
 
-  borderRadius: 8,
+  borderRadius: 5,
 };

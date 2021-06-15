@@ -22,7 +22,7 @@ const FlightListScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       const result = await api.get("/api/flights/");
-      console.log(result);
+      // console.log(result);
       setData(result.data);
     };
 
