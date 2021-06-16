@@ -15,16 +15,32 @@ function DetailScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.details}>
-        <Text style={styles.title}>{route.params.item.id}</Text>
-        <Text style={styles.title}>{route.params.item.date}</Text>
-        <Text style={styles.title}>{route.params.item.aircraft_type}</Text>
-        <Text style={styles.title}>{route.params.item.registration}</Text>
-        <Text style={styles.title}>{route.params.item.route}</Text>
-        <Text style={styles.title}>{route.params.item.remarks}</Text>
+      <View style={styles.detailsPanel}>
+        <View style={styles.firstColumn}>
+          <Text style={styles.title}>{route.params.item.id}</Text>
+          <Text style={styles.title}>{route.params.item.date}</Text>
+          <Text style={styles.title}>{route.params.item.aircraft_type}</Text>
+          <Text style={styles.title}>{route.params.item.registration}</Text>
+          <Text style={styles.title}>{route.params.item.route}</Text>
+          <Text style={styles.title}>{route.params.item.remarks}</Text>
+        </View>
+        <View style={styles.secondColumn}></View>
+        <View style={styles.thirdColumn}></View>
+        <View style={styles.fourthColumn}>
+          <Button
+            style={styles.button}
+            title='Delete'
+            backgroundColor={STYLES.white}
+            onPress={() => console.log("delete")}
+            borderRadius={STYLES.borderRadius}
+          ></Button>
+          <Button
+            style={styles.button}
+            title='Update'
+            onPress={() => console.log("update")}
+          ></Button>
+        </View>
       </View>
-      <Button title='Delete' onPress={() => confirm("Are you sure?")}></Button>
-      <Button title='Update' onPress={() => console.log("update")}></Button>
 
       <MapView
         style={styles.map}
@@ -59,8 +75,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
   },
-  details: {
-    flexDirection: "column",
+  detailsPanel: {
+    flexDirection: "row",
     width: "100%",
     marginBottom: 5,
     backgroundColor: STYLES.white,
@@ -73,19 +89,23 @@ const styles = StyleSheet.create({
   },
   firstColumn: {
     flexDirection: "column",
-    flex: 1.6,
+    flex: 1,
+    backgroundColor: "red",
   },
   secondColumn: {
     flexDirection: "column",
-    flex: 3,
+    flex: 1,
+    backgroundColor: "blue",
   },
   thirdColumn: {
     flexDirection: "column",
     flex: 1,
+    backgroundColor: "green",
   },
   fourthColumn: {
     flexDirection: "column",
     flex: 1,
+    backgroundColor: "yellow",
   },
   title: {
     fontSize: STYLES.fontSizeNormal,
@@ -97,6 +117,9 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
     borderRadius: STYLES.borderRadius,
+  },
+  button: {
+    marginTop: 50,
   },
 });
 
