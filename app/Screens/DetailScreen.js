@@ -13,35 +13,35 @@ function DetailScreen({ route }) {
     mapRef.current.fitToCoordinates(polylines);
   }, []);
 
+  // {
+  //   route.params.item.id; //
+  // }
+
   return (
     <View style={styles.container}>
       <View style={styles.detailsPanel}>
-        <View style={styles.firstColumn}>
-          <Text style={styles.title}>{route.params.item.id}</Text>
-          <Text style={styles.title}>{route.params.item.date}</Text>
-          <Text style={styles.title}>{route.params.item.aircraft_type}</Text>
-          <Text style={styles.title}>{route.params.item.registration}</Text>
-          <Text style={styles.title}>{route.params.item.route}</Text>
-          <Text style={styles.title}>{route.params.item.remarks}</Text>
-        </View>
+        <View style={styles.firstColumn}></View>
         <View style={styles.secondColumn}></View>
         <View style={styles.thirdColumn}></View>
         <View style={styles.fourthColumn}>
-          <Button
-            style={styles.button}
-            title='Delete'
-            backgroundColor={STYLES.white}
-            onPress={() => console.log("delete")}
-            borderRadius={STYLES.borderRadius}
-          ></Button>
-          <Button
-            style={styles.button}
-            title='Update'
-            onPress={() => console.log("update")}
-          ></Button>
+          <View style={styles.topArea}>
+            <Text
+              style={styles.selectableText}
+              onPress={() => console.log("delete")}
+            >
+              Delete
+            </Text>
+          </View>
+          <View style={styles.bottomArea}>
+            <Text
+              style={styles.selectableText}
+              onPress={() => console.log("update")}
+            >
+              Update
+            </Text>
+          </View>
         </View>
       </View>
-
       <MapView
         style={styles.map}
         mapPadding={{
@@ -77,12 +77,11 @@ const styles = StyleSheet.create({
   },
   detailsPanel: {
     flexDirection: "row",
+    flex: 0.2,
     width: "100%",
-    marginBottom: 5,
+    margin: 5,
     backgroundColor: STYLES.white,
     borderRadius: STYLES.borderRadius,
-    margin: 5,
-    padding: 10,
     padding: STYLES.borderRadius,
     backgroundColor: STYLES.white,
     borderRadius: STYLES.borderRadius,
@@ -107,19 +106,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "yellow",
   },
-  title: {
-    fontSize: STYLES.fontSizeNormal,
-    fontWeight: STYLES.fontWeightNormal,
-    color: STYLES.blue,
+  topArea: {
+    flexDirection: "row",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: STYLES.danger,
+  },
+  bottomArea: {
+    flexDirection: "row",
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: STYLES.blue,
+  },
+  selectableText: {
+    fontFamily: STYLES.font,
+    fontWeight: STYLES.fontWeightBold,
+    color: STYLES.white,
   },
   map: {
     flex: 1,
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
     borderRadius: STYLES.borderRadius,
-  },
-  button: {
-    marginTop: 50,
   },
 });
 
