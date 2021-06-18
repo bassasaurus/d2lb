@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 import { STYLES } from "../styles/styles";
+import Icon from "../components/Icon";
 
 function DetailScreen({ route }) {
   const markers = route.params.item.app_markers;
@@ -34,7 +35,7 @@ function DetailScreen({ route }) {
             onPress={() => console.log("delete")}
           >
             <View>
-              <Text style={styles.selectableText}>Delete</Text>
+              <Icon name={"delete"}></Icon>
             </View>
           </TouchableOpacity>
 
@@ -43,7 +44,7 @@ function DetailScreen({ route }) {
             onPress={() => console.log("update")}
           >
             <View>
-              <Text style={styles.selectableText}>Update</Text>
+              <Icon name={"update"}></Icon>
             </View>
           </TouchableOpacity>
         </View>
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
   },
   fourthColumn: {
     flexDirection: "column",
-    flex: 1,
+    flex: 0.4,
     paddingRight: STYLES.borderRadius,
     borderRadius: STYLES.borderRadius,
   },
