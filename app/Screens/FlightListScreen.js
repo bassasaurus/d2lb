@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   SafeAreaView,
   View,
@@ -39,7 +39,6 @@ const FlightListScreen = ({ navigation }) => {
       fetchData();
     });
 
-    // Return the function to unsubscribe from the event so it gets removed on unmount
     return refreshOnBack;
   }, [navigation]);
 
@@ -47,7 +46,7 @@ const FlightListScreen = ({ navigation }) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(() => {
     const fetchData = async () => {
       const result = await api.get("/api/flights/");
       setData(result.data);

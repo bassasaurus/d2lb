@@ -1,6 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import { StyleSheet, Text, View, Dimensions, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 
 import { STYLES } from "../styles/styles";
 
@@ -13,33 +19,33 @@ function DetailScreen({ route }) {
     mapRef.current.fitToCoordinates(polylines);
   }, []);
 
-  // {
-  //   route.params.item.id; //
-  // }
-
   return (
     <View style={styles.container}>
       <View style={styles.detailsPanel}>
-        <View style={styles.firstColumn}></View>
+        <View style={styles.firstColumn}>
+          <Text style={styles.text}>{route.params.item.date}</Text>
+          <Text style={styles.text}>{route.params.item.id}</Text>
+        </View>
         <View style={styles.secondColumn}></View>
         <View style={styles.thirdColumn}></View>
         <View style={styles.fourthColumn}>
-          <View style={styles.topArea}>
-            <Text
-              style={styles.selectableText}
-              onPress={() => console.log("delete")}
-            >
-              Delete
-            </Text>
-          </View>
-          <View style={styles.bottomArea}>
-            <Text
-              style={styles.selectableText}
-              onPress={() => console.log("update")}
-            >
-              Update
-            </Text>
-          </View>
+          <TouchableOpacity
+            style={styles.topArea}
+            onPress={() => console.log("delete")}
+          >
+            <View>
+              <Text style={styles.selectableText}>Delete</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.bottomArea}
+            onPress={() => console.log("update")}
+          >
+            <View>
+              <Text style={styles.selectableText}>Update</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
       <MapView
@@ -89,7 +95,7 @@ const styles = StyleSheet.create({
   firstColumn: {
     flexDirection: "column",
     flex: 1,
-    backgroundColor: "red",
+    backgroundColor: STYLES.white,
   },
   secondColumn: {
     flexDirection: "column",
@@ -104,7 +110,8 @@ const styles = StyleSheet.create({
   fourthColumn: {
     flexDirection: "column",
     flex: 1,
-    backgroundColor: "yellow",
+    paddingRight: STYLES.borderRadius,
+    borderRadius: STYLES.borderRadius,
   },
   topArea: {
     flexDirection: "row",
@@ -119,6 +126,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: STYLES.blue,
+  },
+  text: {
+    fontFamily: STYLES.font,
+    color: STYLES.blue,
   },
   selectableText: {
     fontFamily: STYLES.font,
