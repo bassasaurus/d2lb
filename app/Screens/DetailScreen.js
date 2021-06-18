@@ -6,6 +6,7 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 
 import { STYLES } from "../styles/styles";
@@ -15,6 +16,22 @@ function DetailScreen({ route }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
+
+  const showAlert = () =>
+    Alert.alert("Are you sure?", "This can't be undone", [
+      {
+        text: "Yes",
+        onPress: () => console.log("Delete it"),
+      },
+      {
+        text: "Cancel",
+        onPress: () => console.log("No, Don't!"),
+        style: "cancel",
+      },
+      {
+        cancelable: false,
+      },
+    ]);
 
   useEffect(() => {
     mapRef.current.fitToCoordinates(polylines);
@@ -32,7 +49,9 @@ function DetailScreen({ route }) {
         <View style={styles.fourthColumn}>
           <TouchableOpacity
             style={styles.topArea}
-            onPress={() => console.log("delete")}
+            onPress={() => {
+              showAlert();
+            }}
           >
             <View>
               <Icon name={"delete"}></Icon>
