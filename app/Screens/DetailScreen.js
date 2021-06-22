@@ -11,21 +11,26 @@ import {
 
 import { STYLES } from "../styles/styles";
 import Icon from "../components/Icon";
+import api from "../api/axiosConfig";
 
 function DetailScreen({ route }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
 
-  const showAlert = () =>
+  const deleteItem = (primary_key) => {
+    const url = "/api/flights/" + primary_key + "/";
+    api.delete(url);
+  };
+
+  const showAlert = (primary_key) =>
     Alert.alert("Are you sure?", "This can't be undone", [
       {
         text: "Yes",
-        onPress: () => console.log("Delete it"),
+        onPress: () => deleteItem(primary_key),
       },
       {
         text: "Cancel",
-        onPress: () => console.log("No, Don't!"),
         style: "cancel",
       },
       {
@@ -50,7 +55,7 @@ function DetailScreen({ route }) {
           <TouchableOpacity
             style={styles.topArea}
             onPress={() => {
-              showAlert();
+              showAlert(route.params.item.id);
             }}
           >
             <View>
