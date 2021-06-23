@@ -13,14 +13,20 @@ import { STYLES } from "../styles/styles";
 import Icon from "../components/Icon";
 import api from "../api/axiosConfig";
 
-function DetailScreen({ route }) {
+function DetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
-    api.delete(url);
+    api.delete(url).then(function (response) {
+      if (response.status === 204) {
+        navigation.goBack();
+      } else {
+        Alert.alert("Something went wrong, please try again");
+      }
+    });
   };
 
   const showAlert = (primary_key) =>
