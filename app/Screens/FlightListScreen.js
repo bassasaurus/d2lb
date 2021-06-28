@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
-import { useSpring, animated } from "react-spring";
 
 import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
@@ -18,10 +17,6 @@ import FlightItem from "../components/FlightItem";
 const FlightListScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
-
-  const props = useSpring({ to: { opacity: 1 }, from: { opacity: 0 } });
-
-  const AnimatedView = animated(View);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,12 +32,6 @@ const FlightListScreen = ({ navigation }) => {
     const refreshOnBack = navigation.addListener("focus", () => {
       const fetchData = async () => {
         const result = await api.get("/api/flights/");
-        if (result.data != data) {
-          console.log("removed from state array");
-          setData(result.data);
-        } else {
-          setData(result.data);
-        }
       };
       fetchData();
     });
