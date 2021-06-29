@@ -7,7 +7,6 @@ import platform from "./app/api/axiosConfig";
 
 import StackNavigator from "./app/navigation/StackNavigator";
 import LoginScreen from "./app/screens/LoginScreen";
-import { SafeAreaView, Platform } from "react-native";
 export default function App() {
   return (
     <>

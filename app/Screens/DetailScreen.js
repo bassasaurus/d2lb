@@ -20,8 +20,11 @@ function DetailScreen({ route, navigation }) {
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
-    api.delete(url).then(function (response) {
-      if (response.status === 204) {
+    api.delete(url).then(function (response)
+    {
+      if (response.status === 204)
+      {
+        Alert.alert("Delete successful.");
         navigation.goBack();
       } else {
         Alert.alert("Something went wrong, please try again");
