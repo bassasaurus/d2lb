@@ -13,6 +13,7 @@ import {
 import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
+import AddButton from "../components/AddButton";
 
 const FlightListScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
@@ -83,6 +84,9 @@ const FlightListScreen = ({ navigation }) => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
+      <AddButton>
+
+      </AddButton>
     </SafeAreaView>
   );
 };
