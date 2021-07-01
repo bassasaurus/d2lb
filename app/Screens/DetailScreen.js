@@ -18,13 +18,13 @@ function DetailScreen({ route, navigation }) {
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
 
-  const deleteItem = (primary_key) => {
+  const deleteItem = (primary_key, date, route) => {
     const url = "/api/flights/" + primary_key + "/";
     api.delete(url).then(function (response)
     {
       if (response.status === 204)
       {
-        Alert.alert("Delete successful.");
+        Alert.alert("Succesfully Deleted",  date + " " + route + " " + "#" + primary_key);
         navigation.goBack();
       } else {
         Alert.alert("Something went wrong, please try again");
@@ -32,11 +32,11 @@ function DetailScreen({ route, navigation }) {
     });
   };
 
-  const showAlert = (primary_key) =>
+  const showAlert = (primary_key, date, route) =>
     Alert.alert("Are you sure?", "This can't be undone", [
       {
         text: "Yes",
-        onPress: () => deleteItem(primary_key),
+        onPress: () => deleteItem(primary_key, date, route),
       },
       {
         text: "Cancel",
@@ -64,7 +64,7 @@ function DetailScreen({ route, navigation }) {
           <TouchableOpacity
             style={styles.topArea}
             onPress={() => {
-              showAlert(route.params.item.id);
+              showAlert(route.params.item.id, route.params.item.date, route.params.item.route);
             }}
           >
             <View>
