@@ -59,7 +59,7 @@ const FlightListScreen = ({ navigation }) => {
     <TouchableOpacity
       activeOpacity={0.7}
       style={styles.touchable}
-      onPress={() => navigation.navigate("Detail", { item: item })}
+      onPress={() => navigation.navigate("FlightDetail", { item: item })}
     >
       <FlightItem
         date={item.date}
@@ -84,7 +84,9 @@ const FlightListScreen = ({ navigation }) => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
-      <AddButton>
+      <AddButton
+        onPress={() => navigation.navigate("FlightCreate")}
+      >
 
       </AddButton>
     </SafeAreaView>

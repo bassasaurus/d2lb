@@ -13,7 +13,7 @@ import { STYLES } from "../styles/styles";
 import Icon from "../components/Icon";
 import api from "../api/axiosConfig";
 
-function DetailScreen({ route, navigation }) {
+function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
@@ -178,4 +178,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DetailScreen;
+export default FlightDetailScreen;

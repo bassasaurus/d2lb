@@ -1,7 +1,8 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import FlightListScreen from "../screens/FlightListScreen";
-import DetailScreen from "../screens/DetailScreen";
+import FlightDetailScreen from "../screens/FlightDetailScreen";
+import FlightCreateScreen from "../screens/FlightCreateScreen";
 
 function StackNavigator(props) {
   const Stack = createStackNavigator();
@@ -15,19 +16,26 @@ function StackNavigator(props) {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name='Flights'
+        name='FlightList'
         component={FlightListScreen}
         options={{ title: "Flights" }}
         options={{ cardStyleInterpolator: forFade }}
       />
 
       <Stack.Screen
-        name='Detail'
-        component={DetailScreen}
+        name='FlightDetail'
+        component={FlightDetailScreen}
         options={{ title: "Detail" }}
         options={{ cardStyleInterpolator: forFade }}
       />
       {(props) => <DetailScreen {...props} id={id} />}
+
+      <Stack.Screen
+        name='FlightCreate'
+        component={FlightCreateScreen}
+        options={{ title: "New Flight" }}
+        options={{ cardStyleInterpolator: forFade }}
+      />
     </Stack.Navigator>
   );
 }

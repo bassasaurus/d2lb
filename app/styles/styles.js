@@ -7,6 +7,7 @@ export const STYLES = {
   black: "#000",
   highlight: "#DDDDDD",
   danger: "red",
+  green: "green",
 
   font: Platform.OS === "android" ? "Roboto" : "Avenir",
   fontWeightBold: "800",
