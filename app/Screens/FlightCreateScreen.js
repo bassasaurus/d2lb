@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TextInput, Text, Button, Modal } from 'react-native';
 import { Formik } from 'formik';
-import DatePicker from '../components/CalendarPicker';
+
+import AppModal from '../components/AppModal';
  
 
 function FlightCreateScreen(props) {
@@ -9,8 +10,9 @@ function FlightCreateScreen(props) {
       <View style={styles.container}>
           <Formik initialValues={{ date: '', route: '' }} >
               {({ values, handleChange }) => (
-    <>
-      {/* <DatePicker></DatePicker> */}
+                  <>
+                      <AppModal></AppModal>
+      
       <TextInput
         value={values.date}
         onChangeText={handleChange('date')}
