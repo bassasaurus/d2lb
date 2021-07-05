@@ -2,6 +2,7 @@ import Platform from "react-native";
 
 export const STYLES = {
   blue: "mediumblue",
+  lightblue: "lightblue",
   itemBackground: "gainsboro",
   white: "#fff",
   black: "#000",
