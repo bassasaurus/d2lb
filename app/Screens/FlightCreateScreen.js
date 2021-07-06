@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Text, Button } from 'react-native';
+import { View, StyleSheet, TextInput, Text, Modal } from 'react-native';
 import { Formik } from 'formik';
-import Modal from 'react-native-modal'
 import AppCalendarPicker from '../components/AppCalendarPicker';
+import AppTextInput from "../components/AppTextInput"
+import AppModal  from '../components/AppModal';
  
 function FlightCreateScreen(props)
 {
@@ -10,22 +11,25 @@ function FlightCreateScreen(props)
       <View style={styles.container}>
           <Formik initialValues={{ date: '', route: '' }} >
               {({ values, handleChange }) => (
-                  <>
-                    <TextInput
+          <>
+            <AppModal
+              visible={true}>
+              
+            </AppModal>
+                    <AppTextInput
                         value={values.date}
                         onChangeText={handleChange('date')}
                         placeholder="Date"
                         onFocus={ () => { console.log('onFocus') }} // open modal
                         onBlur={ () => {console.log('onBlur')}} // close modal
                     />
-                    <TextInput
+                    <AppTextInput
                         value={values.route}
                         onChangeText={handleChange('route')}
                         placeholder="Route"
                     />
                     <Text>{JSON.stringify(values)}</Text>
 
-                  
                     </>  
                 )}        
             </Formik>
