@@ -6,37 +6,16 @@ import AppCalendarPicker from '../components/AppCalendarPicker';
  
 function FlightCreateScreen(props)
 {
-    const [isModalVisible, setModalVisible] = useState(false);
-
-    const toggleModal = () => {setModalVisible(!isModalVisible);
-  };
   return (
       <View style={styles.container}>
           <Formik initialValues={{ date: '', route: '' }} >
               {({ values, handleChange }) => (
                   <>
-                      <View style={styles.centeredView}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <AppCalendarPicker/>
-          </View>
-        </View>
-      </Modal>
-    </View>
                     <TextInput
                         value={values.date}
                         onChangeText={handleChange('date')}
                         placeholder="Date"
-                        onFocus={ () => { toggleModal() }} // open modal
+                        onFocus={ () => { console.log('onFocus') }} // open modal
                         onBlur={ () => {console.log('onBlur')}} // close modal
                     />
                     <TextInput
@@ -45,7 +24,8 @@ function FlightCreateScreen(props)
                         placeholder="Route"
                     />
                     <Text>{JSON.stringify(values)}</Text>
-                    <Button title='Sign In' />
+
+                  
                     </>  
                 )}        
             </Formik>
