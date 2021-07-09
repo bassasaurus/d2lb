@@ -1,34 +1,56 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Text } from 'react-native';
+import { View, StyleSheet, TextInput, Text, Modal } from 'react-native';
 import { Formik } from 'formik';
 import AppModal  from '../components/AppModal';
+import CalendarPicker from 'react-native-calendar-picker';
  
 function FlightCreateScreen(props)
 {
   const [visible, setVisible] = useState(false)
+  const [date, setDate] = useState(null)
+
+  const onDateChange = (date) => {
+    //function to handle the date change
+    console.log(date)
+    setDate(date);
+    
+  };
 
   return (
       <View style={styles.container}>
           <Formik initialValues={{ date: '', route: '' }} >
               {({ values, handleChange }) => (
           <>
-                    <TextInput
-                        value={values.date}
-                        onChangeText={handleChange('date')}
-                        placeholder="Date"
-                        onFocus={ () => { setVisible(true) }} // open modal
-                        onBlur={ () => {console.log('onBlur')}} // close modal
-                    />
-                    <TextInput
-                        value={values.route}
-                        onChangeText={handleChange('route')}
-                        placeholder="Route"
-                    />
-                    <Text>{JSON.stringify(values)}</Text>
-                    <AppModal
-                      visible={visible}>
-                    </AppModal>
-                    </>  
+            <TextInput
+                value={values.date}
+                onChangeText={handleChange('date')}
+                placeholder="Date"
+                onFocus={ () => { setVisible(true) }} // open modal
+            />
+            <TextInput
+                value={values.route}
+                onChangeText={handleChange('route')}
+                placeholder="Route"
+            />
+    
+            <Text>{JSON.stringify(values)}</Text>
+    
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={visible}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <CalendarPicker
+                    showDayStragglers={true}
+                    onDateChange={() => onDateChange()}>
+                    
+                  </CalendarPicker>
+                </View>
+              </View>
+        </Modal>
+          </>  
                 )}        
             </Formik>
         </View>

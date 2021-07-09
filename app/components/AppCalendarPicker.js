@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import CalendarPicker from 'react-native-calendar-picker';
 import STYLES from '../styles/styles'
 
-function AppCalendarPicker(props){
+function AppCalendarPicker(props)
+{
+  const [date, setDate] = useState(null)
 
   return (
     <CalendarPicker
-      selectedDayColor="lightblue">
+      showDayStragglers={true}
+      selectedDayColor="lightblue"
+      onDateChange={() => setDate(date)}>
     </CalendarPicker>
   );
 };

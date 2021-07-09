@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Modal, Text, Pressable } from 'react-native';
+import { View, StyleSheet, Modal } from 'react-native';
 import AppCalendarPicker from './AppCalendarPicker';
 
 function AppModal({visible})
@@ -13,7 +13,7 @@ function AppModal({visible})
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <AppCalendarPicker></AppCalendarPicker>
+            {/* <AppCalendarPicker></AppCalendarPicker> */}
           </View>
         </View>
       </Modal>
