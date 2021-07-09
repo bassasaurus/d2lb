@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, Text, Modal } from 'react-native';
 import { Formik } from 'formik';
-import AppModal  from '../components/AppModal';
 import CalendarPicker from 'react-native-calendar-picker';
  
 function FlightCreateScreen(props)
@@ -44,8 +43,8 @@ function FlightCreateScreen(props)
                 <View style={styles.modalView}>
                   <CalendarPicker
                     showDayStragglers={true}
+                    selectedDayColor="lightblue"
                     onDateChange={() => onDateChange()}>
-                    
                   </CalendarPicker>
                 </View>
               </View>
