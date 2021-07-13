@@ -1,74 +1,75 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, Text, Modal, Pressable } from 'react-native';
-import { Formik } from 'formik';
-import CalendarPicker from 'react-native-calendar-picker';
-import { set } from 'react-native-reanimated';
- 
-function FlightCreateScreen(props)
-{
-  const [visible, setVisible] = useState(false)
-  const [date, setDate] = useState(null)
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  Text,
+  Modal,
+  Pressable,
+} from "react-native";
+import { Formik } from "formik";
+import CalendarPicker from "react-native-calendar-picker";
+import { set } from "react-native-reanimated";
+
+function FlightCreateScreen(props) {
+  const [visible, setVisible] = useState(false);
+  const [date, setDate] = useState(null);
 
   const onDateChange = (date) => {
     //function to handle the date change
-    console.log(date)
+    console.log(date);
     setDate(date);
-    setVisible(false);
-    
+    setVisible(false); //hide Modal
   };
 
   return (
-      <View style={styles.container}>
-          <Formik initialValues={{ date: '', route: '' }} >
-              {({ values, handleChange }) => (
+    <View style={styles.container}>
+      <Formik initialValues={{ date: "", route: "" }}>
+        {({ values, handleChange }) => (
           <>
             <Pressable
-              onPress={() => { setVisible(true) }}
+              onPress={() => {
+                setVisible(true);
+              }}
             >
-              <View pointerEvents="none">
+              <View pointerEvents='none'>
                 <TextInput
                   value={values.date}
-                  onChangeText={handleChange('date')}
-                  placeholder="Date"
-                  />
+                  onChangeText={handleChange("date")}
+                  placeholder='Date'
+                />
               </View>
             </Pressable>
-            
+
             <TextInput
-                value={values.route}
-                onChangeText={handleChange('route')}
-                placeholder="Route"
+              value={values.route}
+              onChangeText={handleChange("route")}
+              placeholder='Route'
             />
-    
+
             <Text>{JSON.stringify(values)}</Text>
-            
-            {/* form ends here */}
-            <Modal
-              animationType="slide"
-              transparent={true}
-              visible={visible}
-            >
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <CalendarPicker
-                    showDayStragglers={true}
-                    selectedDayColor="lightblue"
-                    onDateChange={() => onDateChange()}>
-                  </CalendarPicker>
-                </View>
-              </View>
-        </Modal>
-          </>  
-                )}        
-            </Formik>
+          </>
+        )}
+      </Formik>
+      <Modal animationType='slide' transparent={true} visible={visible}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <CalendarPicker
+              showDayStragglers={true}
+              selectedDayColor='lightblue'
+              onDateChange={(date) => onDateChange(date)}
+            />
+          </View>
         </View>
-                    );
-                    };
+      </Modal>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
-    container: {},
+  container: {},
 
-    modalView: {
+  modalView: {
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
@@ -77,20 +78,19 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
-    },
+    elevation: 5,
+  },
 
-    centeredView: {
+  centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22
+    marginTop: 22,
   },
-    
 });
 
 export default FlightCreateScreen;
