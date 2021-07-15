@@ -9,23 +9,19 @@ import {
 } from "react-native";
 import { Formik } from "formik";
 import CalendarPicker from "react-native-calendar-picker";
-import { set } from "react-native-reanimated";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
   const [date, setDate] = useState(null);
 
-  const onDateChange = (date) => {
-    //function to handle the date change
-    console.log(date);
-    setDate(date);
+  const closeModal = () => {
     setVisible(false); //hide Modal
   };
 
   return (
     <View style={styles.container}>
       <Formik initialValues={{ date: "", route: "" }}>
-        {({ values, handleChange }) => (
+        {({ values, handleChange, setFieldValue }) => (
           <>
             <Pressable
               onPress={() => {
@@ -34,7 +30,7 @@ function FlightCreateScreen(props) {
             >
               <View pointerEvents='none'>
                 <TextInput
-                  value={values.date}
+                  value={values.date.toString()}
                   onChangeText={handleChange("date")}
                   placeholder='Date'
                 />
@@ -47,21 +43,22 @@ function FlightCreateScreen(props) {
               placeholder='Route'
             />
 
+            <Modal animationType='slide' transparent={true} visible={visible}>
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <CalendarPicker
+                    showDayStragglers={true}
+                    selectedDayColor='lightblue'
+                    onDateChange={(date) => setFieldValue("date", date)}
+                  />
+                </View>
+              </View>
+            </Modal>
+
             <Text>{JSON.stringify(values)}</Text>
           </>
         )}
       </Formik>
-      <Modal animationType='slide' transparent={true} visible={visible}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <CalendarPicker
-              showDayStragglers={true}
-              selectedDayColor='lightblue'
-              onDateChange={(date) => onDateChange(date)}
-            />
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
