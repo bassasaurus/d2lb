@@ -49,7 +49,10 @@ function FlightCreateScreen(props) {
                   <CalendarPicker
                     showDayStragglers={true}
                     selectedDayColor='lightblue'
-                    onDateChange={(date) => setFieldValue("date", date)}
+                    onDateChange={(date) => {
+                      setFieldValue("date", date);
+                      setVisible(false);
+                    }}
                   />
                 </View>
               </View>
