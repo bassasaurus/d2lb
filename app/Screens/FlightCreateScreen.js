@@ -50,7 +50,7 @@ function FlightCreateScreen(props) {
                     showDayStragglers={true}
                     selectedDayColor='lightblue'
                     onDateChange={(date) => {
-                      setFieldValue("date", date);
+                      setFieldValue("date", date.format("M-d-yyyy"));
                       setVisible(false);
                     }}
                   />
