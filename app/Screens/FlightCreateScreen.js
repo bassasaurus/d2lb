@@ -41,6 +41,10 @@ function FlightCreateScreen(props) {
               value={values.route}
               onChangeText={handleChange("route")}
               placeholder='Route'
+              autoCorrect={false}
+              autoCapitalize={"characters"}
+              keyboardType={"default"}
+              clearButtonMode={"while-editing"}
             />
 
             <Modal animationType='slide' transparent={true} visible={visible}>
@@ -50,7 +54,7 @@ function FlightCreateScreen(props) {
                     showDayStragglers={true}
                     selectedDayColor='lightblue'
                     onDateChange={(date) => {
-                      setFieldValue("date", date.format("M-d-yyyy"));
+                      setFieldValue("date", date.format("M-D-YYYY"));
                       setVisible(false);
                     }}
                   />
