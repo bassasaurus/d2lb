@@ -8,6 +8,8 @@ import {
   Pressable,
 } from "react-native";
 import { Formik } from "formik";
+import Yup from "yup";
+
 import CalendarPicker from "react-native-calendar-picker";
 
 function FlightCreateScreen(props) {
