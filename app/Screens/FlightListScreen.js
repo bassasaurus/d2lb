@@ -55,7 +55,7 @@ const FlightListScreen = ({ navigation }) => {
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
-  const renderItem = ({ item, itemToDelete }) => (
+  const renderItem = ({ item }) => (
     <TouchableOpacity
       activeOpacity={0.7}
       style={styles.touchable}
@@ -86,9 +86,7 @@ const FlightListScreen = ({ navigation }) => {
       />
       <AddButton
         onPress={() => navigation.navigate("FlightCreate")}
-      >
-
-      </AddButton>
+      ></AddButton>
     </SafeAreaView>
   );
 };
