@@ -16,6 +16,7 @@ import api from "../api/axiosConfig";
 function Picker(props) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [value, setValue] = useState("");
 
   const fetchData = async () => {
     const result = await api.get("/api/aircraft/");
@@ -24,7 +25,13 @@ function Picker(props) {
   };
 
   const renderItem = ({ item }) => (
-    <Pressable onPress={() => console.log(item.aircraft_type)}>
+    <Pressable
+      onPress={() => {
+        setVisible(false);
+        setValue(item.aircraft_type);
+        console.log(item.aircraft_type);
+      }}
+    >
       <Text>{item.aircraft_type}</Text>
     </Pressable>
   );
@@ -32,18 +39,20 @@ function Picker(props) {
   return (
     <>
       <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder={"Aircraft"}
-          onFocus={() => {
-            fetchData();
-            setVisible(true);
-          }}
-        />
+        <Pressable>
+          <TextInput
+            style={styles.input}
+            value={value}
+            placeholder={"Aircraft"}
+            onFocus={() => {
+              fetchData();
+              setVisible(true);
+            }}
+          />
+        </Pressable>
       </View>
-
-      <Modal animationType='slide' transparent={true} visible={visible}>
-        <View style={styles.centeredView}>
+      <View style={styles.centeredView}>
+        <Modal animationType='slide' transparent={true} visible={visible}>
           <View style={styles.modalView}>
             <FlatList
               data={data.results}
@@ -52,8 +61,8 @@ function Picker(props) {
             />
             <Button title='Close' onPress={() => setVisible(false)} />
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      </View>
     </>
   );
 }
