@@ -8,7 +8,7 @@ import {
   Button,
   Text,
   FlatList,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 
 import api from "../api/axiosConfig";
@@ -24,13 +24,9 @@ function Picker(props) {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      style={styles.touchable}
-      onPress={() => console.log(item.aircraft_type)}
-    >
+    <Pressable onPress={() => console.log(item.aircraft_type)}>
       <Text>{item.aircraft_type}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
