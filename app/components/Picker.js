@@ -10,6 +10,7 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 import api from "../api/axiosConfig";
 
@@ -25,7 +26,7 @@ function Picker(props) {
   };
 
   const renderItem = ({ item }) => (
-    <Pressable
+    <TouchableOpacity
       onPress={() => {
         setVisible(false);
         setValue(item.aircraft_type);
@@ -33,7 +34,7 @@ function Picker(props) {
       }}
     >
       <Text>{item.aircraft_type}</Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 
   return (
