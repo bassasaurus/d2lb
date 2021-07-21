@@ -38,19 +38,22 @@ function Picker(props) {
 
   return (
     <>
-      <View style={styles.container}>
-        <Pressable>
+      <Pressable
+        onPress={() => {
+          fetchData();
+          setVisible(true);
+        }}
+      >
+        <View pointerEvents={"none"}>
           <TextInput
             style={styles.input}
             value={value}
             placeholder={"Aircraft"}
-            onFocus={() => {
-              fetchData();
-              setVisible(true);
-            }}
-          />
-        </Pressable>
-      </View>
+            clearButtonMode={"always"}
+          ></TextInput>
+        </View>
+      </Pressable>
+
       <View style={styles.centeredView}>
         <Modal animationType='slide' transparent={true} visible={visible}>
           <View style={styles.modalView}>
