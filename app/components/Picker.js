@@ -14,6 +14,8 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import AppTextInput from "./AppTextInput";
 
 import api from "../api/axiosConfig";
+import { STYLES } from "../styles/styles";
+import FlatListItemSeparator from "./FlatListItemSeparator";
 
 function Picker(props) {
   const [data, setData] = useState([]);
@@ -27,14 +29,16 @@ function Picker(props) {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => {
-        setVisible(false);
-        setValue(item.aircraft_type);
-      }}
-    >
-      <Text>{item.aircraft_type}</Text>
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => {
+          setVisible(false);
+          setValue(item.aircraft_type);
+        }}
+      >
+        <Text style={styles.listItem}>{item.aircraft_type}</Text>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -57,6 +61,7 @@ function Picker(props) {
               data={data.results}
               renderItem={renderItem}
               keyExtractor={(item) => item.id.toString()}
+              ItemSeparatorComponent={FlatListItemSeparator}
             />
           </View>
         </Modal>
@@ -88,6 +93,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+  listItem: {
+    fontFamily: STYLES.font,
+    fontSize: STYLES.fontSizeExtraLarge,
+    color: STYLES.blue,
+    marginTop: 20,
   },
 
   centeredView: {

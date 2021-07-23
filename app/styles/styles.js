@@ -16,6 +16,7 @@ export const STYLES = {
   fontWeightNormal: "400",
   fontSizeNormal: 13,
   fontSizeLarge: 15,
+  fontSizeExtraLarge: 20,
 
   borderRadius: 5,
   inputBorderWidth: 1,
