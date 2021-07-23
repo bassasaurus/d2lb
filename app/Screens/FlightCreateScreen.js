@@ -11,6 +11,8 @@ import { Formik } from "formik";
 import Yup from "yup";
 
 import CalendarPicker from "react-native-calendar-picker";
+import Picker from "../components/Picker";
+import AppTextInput from "../components/AppTextInput";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
@@ -31,7 +33,7 @@ function FlightCreateScreen(props) {
               }}
             >
               <View pointerEvents='none'>
-                <TextInput
+                <AppTextInput
                   value={values.date.toString()}
                   onChangeText={handleChange("date")}
                   placeholder='Date'
@@ -39,7 +41,7 @@ function FlightCreateScreen(props) {
               </View>
             </Pressable>
 
-            <TextInput
+            <AppTextInput
               value={values.route}
               onChangeText={handleChange("route")}
               placeholder='Route'
@@ -48,6 +50,7 @@ function FlightCreateScreen(props) {
               keyboardType={"default"}
               clearButtonMode={"while-editing"}
             />
+            <Picker></Picker>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
               <View style={styles.centeredView}>

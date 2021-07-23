@@ -13,7 +13,7 @@ export default function App() {
     <>
       <StatusBar style='auto' />
       <SafeAreaView>
-        <Picker></Picker>
+        <FlightCreateScreen></FlightCreateScreen>
       </SafeAreaView>
 
       {/* <NavigationContainer>
