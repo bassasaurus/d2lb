@@ -24,7 +24,7 @@ function FlightCreateScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Formik initialValues={{ date: "", route: "" }}>
+      <Formik initialValues={{ date: "", route: "", aircraft: "" }}>
         {({ values, handleChange, setFieldValue }) => (
           <>
             <Pressable
@@ -50,7 +50,7 @@ function FlightCreateScreen(props) {
               keyboardType={"default"}
               clearButtonMode={"while-editing"}
             />
-            <Picker></Picker>
+            <Picker onChangeText={handleChange("aircraft")}></Picker>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
               <View style={styles.centeredView}>

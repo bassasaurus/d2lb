@@ -17,7 +17,7 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function Picker(props) {
+function Picker(onChangeText) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
@@ -50,7 +50,11 @@ function Picker(props) {
         }}
       >
         <View pointerEvents={"none"}>
-          <AppTextInput value={value} placeholder={"Aircraft"}></AppTextInput>
+          <AppTextInput
+            value={value}
+            placeholder={"Aircraft"}
+            onChangeText={onChangeText}
+          ></AppTextInput>
         </View>
       </Pressable>
 
