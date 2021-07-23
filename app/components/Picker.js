@@ -11,6 +11,7 @@ import {
   Pressable,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import AppTextInput from "./AppTextInput";
 
 import api from "../api/axiosConfig";
 
@@ -30,7 +31,6 @@ function Picker(props) {
       onPress={() => {
         setVisible(false);
         setValue(item.aircraft_type);
-        console.log(item.aircraft_type);
       }}
     >
       <Text>{item.aircraft_type}</Text>
@@ -46,12 +46,7 @@ function Picker(props) {
         }}
       >
         <View pointerEvents={"none"}>
-          <TextInput
-            style={styles.input}
-            value={value}
-            placeholder={"Aircraft"}
-            clearButtonMode={"always"}
-          ></TextInput>
+          <AppTextInput value={value} placeholder={"Aircraft"}></AppTextInput>
         </View>
       </Pressable>
 
@@ -63,7 +58,6 @@ function Picker(props) {
               renderItem={renderItem}
               keyExtractor={(item) => item.id.toString()}
             />
-            <Button title='Close' onPress={() => setVisible(false)} />
           </View>
         </Modal>
       </View>

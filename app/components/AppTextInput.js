@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TextInput } from "react-native";
+import { STYLES } from "../styles/styles";
 
 function AppTextInput({ title, placeholder, ...props }) {
   return (
@@ -16,13 +17,17 @@ function AppTextInput({ title, placeholder, ...props }) {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
   },
   input: {
-    alignItems: "center",
-    width: 200,
-    height: 30,
+    paddingLeft: 10,
+    width: "95%",
+    height: 40,
+    margin: 10,
+    borderWidth: 1,
+    borderRadius: STYLES.borderRadius,
+    borderColor: STYLES.grey,
   },
 });
 

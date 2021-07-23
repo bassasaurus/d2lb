@@ -9,6 +9,7 @@ export const STYLES = {
   highlight: "#DDDDDD",
   danger: "red",
   green: "green",
+  grey: "grey",
 
   font: Platform.OS === "android" ? "Roboto" : "Avenir",
   fontWeightBold: "800",
@@ -17,4 +18,6 @@ export const STYLES = {
   fontSizeLarge: 15,
 
   borderRadius: 5,
+  inputBorderWidth: 1,
+  inputBorderColor: "grey",
 };
