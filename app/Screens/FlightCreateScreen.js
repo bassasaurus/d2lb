@@ -50,7 +50,11 @@ function FlightCreateScreen(props) {
               keyboardType={"default"}
               clearButtonMode={"while-editing"}
             />
-            <Picker onChangeText={handleChange("aircraft")}></Picker>
+            <Picker
+              value={values.aircraft}
+              onChangeText={handleChange("aircraft")}
+              setFieldValue={setFieldValue}
+            ></Picker>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
               <View style={styles.centeredView}>

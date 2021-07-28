@@ -1,4 +1,3 @@
-import { propSatisfies } from "ramda";
 import React, { useState } from "react";
 import {
   View,
@@ -17,7 +16,7 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function Picker(onChangeText) {
+function Picker({ setFieldValue }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
@@ -34,6 +33,7 @@ function Picker(onChangeText) {
         onPress={() => {
           setVisible(false);
           setValue(item.aircraft_type);
+          setFieldValue("aircraft", item.aircraft_type);
         }}
       >
         <Text style={styles.listItem}>{item.aircraft_type}</Text>
@@ -53,7 +53,7 @@ function Picker(onChangeText) {
           <AppTextInput
             value={value}
             placeholder={"Aircraft"}
-            onChangeText={onChangeText}
+            onChangeText={() => onChangeText()}
           ></AppTextInput>
         </View>
       </Pressable>
