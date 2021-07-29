@@ -55,6 +55,7 @@ function FlightCreateScreen(props) {
               clearButtonMode={"while-editing"}
             />
             <Picker
+              url={"/api/aircraft/"}
               value={values.aircraft}
               onChangeText={handleChange("aircraft")}
               setFieldValue={setFieldValue}

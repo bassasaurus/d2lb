@@ -16,12 +16,12 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function Picker({ setFieldValue, value }) {
+function Picker({ setFieldValue, value, url }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
 
   const fetchData = async () => {
-    const result = await api.get("/api/aircraft/");
+    const result = await api.get(url);
     // console.log(result.data);
     setData(result.data);
   };
