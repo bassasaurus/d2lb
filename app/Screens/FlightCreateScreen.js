@@ -68,6 +68,7 @@ function FlightCreateScreen(props) {
               value={values.tailnumber}
               onChangeText={handleChange("tailnumber")}
               setFieldValue={setFieldValue}
+              filterBy={values.aircraft}
             ></TailPicker>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
