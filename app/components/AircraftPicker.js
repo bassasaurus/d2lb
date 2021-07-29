@@ -16,12 +16,12 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function Picker({ setFieldValue, value, url }) {
+function AircraftPicker({ setFieldValue, value }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
 
   const fetchData = async () => {
-    const result = await api.get(url);
+    const result = await api.get("/api/aircraft/");
     // console.log(result.data);
     setData(result.data);
   };
@@ -31,7 +31,6 @@ function Picker({ setFieldValue, value, url }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-
           setFieldValue("aircraft", item.aircraft_type);
         }}
       >
@@ -112,4 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Picker;
+export default AircraftPicker;

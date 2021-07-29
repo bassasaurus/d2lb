@@ -11,8 +11,9 @@ import { Formik } from "formik";
 import Yup from "yup";
 
 import CalendarPicker from "react-native-calendar-picker";
-import Picker from "../components/Picker";
+import AircraftPicker from "../components/AircraftPicker";
 import AppTextInput from "../components/AppTextInput";
+import TailPicker from "../components/TailPicker";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
@@ -22,13 +23,16 @@ function FlightCreateScreen(props) {
     setVisible(false); //hide Modal
   };
 
-  const replaceSpaceWithDash = (str) => {
-    str.replace(/\s+/g, "-");
+  const dashNotSpace = (str) => {
+    console.log(str);
+    str.replace(/\s/g, "-");
   };
 
   return (
     <View style={styles.container}>
-      <Formik initialValues={{ date: "", route: "", aircraft: "" }}>
+      <Formik
+        initialValues={{ date: "", route: "", aircraft: "", tailnumber: "" }}
+      >
         {({ values, handleChange, setFieldValue }) => (
           <>
             <Pressable
@@ -46,7 +50,7 @@ function FlightCreateScreen(props) {
             </Pressable>
 
             <AppTextInput
-              value={replaceSpaceWithDash(values.route)}
+              value={dashNotSpace(values.route)}
               onChangeText={handleChange("route")}
               placeholder='Route'
               autoCorrect={false}
@@ -54,12 +58,17 @@ function FlightCreateScreen(props) {
               keyboardType={"default"}
               clearButtonMode={"while-editing"}
             />
-            <Picker
-              url={"/api/aircraft/"}
+            <AircraftPicker
               value={values.aircraft}
               onChangeText={handleChange("aircraft")}
               setFieldValue={setFieldValue}
-            ></Picker>
+            ></AircraftPicker>
+
+            <TailPicker
+              value={values.tailnumber}
+              onChangeText={handleChange("tailnumber")}
+              setFieldValue={setFieldValue}
+            ></TailPicker>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
               <View style={styles.centeredView}>
