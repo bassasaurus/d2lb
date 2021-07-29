@@ -22,6 +22,10 @@ function FlightCreateScreen(props) {
     setVisible(false); //hide Modal
   };
 
+  const replaceSpaceWithDash = (str) => {
+    str.replace(/\s+/g, "-");
+  };
+
   return (
     <View style={styles.container}>
       <Formik initialValues={{ date: "", route: "", aircraft: "" }}>
@@ -42,7 +46,7 @@ function FlightCreateScreen(props) {
             </Pressable>
 
             <AppTextInput
-              value={values.route}
+              value={replaceSpaceWithDash(values.route)}
               onChangeText={handleChange("route")}
               placeholder='Route'
               autoCorrect={false}

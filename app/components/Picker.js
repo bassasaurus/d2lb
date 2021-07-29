@@ -16,10 +16,9 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function Picker({ setFieldValue }) {
+function Picker({ setFieldValue, value }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
-  const [value, setValue] = useState("");
 
   const fetchData = async () => {
     const result = await api.get("/api/aircraft/");
@@ -32,7 +31,7 @@ function Picker({ setFieldValue }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setValue(item.aircraft_type);
+
           setFieldValue("aircraft", item.aircraft_type);
         }}
       >
