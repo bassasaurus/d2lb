@@ -31,7 +31,7 @@ function TailPicker({ setFieldValue, value }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("tailnumber", item.tailnumber);
+          setFieldValue("tailnumber", item.registration);
         }}
       >
         <Text style={styles.listItem}>{item.registration}</Text>
@@ -48,11 +48,7 @@ function TailPicker({ setFieldValue, value }) {
         }}
       >
         <View pointerEvents={"none"}>
-          <AppTextInput
-            value={value}
-            placeholder={"Tailnumber"}
-            onChangeText={() => onChangeText()}
-          ></AppTextInput>
+          <AppTextInput value={value} placeholder={"Tailnumber"}></AppTextInput>
         </View>
       </Pressable>
 

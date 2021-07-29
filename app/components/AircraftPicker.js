@@ -48,11 +48,7 @@ function AircraftPicker({ setFieldValue, value }) {
         }}
       >
         <View pointerEvents={"none"}>
-          <AppTextInput
-            value={value}
-            placeholder={"Aircraft"}
-            onChangeText={() => onChangeText()}
-          ></AppTextInput>
+          <AppTextInput value={value} placeholder={"Aircraft"}></AppTextInput>
         </View>
       </Pressable>
 

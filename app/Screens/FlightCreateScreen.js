@@ -17,15 +17,15 @@ import TailPicker from "../components/TailPicker";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
-  const [date, setDate] = useState(null);
+  const [aircraftId, setAircraftId] = useState(null);
 
   const closeModal = () => {
     setVisible(false); //hide Modal
   };
 
   const dashNotSpace = (str) => {
-    console.log(str);
-    str.replace(/\s/g, "-");
+    str = str.replace(/\s/g, "-");
+    return str;
   };
 
   return (
