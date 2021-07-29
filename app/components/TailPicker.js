@@ -34,7 +34,7 @@ function TailPicker({ setFieldValue, value }) {
           setFieldValue("tailnumber", item.tailnumber);
         }}
       >
-        <Text style={styles.listItem}>{item.aircraft_type}</Text>
+        <Text style={styles.listItem}>{item.registration}</Text>
       </TouchableOpacity>
     </View>
   );
