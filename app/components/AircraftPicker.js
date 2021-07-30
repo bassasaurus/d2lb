@@ -15,8 +15,9 @@ import AppTextInput from "./AppTextInput";
 import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
+import { onChange } from "react-native-reanimated";
 
-function AircraftPicker({ setFieldValue, value }) {
+function AircraftPicker({ setFieldValue, value, handleAircraftId }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
 
@@ -32,6 +33,7 @@ function AircraftPicker({ setFieldValue, value }) {
         onPress={() => {
           setVisible(false);
           setFieldValue("aircraft", item.aircraft_type);
+          handleAircraftId(item.id);
         }}
       >
         <Text style={styles.listItem}>{item.aircraft_type}</Text>

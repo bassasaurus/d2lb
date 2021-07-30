@@ -17,6 +17,11 @@ import TailPicker from "../components/TailPicker";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
+  const [aircraftId, setAircraftId] = useState("");
+
+  function handleAircraftId(id) {
+    setAircraftId(id);
+  }
 
   const closeModal = () => {
     setVisible(false); //hide Modal
@@ -61,6 +66,7 @@ function FlightCreateScreen(props) {
               value={values.aircraft}
               onChangeText={handleChange("aircraft")}
               setFieldValue={setFieldValue}
+              handleAircraftId={handleAircraftId}
             ></AircraftPicker>
 
             <TailPicker
@@ -68,6 +74,7 @@ function FlightCreateScreen(props) {
               onChangeText={handleChange("tailnumber")}
               setFieldValue={setFieldValue}
               filterBy={values.aircraft}
+              aircraftId={aircraftId}
             ></TailPicker>
 
             <Modal animationType='slide' transparent={true} visible={visible}>

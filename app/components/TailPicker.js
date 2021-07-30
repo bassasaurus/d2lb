@@ -20,9 +20,11 @@ function TailPicker({ setFieldValue, value, aircraftId }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
 
+  console.log(aircraftId);
+
   const fetchData = async () => {
     const result = await api.get("/api/tailnumbers/");
-    // console.log(result.data);
+    console.log(result.data);
     setData(result.data);
   };
 
@@ -32,7 +34,6 @@ function TailPicker({ setFieldValue, value, aircraftId }) {
         onPress={() => {
           setVisible(false);
           setFieldValue("tailnumber", item.registration);
-          console.log(aircraftId);
         }}
       >
         <Text style={styles.listItem}>{item.registration}</Text>
