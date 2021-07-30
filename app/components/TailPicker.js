@@ -16,7 +16,7 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function TailPicker({ setFieldValue, value, filterBy }) {
+function TailPicker({ setFieldValue, value, aircraftId }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
 
@@ -32,7 +32,7 @@ function TailPicker({ setFieldValue, value, filterBy }) {
         onPress={() => {
           setVisible(false);
           setFieldValue("tailnumber", item.registration);
-          console.log(filterBy);
+          console.log(aircraftId);
         }}
       >
         <Text style={styles.listItem}>{item.registration}</Text>

@@ -17,7 +17,6 @@ import TailPicker from "../components/TailPicker";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
-  const [aircraftId, setAircraftId] = useState(null);
 
   const closeModal = () => {
     setVisible(false); //hide Modal
