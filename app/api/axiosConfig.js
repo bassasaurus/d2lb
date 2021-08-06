@@ -15,6 +15,7 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = "Token " + token;
     }
+    console.log(token);
     return config;
   },
   (error) => {
