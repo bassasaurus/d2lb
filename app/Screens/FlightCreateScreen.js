@@ -8,7 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import { Formik } from "formik";
-import Yup from "yup";
+import * as yup from "yup";
 
 import CalendarPicker from "react-native-calendar-picker";
 import AircraftPicker from "../components/AircraftPicker";
@@ -23,14 +23,18 @@ function FlightCreateScreen(props) {
     setAircraftId(id);
   }
 
-  const closeModal = () => {
-    setVisible(false); //hide Modal
-  };
-
   const dashNotSpace = (str) => {
     str = str.replace(/\s/g, "-");
     return str;
   };
+
+  let schema = yup.object().shape({
+    date: yup.string().required(),
+    route: yup.string().required(),
+    aircraft: yup.string().required(),
+    tailnumber: yup.string().required(),
+    duration: yup.number().min(0.1, "Must be greater than 0.1"),
+  });
 
   return (
     <View style={styles.container}>
@@ -40,10 +44,11 @@ function FlightCreateScreen(props) {
           route: "",
           aircraft: "",
           tailnumber: "",
-          duration: "0.0",
+          duration: 0.0,
         }}
+        validationSchema={schema}
       >
-        {({ values, handleChange, setFieldValue }) => (
+        {({ values, handleChange, setFieldValue, errors }) => (
           <>
             <Pressable
               onPress={() => {
@@ -83,14 +88,16 @@ function FlightCreateScreen(props) {
               filterBy={values.aircraft}
               aircraftId={aircraftId}
             ></TailPicker>
+
             <AppTextInput
               value={values.duration}
               onChangeText={handleChange("duration")}
-              placeholder='Duration'
+              placeholder='Duration - XX.X'
               autoCorrect={false}
               keyboardType={"numeric"}
               clearButtonMode={"while-editing"}
             ></AppTextInput>
+            <Text style={{ color: "red" }}>{errors.duration}</Text>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
               <View style={styles.centeredView}>
