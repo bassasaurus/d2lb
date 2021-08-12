@@ -22,7 +22,6 @@ function TailPicker({ setFieldValue, value, aircraftId }) {
 
   const fetchData = async () => {
     const result = await api.get(`/api/tailnumber_picker/${aircraftId}`);
-    console.log(result.data);
     setData(result.data);
   };
 
