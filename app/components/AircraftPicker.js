@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  TextInput,
   Modal,
-  Button,
   Text,
   FlatList,
   Pressable,
@@ -15,7 +13,6 @@ import AppTextInput from "./AppTextInput";
 import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
-import { onChange } from "react-native-reanimated";
 
 function AircraftPicker({ setFieldValue, value, handleAircraftId }) {
   const [data, setData] = useState([]);

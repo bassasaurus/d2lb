@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
   container: {},
   input: {
     paddingLeft: 10,
-    width: "95%",
     height: 40,
     marginTop: 10,
     borderWidth: 1,

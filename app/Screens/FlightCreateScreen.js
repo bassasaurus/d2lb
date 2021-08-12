@@ -78,14 +78,21 @@ function FlightCreateScreen(props) {
               handleAircraftId={handleAircraftId}
               keyboardType={"numeric"}
             ></AircraftPicker>
-
-            <TailPicker
-              value={values.tailnumber}
-              onChangeText={handleChange("tailnumber")}
-              setFieldValue={setFieldValue}
-              filterBy={values.aircraft}
-              aircraftId={aircraftId}
-            ></TailPicker>
+            <View>
+              {aircraftId ? (
+                <TailPicker
+                  value={values.tailnumber}
+                  onChangeText={handleChange("tailnumber")}
+                  setFieldValue={setFieldValue}
+                  filterBy={values.aircraft}
+                  aircraftId={aircraftId}
+                ></TailPicker>
+              ) : (
+                <View>
+                  <Text>Select an aircraft to pick a tailnumber.</Text>
+                </View>
+              )}
+            </View>
 
             <AppTextInput
               value={values.duration}
@@ -124,7 +131,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     justifyContent: "space-between",
-    margin: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 
   modalView: {
