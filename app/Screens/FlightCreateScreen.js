@@ -23,13 +23,15 @@ function FlightCreateScreen(props) {
     return str;
   };
 
+  const required = "*required*";
   let schema = yup.object().shape({
     date: yup.string().required(),
-    route: yup.string().required(),
-    aircraft: yup.string().required(),
-    tailnumber: yup.string().required(),
+    route: yup.string().required(required),
+    aircraft: yup.string().required(required),
+    tailnumber: yup.string().required(required),
     duration: yup
       .number()
+      .required(required)
       .min(0.1, "Must be greater than 0.1")
       .max(99.0, "Really?"),
   });
@@ -71,6 +73,7 @@ function FlightCreateScreen(props) {
               keyboardType={"default"}
               clearButtonMode={"while-editing"}
             />
+            <Text style={styles.errors}>{errors.route}</Text>
             <AircraftPicker
               value={values.aircraft}
               onChangeText={handleChange("aircraft")}
@@ -78,6 +81,7 @@ function FlightCreateScreen(props) {
               handleAircraftId={handleAircraftId}
               keyboardType={"numeric"}
             ></AircraftPicker>
+
             <View>
               {aircraftId ? (
                 <TailPicker
