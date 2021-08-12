@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, Modal, Pressable } from "react-native";
+import { View, StyleSheet, Text, Modal, Pressable, Button } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
 
@@ -83,31 +83,36 @@ function FlightCreateScreen(props) {
               )}
             </View>
 
-            <AircraftPicker
-              value={values.aircraft}
-              onChangeText={handleChange("aircraft")}
-              setFieldValue={setFieldValue}
-              handleAircraftId={handleAircraftId}
-              keyboardType={"numeric"}
-            ></AircraftPicker>
-
-            <View>
-              {aircraftId ? (
-                <TailPicker
-                  value={values.tailnumber}
-                  onChangeText={handleChange("tailnumber")}
+            <View style={{ flexDirection: "row" }}>
+              <View style={{ flex: 0.5, marginRight: 10 }}>
+                <AircraftPicker
+                  style={{ flex: 0.5 }}
+                  value={values.aircraft}
+                  onChangeText={handleChange("aircraft")}
                   setFieldValue={setFieldValue}
-                  filterBy={values.aircraft}
-                  aircraftId={aircraftId}
-                ></TailPicker>
-              ) : (
-                <View>
-                  <AppTextInput
-                    placeholder={"Aircraft choice required."}
-                    editable={false}
-                  ></AppTextInput>
-                </View>
-              )}
+                  handleAircraftId={handleAircraftId}
+                  keyboardType={"numeric"}
+                ></AircraftPicker>
+              </View>
+
+              <View style={{ flex: 0.5 }}>
+                {aircraftId ? (
+                  <TailPicker
+                    value={values.tailnumber}
+                    onChangeText={handleChange("tailnumber")}
+                    setFieldValue={setFieldValue}
+                    filterBy={values.aircraft}
+                    aircraftId={aircraftId}
+                  ></TailPicker>
+                ) : (
+                  <View>
+                    <AppTextInput
+                      placeholder={"Aircraft choice required."}
+                      editable={false}
+                    ></AppTextInput>
+                  </View>
+                )}
+              </View>
             </View>
 
             <AppTextInput
