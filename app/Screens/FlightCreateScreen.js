@@ -35,7 +35,13 @@ function FlightCreateScreen(props) {
   return (
     <View style={styles.container}>
       <Formik
-        initialValues={{ date: "", route: "", aircraft: "", tailnumber: "" }}
+        initialValues={{
+          date: "",
+          route: "",
+          aircraft: "",
+          tailnumber: "",
+          duration: "0.0",
+        }}
       >
         {({ values, handleChange, setFieldValue }) => (
           <>
@@ -67,6 +73,7 @@ function FlightCreateScreen(props) {
               onChangeText={handleChange("aircraft")}
               setFieldValue={setFieldValue}
               handleAircraftId={handleAircraftId}
+              keyboardType={"numeric"}
             ></AircraftPicker>
 
             <TailPicker
@@ -76,6 +83,14 @@ function FlightCreateScreen(props) {
               filterBy={values.aircraft}
               aircraftId={aircraftId}
             ></TailPicker>
+            <AppTextInput
+              value={values.duration}
+              onChangeText={handleChange("duration")}
+              placeholder='Duration'
+              autoCorrect={false}
+              keyboardType={"numeric"}
+              clearButtonMode={"while-editing"}
+            ></AppTextInput>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
               <View style={styles.centeredView}>
