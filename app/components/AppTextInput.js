@@ -16,15 +16,12 @@ function AppTextInput({ title, placeholder, ...props }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "flex-start",
-    justifyContent: "center",
-  },
+  container: {},
   input: {
     paddingLeft: 10,
     width: "95%",
     height: 40,
-    margin: 10,
+    marginTop: 10,
     borderWidth: 1,
     borderRadius: STYLES.borderRadius,
     borderColor: STYLES.grey,

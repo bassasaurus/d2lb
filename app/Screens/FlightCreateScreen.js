@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  TextInput,
-  Text,
-  Modal,
-  Pressable,
-} from "react-native";
+import { View, StyleSheet, Text, Modal, Pressable } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
 
@@ -14,6 +7,8 @@ import CalendarPicker from "react-native-calendar-picker";
 import AircraftPicker from "../components/AircraftPicker";
 import AppTextInput from "../components/AppTextInput";
 import TailPicker from "../components/TailPicker";
+
+import { STYLES } from "../styles/styles";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
@@ -33,7 +28,10 @@ function FlightCreateScreen(props) {
     route: yup.string().required(),
     aircraft: yup.string().required(),
     tailnumber: yup.string().required(),
-    duration: yup.number().min(0.1, "Must be greater than 0.1"),
+    duration: yup
+      .number()
+      .min(0.1, "Must be greater than 0.1")
+      .max(99.0, "Really?"),
   });
 
   return (
@@ -44,7 +42,7 @@ function FlightCreateScreen(props) {
           route: "",
           aircraft: "",
           tailnumber: "",
-          duration: 0.0,
+          duration: 0.1,
         }}
         validationSchema={schema}
       >
@@ -97,7 +95,7 @@ function FlightCreateScreen(props) {
               keyboardType={"numeric"}
               clearButtonMode={"while-editing"}
             ></AppTextInput>
-            <Text style={{ color: "red" }}>{errors.duration}</Text>
+            <Text style={styles.errors}>{errors.duration}</Text>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
               <View style={styles.centeredView}>
@@ -123,7 +121,11 @@ function FlightCreateScreen(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    margin: 10,
+  },
 
   modalView: {
     margin: 20,
@@ -139,6 +141,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+
+  errors: {
+    color: STYLES.danger,
   },
 
   centeredView: {
