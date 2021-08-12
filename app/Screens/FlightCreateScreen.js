@@ -89,7 +89,10 @@ function FlightCreateScreen(props) {
                 ></TailPicker>
               ) : (
                 <View>
-                  <Text>Select an aircraft to pick a tailnumber.</Text>
+                  <AppTextInput
+                    placeholder={"Aircraft choice required."}
+                    editable={false}
+                  ></AppTextInput>
                 </View>
               )}
             </View>
