@@ -3,10 +3,13 @@ import { View, StyleSheet, Text, Modal, Pressable, Button } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
 
+import { NativeBaseProvider, Box, Checkbox } from "native-base";
+
 import CalendarPicker from "react-native-calendar-picker";
 import AircraftPicker from "../components/AircraftPicker";
 import AppTextInput from "../components/AppTextInput";
 import TailPicker from "../components/TailPicker";
+import AppText from "../components/AppText";
 
 import { STYLES } from "../styles/styles";
 
@@ -129,6 +132,29 @@ function FlightCreateScreen(props) {
               ) : (
                 <View></View>
               )}
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                marginTop: 10,
+                justifyContent: "space-evenly",
+              }}
+            >
+              <AppText>PIC</AppText>
+              <Checkbox></Checkbox>
+              <AppText>SIC</AppText>
+              <Checkbox></Checkbox>
+              <AppText>Solo</AppText>
+              <Checkbox></Checkbox>
+              <AppText>Dual</AppText>
+              <Checkbox></Checkbox>
+              <AppText>CFI</AppText>
+              <Checkbox></Checkbox>
+              <AppText>Sim</AppText>
+              <Checkbox></Checkbox>
+              <AppText>XCntry</AppText>
+              <Checkbox></Checkbox>
             </View>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
