@@ -4,7 +4,7 @@ import { STYLES } from "../styles/styles";
 
 function AppTextInput({ title, placeholder, ...props }) {
   return (
-    <View style={styles.container}>
+    <View>
       <TextInput
         style={styles.input}
         title={title}
@@ -16,7 +16,6 @@ function AppTextInput({ title, placeholder, ...props }) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
   input: {
     paddingLeft: 10,
     height: 40,

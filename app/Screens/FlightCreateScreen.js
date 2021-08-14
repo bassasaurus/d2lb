@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text, Modal, Pressable, Button } from "react-native";
-import { Formik } from "formik";
+import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
-import { NativeBaseProvider, Box, Checkbox } from "native-base";
+import { Checkbox } from "native-base";
 
 import CalendarPicker from "react-native-calendar-picker";
 import AircraftPicker from "../components/AircraftPicker";
@@ -12,6 +12,7 @@ import TailPicker from "../components/TailPicker";
 import AppText from "../components/AppText";
 
 import { STYLES } from "../styles/styles";
+import { duration } from "moment";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
@@ -29,7 +30,7 @@ function FlightCreateScreen(props) {
   const required = "*required*";
 
   let schema = yup.object().shape({
-    date: yup.string().required(),
+    date: yup.string().required(required),
     route: yup.string().required(required),
     aircraft: yup.string().required(required),
     tailnumber: yup.string().required(required),
@@ -48,7 +49,9 @@ function FlightCreateScreen(props) {
           route: "",
           aircraft: "",
           tailnumber: "",
-          duration: 0.1,
+          duration: "",
+          pic: false,
+          sic: false,
         }}
         validationSchema={schema}
       >
@@ -67,6 +70,14 @@ function FlightCreateScreen(props) {
                 />
               </View>
             </Pressable>
+
+            <View>
+              {errors.date ? (
+                <Text style={styles.errors}>{errors.date}</Text>
+              ) : (
+                <View></View>
+              )}
+            </View>
 
             <AppTextInput
               value={dashNotSpace(values.route)}
@@ -96,6 +107,13 @@ function FlightCreateScreen(props) {
                   handleAircraftId={handleAircraftId}
                   keyboardType={"numeric"}
                 ></AircraftPicker>
+                <View>
+                  {errors.aircraft ? (
+                    <Text style={styles.errors}>{errors.aircraft}</Text>
+                  ) : (
+                    <View></View>
+                  )}
+                </View>
               </View>
 
               <View style={{ flex: 0.5 }}>
@@ -115,6 +133,13 @@ function FlightCreateScreen(props) {
                     ></AppTextInput>
                   </View>
                 )}
+                <View>
+                  {errors.tailnumber ? (
+                    <Text style={styles.errors}>{errors.tailnumber}</Text>
+                  ) : (
+                    <View></View>
+                  )}
+                </View>
               </View>
             </View>
 
@@ -126,6 +151,7 @@ function FlightCreateScreen(props) {
               keyboardType={"numeric"}
               clearButtonMode={"while-editing"}
             ></AppTextInput>
+
             <View>
               {errors.duration ? (
                 <Text style={styles.errors}>{errors.duration}</Text>
@@ -134,27 +160,21 @@ function FlightCreateScreen(props) {
               )}
             </View>
 
-            <View
-              style={{
-                flexDirection: "row",
-                marginTop: 10,
-                justifyContent: "space-evenly",
-              }}
-            >
-              <AppText>PIC</AppText>
-              <Checkbox></Checkbox>
-              <AppText>SIC</AppText>
-              <Checkbox></Checkbox>
-              <AppText>Solo</AppText>
-              <Checkbox></Checkbox>
-              <AppText>Dual</AppText>
-              <Checkbox></Checkbox>
-              <AppText>CFI</AppText>
-              <Checkbox></Checkbox>
-              <AppText>Sim</AppText>
-              <Checkbox></Checkbox>
-              <AppText>XCntry</AppText>
-              <Checkbox></Checkbox>
+            <View style={{ flexDirection: "row", paddingTop: 10 }}>
+              <Checkbox
+                value={values.pic}
+                onPress={handleChange("pic")}
+                accessibilityLabel='pic'
+              >
+                <AppText> PIC </AppText>
+              </Checkbox>
+              <Checkbox
+                value={values.sic}
+                onPress={() => console.log(true)}
+                accessibilityLabel='sic'
+              >
+                <AppText> SIC </AppText>
+              </Checkbox>
             </View>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
