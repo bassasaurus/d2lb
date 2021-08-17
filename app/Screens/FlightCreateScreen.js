@@ -12,7 +12,7 @@ import TailPicker from "../components/TailPicker";
 import AppText from "../components/AppText";
 
 import { STYLES } from "../styles/styles";
-import { duration } from "moment";
+import { boolean } from "yup";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
@@ -25,6 +25,11 @@ function FlightCreateScreen(props) {
   const dashNotSpace = (str) => {
     str = str.replace(/\s/g, "-");
     return str;
+  };
+
+  const booleanToggle = (value) => {
+    value = !value;
+    return value;
   };
 
   const required = "*required*";
@@ -161,20 +166,20 @@ function FlightCreateScreen(props) {
             </View>
 
             <View style={{ flexDirection: "row", paddingTop: 10 }}>
+              <AppText> PIC </AppText>
               <Checkbox
+                name={"pic"}
                 value={values.pic}
-                onPress={handleChange("pic")}
                 accessibilityLabel='pic'
-              >
-                <AppText> PIC </AppText>
-              </Checkbox>
+                onChange={() => setFieldValue("pic", !values.pic)}
+              ></Checkbox>
+
+              <AppText> SIC </AppText>
               <Checkbox
                 value={values.sic}
-                onPress={() => console.log(true)}
                 accessibilityLabel='sic'
-              >
-                <AppText> SIC </AppText>
-              </Checkbox>
+                onChange={() => setFieldValue("sic", !values.sic)}
+              ></Checkbox>
             </View>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
