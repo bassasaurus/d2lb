@@ -17,6 +17,7 @@ import { boolean } from "yup";
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
+  const [picSoloLogic, setPicSoloLogic] = useState(false);
 
   function handleAircraftId(id) {
     setAircraftId(id);
@@ -57,6 +58,8 @@ function FlightCreateScreen(props) {
           duration: "",
           pic: false,
           sic: false,
+          solo: false,
+          dual: false,
         }}
         validationSchema={schema}
       >
@@ -171,14 +174,44 @@ function FlightCreateScreen(props) {
                 name={"pic"}
                 value={values.pic}
                 accessibilityLabel='pic'
-                onChange={() => setFieldValue("pic", !values.pic)}
+                onChange={() => {
+                  setFieldValue("pic", !values.pic);
+                  setFieldValue("sic", false);
+                }}
+                isChecked={values.pic}
               ></Checkbox>
 
               <AppText> SIC </AppText>
               <Checkbox
                 value={values.sic}
                 accessibilityLabel='sic'
-                onChange={() => setFieldValue("sic", !values.sic)}
+                onChange={() => {
+                  setFieldValue("sic", !values.sic);
+                  setFieldValue("pic", false);
+                }}
+                isChecked={values.sic}
+              ></Checkbox>
+
+              <AppText> Solo </AppText>
+              <Checkbox
+                value={values.solo}
+                accessibilityLabel='solo'
+                onChange={() => {
+                  setFieldValue("solo", !values.solo);
+                  setFieldValue("dual", false);
+                }}
+                isChecked={values.solo}
+              ></Checkbox>
+
+              <AppText> Dual </AppText>
+              <Checkbox
+                value={values.dual}
+                accessibilityLabel='dual'
+                onChange={() => {
+                  setFieldValue("dual", !values.dual);
+                  setFieldValue("solo", false);
+                }}
+                isChecked={values.dual}
               ></Checkbox>
             </View>
 
