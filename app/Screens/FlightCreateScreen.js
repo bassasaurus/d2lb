@@ -17,7 +17,7 @@ import { boolean } from "yup";
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
-  const [picSoloLogic, setPicSoloLogic] = useState(false);
+  const [picSoloLogic, setPicLogic] = useState(false);
 
   function handleAircraftId(id) {
     setAircraftId(id);
@@ -33,7 +33,7 @@ function FlightCreateScreen(props) {
     return value;
   };
 
-  const required = "*required*";
+  const required = "*required";
 
   let schema = yup.object().shape({
     date: yup.string().required(required),
@@ -153,7 +153,10 @@ function FlightCreateScreen(props) {
 
             <AppTextInput
               value={values.duration}
-              onChangeText={handleChange("duration")}
+              onChangeText={(val) => {
+                // handleChange("duration");
+                setFieldValue("duration", parseFloat(val));
+              }}
               placeholder='Duration - XX.X'
               autoCorrect={false}
               keyboardType={"numeric"}
