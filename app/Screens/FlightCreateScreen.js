@@ -63,6 +63,10 @@ function FlightCreateScreen(props) {
           instructor: false,
           simulator: false,
           cross_country: false,
+          landings_day: "",
+          landings_night: "",
+          instrument: "",
+          simulated_instrument: "",
         }}
         validationSchema={schema}
       >
@@ -157,7 +161,6 @@ function FlightCreateScreen(props) {
             <AppTextInput
               value={values.duration}
               onChangeText={(val) => {
-                // handleChange("duration");
                 setFieldValue("duration", parseFloat(val));
               }}
               placeholder='Duration - XX.X'
@@ -178,11 +181,12 @@ function FlightCreateScreen(props) {
               style={{
                 flexDirection: "row",
                 paddingTop: 10,
-                justifyContent: "space-evenly",
+                justifyContent: "space-between",
               }}
             >
               <View style={styles.checkboxContainer}>
                 <Checkbox
+                  style={styles.checkbox}
                   name={"pilot_in_command"}
                   value={values.pilot_in_command}
                   accessibilityLabel='pilot_in_command'
@@ -198,6 +202,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
+                  style={styles.checkbox}
                   value={values.second_in_command}
                   accessibilityLabel='second_in_command'
                   onChange={() => {
@@ -217,6 +222,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
+                  style={styles.checkbox}
                   value={values.solo}
                   accessibilityLabel='solo'
                   onChange={() => {
@@ -232,6 +238,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
+                  style={styles.checkbox}
                   value={values.dual}
                   accessibilityLabel='dual'
                   onChange={() => {
@@ -245,6 +252,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
+                  style={styles.checkbox}
                   value={values.instructor}
                   accessibilityLabel='instructor'
                   onChange={() => {
@@ -257,6 +265,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
+                  style={styles.checkbox}
                   value={values.simulator}
                   accessibilityLabel='simulator'
                   onChange={() => {
@@ -270,6 +279,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
+                  style={styles.checkbox}
                   value={values.cross_country}
                   accessibilityLabel='cross_country'
                   onChange={() => {
@@ -281,6 +291,50 @@ function FlightCreateScreen(props) {
                 <AppText>XC</AppText>
               </View>
             </View>
+
+            <AppTextInput
+              value={values.landings_day}
+              onChangeText={(val) => {
+                setFieldValue("landings_day", parseInt(val));
+              }}
+              placeholder='Day Landings'
+              autoCorrect={false}
+              keyboardType={"numeric"}
+              clearButtonMode={"while-editing"}
+            ></AppTextInput>
+
+            <AppTextInput
+              value={values.landings_night}
+              onChangeText={(val) => {
+                setFieldValue("landings_night", parseInt(val));
+              }}
+              placeholder='Night Landings'
+              autoCorrect={false}
+              keyboardType={"numeric"}
+              clearButtonMode={"while-editing"}
+            ></AppTextInput>
+
+            <AppTextInput
+              value={values.instrument}
+              onChangeText={(val) => {
+                setFieldValue("instrument", parseFloat(val));
+              }}
+              placeholder='IFR'
+              autoCorrect={false}
+              keyboardType={"numeric"}
+              clearButtonMode={"while-editing"}
+            ></AppTextInput>
+
+            <AppTextInput
+              value={values.simulated_instrument}
+              onChangeText={(val) => {
+                setFieldValue("simulated_instrument", parseFloat(val));
+              }}
+              placeholder='Simulated IFR'
+              autoCorrect={false}
+              keyboardType={"numeric"}
+              clearButtonMode={"while-editing"}
+            ></AppTextInput>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
               <View style={styles.centeredView}>
@@ -344,6 +398,10 @@ const styles = StyleSheet.create({
     flex: 0.1,
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+
+  checkbox: {
+    paddingRight: 3,
   },
 });
 
