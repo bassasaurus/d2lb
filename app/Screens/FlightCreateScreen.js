@@ -56,8 +56,8 @@ function FlightCreateScreen(props) {
           aircraft: "",
           tailnumber: "",
           duration: "",
-          pic: false,
-          sic: false,
+          pilot_in_command: false,
+          second_in_command: false,
           solo: false,
           dual: false,
         }}
@@ -174,25 +174,25 @@ function FlightCreateScreen(props) {
             <View style={{ flexDirection: "row", paddingTop: 10 }}>
               <AppText> PIC </AppText>
               <Checkbox
-                name={"pic"}
-                value={values.pic}
-                accessibilityLabel='pic'
+                name={"pilot_in_command"}
+                value={values.pilot_in_command}
+                accessibilityLabel='pilot_in_command'
                 onChange={() => {
-                  setFieldValue("pic", !values.pic);
-                  setFieldValue("sic", false);
+                  setFieldValue("pilot_in_command", !values.pilot_in_command);
+                  setFieldValue("second_in_command", false);
                 }}
-                isChecked={values.pic}
+                isChecked={values.pilot_in_command}
               ></Checkbox>
 
               <AppText> SIC </AppText>
               <Checkbox
-                value={values.sic}
-                accessibilityLabel='sic'
+                value={values.second_in_command}
+                accessibilityLabel='second_in_command'
                 onChange={() => {
-                  setFieldValue("sic", !values.sic);
-                  setFieldValue("pic", false);
+                  setFieldValue("second_in_command", !values.second_in_command);
+                  setFieldValue("pilot_in_command", false);
                 }}
-                isChecked={values.sic}
+                isChecked={values.second_in_command}
               ></Checkbox>
 
               <AppText> Solo </AppText>
