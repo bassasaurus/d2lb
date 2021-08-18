@@ -60,6 +60,9 @@ function FlightCreateScreen(props) {
           second_in_command: false,
           solo: false,
           dual: false,
+          instructor: false,
+          simulator: false,
+          cross_country: false,
         }}
         validationSchema={schema}
       >
@@ -171,51 +174,112 @@ function FlightCreateScreen(props) {
               )}
             </View>
 
-            <View style={{ flexDirection: "row", paddingTop: 10 }}>
-              <AppText> PIC </AppText>
-              <Checkbox
-                name={"pilot_in_command"}
-                value={values.pilot_in_command}
-                accessibilityLabel='pilot_in_command'
-                onChange={() => {
-                  setFieldValue("pilot_in_command", !values.pilot_in_command);
-                  setFieldValue("second_in_command", false);
-                }}
-                isChecked={values.pilot_in_command}
-              ></Checkbox>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingTop: 10,
+                justifyContent: "space-evenly",
+              }}
+            >
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  name={"pilot_in_command"}
+                  value={values.pilot_in_command}
+                  accessibilityLabel='pilot_in_command'
+                  onChange={() => {
+                    setFieldValue("pilot_in_command", !values.pilot_in_command);
+                    setFieldValue("second_in_command", false);
+                    setFieldValue("solo", false);
+                  }}
+                  isChecked={values.pilot_in_command}
+                ></Checkbox>
+                <AppText>PIC</AppText>
+              </View>
 
-              <AppText> SIC </AppText>
-              <Checkbox
-                value={values.second_in_command}
-                accessibilityLabel='second_in_command'
-                onChange={() => {
-                  setFieldValue("second_in_command", !values.second_in_command);
-                  setFieldValue("pilot_in_command", false);
-                }}
-                isChecked={values.second_in_command}
-              ></Checkbox>
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={values.second_in_command}
+                  accessibilityLabel='second_in_command'
+                  onChange={() => {
+                    setFieldValue(
+                      "second_in_command",
+                      !values.second_in_command
+                    );
+                    setFieldValue("pilot_in_command", false);
+                    setFieldValue("solo", false);
+                    setFieldValue("dual", false);
+                    setFieldValue("instructor", false);
+                  }}
+                  isChecked={values.second_in_command}
+                ></Checkbox>
+                <AppText>SIC</AppText>
+              </View>
 
-              <AppText> Solo </AppText>
-              <Checkbox
-                value={values.solo}
-                accessibilityLabel='solo'
-                onChange={() => {
-                  setFieldValue("solo", !values.solo);
-                  setFieldValue("dual", false);
-                }}
-                isChecked={values.solo}
-              ></Checkbox>
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={values.solo}
+                  accessibilityLabel='solo'
+                  onChange={() => {
+                    setFieldValue("solo", !values.solo);
+                    setFieldValue("dual", false);
+                    setFieldValue("pilot_in_command", false);
+                    setFieldValue("second_in_command", false);
+                  }}
+                  isChecked={values.solo}
+                ></Checkbox>
+                <AppText>Solo</AppText>
+              </View>
 
-              <AppText> Dual </AppText>
-              <Checkbox
-                value={values.dual}
-                accessibilityLabel='dual'
-                onChange={() => {
-                  setFieldValue("dual", !values.dual);
-                  setFieldValue("solo", false);
-                }}
-                isChecked={values.dual}
-              ></Checkbox>
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={values.dual}
+                  accessibilityLabel='dual'
+                  onChange={() => {
+                    setFieldValue("dual", !values.dual);
+                    setFieldValue("solo", false);
+                  }}
+                  isChecked={values.dual}
+                ></Checkbox>
+                <AppText>Dual</AppText>
+              </View>
+
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={values.instructor}
+                  accessibilityLabel='instructor'
+                  onChange={() => {
+                    setFieldValue("instructor", !values.instructor);
+                  }}
+                  isChecked={values.instructor}
+                ></Checkbox>
+                <AppText>CFI</AppText>
+              </View>
+
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={values.simulator}
+                  accessibilityLabel='simulator'
+                  onChange={() => {
+                    setFieldValue("simulator", !values.simulator);
+                    setFieldValue("cross_country", false);
+                  }}
+                  isChecked={values.simulator}
+                ></Checkbox>
+                <AppText>Sim</AppText>
+              </View>
+
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={values.cross_country}
+                  accessibilityLabel='cross_country'
+                  onChange={() => {
+                    setFieldValue("cross_country", !values.cross_country);
+                    setFieldValue("simulator", false);
+                  }}
+                  isChecked={values.cross_country}
+                ></Checkbox>
+                <AppText>XC</AppText>
+              </View>
             </View>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
@@ -274,6 +338,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
+  },
+
+  checkboxContainer: {
+    flex: 0.1,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
 
