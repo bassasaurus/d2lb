@@ -244,6 +244,7 @@ function FlightCreateScreen(props) {
                   onChange={() => {
                     setFieldValue("dual", !values.dual);
                     setFieldValue("solo", false);
+                    setFieldValue("instructor", false);
                   }}
                   isChecked={values.dual}
                 ></Checkbox>
@@ -257,6 +258,7 @@ function FlightCreateScreen(props) {
                   accessibilityLabel='instructor'
                   onChange={() => {
                     setFieldValue("instructor", !values.instructor);
+                    setFieldValue("dual", false);
                   }}
                   isChecked={values.instructor}
                 ></Checkbox>
