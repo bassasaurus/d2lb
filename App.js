@@ -9,6 +9,7 @@ import StackNavigator from "./app/navigation/StackNavigator";
 import LoginScreen from "./app/screens/LoginScreen";
 import FlightCreateScreen from "./app/screens/FlightCreateScreen";
 import Picker from "./app/components/AircraftPicker";
+import ApproachPicker from "./app/components/ApproachPicker";
 
 export default function App() {
   return (
@@ -17,7 +18,8 @@ export default function App() {
         <Box flex={1} bg='#fff' alignItems='center' justifyContent='center'>
           <StatusBar style='auto' />
           <SafeAreaView>
-            <FlightCreateScreen></FlightCreateScreen>
+            {/* <FlightCreateScreen></FlightCreateScreen> */}
+            <ApproachPicker></ApproachPicker>
           </SafeAreaView>
         </Box>
       </NativeBaseProvider>
