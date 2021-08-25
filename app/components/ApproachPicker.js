@@ -14,7 +14,7 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function ApproachPicker({ setFieldValue, value, aircraftId }) {
+function ApproachPicker({ setFieldValue, value }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
 
@@ -86,7 +86,7 @@ function ApproachPicker({ setFieldValue, value, aircraftId }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("approach", item.approach);
+          setFieldValue(value, item.approach);
         }}
       >
         <Text style={styles.listItem}>{item.approach}</Text>
@@ -96,16 +96,25 @@ function ApproachPicker({ setFieldValue, value, aircraftId }) {
 
   return (
     <>
-      <Pressable
-        onPress={() => {
-          fetchData();
-          setVisible(true);
-        }}
-      >
-        <View pointerEvents={"none"}>
-          <AppTextInput value={value} placeholder={"Tailnumber"}></AppTextInput>
-        </View>
-      </Pressable>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <Pressable
+          onPress={() => {
+            fetchData();
+            setVisible(true);
+          }}
+        >
+          <View pointerEvents={"none"}>
+            <AppTextInput
+              value={value}
+              placeholder={"Approach Type"}
+            ></AppTextInput>
+          </View>
+        </Pressable>
+        <AppTextInput
+          placeholder='#'
+          onChangeText={(val) => setFieldValue(value, val)}
+        ></AppTextInput>
+      </View>
 
       <View style={styles.centeredView}>
         <Modal animationType='slide' transparent={true} visible={visible}>
