@@ -16,27 +16,69 @@ import FlatListItemSeparator from "./FlatListItemSeparator";
 
 function ApproachPicker({ setFieldValue, value, aircraftId }) {
   const [visible, setVisible] = useState(false);
+  const [data, setData] = useState("");
 
-  const data = {
-    ILS: "ILS",
-    CATI: "CATI",
-    CATII: "CATII",
-    CATIII: "CATIII",
-    GPS: "GPS",
-    RNAV: "RNAV",
-    LOC: "LOC",
-    VOR: "VOR",
-    NDB: "NDB",
-    LOC_BC: "LOC BC",
-    SDF: "SDF",
-    LDA: "LDA",
-    TACAN: "TACAN",
-    MLS: "MLS",
-  };
+  const approaches = [
+    {
+      id: 0,
+      ILS: "ILS",
+    },
+    {
+      id: 1,
+      approach: "CAT I",
+    },
+    {
+      id: 2,
+      approach: "CAT II",
+    },
+    {
+      id: 3,
+      approach: "CAT III",
+    },
+    {
+      id: 4,
+      approach: "GPS",
+    },
+    {
+      id: 5,
+      approach: "RNAV",
+    },
+    {
+      id: 6,
+      approach: "LOC",
+    },
+    {
+      id: 7,
+      approach: "VOR",
+    },
+    {
+      id: 8,
+      approach: "NDB",
+    },
+    {
+      id: 9,
+      approach: "LOC BC",
+    },
+    {
+      id: 10,
+      approach: "SDF",
+    },
+    {
+      id: 11,
+      approach: "LDA",
+    },
+    {
+      id: 12,
+      approach: "TACAN",
+    },
+    {
+      id: 13,
+      approach: "MLS",
+    },
+  ];
 
-  const fetchData = async () => {
-    const result = await api.get(`/api/tailnumber_picker/${aircraftId}`);
-    setData(result.data);
+  const fetchData = () => {
+    setData(approaches);
   };
 
   const renderItem = ({ item }) => (
@@ -44,10 +86,10 @@ function ApproachPicker({ setFieldValue, value, aircraftId }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("tailnumber", item.registration);
+          setFieldValue("approach", item.approach);
         }}
       >
-        <Text style={styles.listItem}>{item.registration}</Text>
+        <Text style={styles.listItem}>{item.approach}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -69,7 +111,7 @@ function ApproachPicker({ setFieldValue, value, aircraftId }) {
         <Modal animationType='slide' transparent={true} visible={visible}>
           <View style={styles.modalView}>
             <FlatList
-              data={data.results}
+              data={data}
               renderItem={renderItem}
               keyExtractor={(item) => item.id.toString()}
               ItemSeparatorComponent={FlatListItemSeparator}
