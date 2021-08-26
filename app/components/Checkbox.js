@@ -19,7 +19,11 @@ function Checkbox({ onPress }) {
           style={{
             height: 20,
             width: 20,
-            backgroundColor: checked === true ? "blue" : "yellow",
+            backgroundColor: checked === true ? STYLES.blue : STYLES.white,
+            borderColor: STYLES.grey,
+            borderWidth: 1,
+            marginRight: 5,
+            borderRadius: STYLES.borderRadius,
           }}
         ></View>
       </Pressable>
