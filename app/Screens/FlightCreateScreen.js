@@ -3,13 +3,12 @@ import { View, StyleSheet, Text, Modal, Pressable, Button } from "react-native";
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
-import { Checkbox } from "../components/Checkbox";
-
 import CalendarPicker from "react-native-calendar-picker";
 import AircraftPicker from "../components/AircraftPicker";
 import AppTextInput from "../components/AppTextInput";
 import TailPicker from "../components/TailPicker";
 import AppText from "../components/AppText";
+import Checkbox from "../components/Checkbox";
 
 import { STYLES } from "../styles/styles";
 import { boolean } from "yup";
