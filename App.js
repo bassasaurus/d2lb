@@ -10,19 +10,15 @@ import LoginScreen from "./app/screens/LoginScreen";
 import FlightCreateScreen from "./app/screens/FlightCreateScreen";
 import Picker from "./app/components/AircraftPicker";
 import ApproachPicker from "./app/components/ApproachPicker";
+import Checkbox from "./app/components/Checkbox";
 
 export default function App() {
   return (
     <>
-      <NativeBaseProvider>
-        <Box flex={1} bg='#fff' alignItems='center' justifyContent='center'>
-          <StatusBar style='auto' />
-          <SafeAreaView>
-            {/* <FlightCreateScreen></FlightCreateScreen> */}
-            <ApproachPicker></ApproachPicker>
-          </SafeAreaView>
-        </Box>
-      </NativeBaseProvider>
+      <StatusBar style='auto' />
+      <SafeAreaView>
+        <Checkbox></Checkbox>
+      </SafeAreaView>
 
       {/* <NavigationContainer>
         <StackNavigator></StackNavigator>

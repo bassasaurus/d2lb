@@ -10,7 +10,6 @@ import {
 import { TouchableOpacity } from "react-native-gesture-handler";
 import AppTextInput from "./AppTextInput";
 
-import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 

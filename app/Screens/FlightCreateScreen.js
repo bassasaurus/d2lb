@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, Modal, Pressable, Button } from "react-native";
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
-import { Checkbox } from "native-base";
+import { Checkbox } from "../components/Checkbox";
 
 import CalendarPicker from "react-native-calendar-picker";
 import AircraftPicker from "../components/AircraftPicker";
@@ -17,7 +17,6 @@ import { boolean } from "yup";
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
-  const [picSoloLogic, setPicLogic] = useState(false);
 
   function handleAircraftId(id) {
     setAircraftId(id);
