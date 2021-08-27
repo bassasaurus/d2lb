@@ -2,27 +2,32 @@ import React, { useState } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { STYLES } from "../styles/styles";
 
-function Checkbox({ onPress }) {
+function Checkbox({ onPress, isChecked }) {
   const [checked, setChecked] = useState(false);
-  const toggleFunction = () => {
+
+  const toggle = () => {
     setChecked(!checked);
   };
+
   return (
     <View style={styles.container}>
       <Pressable
         onPress={() => {
+          {
+            onPress();
+          }
           setChecked(true);
-          toggleFunction();
+          toggle();
         }}
       >
         <View
           style={{
             height: 20,
             width: 20,
-            backgroundColor: checked === true ? STYLES.blue : STYLES.white,
+            backgroundColor: isChecked === true ? STYLES.blue : STYLES.white,
             borderColor: STYLES.grey,
             borderWidth: 1,
-            marginRight: 5,
+            marginRight: 3,
             borderRadius: STYLES.borderRadius,
           }}
         ></View>
@@ -33,7 +38,6 @@ function Checkbox({ onPress }) {
 
 const styles = StyleSheet.create({
   container: {},
-  checkbox: {},
 });
 
 export default Checkbox;

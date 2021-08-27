@@ -184,11 +184,7 @@ function FlightCreateScreen(props) {
             >
               <View style={styles.checkboxContainer}>
                 <Checkbox
-                  style={styles.checkbox}
-                  name={"pilot_in_command"}
-                  value={values.pilot_in_command}
-                  accessibilityLabel='pilot_in_command'
-                  onChange={() => {
+                  onPress={() => {
                     setFieldValue("pilot_in_command", !values.pilot_in_command);
                     setFieldValue("second_in_command", false);
                     setFieldValue("solo", false);
@@ -200,10 +196,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
-                  style={styles.checkbox}
-                  value={values.second_in_command}
-                  accessibilityLabel='second_in_command'
-                  onChange={() => {
+                  onPress={() => {
                     setFieldValue(
                       "second_in_command",
                       !values.second_in_command
@@ -220,10 +213,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
-                  style={styles.checkbox}
-                  value={values.solo}
-                  accessibilityLabel='solo'
-                  onChange={() => {
+                  onPress={() => {
                     setFieldValue("solo", !values.solo);
                     setFieldValue("dual", false);
                     setFieldValue("pilot_in_command", false);
@@ -236,10 +226,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
-                  style={styles.checkbox}
-                  value={values.dual}
-                  accessibilityLabel='dual'
-                  onChange={() => {
+                  onPress={() => {
                     setFieldValue("dual", !values.dual);
                     setFieldValue("solo", false);
                     setFieldValue("instructor", false);
@@ -251,10 +238,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
-                  style={styles.checkbox}
-                  value={values.instructor}
-                  accessibilityLabel='instructor'
-                  onChange={() => {
+                  onPress={() => {
                     setFieldValue("instructor", !values.instructor);
                     setFieldValue("dual", false);
                   }}
@@ -265,10 +249,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
-                  style={styles.checkbox}
-                  value={values.simulator}
-                  accessibilityLabel='simulator'
-                  onChange={() => {
+                  onPress={() => {
                     setFieldValue("simulator", !values.simulator);
                     setFieldValue("cross_country", false);
                   }}
@@ -279,10 +260,7 @@ function FlightCreateScreen(props) {
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
-                  style={styles.checkbox}
-                  value={values.cross_country}
-                  accessibilityLabel='cross_country'
-                  onChange={() => {
+                  onPress={() => {
                     setFieldValue("cross_country", !values.cross_country);
                     setFieldValue("simulator", false);
                   }}
@@ -351,7 +329,7 @@ function FlightCreateScreen(props) {
               </View>
             </Modal>
 
-            <Text>{JSON.stringify(values)}</Text>
+            <Text>{JSON.stringify(values, null, "  ")}</Text>
           </>
         )}
       </Formik>
@@ -398,10 +376,6 @@ const styles = StyleSheet.create({
     flex: 0.1,
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-
-  checkbox: {
-    paddingRight: 3,
   },
 });
 
