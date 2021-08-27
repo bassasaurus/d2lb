@@ -15,9 +15,8 @@ import FlatListItemSeparator from "./FlatListItemSeparator";
 
 function ApproachPicker({ setFieldValue, value }) {
   const [visible, setVisible] = useState(false);
-  const [data, setData] = useState("");
 
-  const approaches = [
+  const data = [
     {
       id: 0,
       ILS: "ILS",
@@ -76,10 +75,6 @@ function ApproachPicker({ setFieldValue, value }) {
     },
   ];
 
-  const fetchData = () => {
-    setData(approaches);
-  };
-
   const renderItem = ({ item }) => (
     <View style={styles.container}>
       <TouchableOpacity
@@ -95,10 +90,15 @@ function ApproachPicker({ setFieldValue, value }) {
 
   return (
     <>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginTop: 10,
+        }}
+      >
         <Pressable
           onPress={() => {
-            fetchData();
             setVisible(true);
           }}
         >
@@ -111,7 +111,7 @@ function ApproachPicker({ setFieldValue, value }) {
         </Pressable>
         <AppTextInput
           placeholder='#'
-          onChangeText={(val) => setFieldValue(value, val)}
+          onChangeText={(val) => setFieldValue("approaches", val)}
         ></AppTextInput>
       </View>
 

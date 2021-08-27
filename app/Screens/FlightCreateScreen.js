@@ -7,6 +7,7 @@ import CalendarPicker from "react-native-calendar-picker";
 import AircraftPicker from "../components/AircraftPicker";
 import AppTextInput from "../components/AppTextInput";
 import TailPicker from "../components/TailPicker";
+import ApproachPicker from "../components/ApproachPicker";
 import AppText from "../components/AppText";
 import Checkbox from "../components/Checkbox";
 
@@ -268,50 +269,71 @@ function FlightCreateScreen(props) {
                 <AppText>XC</AppText>
               </View>
             </View>
-
-            <AppTextInput
-              value={values.landings_day}
-              onChangeText={(val) => {
-                setFieldValue("landings_day", parseInt(val));
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                justifyContent: "space-between",
               }}
-              placeholder='Day Landings'
-              autoCorrect={false}
-              keyboardType={"numeric"}
-              clearButtonMode={"while-editing"}
-            ></AppTextInput>
+            >
+              <AppTextInput
+                value={values.landings_day}
+                onChangeText={(val) => {
+                  setFieldValue("landings_day", parseInt(val));
+                }}
+                placeholder='Day Landings'
+                autoCorrect={false}
+                keyboardType={"numeric"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
 
-            <AppTextInput
-              value={values.landings_night}
-              onChangeText={(val) => {
-                setFieldValue("landings_night", parseInt(val));
-              }}
-              placeholder='Night Landings'
-              autoCorrect={false}
-              keyboardType={"numeric"}
-              clearButtonMode={"while-editing"}
-            ></AppTextInput>
+              <AppTextInput
+                value={values.landings_night}
+                onChangeText={(val) => {
+                  setFieldValue("landings_night", parseInt(val));
+                }}
+                placeholder='Night Landings'
+                autoCorrect={false}
+                keyboardType={"numeric"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
 
-            <AppTextInput
-              value={values.instrument}
-              onChangeText={(val) => {
-                setFieldValue("instrument", parseFloat(val));
-              }}
-              placeholder='IFR'
-              autoCorrect={false}
-              keyboardType={"numeric"}
-              clearButtonMode={"while-editing"}
-            ></AppTextInput>
+              <AppTextInput
+                value={values.instrument}
+                onChangeText={(val) => {
+                  setFieldValue("instrument", parseFloat(val));
+                }}
+                placeholder='IFR'
+                autoCorrect={false}
+                keyboardType={"numeric"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
 
-            <AppTextInput
-              value={values.simulated_instrument}
-              onChangeText={(val) => {
-                setFieldValue("simulated_instrument", parseFloat(val));
+              <AppTextInput
+                value={values.simulated_instrument}
+                onChangeText={(val) => {
+                  setFieldValue("simulated_instrument", parseFloat(val));
+                }}
+                placeholder='Simulated IFR'
+                autoCorrect={false}
+                keyboardType={"numeric"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                paddingTop: 40,
+                justifyContent: "space-between",
               }}
-              placeholder='Simulated IFR'
-              autoCorrect={false}
-              keyboardType={"numeric"}
-              clearButtonMode={"while-editing"}
-            ></AppTextInput>
+            >
+              <ApproachPicker></ApproachPicker>
+            </View>
+
+            <View style={{ marginTop: 200 }}>
+              <Text>{JSON.stringify(values, null, "  ")}</Text>
+            </View>
 
             <Modal animationType='slide' transparent={true} visible={visible}>
               <View style={styles.centeredView}>
@@ -326,8 +348,6 @@ function FlightCreateScreen(props) {
                 </View>
               </View>
             </Modal>
-
-            <Text>{JSON.stringify(values, null, "  ")}</Text>
           </>
         )}
       </Formik>
