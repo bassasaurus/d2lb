@@ -13,7 +13,7 @@ import AppTextInput from "./AppTextInput";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function ApproachPicker({ setFieldValue, value }) {
+function ApproachPicker({ ...props }) {
   const [visible, setVisible] = useState(false);
 
   const data = [
@@ -102,10 +102,7 @@ function ApproachPicker({ setFieldValue, value }) {
           }}
         >
           <View pointerEvents={"none"}>
-            <AppTextInput
-              value={value}
-              placeholder={"Approach Type"}
-            ></AppTextInput>
+            <AppTextInput placeholder={"Approach Type"}></AppTextInput>
           </View>
         </Pressable>
         <AppTextInput

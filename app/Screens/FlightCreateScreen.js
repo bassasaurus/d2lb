@@ -269,65 +269,56 @@ function FlightCreateScreen(props) {
                 <AppText>XC</AppText>
               </View>
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
+
+            <AppTextInput
+              value={values.landings_day}
+              onChangeText={(val) => {
+                setFieldValue("landings_day", parseInt(val));
               }}
-            >
-              <AppTextInput
-                value={values.landings_day}
-                onChangeText={(val) => {
-                  setFieldValue("landings_day", parseInt(val));
-                }}
-                placeholder='Day Landings'
-                autoCorrect={false}
-                keyboardType={"numeric"}
-                clearButtonMode={"while-editing"}
-              ></AppTextInput>
+              placeholder='Day Landings'
+              autoCorrect={false}
+              keyboardType={"numeric"}
+              clearButtonMode={"while-editing"}
+            ></AppTextInput>
 
-              <AppTextInput
-                value={values.landings_night}
-                onChangeText={(val) => {
-                  setFieldValue("landings_night", parseInt(val));
-                }}
-                placeholder='Night Landings'
-                autoCorrect={false}
-                keyboardType={"numeric"}
-                clearButtonMode={"while-editing"}
-              ></AppTextInput>
+            <AppTextInput
+              value={values.landings_night}
+              onChangeText={(val) => {
+                setFieldValue("landings_night", parseInt(val));
+              }}
+              placeholder='Night Landings'
+              autoCorrect={false}
+              keyboardType={"numeric"}
+              clearButtonMode={"while-editing"}
+            ></AppTextInput>
 
-              <AppTextInput
-                value={values.instrument}
-                onChangeText={(val) => {
-                  setFieldValue("instrument", parseFloat(val));
-                }}
-                placeholder='IFR'
-                autoCorrect={false}
-                keyboardType={"numeric"}
-                clearButtonMode={"while-editing"}
-              ></AppTextInput>
+            <AppTextInput
+              value={values.instrument}
+              onChangeText={(val) => {
+                setFieldValue("instrument", parseFloat(val));
+              }}
+              placeholder='IFR'
+              autoCorrect={false}
+              keyboardType={"numeric"}
+              clearButtonMode={"while-editing"}
+            ></AppTextInput>
 
-              <AppTextInput
-                value={values.simulated_instrument}
-                onChangeText={(val) => {
-                  setFieldValue("simulated_instrument", parseFloat(val));
-                }}
-                placeholder='Simulated IFR'
-                autoCorrect={false}
-                keyboardType={"numeric"}
-                clearButtonMode={"while-editing"}
-              ></AppTextInput>
-            </View>
+            <AppTextInput
+              value={values.simulated_instrument}
+              onChangeText={(val) => {
+                setFieldValue("simulated_instrument", parseFloat(val));
+              }}
+              placeholder='Simulated IFR'
+              autoCorrect={false}
+              keyboardType={"numeric"}
+              clearButtonMode={"while-editing"}
+            ></AppTextInput>
 
             <View>
-              <ApproachPicker
-                value={values.approach}
-                setFieldValue={setFieldValue}
-              ></ApproachPicker>
+              <ApproachPicker></ApproachPicker>
             </View>
 
-            <View style={{ marginTop: 200 }}>
+            <View style={{ marginTop: 60 }}>
               <Text>{JSON.stringify(values, null, "  ")}</Text>
             </View>
 
