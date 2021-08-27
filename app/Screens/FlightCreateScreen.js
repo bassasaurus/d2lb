@@ -218,6 +218,7 @@ function FlightCreateScreen(props) {
                     setFieldValue("dual", false);
                     setFieldValue("pilot_in_command", false);
                     setFieldValue("second_in_command", false);
+                    setFieldValue("instructor", false);
                   }}
                   isChecked={values.solo}
                 ></Checkbox>
@@ -241,6 +242,7 @@ function FlightCreateScreen(props) {
                   onPress={() => {
                     setFieldValue("instructor", !values.instructor);
                     setFieldValue("dual", false);
+                    setFieldValue("solo", false);
                   }}
                   isChecked={values.instructor}
                 ></Checkbox>
@@ -318,7 +320,6 @@ function FlightCreateScreen(props) {
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                   <CalendarPicker
-                    showDayStragglers={true}
                     selectedDayColor='lightblue'
                     onDateChange={(date) => {
                       setFieldValue("date", date.format("M-D-YYYY"));
