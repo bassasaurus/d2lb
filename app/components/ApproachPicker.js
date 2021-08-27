@@ -93,8 +93,7 @@ function ApproachPicker({ setFieldValue, value }) {
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-between",
-          marginTop: 10,
+          flex: 1,
         }}
       >
         <Pressable
@@ -134,6 +133,7 @@ function ApproachPicker({ setFieldValue, value }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "row",
   },
   input: {
     borderWidth: 1,

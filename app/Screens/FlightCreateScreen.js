@@ -271,7 +271,6 @@ function FlightCreateScreen(props) {
             </View>
             <View
               style={{
-                flex: 1,
                 flexDirection: "row",
                 justifyContent: "space-between",
               }}
@@ -321,14 +320,11 @@ function FlightCreateScreen(props) {
               ></AppTextInput>
             </View>
 
-            <View
-              style={{
-                flexDirection: "row",
-                paddingTop: 40,
-                justifyContent: "space-between",
-              }}
-            >
-              <ApproachPicker></ApproachPicker>
+            <View>
+              <ApproachPicker
+                value={values.approach}
+                setFieldValue={setFieldValue}
+              ></ApproachPicker>
             </View>
 
             <View style={{ marginTop: 200 }}>
