@@ -26,11 +26,6 @@ function FlightCreateScreen(props) {
     return str;
   };
 
-  const booleanToggle = (value) => {
-    value = !value;
-    return value;
-  };
-
   const required = "*required";
 
   let schema = yup.object().shape({
@@ -219,6 +214,7 @@ function FlightCreateScreen(props) {
                     setFieldValue("pilot_in_command", false);
                     setFieldValue("second_in_command", false);
                     setFieldValue("instructor", false);
+                    setFieldValue("simulator", false);
                   }}
                   isChecked={values.solo}
                 ></Checkbox>
@@ -254,6 +250,7 @@ function FlightCreateScreen(props) {
                   onPress={() => {
                     setFieldValue("simulator", !values.simulator);
                     setFieldValue("cross_country", false);
+                    setFieldValue("solo", false);
                   }}
                   isChecked={values.simulator}
                 ></Checkbox>
