@@ -12,7 +12,6 @@ import AppText from "../components/AppText";
 import Checkbox from "../components/Checkbox";
 
 import { STYLES } from "../styles/styles";
-import { boolean } from "yup";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
