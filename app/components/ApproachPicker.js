@@ -13,14 +13,15 @@ import AppTextInput from "./AppTextInput";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function ApproachPicker({ setFieldValue, value }) {
+function ApproachPicker({ setFieldValue }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
+  const [approachValue, setApproachValue] = useState("");
 
   const approaches = [
     {
       id: 0,
-      ILS: "ILS",
+      approach: "ILS",
     },
     {
       id: 1,
@@ -85,7 +86,7 @@ function ApproachPicker({ setFieldValue, value }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue(value, item.approach);
+          setApproachValue(item.approach);
         }}
       >
         <Text style={styles.listItem}>{item.approach}</Text>
@@ -105,17 +106,14 @@ function ApproachPicker({ setFieldValue, value }) {
           >
             <View pointerEvents={"none"}>
               <AppTextInput
-                value={value}
+                value={approachValue}
                 placeholder={"Approach Type"}
               ></AppTextInput>
             </View>
           </Pressable>
         </View>
-        <View></View>
-        <AppTextInput
-          placeholder='#'
-          onChangeText={(val) => setFieldValue(value, val)}
-        ></AppTextInput>
+
+        <AppTextInput placeholder='#' keyboardType='numeric'></AppTextInput>
       </View>
 
       <View style={styles.centeredView}>
