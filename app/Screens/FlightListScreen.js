@@ -86,6 +86,7 @@ const FlightListScreen = ({ navigation }) => {
       />
       <RoundButton
         buttonSize={60}
+        iconName='plus'
         buttonColor={STYLES.green}
         onPress={() => navigation.navigate("FlightCreate")}
       ></RoundButton>

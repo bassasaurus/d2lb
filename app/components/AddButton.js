@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "../components/Icon";
 import { STYLES } from "../styles/styles";
 
-function AddButton({ onPress, buttonSize, buttonColor }) {
+function RoundButton({ onPress, buttonSize, buttonColor, iconName }) {
   const iconSize = buttonSize * 1.8;
   return (
     <TouchableOpacity
@@ -13,7 +13,7 @@ function AddButton({ onPress, buttonSize, buttonColor }) {
       ]}
       onPress={onPress}
     >
-      <Icon name={"plus"} size={iconSize} iconColor={STYLES.white} />
+      <Icon name={iconName} size={iconSize} iconColor={STYLES.white} />
     </TouchableOpacity>
   );
 }
@@ -31,4 +31,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddButton;
+export default RoundButton;

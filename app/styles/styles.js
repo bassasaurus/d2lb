@@ -9,6 +9,7 @@ export const STYLES = {
   highlight: "#DDDDDD",
   danger: "red",
   green: "green",
+  red: "red",
   grey: "grey",
 
   font: Platform.OS === "android" ? "Roboto" : "Avenir",
