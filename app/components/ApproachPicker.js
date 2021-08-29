@@ -12,6 +12,7 @@ import AppTextInput from "./AppTextInput";
 
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
+import ApproachPickerButton from "./ApproachPickerButton";
 
 function ApproachPicker({ setFieldValue }) {
   const [visible, setVisible] = useState(false);
@@ -106,6 +107,7 @@ function ApproachPicker({ setFieldValue }) {
           >
             <View pointerEvents={"none"}>
               <AppTextInput
+                width={150}
                 value={approachValue}
                 placeholder={"Approach Type"}
               ></AppTextInput>
@@ -113,7 +115,31 @@ function ApproachPicker({ setFieldValue }) {
           </Pressable>
         </View>
 
-        <AppTextInput placeholder='#' keyboardType='numeric'></AppTextInput>
+        <AppTextInput
+          width={80}
+          placeholder='#'
+          keyboardType='numeric'
+        ></AppTextInput>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ApproachPickerButton
+            buttonSize={40}
+            buttonColor={STYLES.green}
+            iconName='plus'
+          ></ApproachPickerButton>
+
+          <ApproachPickerButton
+            buttonSize={40}
+            buttonColor={STYLES.red}
+            iconName='minus'
+          ></ApproachPickerButton>
+        </View>
       </View>
 
       <View style={styles.centeredView}>
