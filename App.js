@@ -14,14 +14,14 @@ export default function App() {
   return (
     <>
       <StatusBar style='auto' />
-      {/* <SafeAreaView>
+      <SafeAreaView>
         <ApproachPicker></ApproachPicker>
-        <FlightCreateScreen></FlightCreateScreen>
-      </SafeAreaView> */}
+        {/* <FlightCreateScreen></FlightCreateScreen> */}
+      </SafeAreaView>
 
-      <NavigationContainer>
+      {/* <NavigationContainer>
         <StackNavigator></StackNavigator>
-      </NavigationContainer>
+      </NavigationContainer> */}
     </>
     // <SafeAreaView>
     //   <LoginScreen></LoginScreen>
