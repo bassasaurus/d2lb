@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import Icon from "../components/Icon";
+import Icon from "./Icon";
 import { STYLES } from "../styles/styles";
 
 function RoundButton({ onPress, buttonSize, buttonColor, iconName }) {

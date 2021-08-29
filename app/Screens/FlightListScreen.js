@@ -13,7 +13,7 @@ import {
 import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
-import RoundButton from "../components/AddButton";
+import RoundButton from "../components/RoundButton";
 
 const FlightListScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
