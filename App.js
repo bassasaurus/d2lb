@@ -15,8 +15,8 @@ export default function App() {
     <>
       <StatusBar style='auto' />
       <SafeAreaView>
-        {/* <ApproachPicker></ApproachPicker> */}
-        <FlightCreateScreen></FlightCreateScreen>
+        <ApproachPicker></ApproachPicker>
+        {/* <FlightCreateScreen></FlightCreateScreen> */}
       </SafeAreaView>
 
       {/* <NavigationContainer>

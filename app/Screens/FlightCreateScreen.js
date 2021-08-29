@@ -60,6 +60,8 @@ function FlightCreateScreen(props) {
           landings_night: "",
           instrument: "",
           simulated_instrument: "",
+          approach: null,
+          number: null,
         }}
         validationSchema={schema}
       >
@@ -113,7 +115,6 @@ function FlightCreateScreen(props) {
                   onChangeText={handleChange("aircraft")}
                   setFieldValue={setFieldValue}
                   handleAircraftId={handleAircraftId}
-                  keyboardType={"numeric"}
                 ></AircraftPicker>
                 <View>
                   {errors.aircraft ? (
@@ -314,7 +315,13 @@ function FlightCreateScreen(props) {
             ></AppTextInput>
 
             <View>
-              <ApproachPicker></ApproachPicker>
+              <ApproachPicker
+                style={{ flex: 0.5 }}
+                approachvalue={values.approach}
+                numberValue={values.number}
+                onChangeText={handleChange("approach")}
+                setFieldValue={setFieldValue}
+              ></ApproachPicker>
             </View>
 
             <View style={{ marginTop: 60 }}>

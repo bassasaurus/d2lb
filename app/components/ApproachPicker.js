@@ -15,8 +15,9 @@ import FlatListItemSeparator from "./FlatListItemSeparator";
 
 function ApproachPicker({ setFieldValue, value }) {
   const [visible, setVisible] = useState(false);
+  const [data, setData] = useState("");
 
-  const data = [
+  const approaches = [
     {
       id: 0,
       ILS: "ILS",
@@ -75,12 +76,16 @@ function ApproachPicker({ setFieldValue, value }) {
     },
   ];
 
+  const fetchData = () => {
+    setData(approaches);
+  };
+
   const renderItem = ({ item }) => (
     <View style={styles.container}>
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("approach", item.approach);
+          setFieldValue(value, item.approach);
         }}
       >
         <Text style={styles.listItem}>{item.approach}</Text>
@@ -90,27 +95,26 @@ function ApproachPicker({ setFieldValue, value }) {
 
   return (
     <>
-      <View
-        style={{
-          flexDirection: "row",
-          flex: 1,
-        }}
-      >
-        <Pressable
-          onPress={() => {
-            setVisible(true);
-          }}
-        >
-          <View pointerEvents={"none"}>
-            <AppTextInput
-              value={value}
-              placeholder={"Approach Type"}
-            ></AppTextInput>
-          </View>
-        </Pressable>
+      <View style={{ flexDirection: "row" }}>
+        <View>
+          <Pressable
+            onPress={() => {
+              fetchData();
+              setVisible(true);
+            }}
+          >
+            <View pointerEvents={"none"}>
+              <AppTextInput
+                value={value}
+                placeholder={"Approach Type"}
+              ></AppTextInput>
+            </View>
+          </Pressable>
+        </View>
+        <View></View>
         <AppTextInput
           placeholder='#'
-          onChangeText={(val) => setFieldValue("approach", parseInt(val))}
+          onChangeText={(val) => setFieldValue(value, val)}
         ></AppTextInput>
       </View>
 
@@ -133,7 +137,6 @@ function ApproachPicker({ setFieldValue, value }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "row",
   },
   input: {
     borderWidth: 1,
