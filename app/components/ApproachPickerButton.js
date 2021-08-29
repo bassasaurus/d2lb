@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "./Icon";
 import { STYLES } from "../styles/styles";
 
-function ApproachPickerButton({ onPress, buttonSize, buttonColor, iconName }) {
+function AddFormButton({ onPress, buttonSize, buttonColor, iconName }) {
   const iconSize = buttonSize * 1.8;
   return (
     <TouchableOpacity
@@ -20,12 +20,13 @@ function ApproachPickerButton({ onPress, buttonSize, buttonColor, iconName }) {
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 1,
-    borderColor: STYLES.white,
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: STYLES.white,
     borderRadius: 100,
   },
 });
 
-export default ApproachPickerButton;
+export default AddFormButton;

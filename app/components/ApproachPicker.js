@@ -12,7 +12,7 @@ import AppTextInput from "./AppTextInput";
 
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
-import ApproachPickerButton from "./ApproachPickerButton";
+import AddFormButton from "./ApproachPickerButton";
 
 function ApproachPicker({ setFieldValue }) {
   const [visible, setVisible] = useState(false);
@@ -97,7 +97,7 @@ function ApproachPicker({ setFieldValue }) {
 
   return (
     <>
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
         <View>
           <Pressable
             onPress={() => {
@@ -121,24 +121,31 @@ function ApproachPicker({ setFieldValue }) {
           keyboardType='numeric'
         ></AppTextInput>
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <ApproachPickerButton
-            buttonSize={40}
-            buttonColor={STYLES.green}
-            iconName='plus'
-          ></ApproachPickerButton>
-
-          <ApproachPickerButton
-            buttonSize={40}
-            buttonColor={STYLES.red}
-            iconName='minus'
-          ></ApproachPickerButton>
+        <View style={{ flexDirection: "row" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "flex-end",
+            }}
+          >
+            <AddFormButton
+              buttonSize={41}
+              buttonColor={STYLES.green}
+              iconName='plus'
+            ></AddFormButton>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "flex-end",
+            }}
+          >
+            <AddFormButton
+              buttonSize={41}
+              buttonColor={STYLES.red}
+              iconName='minus'
+            ></AddFormButton>
+          </View>
         </View>
       </View>
 
