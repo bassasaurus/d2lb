@@ -8,11 +8,11 @@ function StackNavigator(props) {
   const Stack = createStackNavigator();
 
   const forFade = ({ current }) => ({
-  cardStyle: {
-    opacity: current.progress,
-  },
+    cardStyle: {
+      opacity: current.progress,
+    },
   });
-  
+
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -20,9 +20,8 @@ function StackNavigator(props) {
         component={FlightListScreen}
         options={{
           title: "Flights",
-          cardStyleInterpolator: forFade
+          cardStyleInterpolator: forFade,
         }}
-        
       />
 
       <Stack.Screen
@@ -30,7 +29,7 @@ function StackNavigator(props) {
         component={FlightDetailScreen}
         options={{
           title: "Detail",
-          cardStyleInterpolator: forFade
+          cardStyleInterpolator: forFade,
         }}
       />
       {(props) => <DetailScreen {...props} id={id} />}
@@ -40,7 +39,7 @@ function StackNavigator(props) {
         component={FlightCreateScreen}
         options={{
           title: "New Flight",
-          cardStyleInterpolator: forFade
+          cardStyleInterpolator: forFade,
         }}
       />
     </Stack.Navigator>
