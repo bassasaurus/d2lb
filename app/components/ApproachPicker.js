@@ -145,27 +145,6 @@ function ApproachPicker({ setFieldValue, values }) {
             }}
           >
             <View style={{ marginRight: 10 }}>
-              {count <= 3 ? (
-                <AddFormButton
-                  buttonSize={40}
-                  buttonColor={STYLES.green}
-                  iconName='plus'
-                  onPress={() => {
-                    setCount(limitCount(count + 1));
-                  }}
-                ></AddFormButton>
-              ) : (
-                <View></View>
-              )}
-            </View>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "flex-end",
-            }}
-          >
-            <View style={{ marginRight: 40 }}>
               {count > 0 ? (
                 <AddFormButton
                   buttonSize={40}
@@ -176,7 +155,28 @@ function ApproachPicker({ setFieldValue, values }) {
                   }}
                 ></AddFormButton>
               ) : (
-                <View></View>
+                <View style={{ width: 40 }}></View>
+              )}
+            </View>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "flex-end",
+            }}
+          >
+            <View style={{ marginRight: 40 }}>
+              {count < 3 ? (
+                <AddFormButton
+                  buttonSize={40}
+                  buttonColor={STYLES.green}
+                  iconName='plus'
+                  onPress={() => {
+                    setCount(limitCount(count + 1));
+                  }}
+                ></AddFormButton>
+              ) : (
+                <View style={{ width: 40 }}></View>
               )}
             </View>
           </View>
