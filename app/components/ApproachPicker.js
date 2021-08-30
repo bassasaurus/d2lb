@@ -98,7 +98,7 @@ function ApproachPicker({ ...props }) {
 
   return (
     <>
-      <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
         <View>
           <Pressable
             onPress={() => {
