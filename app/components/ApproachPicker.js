@@ -13,6 +13,7 @@ import AppTextInput from "./AppTextInput";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 import AddFormButton from "./ApproachPickerButton";
+import { justifyContent } from "styled-system";
 
 function ApproachPicker({ setFieldValue }) {
   const [visible, setVisible] = useState(false);
@@ -128,11 +129,13 @@ function ApproachPicker({ setFieldValue }) {
               alignItems: "flex-end",
             }}
           >
-            <AddFormButton
-              buttonSize={41}
-              buttonColor={STYLES.green}
-              iconName='plus'
-            ></AddFormButton>
+            <View style={{ marginRight: 10 }}>
+              <AddFormButton
+                buttonSize={40}
+                buttonColor={STYLES.green}
+                iconName='plus'
+              ></AddFormButton>
+            </View>
           </View>
           <View
             style={{
@@ -140,11 +143,13 @@ function ApproachPicker({ setFieldValue }) {
               alignItems: "flex-end",
             }}
           >
-            <AddFormButton
-              buttonSize={41}
-              buttonColor={STYLES.red}
-              iconName='minus'
-            ></AddFormButton>
+            <View style={{ marginRight: 40 }}>
+              <AddFormButton
+                buttonSize={40}
+                buttonColor={STYLES.red}
+                iconName='minus'
+              ></AddFormButton>
+            </View>
           </View>
         </View>
       </View>
