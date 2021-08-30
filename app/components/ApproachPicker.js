@@ -15,10 +15,9 @@ import FlatListItemSeparator from "./FlatListItemSeparator";
 import AddFormButton from "./ApproachPickerButton";
 import { justifyContent } from "styled-system";
 
-function ApproachPicker({ ...props }) {
+function ApproachPicker({ setFieldValue, values }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
-  const [approachValue, setApproachValue] = useState("");
 
   const approaches = [
     {
@@ -88,7 +87,7 @@ function ApproachPicker({ ...props }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setApproachValue(item.approach);
+          setFieldValue("approach", item.approach);
         }}
       >
         <Text style={styles.listItem}>{item.approach}</Text>
@@ -109,7 +108,7 @@ function ApproachPicker({ ...props }) {
             <View pointerEvents={"none"}>
               <AppTextInput
                 width={150}
-                value={approachValue}
+                value={values.approach}
                 placeholder={"Approach Type"}
               ></AppTextInput>
             </View>
@@ -120,6 +119,7 @@ function ApproachPicker({ ...props }) {
           width={80}
           placeholder='#'
           keyboardType='numeric'
+          onChangeText={(val) => setFieldValue("number", parseInt(val))}
         ></AppTextInput>
 
         <View style={{ flexDirection: "row" }}>

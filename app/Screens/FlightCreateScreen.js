@@ -12,6 +12,7 @@ import AppText from "../components/AppText";
 import Checkbox from "../components/Checkbox";
 
 import { STYLES } from "../styles/styles";
+import { ScrollView } from "react-native-gesture-handler";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
@@ -41,310 +42,312 @@ function FlightCreateScreen(props) {
   });
 
   return (
-    <View style={styles.container}>
-      <Formik
-        initialValues={{
-          date: "",
-          route: "",
-          aircraft: "",
-          tailnumber: "",
-          duration: "",
-          pilot_in_command: false,
-          second_in_command: false,
-          solo: false,
-          dual: false,
-          instructor: false,
-          simulator: false,
-          cross_country: false,
-          landings_day: "",
-          landings_night: "",
-          instrument: "",
-          simulated_instrument: "",
-          approach: null,
-          number: null,
-        }}
-        validationSchema={schema}
-      >
-        {({ values, handleChange, setFieldValue, errors }) => (
-          <>
-            <Pressable
-              onPress={() => {
-                setVisible(true);
-              }}
-            >
-              <View pointerEvents='none'>
-                <AppTextInput
-                  value={values.date.toString()}
-                  onChangeText={handleChange("date")}
-                  placeholder='Date'
-                />
-              </View>
-            </Pressable>
-
-            <View>
-              {errors.date ? (
-                <Text style={styles.errors}>{errors.date}</Text>
-              ) : (
-                <View></View>
-              )}
-            </View>
-
-            <AppTextInput
-              value={dashNotSpace(values.route)}
-              onChangeText={handleChange("route")}
-              placeholder='Route'
-              autoCorrect={false}
-              autoCapitalize={"characters"}
-              keyboardType={"default"}
-              clearButtonMode={"while-editing"}
-            />
-
-            <View>
-              {errors.route ? (
-                <Text style={styles.errors}>{errors.route}</Text>
-              ) : (
-                <View></View>
-              )}
-            </View>
-
-            <View style={{ flexDirection: "row" }}>
-              <View style={{ flex: 0.5, marginRight: 10 }}>
-                <AircraftPicker
-                  style={{ flex: 0.5 }}
-                  value={values.aircraft}
-                  onChangeText={handleChange("aircraft")}
-                  setFieldValue={setFieldValue}
-                  handleAircraftId={handleAircraftId}
-                ></AircraftPicker>
-                <View>
-                  {errors.aircraft ? (
-                    <Text style={styles.errors}>{errors.aircraft}</Text>
-                  ) : (
-                    <View></View>
-                  )}
-                </View>
-              </View>
-
-              <View style={{ flex: 0.5 }}>
-                {aircraftId ? (
-                  <TailPicker
-                    value={values.tailnumber}
-                    onChangeText={handleChange("tailnumber")}
-                    setFieldValue={setFieldValue}
-                    filterBy={values.aircraft}
-                    aircraftId={aircraftId}
-                  ></TailPicker>
-                ) : (
-                  <View>
-                    <AppTextInput
-                      placeholder={"Aircraft choice required."}
-                      editable={false}
-                    ></AppTextInput>
-                  </View>
-                )}
-                <View>
-                  {errors.tailnumber ? (
-                    <Text style={styles.errors}>{errors.tailnumber}</Text>
-                  ) : (
-                    <View></View>
-                  )}
-                </View>
-              </View>
-            </View>
-
-            <AppTextInput
-              value={values.duration}
-              onChangeText={(val) => {
-                setFieldValue("duration", parseFloat(val));
-              }}
-              placeholder='Duration - XX.X'
-              autoCorrect={false}
-              keyboardType={"numeric"}
-              clearButtonMode={"while-editing"}
-            ></AppTextInput>
-
-            <View>
-              {errors.duration ? (
-                <Text style={styles.errors}>{errors.duration}</Text>
-              ) : (
-                <View></View>
-              )}
-            </View>
-
-            <View
-              style={{
-                flexDirection: "row",
-                paddingTop: 10,
-                justifyContent: "space-between",
-              }}
-            >
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue("pilot_in_command", !values.pilot_in_command);
-                    setFieldValue("second_in_command", false);
-                    setFieldValue("solo", false);
-                  }}
-                  isChecked={values.pilot_in_command}
-                ></Checkbox>
-                <AppText>PIC</AppText>
-              </View>
-
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue(
-                      "second_in_command",
-                      !values.second_in_command
-                    );
-                    setFieldValue("pilot_in_command", false);
-                    setFieldValue("solo", false);
-                    setFieldValue("dual", false);
-                    setFieldValue("instructor", false);
-                  }}
-                  isChecked={values.second_in_command}
-                ></Checkbox>
-                <AppText>SIC</AppText>
-              </View>
-
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue("solo", !values.solo);
-                    setFieldValue("dual", false);
-                    setFieldValue("pilot_in_command", false);
-                    setFieldValue("second_in_command", false);
-                    setFieldValue("instructor", false);
-                    setFieldValue("simulator", false);
-                  }}
-                  isChecked={values.solo}
-                ></Checkbox>
-                <AppText>Solo</AppText>
-              </View>
-
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue("dual", !values.dual);
-                    setFieldValue("solo", false);
-                    setFieldValue("instructor", false);
-                  }}
-                  isChecked={values.dual}
-                ></Checkbox>
-                <AppText>Dual</AppText>
-              </View>
-
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue("instructor", !values.instructor);
-                    setFieldValue("dual", false);
-                    setFieldValue("solo", false);
-                  }}
-                  isChecked={values.instructor}
-                ></Checkbox>
-                <AppText>CFI</AppText>
-              </View>
-
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue("simulator", !values.simulator);
-                    setFieldValue("cross_country", false);
-                    setFieldValue("solo", false);
-                  }}
-                  isChecked={values.simulator}
-                ></Checkbox>
-                <AppText>Sim</AppText>
-              </View>
-
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue("cross_country", !values.cross_country);
-                    setFieldValue("simulator", false);
-                  }}
-                  isChecked={values.cross_country}
-                ></Checkbox>
-                <AppText>XC</AppText>
-              </View>
-            </View>
-
-            <AppTextInput
-              value={values.landings_day}
-              onChangeText={(val) => {
-                setFieldValue("landings_day", parseInt(val));
-              }}
-              placeholder='Day Landings'
-              autoCorrect={false}
-              keyboardType={"numeric"}
-              clearButtonMode={"while-editing"}
-            ></AppTextInput>
-
-            <AppTextInput
-              value={values.landings_night}
-              onChangeText={(val) => {
-                setFieldValue("landings_night", parseInt(val));
-              }}
-              placeholder='Night Landings'
-              autoCorrect={false}
-              keyboardType={"numeric"}
-              clearButtonMode={"while-editing"}
-            ></AppTextInput>
-
-            <AppTextInput
-              value={values.instrument}
-              onChangeText={(val) => {
-                setFieldValue("instrument", parseFloat(val));
-              }}
-              placeholder='IFR'
-              autoCorrect={false}
-              keyboardType={"numeric"}
-              clearButtonMode={"while-editing"}
-            ></AppTextInput>
-
-            <AppTextInput
-              value={values.simulated_instrument}
-              onChangeText={(val) => {
-                setFieldValue("simulated_instrument", parseFloat(val));
-              }}
-              placeholder='Simulated IFR'
-              autoCorrect={false}
-              keyboardType={"numeric"}
-              clearButtonMode={"while-editing"}
-            ></AppTextInput>
-
-            <View>
-              <ApproachPicker
-                style={{ flex: 0.5 }}
-                approachvalue={values.approach}
-                numberValue={values.number}
-                onChangeText={handleChange("approach")}
-                setFieldValue={setFieldValue}
-              ></ApproachPicker>
-            </View>
-
-            <View style={{ marginTop: 60 }}>
-              <Text>{JSON.stringify(values, null, "  ")}</Text>
-            </View>
-
-            <Modal animationType='slide' transparent={true} visible={visible}>
-              <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                  <CalendarPicker
-                    selectedDayColor='lightblue'
-                    onDateChange={(date) => {
-                      setFieldValue("date", date.format("M-D-YYYY"));
-                      setVisible(false);
-                    }}
+    <ScrollView>
+      <View style={styles.container}>
+        <Formik
+          initialValues={{
+            date: "",
+            route: "",
+            aircraft: "",
+            tailnumber: "",
+            duration: "",
+            pilot_in_command: false,
+            second_in_command: false,
+            solo: false,
+            dual: false,
+            instructor: false,
+            simulator: false,
+            cross_country: false,
+            landings_day: "",
+            landings_night: "",
+            instrument: "",
+            simulated_instrument: "",
+            approach: null,
+            number: null,
+          }}
+          validationSchema={schema}
+        >
+          {({ values, handleChange, setFieldValue, errors }) => (
+            <>
+              <Pressable
+                onPress={() => {
+                  setVisible(true);
+                }}
+              >
+                <View pointerEvents='none'>
+                  <AppTextInput
+                    value={values.date.toString()}
+                    onChangeText={handleChange("date")}
+                    placeholder='Date'
                   />
                 </View>
+              </Pressable>
+
+              <View>
+                {errors.date ? (
+                  <Text style={styles.errors}>{errors.date}</Text>
+                ) : (
+                  <View></View>
+                )}
               </View>
-            </Modal>
-          </>
-        )}
-      </Formik>
-    </View>
+
+              <AppTextInput
+                value={dashNotSpace(values.route)}
+                onChangeText={handleChange("route")}
+                placeholder='Route'
+                autoCorrect={false}
+                autoCapitalize={"characters"}
+                keyboardType={"default"}
+                clearButtonMode={"while-editing"}
+              />
+
+              <View>
+                {errors.route ? (
+                  <Text style={styles.errors}>{errors.route}</Text>
+                ) : (
+                  <View></View>
+                )}
+              </View>
+
+              <View style={{ flexDirection: "row" }}>
+                <View style={{ flex: 0.5, marginRight: 10 }}>
+                  <AircraftPicker
+                    style={{ flex: 0.5 }}
+                    value={values.aircraft}
+                    onChangeText={handleChange("aircraft")}
+                    setFieldValue={setFieldValue}
+                    handleAircraftId={handleAircraftId}
+                  ></AircraftPicker>
+                  <View>
+                    {errors.aircraft ? (
+                      <Text style={styles.errors}>{errors.aircraft}</Text>
+                    ) : (
+                      <View></View>
+                    )}
+                  </View>
+                </View>
+
+                <View style={{ flex: 0.5 }}>
+                  {aircraftId ? (
+                    <TailPicker
+                      value={values.tailnumber}
+                      onChangeText={handleChange("tailnumber")}
+                      setFieldValue={setFieldValue}
+                      filterBy={values.aircraft}
+                      aircraftId={aircraftId}
+                    ></TailPicker>
+                  ) : (
+                    <View>
+                      <AppTextInput
+                        placeholder={"Aircraft choice required."}
+                        editable={false}
+                      ></AppTextInput>
+                    </View>
+                  )}
+                  <View>
+                    {errors.tailnumber ? (
+                      <Text style={styles.errors}>{errors.tailnumber}</Text>
+                    ) : (
+                      <View></View>
+                    )}
+                  </View>
+                </View>
+              </View>
+
+              <AppTextInput
+                value={values.duration}
+                onChangeText={(val) => {
+                  setFieldValue("duration", parseFloat(val));
+                }}
+                placeholder='Duration - XX.X'
+                autoCorrect={false}
+                keyboardType={"numeric"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
+
+              <View>
+                {errors.duration ? (
+                  <Text style={styles.errors}>{errors.duration}</Text>
+                ) : (
+                  <View></View>
+                )}
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  paddingTop: 10,
+                  justifyContent: "space-between",
+                }}
+              >
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    onPress={() => {
+                      setFieldValue(
+                        "pilot_in_command",
+                        !values.pilot_in_command
+                      );
+                      setFieldValue("second_in_command", false);
+                      setFieldValue("solo", false);
+                    }}
+                    isChecked={values.pilot_in_command}
+                  ></Checkbox>
+                  <AppText>PIC</AppText>
+                </View>
+
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    onPress={() => {
+                      setFieldValue(
+                        "second_in_command",
+                        !values.second_in_command
+                      );
+                      setFieldValue("pilot_in_command", false);
+                      setFieldValue("solo", false);
+                      setFieldValue("dual", false);
+                      setFieldValue("instructor", false);
+                    }}
+                    isChecked={values.second_in_command}
+                  ></Checkbox>
+                  <AppText>SIC</AppText>
+                </View>
+
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    onPress={() => {
+                      setFieldValue("solo", !values.solo);
+                      setFieldValue("dual", false);
+                      setFieldValue("pilot_in_command", false);
+                      setFieldValue("second_in_command", false);
+                      setFieldValue("instructor", false);
+                      setFieldValue("simulator", false);
+                    }}
+                    isChecked={values.solo}
+                  ></Checkbox>
+                  <AppText>Solo</AppText>
+                </View>
+
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    onPress={() => {
+                      setFieldValue("dual", !values.dual);
+                      setFieldValue("solo", false);
+                      setFieldValue("instructor", false);
+                    }}
+                    isChecked={values.dual}
+                  ></Checkbox>
+                  <AppText>Dual</AppText>
+                </View>
+
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    onPress={() => {
+                      setFieldValue("instructor", !values.instructor);
+                      setFieldValue("dual", false);
+                      setFieldValue("solo", false);
+                    }}
+                    isChecked={values.instructor}
+                  ></Checkbox>
+                  <AppText>CFI</AppText>
+                </View>
+
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    onPress={() => {
+                      setFieldValue("simulator", !values.simulator);
+                      setFieldValue("cross_country", false);
+                      setFieldValue("solo", false);
+                    }}
+                    isChecked={values.simulator}
+                  ></Checkbox>
+                  <AppText>Sim</AppText>
+                </View>
+
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    onPress={() => {
+                      setFieldValue("cross_country", !values.cross_country);
+                      setFieldValue("simulator", false);
+                    }}
+                    isChecked={values.cross_country}
+                  ></Checkbox>
+                  <AppText>XC</AppText>
+                </View>
+              </View>
+
+              <AppTextInput
+                value={values.landings_day}
+                onChangeText={(val) => {
+                  setFieldValue("landings_day", parseInt(val));
+                }}
+                placeholder='Day Landings'
+                autoCorrect={false}
+                keyboardType={"numeric"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
+
+              <AppTextInput
+                value={values.landings_night}
+                onChangeText={(val) => {
+                  setFieldValue("landings_night", parseInt(val));
+                }}
+                placeholder='Night Landings'
+                autoCorrect={false}
+                keyboardType={"numeric"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
+
+              <AppTextInput
+                value={values.instrument}
+                onChangeText={(val) => {
+                  setFieldValue("instrument", parseFloat(val));
+                }}
+                placeholder='IFR'
+                autoCorrect={false}
+                keyboardType={"numeric"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
+
+              <AppTextInput
+                value={values.simulated_instrument}
+                onChangeText={(val) => {
+                  setFieldValue("simulated_instrument", parseFloat(val));
+                }}
+                placeholder='Simulated IFR'
+                autoCorrect={false}
+                keyboardType={"numeric"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
+
+              <View>
+                <ApproachPicker
+                  setFieldValue={setFieldValue}
+                  values={values}
+                ></ApproachPicker>
+              </View>
+
+              <View style={{ marginTop: 30 }}>
+                <Text>{JSON.stringify(values, null, "  ")}</Text>
+              </View>
+
+              <Modal animationType='slide' transparent={true} visible={visible}>
+                <View style={styles.centeredView}>
+                  <View style={styles.modalView}>
+                    <CalendarPicker
+                      selectedDayColor='lightblue'
+                      onDateChange={(date) => {
+                        setFieldValue("date", date.format("M-D-YYYY"));
+                        setVisible(false);
+                      }}
+                    />
+                  </View>
+                </View>
+              </Modal>
+            </>
+          )}
+        </Formik>
+      </View>
+    </ScrollView>
   );
 }
 
