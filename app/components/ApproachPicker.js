@@ -15,7 +15,7 @@ import FlatListItemSeparator from "./FlatListItemSeparator";
 import AddFormButton from "./ApproachPickerButton";
 import { justifyContent } from "styled-system";
 
-function ApproachPicker({ setFieldValue }) {
+function ApproachPicker({ ...props }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
   const [approachValue, setApproachValue] = useState("");
@@ -98,7 +98,7 @@ function ApproachPicker({ setFieldValue }) {
 
   return (
     <>
-      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
         <View>
           <Pressable
             onPress={() => {
