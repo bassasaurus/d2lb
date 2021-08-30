@@ -18,6 +18,9 @@ import { justifyContent } from "styled-system";
 function ApproachPicker({ setFieldValue, values }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
+  const [count, setCount] = useState(0);
+
+  console.log(count);
 
   const approaches = [
     {
@@ -134,6 +137,7 @@ function ApproachPicker({ setFieldValue, values }) {
                 buttonSize={40}
                 buttonColor={STYLES.green}
                 iconName='plus'
+                onPress={() => setCount(count + 1)}
               ></AddFormButton>
             </View>
           </View>
@@ -148,6 +152,7 @@ function ApproachPicker({ setFieldValue, values }) {
                 buttonSize={40}
                 buttonColor={STYLES.red}
                 iconName='minus'
+                onPress={() => setCount(count - 1)}
               ></AddFormButton>
             </View>
           </View>
