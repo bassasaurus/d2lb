@@ -182,7 +182,6 @@ function ApproachPicker({ setFieldValue, values }) {
           </View>
         </View>
       </View>
-
       <View style={styles.centeredView}>
         <Modal animationType='slide' transparent={true} visible={visible}>
           <View style={styles.modalView}>
