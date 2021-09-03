@@ -110,12 +110,9 @@ function ApproachPicker({ setFieldValue, values }) {
     </View>
   );
 
-  return [...Array(count)].map((e, i) => (
+  return (
     <>
-      <View
-        key={i}
-        style={{ flexDirection: "row", justifyContent: "space-evenly" }}
-      >
+      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
         <View>
           <Pressable
             onPress={() => {
@@ -199,7 +196,7 @@ function ApproachPicker({ setFieldValue, values }) {
         </Modal>
       </View>
     </>
-  ));
+  );
 }
 
 const styles = StyleSheet.create({
