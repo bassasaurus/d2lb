@@ -128,7 +128,6 @@ function ApproachPicker({ setFieldValue, values }) {
                 width={150}
                 value={values.approach}
                 placeholder={"Approach Type"}
-                clearButtonMode={"always"}
               ></AppTextInput>
             </View>
           </Pressable>
@@ -150,7 +149,7 @@ function ApproachPicker({ setFieldValue, values }) {
             }}
           >
             <View style={{ marginRight: 10 }}>
-              {count > 0 ? (
+              {count > 1 ? (
                 <AddFormButton
                   buttonSize={40}
                   buttonColor={STYLES.red}
