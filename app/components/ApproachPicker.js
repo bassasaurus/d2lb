@@ -128,6 +128,7 @@ function ApproachPicker({ setFieldValue, values }) {
                 width={150}
                 value={values.approach}
                 placeholder={"Approach Type"}
+                clearButtonMode={"always"}
               ></AppTextInput>
             </View>
           </Pressable>
@@ -137,6 +138,7 @@ function ApproachPicker({ setFieldValue, values }) {
           width={80}
           placeholder='#'
           keyboardType='numeric'
+          clearButtonMode={"always"}
           onChangeText={(val) => setFieldValue("number", parseInt(val))}
         ></AppTextInput>
 
@@ -202,12 +204,8 @@ function ApproachPicker({ setFieldValue, values }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  input: {
-    borderWidth: 1,
-  },
+  container: {},
+
   modalView: {
     margin: 20,
     backgroundColor: "white",
