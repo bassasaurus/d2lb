@@ -18,11 +18,11 @@ import { justifyContent } from "styled-system";
 function ApproachPicker({ setFieldValue, values }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(1);
 
   const limitCount = (count) => {
     if (count <= 0) {
-      return 0;
+      return 1;
     }
     if (count > 2) {
       return 3;
@@ -110,9 +110,12 @@ function ApproachPicker({ setFieldValue, values }) {
     </View>
   );
 
-  return (
+  return [...Array(count)].map((e, i) => (
     <>
-      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+      <View
+        key={i}
+        style={{ flexDirection: "row", justifyContent: "space-evenly" }}
+      >
         <View>
           <Pressable
             onPress={() => {
@@ -195,7 +198,7 @@ function ApproachPicker({ setFieldValue, values }) {
         </Modal>
       </View>
     </>
-  );
+  ));
 }
 
 const styles = StyleSheet.create({
