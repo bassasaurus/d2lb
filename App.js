@@ -9,6 +9,7 @@ import StackNavigator from "./app/navigation/StackNavigator";
 import LoginScreen from "./app/screens/LoginScreen";
 import FlightCreateScreen from "./app/screens/FlightCreateScreen";
 import ApproachPicker from "./app/components/ApproachPicker";
+import FormTest from "./app/components/FormTest";
 
 export default function App() {
   return (
@@ -16,7 +17,8 @@ export default function App() {
       <StatusBar style='auto' />
       <SafeAreaView>
         {/* <ApproachPicker></ApproachPicker> */}
-        <FlightCreateScreen></FlightCreateScreen>
+        {/* <FlightCreateScreen></FlightCreateScreen> */}
+        <FormTest></FormTest>
       </SafeAreaView>
 
       {/* <NavigationContainer>

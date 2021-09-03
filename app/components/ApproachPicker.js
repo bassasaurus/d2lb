@@ -12,7 +12,7 @@ import AppTextInput from "./AppTextInput";
 
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
-import AddFormButton from "./ApproachPickerButton";
+import AddFormButton from "./AddFormButton";
 import { justifyContent } from "styled-system";
 
 function ApproachPicker({ setFieldValue, values }) {
@@ -34,7 +34,7 @@ function ApproachPicker({ setFieldValue, values }) {
 
   console.log(count);
 
-  const approaches = [
+  const approachChoices = [
     {
       id: 0,
       approach: "ILS",
@@ -94,7 +94,7 @@ function ApproachPicker({ setFieldValue, values }) {
   ];
 
   const fetchData = () => {
-    setData(approaches);
+    setData(approachChoices);
   };
 
   const renderItem = ({ item }) => (
