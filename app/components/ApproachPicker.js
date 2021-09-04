@@ -112,7 +112,7 @@ function ApproachPicker({ setFieldValue, values }) {
 
   return (
     <>
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
         <View>
           <Pressable
             onPress={() => {
@@ -184,7 +184,7 @@ function ApproachPicker({ setFieldValue, values }) {
         </View>
       </View>
 
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
         <View>
           <Pressable
             onPress={() => {
@@ -210,7 +210,7 @@ function ApproachPicker({ setFieldValue, values }) {
           onChangeText={(val) => setFieldValue("number", parseInt(val))}
         ></AppTextInput>
 
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
           <View
             style={{
               flexDirection: "row",
