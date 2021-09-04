@@ -112,7 +112,7 @@ function ApproachPicker({ setFieldValue, values }) {
 
   return (
     <>
-      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+      <View style={{ flexDirection: "row" }}>
         <View>
           <Pressable
             onPress={() => {
@@ -182,6 +182,69 @@ function ApproachPicker({ setFieldValue, values }) {
             </View>
           </View>
         </View>
+      </View>
+
+      <View style={{ flexDirection: "row" }}>
+        <View>
+          <Pressable
+            onPress={() => {
+              fetchData();
+              setVisible(true);
+            }}
+          >
+            <View pointerEvents={"none"}>
+              <AppTextInput
+                width={150}
+                value={values.approach}
+                placeholder={"Approach Type"}
+              ></AppTextInput>
+            </View>
+          </Pressable>
+        </View>
+
+        <AppTextInput
+          width={80}
+          placeholder='#'
+          keyboardType='numeric'
+          clearButtonMode={"always"}
+          onChangeText={(val) => setFieldValue("number", parseInt(val))}
+        ></AppTextInput>
+
+        <View style={{ flexDirection: "row" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "flex-end",
+            }}
+          ></View>
+        </View>
+      </View>
+
+      <View style={{ flexDirection: "row" }}>
+        <View>
+          <Pressable
+            onPress={() => {
+              fetchData();
+              setVisible(true);
+            }}
+          >
+            <View pointerEvents={"none"}>
+              <AppTextInput
+                width={150}
+                value={values.approach}
+                placeholder={"Approach Type"}
+              ></AppTextInput>
+            </View>
+          </Pressable>
+        </View>
+
+        <AppTextInput
+          width={80}
+          placeholder='#'
+          keyboardType='numeric'
+          clearButtonMode={"always"}
+          onChangeText={(val) => setFieldValue("number", parseInt(val))}
+        ></AppTextInput>
       </View>
       <View style={styles.centeredView}>
         <Modal animationType='slide' transparent={true} visible={visible}>
