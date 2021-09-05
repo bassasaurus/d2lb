@@ -15,7 +15,7 @@ import FlatListItemSeparator from "./FlatListItemSeparator";
 import AddFormButton from "./AddFormButton";
 import { justifyContent } from "styled-system";
 
-function ApproachPicker({ setFieldValue, values }) {
+function ApproachPicker({ setFieldValue, values, approachValue, numberValue }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
   const [count, setCount] = useState(1);
@@ -102,7 +102,7 @@ function ApproachPicker({ setFieldValue, values }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("approach", item.approach);
+          setFieldValue(approachValue, item.approach);
         }}
       >
         <Text style={styles.listItem}>{item.approach}</Text>
@@ -112,7 +112,7 @@ function ApproachPicker({ setFieldValue, values }) {
 
   return (
     <>
-      <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
         <View>
           <Pressable
             onPress={() => {
@@ -123,8 +123,9 @@ function ApproachPicker({ setFieldValue, values }) {
             <View pointerEvents={"none"}>
               <AppTextInput
                 width={150}
-                value={values.approach}
+                value={values.approaches}
                 placeholder={"Approach Type"}
+                clearButtonMode={"always"}
               ></AppTextInput>
             </View>
           </Pressable>
@@ -135,7 +136,7 @@ function ApproachPicker({ setFieldValue, values }) {
           placeholder='#'
           keyboardType='numeric'
           clearButtonMode={"always"}
-          onChangeText={(val) => setFieldValue("number", parseInt(val))}
+          onChangeText={(val) => setFieldValue(numberValue, parseInt(val))}
         ></AppTextInput>
 
         <View style={{ flexDirection: "row" }}>
@@ -146,7 +147,7 @@ function ApproachPicker({ setFieldValue, values }) {
             }}
           >
             <View style={{ marginRight: 10 }}>
-              {count > 1 ? (
+              {count > 0 ? (
                 <AddFormButton
                   buttonSize={40}
                   buttonColor={STYLES.red}
@@ -182,69 +183,6 @@ function ApproachPicker({ setFieldValue, values }) {
             </View>
           </View>
         </View>
-      </View>
-
-      <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
-        <View>
-          <Pressable
-            onPress={() => {
-              fetchData();
-              setVisible(true);
-            }}
-          >
-            <View pointerEvents={"none"}>
-              <AppTextInput
-                width={150}
-                value={values.approach}
-                placeholder={"Approach Type"}
-              ></AppTextInput>
-            </View>
-          </Pressable>
-        </View>
-
-        <AppTextInput
-          width={80}
-          placeholder='#'
-          keyboardType='numeric'
-          clearButtonMode={"always"}
-          onChangeText={(val) => setFieldValue("number", parseInt(val))}
-        ></AppTextInput>
-
-        <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "flex-end",
-            }}
-          ></View>
-        </View>
-      </View>
-
-      <View style={{ flexDirection: "row" }}>
-        <View>
-          <Pressable
-            onPress={() => {
-              fetchData();
-              setVisible(true);
-            }}
-          >
-            <View pointerEvents={"none"}>
-              <AppTextInput
-                width={150}
-                value={values.approach}
-                placeholder={"Approach Type"}
-              ></AppTextInput>
-            </View>
-          </Pressable>
-        </View>
-
-        <AppTextInput
-          width={80}
-          placeholder='#'
-          keyboardType='numeric'
-          clearButtonMode={"always"}
-          onChangeText={(val) => setFieldValue("number", parseInt(val))}
-        ></AppTextInput>
       </View>
       <View style={styles.centeredView}>
         <Modal animationType='slide' transparent={true} visible={visible}>

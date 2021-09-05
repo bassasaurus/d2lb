@@ -62,8 +62,9 @@ function FlightCreateScreen(props) {
             landings_night: "",
             instrument: "",
             simulated_instrument: "",
-            approach: null,
-            number: null,
+            approach1: "",
+            approach2: "",
+            approach3: "",
           }}
           validationSchema={schema}
         >
@@ -323,6 +324,26 @@ function FlightCreateScreen(props) {
                 <ApproachPicker
                   setFieldValue={setFieldValue}
                   values={values}
+                  approachValue={"approach1"}
+                  // numberValue={values.approaches[0].number}
+                ></ApproachPicker>
+              </View>
+
+              <View>
+                <ApproachPicker
+                  setFieldValue={setFieldValue}
+                  values={values}
+                  approachValue={"approach2"}
+                  // numberValue={values.approaches[1].number}
+                ></ApproachPicker>
+              </View>
+
+              <View>
+                <ApproachPicker
+                  setFieldValue={setFieldValue}
+                  values={values}
+                  approachValue={"approach3"}
+                  // numberValue={values.approaches[2].number}
                 ></ApproachPicker>
               </View>
 
