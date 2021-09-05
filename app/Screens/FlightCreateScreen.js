@@ -323,8 +323,8 @@ function FlightCreateScreen(props) {
               <View>
                 <ApproachPicker
                   setFieldValue={setFieldValue}
-                  values={values}
                   approachValue={"approach1"}
+                  value={values.approach1}
                   // numberValue={values.approaches[0].number}
                 ></ApproachPicker>
               </View>
@@ -332,8 +332,8 @@ function FlightCreateScreen(props) {
               <View>
                 <ApproachPicker
                   setFieldValue={setFieldValue}
-                  values={values}
                   approachValue={"approach2"}
+                  value={values.approach2}
                   // numberValue={values.approaches[1].number}
                 ></ApproachPicker>
               </View>
@@ -341,8 +341,8 @@ function FlightCreateScreen(props) {
               <View>
                 <ApproachPicker
                   setFieldValue={setFieldValue}
-                  values={values}
                   approachValue={"approach3"}
+                  value={values.approach3}
                   // numberValue={values.approaches[2].number}
                 ></ApproachPicker>
               </View>
