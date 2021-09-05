@@ -62,6 +62,11 @@ function FlightCreateScreen(props) {
             landings_night: "",
             instrument: "",
             simulated_instrument: "",
+            approaches: [
+              { approach_type: "", number: 0 },
+              { approach_type: "", number: 0 },
+              { approach_type: "", number: 0 },
+            ],
             approach1: "",
             appr_number1: 0,
             approach2: "",
