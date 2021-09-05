@@ -63,8 +63,11 @@ function FlightCreateScreen(props) {
             instrument: "",
             simulated_instrument: "",
             approach1: "",
+            appr_number1: 0,
             approach2: "",
+            appr_number2: 0,
             approach3: "",
+            appr_number3: 0,
           }}
           validationSchema={schema}
         >
@@ -324,8 +327,8 @@ function FlightCreateScreen(props) {
                 <ApproachPicker
                   setFieldValue={setFieldValue}
                   approachValue={"approach1"}
-                  value={values.approach1}
-                  // numberValue={values.approaches[0].number}
+                  appr_value={values.approach1}
+                  numberValue={"appr_number1"}
                 ></ApproachPicker>
               </View>
 
@@ -333,8 +336,8 @@ function FlightCreateScreen(props) {
                 <ApproachPicker
                   setFieldValue={setFieldValue}
                   approachValue={"approach2"}
-                  value={values.approach2}
-                  // numberValue={values.approaches[1].number}
+                  appr_value={values.approach2}
+                  numberValue={"appr_number2"}
                 ></ApproachPicker>
               </View>
 
@@ -342,8 +345,8 @@ function FlightCreateScreen(props) {
                 <ApproachPicker
                   setFieldValue={setFieldValue}
                   approachValue={"approach3"}
-                  value={values.approach3}
-                  // numberValue={values.approaches[2].number}
+                  appr_value={values.approach3}
+                  numberValue={"appr_number3"}
                 ></ApproachPicker>
               </View>
 

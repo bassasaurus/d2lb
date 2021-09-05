@@ -15,7 +15,12 @@ import FlatListItemSeparator from "./FlatListItemSeparator";
 import AddFormButton from "./AddFormButton";
 import { justifyContent } from "styled-system";
 
-function ApproachPicker({ setFieldValue, approachValue, numberValue, value }) {
+function ApproachPicker({
+  setFieldValue,
+  approachValue,
+  numberValue,
+  appr_value,
+}) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
   const [count, setCount] = useState(1);
@@ -123,7 +128,7 @@ function ApproachPicker({ setFieldValue, approachValue, numberValue, value }) {
             <View pointerEvents={"none"}>
               <AppTextInput
                 width={150}
-                value={value}
+                value={appr_value}
                 placeholder={"Approach Type"}
                 clearButtonMode={"always"}
               ></AppTextInput>
