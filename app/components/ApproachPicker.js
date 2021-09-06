@@ -108,7 +108,6 @@ function ApproachPicker({ setFieldValue, approachValue, numberValue, value }) {
                 width={150}
                 value={value}
                 placeholder={"Approach Type"}
-                clearButtonMode={"always"}
               ></AppTextInput>
             </View>
           </Pressable>

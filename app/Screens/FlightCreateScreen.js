@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, Modal, Pressable, Button } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Modal,
+  Pressable,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
@@ -13,6 +21,7 @@ import Checkbox from "../components/Checkbox";
 
 import { STYLES } from "../styles/styles";
 import { ScrollView } from "react-native-gesture-handler";
+import { flexDirection } from "styled-system";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
@@ -324,49 +333,85 @@ function FlightCreateScreen(props) {
                 clearButtonMode={"while-editing"}
               ></AppTextInput>
 
-              <View>
+              <View style={{ flexDirection: "row" }}>
                 <ApproachPicker
                   setFieldValue={setFieldValue}
                   approachValue={"approaches[0].approach_type"}
                   value={values.approaches[0].approach_type}
                   numberValue={"approaches[0].number"}
                 ></ApproachPicker>
+                <View style={styles.clearApproachType}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setFieldValue("approaches[0].approach_type", "");
+                    }}
+                  >
+                    <AppText>Clear Approach Type</AppText>
+                  </TouchableOpacity>
+                </View>
               </View>
 
               {formCount > 0 ? (
-                <View>
+                <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
                     setFieldValue={setFieldValue}
                     approachValue={"approaches[1].approach_type"}
                     value={values.approaches[1].approach_type}
                     numberValue={"approaches[1].number"}
                   ></ApproachPicker>
+                  <View style={styles.clearApproachType}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setFieldValue("approaches[1].approach_type", "");
+                      }}
+                    >
+                      <AppText>Clear Approach Type</AppText>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               ) : (
                 <View></View>
               )}
 
               {formCount > 1 ? (
-                <View>
+                <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
                     setFieldValue={setFieldValue}
                     approachValue={"approaches[2].approach_type"}
                     value={values.approaches[2].approach_type}
                     numberValue={"approaches[2].number"}
                   ></ApproachPicker>
+                  <View style={styles.clearApproachType}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setFieldValue("approaches[2].approach_type", "");
+                      }}
+                    >
+                      <AppText>Clear Approach Type</AppText>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               ) : (
                 <View></View>
               )}
 
               {formCount > 2 ? (
-                <View>
+                <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
                     setFieldValue={setFieldValue}
                     approachValue={"approaches[3].approach_type"}
                     value={values.approaches[3].approach_type}
                     numberValue={"approaches[3].number"}
                   ></ApproachPicker>
+                  <View style={styles.clearApproachType}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setFieldValue("approaches[3].approach_type", "");
+                      }}
+                    >
+                      <AppText>Clear Approach Type</AppText>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               ) : (
                 <View></View>
@@ -468,6 +513,15 @@ const styles = StyleSheet.create({
     flex: 0.1,
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+
+  clearApproachType: {
+    marginLeft: 0,
+    marginRight: 10,
+    paddingTop: 10,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
