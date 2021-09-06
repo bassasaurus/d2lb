@@ -18,23 +18,6 @@ import { justifyContent } from "styled-system";
 function ApproachPicker({ setFieldValue, approachValue, numberValue, value }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
-  const [count, setCount] = useState(1);
-
-  console.log(value);
-
-  const limitCount = (count) => {
-    if (count <= 0) {
-      return 1;
-    }
-    if (count > 2) {
-      return 3;
-    }
-    if (count < 3) {
-      return count;
-    }
-  };
-
-  console.log(count);
 
   const approachChoices = [
     {
@@ -115,7 +98,7 @@ function ApproachPicker({ setFieldValue, approachValue, numberValue, value }) {
   return (
     <>
       <View style={{ flexDirection: "row" }}>
-        <View>
+        <View style={{ paddingRight: 10 }}>
           <Pressable
             onPress={() => {
               fetchData();

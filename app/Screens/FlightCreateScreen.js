@@ -13,10 +13,12 @@ import Checkbox from "../components/Checkbox";
 
 import { STYLES } from "../styles/styles";
 import { ScrollView } from "react-native-gesture-handler";
+import AddFormButton from "../components/AddFormButton";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
+  const [formCount, setFormCount] = useState(1);
 
   function handleAircraftId(id) {
     setAircraftId(id);
@@ -332,32 +334,60 @@ function FlightCreateScreen(props) {
                 ></ApproachPicker>
               </View>
 
-              <View>
-                <ApproachPicker
-                  setFieldValue={setFieldValue}
-                  approachValue={"approaches[1].approach_type"}
-                  value={values.approaches[1].approach_type}
-                  numberValue={"approaches[1].number"}
-                ></ApproachPicker>
-              </View>
+              {formCount > 1 ? (
+                <View>
+                  <ApproachPicker
+                    setFieldValue={setFieldValue}
+                    approachValue={"approaches[1].approach_type"}
+                    value={values.approaches[1].approach_type}
+                    numberValue={"approaches[1].number"}
+                  ></ApproachPicker>
+                </View>
+              ) : (
+                <View></View>
+              )}
 
-              <View>
-                <ApproachPicker
-                  setFieldValue={setFieldValue}
-                  approachValue={"approaches[2].approach_type"}
-                  value={values.approaches[2].approach_type}
-                  numberValue={"approaches[2].number"}
-                ></ApproachPicker>
-              </View>
+              {formCount > 2 ? (
+                <View>
+                  <ApproachPicker
+                    setFieldValue={setFieldValue}
+                    approachValue={"approaches[2].approach_type"}
+                    value={values.approaches[2].approach_type}
+                    numberValue={"approaches[2].number"}
+                  ></ApproachPicker>
+                </View>
+              ) : (
+                <View></View>
+              )}
 
-              <View>
-                <ApproachPicker
-                  setFieldValue={setFieldValue}
-                  approachValue={"approaches[3].approach_type"}
-                  value={values.approaches[3].approach_type}
-                  numberValue={"approaches[3].number"}
-                ></ApproachPicker>
-              </View>
+              {formCount > 3 ? (
+                <View>
+                  <ApproachPicker
+                    setFieldValue={setFieldValue}
+                    approachValue={"approaches[3].approach_type"}
+                    value={values.approaches[3].approach_type}
+                    numberValue={"approaches[3].number"}
+                  ></ApproachPicker>
+                </View>
+              ) : (
+                <View></View>
+              )}
+
+              {formCount >= 2 ? (
+                <Pressable onPress={() => setFormCount(formCount - 1)}>
+                  <Text>Remove approach</Text>
+                </Pressable>
+              ) : (
+                <View></View>
+              )}
+
+              {formCount < 4 ? (
+                <Pressable onPress={() => setFormCount(formCount + 1)}>
+                  <Text>Add approach</Text>
+                </Pressable>
+              ) : (
+                <View></View>
+              )}
 
               <View style={{ marginTop: 30 }}>
                 <Text>{JSON.stringify(values, null, "  ")}</Text>
