@@ -344,9 +344,10 @@ function FlightCreateScreen(props) {
                   <TouchableOpacity
                     onPress={() => {
                       setFieldValue("approaches[0].approach_type", "");
+                      setFormCount(formCount - 1);
                     }}
                   >
-                    <AppText>Clear Approach Type</AppText>
+                    <AppText>Remove</AppText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -363,9 +364,10 @@ function FlightCreateScreen(props) {
                     <TouchableOpacity
                       onPress={() => {
                         setFieldValue("approaches[1].approach_type", "");
+                        setFormCount(formCount - 1);
                       }}
                     >
-                      <AppText>Clear Approach Type</AppText>
+                      <AppText>Remove</AppText>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -385,9 +387,10 @@ function FlightCreateScreen(props) {
                     <TouchableOpacity
                       onPress={() => {
                         setFieldValue("approaches[2].approach_type", "");
+                        setFormCount(formCount - 1);
                       }}
                     >
-                      <AppText>Clear Approach Type</AppText>
+                      <AppText>Remove</AppText>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -407,9 +410,10 @@ function FlightCreateScreen(props) {
                     <TouchableOpacity
                       onPress={() => {
                         setFieldValue("approaches[3].approach_type", "");
+                        setFormCount(formCount - 1);
                       }}
                     >
-                      <AppText>Clear Approach Type</AppText>
+                      <AppText>Remove</AppText>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -432,20 +436,6 @@ function FlightCreateScreen(props) {
                   </Pressable>
                 ) : (
                   <View style={{ paddingLeft: 125 }}></View>
-                )}
-
-                {formCount >= 1 ? (
-                  <Pressable
-                    onPress={() => {
-                      setFormCount(formCount - 1);
-                    }}
-                  >
-                    <AppText style={{ color: STYLES.red, marginTop: 10 }}>
-                      Remove approach
-                    </AppText>
-                  </Pressable>
-                ) : (
-                  <View></View>
                 )}
               </View>
 
