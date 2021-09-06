@@ -372,21 +372,24 @@ function FlightCreateScreen(props) {
                 <View></View>
               )}
 
-              {formCount >= 2 ? (
-                <Pressable onPress={() => setFormCount(formCount - 1)}>
-                  <Text>Remove approach</Text>
-                </Pressable>
-              ) : (
-                <View></View>
-              )}
-
-              {formCount < 4 ? (
-                <Pressable onPress={() => setFormCount(formCount + 1)}>
-                  <Text>Add approach</Text>
-                </Pressable>
-              ) : (
-                <View></View>
-              )}
+              <View style={{ flexDirection: "row" }}>
+                {formCount >= 2 ? (
+                  <Pressable onPress={() => setFormCount(formCount - 1)}>
+                    <AppText style={{ marginRight: 20, marginTop: 10 }}>
+                      Remove approach
+                    </AppText>
+                  </Pressable>
+                ) : (
+                  <View></View>
+                )}
+                {formCount < 4 ? (
+                  <Pressable onPress={() => setFormCount(formCount + 1)}>
+                    <AppText style={{ marginTop: 10 }}>Add approach</AppText>
+                  </Pressable>
+                ) : (
+                  <View></View>
+                )}
+              </View>
 
               <View style={{ marginTop: 30 }}>
                 <Text>{JSON.stringify(values, null, "  ")}</Text>
