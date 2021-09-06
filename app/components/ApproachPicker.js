@@ -114,7 +114,7 @@ function ApproachPicker({ setFieldValue, approachValue, numberValue, value }) {
 
   return (
     <>
-      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+      <View style={{ flexDirection: "row" }}>
         <View>
           <Pressable
             onPress={() => {
@@ -147,43 +147,7 @@ function ApproachPicker({ setFieldValue, approachValue, numberValue, value }) {
               flexDirection: "row",
               alignItems: "flex-end",
             }}
-          >
-            <View style={{ marginRight: 10 }}>
-              {count > 0 ? (
-                <AddFormButton
-                  buttonSize={40}
-                  buttonColor={STYLES.red}
-                  iconName='minus'
-                  onPress={() => {
-                    setCount(limitCount(count - 1));
-                  }}
-                ></AddFormButton>
-              ) : (
-                <View style={{ width: 40 }}></View>
-              )}
-            </View>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "flex-end",
-            }}
-          >
-            <View style={{ marginRight: 40 }}>
-              {count < 3 ? (
-                <AddFormButton
-                  buttonSize={40}
-                  buttonColor={STYLES.green}
-                  iconName='plus'
-                  onPress={() => {
-                    setCount(limitCount(count + 1));
-                  }}
-                ></AddFormButton>
-              ) : (
-                <View style={{ width: 40 }}></View>
-              )}
-            </View>
-          </View>
+          ></View>
         </View>
       </View>
       <View style={styles.centeredView}>
