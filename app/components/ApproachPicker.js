@@ -12,8 +12,6 @@ import AppTextInput from "./AppTextInput";
 
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
-import AddFormButton from "./AddFormButton";
-import { justifyContent } from "styled-system";
 
 function ApproachPicker({ setFieldValue, approachValue, numberValue, value }) {
   const [visible, setVisible] = useState(false);

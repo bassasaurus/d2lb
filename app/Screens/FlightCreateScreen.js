@@ -13,7 +13,6 @@ import Checkbox from "../components/Checkbox";
 
 import { STYLES } from "../styles/styles";
 import { ScrollView } from "react-native-gesture-handler";
-import AddFormButton from "../components/AddFormButton";
 
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
