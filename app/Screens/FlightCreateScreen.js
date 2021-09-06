@@ -17,7 +17,7 @@ import { ScrollView } from "react-native-gesture-handler";
 function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
-  const [formCount, setFormCount] = useState(1);
+  const [formCount, setFormCount] = useState(0);
 
   function handleAircraftId(id) {
     setAircraftId(id);
@@ -333,7 +333,7 @@ function FlightCreateScreen(props) {
                 ></ApproachPicker>
               </View>
 
-              {formCount > 1 ? (
+              {formCount > 0 ? (
                 <View>
                   <ApproachPicker
                     setFieldValue={setFieldValue}
@@ -346,7 +346,7 @@ function FlightCreateScreen(props) {
                 <View></View>
               )}
 
-              {formCount > 2 ? (
+              {formCount > 1 ? (
                 <View>
                   <ApproachPicker
                     setFieldValue={setFieldValue}
@@ -359,7 +359,7 @@ function FlightCreateScreen(props) {
                 <View></View>
               )}
 
-              {formCount > 3 ? (
+              {formCount > 2 ? (
                 <View>
                   <ApproachPicker
                     setFieldValue={setFieldValue}
@@ -373,7 +373,7 @@ function FlightCreateScreen(props) {
               )}
 
               <View style={{ flexDirection: "row" }}>
-                {formCount < 4 ? (
+                {formCount < 3 ? (
                   <Pressable onPress={() => setFormCount(formCount + 1)}>
                     <AppText
                       style={{
@@ -389,8 +389,12 @@ function FlightCreateScreen(props) {
                   <View style={{ paddingLeft: 125 }}></View>
                 )}
 
-                {formCount >= 2 ? (
-                  <Pressable onPress={() => setFormCount(formCount - 1)}>
+                {formCount >= 1 ? (
+                  <Pressable
+                    onPress={() => {
+                      setFormCount(formCount - 1);
+                    }}
+                  >
                     <AppText style={{ color: STYLES.red, marginTop: 10 }}>
                       Remove approach
                     </AppText>
