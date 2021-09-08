@@ -78,6 +78,7 @@ function FlightCreateScreen(props) {
               { approach_type: "", number: 0 },
               { approach_type: "", number: 0 },
             ],
+            remarks: "",
           }}
           validationSchema={schema}
         >
@@ -483,7 +484,33 @@ function FlightCreateScreen(props) {
                   <View style={{ paddingLeft: 125 }}></View>
                 )}
               </View>
-              <Text>{formCount}</Text>
+
+              <AppTextInput
+                style={{
+                  paddingRight: 10,
+                  paddingLeft: 10,
+                  height: 80,
+                  marginTop: 10,
+                  borderWidth: 1,
+                  borderRadius: STYLES.borderRadius,
+                  borderColor: STYLES.grey,
+                }}
+                value={values.remarks}
+                onChangeText={(val) => {
+                  setFieldValue("remarks", val);
+                }}
+                placeholder='Remarks'
+                autoCorrect={false}
+                multiline={true}
+              ></AppTextInput>
+
+              <View>
+                {errors.remarks ? (
+                  <Text style={styles.errors}>{errors.remarks}</Text>
+                ) : (
+                  <View></View>
+                )}
+              </View>
               <View style={{ marginTop: 30 }}>
                 <Text>{JSON.stringify(values, null, "  ")}</Text>
               </View>
