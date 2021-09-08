@@ -73,10 +73,10 @@ function FlightCreateScreen(props) {
             instrument: "",
             simulated_instrument: "",
             approaches: [
-              { approach_type: "", number: 0 },
-              { approach_type: "", number: 0 },
-              { approach_type: "", number: 0 },
-              { approach_type: "", number: 0 },
+              { approach_type: null, number: null },
+              { approach_type: null, number: null },
+              { approach_type: null, number: null },
+              { approach_type: null, number: null },
             ],
           }}
           validationSchema={schema}
@@ -344,7 +344,8 @@ function FlightCreateScreen(props) {
                   {formCount == 0 ? (
                     <TouchableOpacity
                       onPress={() => {
-                        setFieldValue("approaches[0].approach_type", "");
+                        setFieldValue("approaches[0].approach_type", null);
+                        setFieldValue("approaches[0].number", null);
                         setFormCount(0);
                       }}
                     >
@@ -374,7 +375,7 @@ function FlightCreateScreen(props) {
                     {formCount == 1 ? (
                       <TouchableOpacity
                         onPress={() => {
-                          setFieldValue("approaches[1].approach_type", "");
+                          setFieldValue("approaches[1].approach_type", null);
                           setFormCount(0);
                         }}
                       >
@@ -407,7 +408,7 @@ function FlightCreateScreen(props) {
                     {formCount == 2 ? (
                       <TouchableOpacity
                         onPress={() => {
-                          setFieldValue("approaches[2].approach_type", "");
+                          setFieldValue("approaches[2].approach_type", null);
                           setFormCount(formCount - 1);
                         }}
                       >
@@ -440,7 +441,7 @@ function FlightCreateScreen(props) {
                     {formCount == 3 ? (
                       <TouchableOpacity
                         onPress={() => {
-                          setFieldValue("approaches[3].approach_type", "");
+                          setFieldValue("approaches[3].approach_type", null);
                           setFormCount(formCount - 1);
                         }}
                       >
