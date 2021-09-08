@@ -22,9 +22,9 @@ export default function App() {
       {/* <NavigationContainer>
         <StackNavigator></StackNavigator>
       </NavigationContainer> */}
+      {/* <SafeAreaView>
+        <LoginScreen></LoginScreen>
+      </SafeAreaView> */}
     </>
-    // <SafeAreaView>
-    //   <LoginScreen></LoginScreen>
-    // </SafeAreaView>
   );
 }

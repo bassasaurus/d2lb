@@ -336,9 +336,9 @@ function FlightCreateScreen(props) {
               <View style={{ flexDirection: "row" }}>
                 <ApproachPicker
                   setFieldValue={setFieldValue}
-                  approachValue={"approaches[0].approach_type"}
+                  approachKey={"approaches[0].approach_type"}
                   value={values.approaches[0].approach_type}
-                  numberValue={"approaches[0].number"}
+                  numberKey={"approaches[0].number"}
                 ></ApproachPicker>
                 <View style={styles.clearApproachType}>
                   {formCount == 0 ? (
@@ -367,9 +367,9 @@ function FlightCreateScreen(props) {
                 <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
                     setFieldValue={setFieldValue}
-                    approachValue={"approaches[1].approach_type"}
+                    approachKey={"approaches[1].approach_type"}
                     value={values.approaches[1].approach_type}
-                    numberValue={"approaches[1].number"}
+                    numberKey={"approaches[1].number"}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
                     {formCount == 1 ? (
@@ -400,9 +400,9 @@ function FlightCreateScreen(props) {
                 <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
                     setFieldValue={setFieldValue}
-                    approachValue={"approaches[2].approach_type"}
+                    approachKey={"approaches[2].approach_type"}
                     value={values.approaches[2].approach_type}
-                    numberValue={"approaches[2].number"}
+                    numberKey={"approaches[2].number"}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
                     {formCount == 2 ? (
@@ -433,9 +433,9 @@ function FlightCreateScreen(props) {
                 <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
                     setFieldValue={setFieldValue}
-                    approachValue={"approaches[3].approach_type"}
+                    approachKey={"approaches[3].approach_type"}
                     value={values.approaches[3].approach_type}
-                    numberValue={"approaches[3].number"}
+                    numberKey={"approaches[3].number"}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
                     {formCount == 3 ? (
