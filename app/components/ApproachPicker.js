@@ -125,7 +125,7 @@ function ApproachPicker({
           keyboardType='numeric'
           clearButtonMode={"always"}
           value={numberValue.toString()}
-          onChangeText={(val) => setFieldValue(numberKey, parseInt(val))}
+          onChangeText={(val) => setFieldValue(numberKey, val)}
         ></AppTextInput>
 
         <View style={{ flexDirection: "row" }}>
