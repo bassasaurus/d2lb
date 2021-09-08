@@ -13,7 +13,12 @@ import AppTextInput from "./AppTextInput";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function ApproachPicker({ setFieldValue, approachKey, numberKey, value }) {
+function ApproachPicker({
+  setFieldValue,
+  approachKey,
+  numberKey,
+  approachValue,
+}) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
 
@@ -106,7 +111,7 @@ function ApproachPicker({ setFieldValue, approachKey, numberKey, value }) {
             <View pointerEvents={"none"}>
               <AppTextInput
                 width={150}
-                value={value}
+                value={approachValue}
                 placeholder={"Approach Type"}
               ></AppTextInput>
             </View>

@@ -337,7 +337,7 @@ function FlightCreateScreen(props) {
                 <ApproachPicker
                   setFieldValue={setFieldValue}
                   approachKey={"approaches[0].approach_type"}
-                  value={values.approaches[0].approach_type}
+                  approachValue={values.approaches[0].approach_type}
                   numberKey={"approaches[0].number"}
                 ></ApproachPicker>
                 <View style={styles.clearApproachType}>
@@ -368,7 +368,7 @@ function FlightCreateScreen(props) {
                   <ApproachPicker
                     setFieldValue={setFieldValue}
                     approachKey={"approaches[1].approach_type"}
-                    value={values.approaches[1].approach_type}
+                    approachValue={values.approaches[1].approach_type}
                     numberKey={"approaches[1].number"}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
@@ -401,7 +401,7 @@ function FlightCreateScreen(props) {
                   <ApproachPicker
                     setFieldValue={setFieldValue}
                     approachKey={"approaches[2].approach_type"}
-                    value={values.approaches[2].approach_type}
+                    approachValue={values.approaches[2].approach_type}
                     numberKey={"approaches[2].number"}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
@@ -434,7 +434,7 @@ function FlightCreateScreen(props) {
                   <ApproachPicker
                     setFieldValue={setFieldValue}
                     approachKey={"approaches[3].approach_type"}
-                    value={values.approaches[3].approach_type}
+                    approachValue={values.approaches[3].approach_type}
                     numberKey={"approaches[3].number"}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
