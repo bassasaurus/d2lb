@@ -73,10 +73,10 @@ function FlightCreateScreen(props) {
             instrument: "",
             simulated_instrument: "",
             approaches: [
-              { approach_type: null, number: null },
-              { approach_type: null, number: null },
-              { approach_type: null, number: null },
-              { approach_type: null, number: null },
+              { approach_type: "", number: 0 },
+              { approach_type: "", number: 0 },
+              { approach_type: "", number: 0 },
+              { approach_type: "", number: 0 },
             ],
           }}
           validationSchema={schema}
@@ -339,13 +339,14 @@ function FlightCreateScreen(props) {
                   approachKey={"approaches[0].approach_type"}
                   approachValue={values.approaches[0].approach_type}
                   numberKey={"approaches[0].number"}
+                  numberValue={values.approaches[0].number}
                 ></ApproachPicker>
                 <View style={styles.clearApproachType}>
                   {formCount == 0 ? (
                     <TouchableOpacity
                       onPress={() => {
                         setFieldValue("approaches[0].approach_type", null);
-                        setFieldValue("approaches[0].number", null);
+                        setFieldValue("approaches[0].number", 0);
                         setFormCount(0);
                       }}
                     >
@@ -370,6 +371,7 @@ function FlightCreateScreen(props) {
                     approachKey={"approaches[1].approach_type"}
                     approachValue={values.approaches[1].approach_type}
                     numberKey={"approaches[1].number"}
+                    numberValue={values.approaches[1].number}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
                     {formCount == 1 ? (
@@ -403,6 +405,7 @@ function FlightCreateScreen(props) {
                     approachKey={"approaches[2].approach_type"}
                     approachValue={values.approaches[2].approach_type}
                     numberKey={"approaches[2].number"}
+                    numberValue={values.approaches[2].number}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
                     {formCount == 2 ? (
@@ -436,6 +439,7 @@ function FlightCreateScreen(props) {
                     approachKey={"approaches[3].approach_type"}
                     approachValue={values.approaches[3].approach_type}
                     numberKey={"approaches[3].number"}
+                    numberValue={values.approaches[3].number}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
                     {formCount == 3 ? (

@@ -16,8 +16,9 @@ import FlatListItemSeparator from "./FlatListItemSeparator";
 function ApproachPicker({
   setFieldValue,
   approachKey,
-  numberKey,
   approachValue,
+  numberKey,
+  numberValue,
 }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
@@ -123,6 +124,7 @@ function ApproachPicker({
           placeholder='#'
           keyboardType='numeric'
           clearButtonMode={"always"}
+          value={numberValue.toString()}
           onChangeText={(val) => setFieldValue(numberKey, parseInt(val))}
         ></AppTextInput>
 
