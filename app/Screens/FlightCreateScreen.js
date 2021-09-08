@@ -459,7 +459,7 @@ function FlightCreateScreen(props) {
 
               <View style={{ flexDirection: "row" }}>
                 {formCount < 3 ? (
-                  <Pressable onPress={() => setFormCount(formCount + 1)}>
+                  <TouchableOpacity onPress={() => setFormCount(formCount + 1)}>
                     <AppText
                       style={{
                         color: STYLES.green,
@@ -469,12 +469,11 @@ function FlightCreateScreen(props) {
                     >
                       Add approach
                     </AppText>
-                  </Pressable>
+                  </TouchableOpacity>
                 ) : (
                   <View style={{ paddingLeft: 125 }}></View>
                 )}
               </View>
-
               <Text>{formCount}</Text>
               <View style={{ marginTop: 30 }}>
                 <Text>{JSON.stringify(values, null, "  ")}</Text>
