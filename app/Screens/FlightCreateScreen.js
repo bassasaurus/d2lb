@@ -28,6 +28,8 @@ function FlightCreateScreen(props) {
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
 
+  const [acTailPair, setAcTailPair] = useState(0);
+
   function handleAircraftId(id) {
     setAircraftId(id);
   }
@@ -73,10 +75,10 @@ function FlightCreateScreen(props) {
             instrument: "",
             simulated_instrument: "",
             approaches: [
-              { approach_type: "", number: 0 },
-              { approach_type: "", number: 0 },
-              { approach_type: "", number: 0 },
-              { approach_type: "", number: 0 },
+              { approach_type: "", number: "" },
+              { approach_type: "", number: "" },
+              { approach_type: "", number: "" },
+              { approach_type: "", number: "" },
             ],
             remarks: "",
           }}
@@ -346,8 +348,8 @@ function FlightCreateScreen(props) {
                   {formCount == 0 ? (
                     <TouchableOpacity
                       onPress={() => {
-                        setFieldValue("approaches[0].approach_type", null);
-                        setFieldValue("approaches[0].number", 0);
+                        setFieldValue("approaches[0].approach_type", "");
+                        setFieldValue("approaches[0].number", "");
                         setFormCount(0);
                       }}
                     >
@@ -378,7 +380,8 @@ function FlightCreateScreen(props) {
                     {formCount == 1 ? (
                       <TouchableOpacity
                         onPress={() => {
-                          setFieldValue("approaches[1].approach_type", null);
+                          setFieldValue("approaches[1].approach_type", "");
+                          setFieldValue("approaches[1].number", "");
                           setFormCount(0);
                         }}
                       >
@@ -412,7 +415,8 @@ function FlightCreateScreen(props) {
                     {formCount == 2 ? (
                       <TouchableOpacity
                         onPress={() => {
-                          setFieldValue("approaches[2].approach_type", null);
+                          setFieldValue("approaches[2].approach_type", "");
+                          setFieldValue("approaches[2].number", "");
                           setFormCount(formCount - 1);
                         }}
                       >
@@ -446,7 +450,8 @@ function FlightCreateScreen(props) {
                     {formCount == 3 ? (
                       <TouchableOpacity
                         onPress={() => {
-                          setFieldValue("approaches[3].approach_type", null);
+                          setFieldValue("approaches[3].approach_type", "");
+                          setFieldValue("approaches[3].number", "");
                           setFormCount(formCount - 1);
                         }}
                       >
