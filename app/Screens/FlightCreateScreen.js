@@ -341,7 +341,7 @@ function FlightCreateScreen(props) {
                   numberValue={"approaches[0].number"}
                 ></ApproachPicker>
                 <View style={styles.clearApproachType}>
-                  {formCount > 0 ? (
+                  {formCount == 0 ? (
                     <TouchableOpacity
                       onPress={() => {
                         setFieldValue("approaches[0].approach_type", "");
@@ -371,7 +371,7 @@ function FlightCreateScreen(props) {
                     numberValue={"approaches[1].number"}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
-                    {formCount > 0 ? (
+                    {formCount == 1 ? (
                       <TouchableOpacity
                         onPress={() => {
                           setFieldValue("approaches[1].approach_type", "");
@@ -404,7 +404,7 @@ function FlightCreateScreen(props) {
                     numberValue={"approaches[2].number"}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
-                    {formCount > 1 ? (
+                    {formCount == 2 ? (
                       <TouchableOpacity
                         onPress={() => {
                           setFieldValue("approaches[2].approach_type", "");
@@ -437,7 +437,7 @@ function FlightCreateScreen(props) {
                     numberValue={"approaches[3].number"}
                   ></ApproachPicker>
                   <View style={styles.clearApproachType}>
-                    {formCount > 2 ? (
+                    {formCount == 3 ? (
                       <TouchableOpacity
                         onPress={() => {
                           setFieldValue("approaches[3].approach_type", "");
