@@ -17,14 +17,13 @@ export default function App() {
       <SafeAreaView>
         {/* <ApproachPicker></ApproachPicker> */}
         <FlightCreateScreen></FlightCreateScreen>
+
+        {/* <LoginScreen></LoginScreen> */}
       </SafeAreaView>
 
       {/* <NavigationContainer>
         <StackNavigator></StackNavigator>
       </NavigationContainer> */}
-      {/* <SafeAreaView>
-        <LoginScreen></LoginScreen>
-      </SafeAreaView> */}
     </>
   );
 }

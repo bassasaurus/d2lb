@@ -28,7 +28,7 @@ function FlightCreateScreen(props) {
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
 
-  const [acTailPair, setAcTailPair] = useState(0);
+  const [acTailPair, setAcTailPair] = useState(["", ""]);
 
   function handleAircraftId(id) {
     setAircraftId(id);
@@ -51,6 +51,7 @@ function FlightCreateScreen(props) {
       .required(required)
       .min(0.1, "Must be greater than 0.1")
       .max(30.0, "Seems unlikely."),
+    remarks: yup.string().length(256, "256 Character Maximum"),
   });
 
   return (
@@ -516,9 +517,9 @@ function FlightCreateScreen(props) {
                   <View></View>
                 )}
               </View>
-              <View style={{ marginTop: 30 }}>
+              {/* <View style={{ marginTop: 30 }}>
                 <Text>{JSON.stringify(values, null, "  ")}</Text>
-              </View>
+              </View> */}
 
               <Modal animationType='slide' transparent={true} visible={visible}>
                 <View style={styles.centeredView}>
