@@ -7,6 +7,7 @@ import {
   Pressable,
   TouchableOpacity,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
@@ -54,8 +55,10 @@ function FlightCreateScreen(props) {
   });
 
   return (
-    <ScrollView>
-      <KeyboardAvoidingView behavior='padding' keyboardVerticalOffset={30}>
+    <KeyboardAvoidingView
+      behavior={Platform.select({ android: undefined, ios: "position" })}
+    >
+      <ScrollView>
         <View style={styles.container}>
           <Formik
             initialValues={{
@@ -511,6 +514,7 @@ function FlightCreateScreen(props) {
                   autoCorrect={false}
                   multiline={true}
                 ></AppTextInput>
+
                 <View>
                   {errors.remarks ? (
                     <Text style={styles.errors}>{errors.remarks}</Text>
@@ -544,8 +548,8 @@ function FlightCreateScreen(props) {
             )}
           </Formik>
         </View>
-      </KeyboardAvoidingView>
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
