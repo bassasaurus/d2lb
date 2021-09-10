@@ -57,7 +57,7 @@ function FlightCreateScreen(props) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.select({ android: undefined, ios: "position" })}
-      keyboardVerticalOffset={Platform.select({ ios: 80, android: 78 })}
+      keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
     >
       <ScrollView>
         <View style={styles.container}>

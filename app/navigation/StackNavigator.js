@@ -21,6 +21,7 @@ function StackNavigator(props) {
         options={{
           title: "Flights",
           cardStyleInterpolator: forFade,
+          cardStyle: { backgroundColor: "white" },
         }}
       />
 
@@ -30,6 +31,7 @@ function StackNavigator(props) {
         options={{
           title: "Detail",
           cardStyleInterpolator: forFade,
+          cardStyle: { backgroundColor: "white" },
         }}
       />
       {(props) => <DetailScreen {...props} id={id} />}
@@ -40,6 +42,7 @@ function StackNavigator(props) {
         options={{
           title: "New Flight",
           cardStyleInterpolator: forFade,
+          cardStyle: { backgroundColor: "white" },
         }}
       />
     </Stack.Navigator>
