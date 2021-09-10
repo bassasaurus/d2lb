@@ -57,6 +57,7 @@ function FlightCreateScreen(props) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.select({ android: undefined, ios: "position" })}
+      keyboardVerticalOffset={Platform.select({ ios: 80, android: 78 })}
     >
       <ScrollView>
         <View style={styles.container}>
@@ -559,6 +560,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingLeft: 10,
     paddingRight: 10,
+    marginBottom: 20,
   },
 
   modalView: {

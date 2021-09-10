@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   item: {
     width: "100%",
-    backgroundColor: STYLES.elementBackground,
+
     padding: 10,
     marginTop: 2,
     marginRight: 10,

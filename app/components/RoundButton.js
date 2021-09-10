@@ -20,8 +20,6 @@ function RoundButton({ onPress, buttonSize, buttonColor, iconName }) {
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 1,
-    borderColor: STYLES.white,
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
