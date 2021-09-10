@@ -1,8 +1,10 @@
-import api from "./apiClient";
+import api from "./axiosConfig";
 
 import storeData from "../asyncStorage/storeAsyncData";
 
-const getApiToken = (username, password) =>
+const getApiToken = (username, password) => {
+  console.log(username, password);
+
   api({
     method: "post",
     url: "/api/token-auth/",
@@ -13,12 +15,13 @@ const getApiToken = (username, password) =>
   })
     .then(function (response) {
       storeData("token", response.data["token"]);
-      // console.log(response.data["token"]);
+      console.log(response.data["token"]);
       // console.log(response.status);
       // console.log(response.statusText);
       // console.log(response.headers);
       // console.log(response.config);
     })
+
     .catch(function (error) {
       if (error.response) {
         // The request was made and the server responded with a status code
@@ -30,12 +33,13 @@ const getApiToken = (username, password) =>
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
         // http.ClientRequest in node.js
-        console.log(error.request);
+        // console.log(error.request);
       } else {
         // Something happened in setting up the request that triggered an Error
-        console.log("Error", error.message);
+        // console.log("Error", error.message);
       }
-      console.log(error.config);
+      // console.log(error.config);
     });
+};
 
 export default getApiToken;

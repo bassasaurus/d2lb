@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 
+import { STYLES } from "../styles/styles";
+
 import AppButton from "../components/AppButton";
 import AppTextInput from "../components/AppTextInput";
 import getApiToken from "../api/getApiToken";
 
-import getAsyncData from "../asyncStorage/getAsyncData";
-
 function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   return (
     <View style={styles.container}>
       <AppTextInput
-        title='email'
+        title='username'
         placeholder='Email'
-        onChangeText={(text) => setEmail(text)}
+        onChangeText={(text) => setUsername(text)}
         textContentType='emailAddress'
       />
       <AppTextInput
@@ -25,7 +26,10 @@ function Login() {
         textContentType='password'
         secureTextEntry={true}
       />
-      <AppButton title='Login' onPress={() => getApiToken(email, password)} />
+      <AppButton
+        title='Login'
+        onPress={() => getApiToken(username, password)}
+      />
     </View>
   );
 }

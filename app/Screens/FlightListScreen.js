@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   SafeAreaView,
   View,
@@ -6,48 +6,118 @@ import {
   StyleSheet,
   Text,
   StatusBar,
+  TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 
-import getFlights from "../api/getFlights";
+import { STYLES } from "../styles/styles";
+import api from "../api/axiosConfig";
+import FlightItem from "../components/FlightItem";
+import RoundButton from "../components/RoundButton";
 
-const Item = ({ title }) => (
-  <View style={styles.item}>
-    <Text style={styles.title}>{title}</Text>
-  </View>
-);
+const FlightListScreen = ({ navigation }) => {
+  const [data, setData] = useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
 
-const FlightListScreen = () => {
-  const [list, setList] = useState();
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await api.get("/api/flights/");
+      // console.log(result);
+      setData(result.data);
+    };
 
-  const renderItem = ({ item }) => <Item title={item.route} />;
+    fetchData();
+  }, []);
 
-  const response = getFlights();
-  // setList(response);
+  useEffect(() => {
+    const refreshOnBack = navigation.addListener("focus", () => {
+      const fetchData = async () => {
+        const result = await api.get("/api/flights/");
+      };
+      fetchData();
+    });
+
+    return refreshOnBack;
+  }, [navigation]);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = useCallback(() => {
+    const fetchData = async () => {
+      const result = await api.get("/api/flights/");
+      setData(result.data);
+    };
+
+    fetchData();
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      style={styles.touchable}
+      onPress={() => navigation.navigate("FlightDetail", { item: item })}
+    >
+      <FlightItem
+        date={item.date}
+        route={item.route}
+        type={item.aircraft_type}
+        reg={item.registration}
+        dur={item.duration}
+        crew={item.second_in_command ? "SIC" : "PIC"}
+        dayL={item.landings_day ? item.landings_day : 0}
+        nitL={item.landings_night ? item.landings_night : 0}
+      />
+    </TouchableOpacity>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={list}
+        data={data.results}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
+      <RoundButton
+        buttonSize={60}
+        iconName='plus'
+        buttonColor={STYLES.green}
+        onPress={() => navigation.navigate("FlightCreate")}
+      ></RoundButton>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    width: "100%",
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
   },
   item: {
-    backgroundColor: "#f9c2ff",
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    width: "100%",
+    backgroundColor: STYLES.elementBackground,
+    padding: 10,
+    marginTop: 2,
+    marginRight: 10,
+    marginLeft: 10,
   },
-  title: {
-    fontSize: 32,
+  text: {
+    fontSize: 16,
+    justifyContent: "space-between",
+    color: STYLES.blue,
+  },
+  touchable: {
+    alignItems: "center",
+    backgroundColor: STYLES.highlight,
+    padding: 0,
+    marginTop: 2,
   },
 });
 

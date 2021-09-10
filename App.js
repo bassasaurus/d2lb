@@ -1,33 +1,29 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import {
-  Button,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { SafeAreaView } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 
-import FlightListScreen from "./app/screens/FlightListScreen";
+import { NativeBaseProvider, Box } from "native-base";
+
+import StackNavigator from "./app/navigation/StackNavigator";
 import LoginScreen from "./app/screens/LoginScreen";
+import FlightCreateScreen from "./app/screens/FlightCreateScreen";
+import ApproachPicker from "./app/components/ApproachPicker";
 
 export default function App() {
   return (
     <>
       <StatusBar style='auto' />
-      <View style={styles.container}>
-        <FlightListScreen />
-      </View>
+      {/* <SafeAreaView> */}
+      {/* <ApproachPicker></ApproachPicker> */}
+      {/* <FlightCreateScreen></FlightCreateScreen> */}
+
+      {/* <LoginScreen></LoginScreen> */}
+      {/* </SafeAreaView> */}
+
+      <NavigationContainer>
+        <StackNavigator></StackNavigator>
+      </NavigationContainer>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
