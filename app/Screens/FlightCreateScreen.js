@@ -127,7 +127,9 @@ function FlightCreateScreen(props) {
                   {errors.route ? (
                     <Text style={styles.errors}>{errors.route}</Text>
                   ) : (
-                    <View></View>
+                    <View>
+                      <AppText>Route</AppText>
+                    </View>
                   )}
                 </View>
 
@@ -191,7 +193,9 @@ function FlightCreateScreen(props) {
                   {errors.duration ? (
                     <Text style={styles.errors}>{errors.duration}</Text>
                   ) : (
-                    <View></View>
+                    <View>
+                      <AppText>Duration</AppText>
+                    </View>
                   )}
                 </View>
 
@@ -307,6 +311,9 @@ function FlightCreateScreen(props) {
                   keyboardType={"numeric"}
                   clearButtonMode={"while-editing"}
                 ></AppTextInput>
+                <View>
+                  <AppText>Day Landings</AppText>
+                </View>
 
                 <AppTextInput
                   value={values.landings_night}
@@ -318,6 +325,9 @@ function FlightCreateScreen(props) {
                   keyboardType={"numeric"}
                   clearButtonMode={"while-editing"}
                 ></AppTextInput>
+                <View>
+                  <AppText>Night Landings</AppText>
+                </View>
 
                 <AppTextInput
                   value={values.instrument}
@@ -329,6 +339,9 @@ function FlightCreateScreen(props) {
                   keyboardType={"numeric"}
                   clearButtonMode={"while-editing"}
                 ></AppTextInput>
+                <View>
+                  <AppText>IFR</AppText>
+                </View>
 
                 <AppTextInput
                   value={values.simulated_instrument}
@@ -340,6 +353,9 @@ function FlightCreateScreen(props) {
                   keyboardType={"numeric"}
                   clearButtonMode={"while-editing"}
                 ></AppTextInput>
+                <View>
+                  <AppText>Hood</AppText>
+                </View>
 
                 <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
