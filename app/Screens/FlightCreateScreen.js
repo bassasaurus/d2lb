@@ -312,7 +312,13 @@ function FlightCreateScreen(props) {
                   clearButtonMode={"while-editing"}
                 ></AppTextInput>
                 <View>
-                  <AppText>Day Landings</AppText>
+                  {errors.landings_day ? (
+                    <Text style={styles.errors}>{errors.landings_day}</Text>
+                  ) : (
+                    <View>
+                      <AppText>Day Landings</AppText>
+                    </View>
+                  )}
                 </View>
 
                 <AppTextInput
@@ -326,7 +332,13 @@ function FlightCreateScreen(props) {
                   clearButtonMode={"while-editing"}
                 ></AppTextInput>
                 <View>
-                  <AppText>Night Landings</AppText>
+                  {errors.landings_night ? (
+                    <Text style={styles.errors}>{errors.landings_night}</Text>
+                  ) : (
+                    <View>
+                      <AppText>Night Landings</AppText>
+                    </View>
+                  )}
                 </View>
 
                 <AppTextInput
@@ -340,7 +352,13 @@ function FlightCreateScreen(props) {
                   clearButtonMode={"while-editing"}
                 ></AppTextInput>
                 <View>
-                  <AppText>IFR</AppText>
+                  {errors.instrument ? (
+                    <Text style={styles.errors}>{errors.instrument}</Text>
+                  ) : (
+                    <View>
+                      <AppText>IFR</AppText>
+                    </View>
+                  )}
                 </View>
 
                 <AppTextInput
@@ -354,7 +372,15 @@ function FlightCreateScreen(props) {
                   clearButtonMode={"while-editing"}
                 ></AppTextInput>
                 <View>
-                  <AppText>Hood</AppText>
+                  {errors.simulated_instrument ? (
+                    <Text style={styles.errors}>
+                      {errors.simulated_instrument}
+                    </Text>
+                  ) : (
+                    <View>
+                      <AppText>Hood</AppText>
+                    </View>
+                  )}
                 </View>
 
                 <View style={{ flexDirection: "row" }}>
