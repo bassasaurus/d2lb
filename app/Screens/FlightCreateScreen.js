@@ -27,6 +27,7 @@ function FlightCreateScreen(props) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
 
   const [acTailPair, setAcTailPair] = useState(["", ""]);
 
@@ -58,6 +59,7 @@ function FlightCreateScreen(props) {
     <KeyboardAvoidingView
       behavior={Platform.select({ android: undefined, ios: "position" })}
       keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
+      enabled={scrollEnabled}
     >
       <ScrollView>
         <View style={styles.container}>
@@ -121,6 +123,8 @@ function FlightCreateScreen(props) {
                   autoCapitalize={"characters"}
                   keyboardType={"default"}
                   clearButtonMode={"while-editing"}
+                  onFocus={() => setScrollEnabled(false)}
+                  onBlur={() => setScrollEnabled(true)}
                 />
 
                 <View>
@@ -181,12 +185,14 @@ function FlightCreateScreen(props) {
                 <AppTextInput
                   value={values.duration.toString()}
                   onChangeText={(val) => {
-                    setFieldValue("duration", parseFloat(val));
+                    setFieldValue("duration", parseFloat(val)); //function to return zero if blank
                   }}
                   placeholder='Duration - XX.X'
                   autoCorrect={false}
                   keyboardType={"numeric"}
                   clearButtonMode={"while-editing"}
+                  onFocus={() => setScrollEnabled(false)}
+                  onBlur={() => setScrollEnabled(true)}
                 ></AppTextInput>
 
                 <View>
