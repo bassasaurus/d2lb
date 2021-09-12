@@ -49,9 +49,20 @@ function FlightCreateScreen(props) {
     tailnumber: yup.string().required(required),
     duration: yup
       .number()
+      .positive("Must be positive")
       .required(required)
       .min(0.1, "Must be greater than 0.1")
       .max(30.0, "Seems unlikely."),
+    landings_day: yup
+      .number()
+      .positive("Must be positive")
+      .integer("Integers only, no decimals."),
+    landings_night: yup
+      .number()
+      .positive("Must be positive")
+      .integer("Integers only, no decimals."),
+    instrument: yup.number().positive("Must be positive"),
+    simulated_instrument: yup.number().positive("Must be positive"),
     remarks: yup.string().max(256, "256 Character Maximum"),
   });
 
@@ -370,7 +381,7 @@ function FlightCreateScreen(props) {
                 <AppTextInput
                   value={values.simulated_instrument.toString()}
                   onChangeText={(val) => {
-                    setFieldValue("simulated_instrument", parseFloat(val));
+                    setFieldValue("simulated_instrument", val);
                   }}
                   placeholder='Simulated IFR'
                   autoCorrect={false}
