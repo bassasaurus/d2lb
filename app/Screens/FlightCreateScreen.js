@@ -43,7 +43,7 @@ function FlightCreateScreen(props) {
   const required = "*required";
   const positive = "Must be positive number.";
 
-  let schema = yup.object().shape({
+  let flightSchema = yup.object().shape({
     date: yup.string().required(required),
     route: yup.string().required(required),
     aircraft: yup.string().required(required),
@@ -102,7 +102,7 @@ function FlightCreateScreen(props) {
               ],
               remarks: "",
             }}
-            validationSchema={schema}
+            validationSchema={flightSchema}
           >
             {({ values, handleChange, setFieldValue, errors }) => (
               <>
