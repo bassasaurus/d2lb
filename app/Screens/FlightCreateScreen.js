@@ -179,7 +179,7 @@ function FlightCreateScreen(props) {
                 </View>
 
                 <AppTextInput
-                  value={values.duration}
+                  value={values.duration.toString()}
                   onChangeText={(val) => {
                     setFieldValue("duration", parseFloat(val));
                   }}
