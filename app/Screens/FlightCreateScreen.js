@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Button,
 } from "react-native";
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
@@ -104,7 +105,15 @@ function FlightCreateScreen(props) {
             }}
             validationSchema={flightSchema}
           >
-            {({ values, handleChange, setFieldValue, errors }) => (
+            {({
+              values,
+              errors,
+              isValid,
+              touched,
+              handleChange,
+              setFieldValue,
+              handleSubmit,
+            }) => (
               <>
                 <Pressable
                   onPress={() => {
@@ -584,6 +593,18 @@ function FlightCreateScreen(props) {
                     <View></View>
                   )}
                 </View>
+
+                {isValid ? (
+                  <Button
+                    title='Submit'
+                    onPress={() => console.log(isValid)}
+                  ></Button>
+                ) : (
+                  <Button
+                    title='Please complete all required fields'
+                    onPress={() => console.log(isValid)}
+                  ></Button>
+                )}
 
                 {/* <View style={{ marginTop: 30 }}>
                 <Text>{JSON.stringify(values, null, "  ")}</Text>
