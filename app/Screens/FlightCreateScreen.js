@@ -183,9 +183,9 @@ function FlightCreateScreen(props) {
                 </View>
 
                 <AppTextInput
-                  value={values.duration.toString()}
+                  value={values.duration}
                   onChangeText={(val) => {
-                    setFieldValue("duration", parseFloat(val)); //function to return zero if blank
+                    setFieldValue("duration", val); //function to return zero if blank
                   }}
                   placeholder='Duration - XX.X'
                   autoCorrect={false}
@@ -308,9 +308,9 @@ function FlightCreateScreen(props) {
                 </View>
 
                 <AppTextInput
-                  value={values.landings_day}
+                  value={values.landings_day.toString()}
                   onChangeText={(val) => {
-                    setFieldValue("landings_day", parseInt(val));
+                    setFieldValue("landings_day", val);
                   }}
                   placeholder='Day Landings'
                   autoCorrect={false}
@@ -328,9 +328,9 @@ function FlightCreateScreen(props) {
                 </View>
 
                 <AppTextInput
-                  value={values.landings_night}
+                  value={values.landings_night.toString()}
                   onChangeText={(val) => {
-                    setFieldValue("landings_night", parseInt(val));
+                    setFieldValue("landings_night", val);
                   }}
                   placeholder='Night Landings'
                   autoCorrect={false}
@@ -348,9 +348,9 @@ function FlightCreateScreen(props) {
                 </View>
 
                 <AppTextInput
-                  value={values.instrument}
+                  value={values.instrument.toString()}
                   onChangeText={(val) => {
-                    setFieldValue("instrument", parseFloat(val));
+                    setFieldValue("instrument", val);
                   }}
                   placeholder='IFR'
                   autoCorrect={false}
@@ -368,7 +368,7 @@ function FlightCreateScreen(props) {
                 </View>
 
                 <AppTextInput
-                  value={values.simulated_instrument}
+                  value={values.simulated_instrument.toString()}
                   onChangeText={(val) => {
                     setFieldValue("simulated_instrument", parseFloat(val));
                   }}
