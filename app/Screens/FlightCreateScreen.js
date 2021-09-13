@@ -9,8 +9,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Button,
+  Alert,
 } from "react-native";
-import { Formik, validateYupSchema, useFormik } from "formik";
+import { Formik } from "formik";
 import * as yup from "yup";
 
 import CalendarPicker from "react-native-calendar-picker";
@@ -20,6 +21,7 @@ import TailPicker from "../components/TailPicker";
 import ApproachPicker from "../components/ApproachPicker";
 import AppText from "../components/AppText";
 import Checkbox from "../components/Checkbox";
+import api from "../api/axiosConfig";
 
 import { STYLES } from "../styles/styles";
 import { ScrollView } from "react-native-gesture-handler";
@@ -39,6 +41,13 @@ function FlightCreateScreen(props) {
   const dashNotSpace = (str) => {
     str = str.replace(/\s/g, "-");
     return str;
+  };
+
+  const post = (data) => {
+    api
+      .post("/api/flights/", data)
+      .then((res) => alert("Form Submitted"))
+      .catch((errors) => console.log(errors));
   };
 
   const required = "*required";
@@ -606,8 +615,8 @@ function FlightCreateScreen(props) {
                   <Button
                     title='Submit'
                     onPress={() => {
-                      handleSubmit(values);
-                      console.log(isSubmitting);
+                      onSubmit;
+                      post(values);
                     }}
                   ></Button>
                 ) : (
