@@ -10,7 +10,7 @@ import {
   Platform,
   Button,
 } from "react-native";
-import { Formik, validateYupSchema } from "formik";
+import { Formik, validateYupSchema, useFormik } from "formik";
 import * as yup from "yup";
 
 import CalendarPicker from "react-native-calendar-picker";
@@ -104,12 +104,20 @@ function FlightCreateScreen(props) {
               remarks: "",
             }}
             validationSchema={flightSchema}
+            onSubmit={(values, { setSubmitting }) => {
+              setTimeout(() => {
+                alert(JSON.stringify(values, null, 2));
+                setSubmitting(false);
+              }, 400);
+            }}
           >
             {({
               values,
               errors,
               isValid,
               touched,
+              isSubmitting,
+              onSubmit,
               handleChange,
               setFieldValue,
               handleSubmit,
@@ -597,7 +605,10 @@ function FlightCreateScreen(props) {
                 {isValid ? (
                   <Button
                     title='Submit'
-                    onPress={() => console.log(isValid)}
+                    onPress={() => {
+                      handleSubmit(values);
+                      console.log(isSubmitting);
+                    }}
                   ></Button>
                 ) : (
                   <Button
