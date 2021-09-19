@@ -14,7 +14,7 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function TailPicker({ setFieldValue, aircraftId }) {
+function TailnumberPicker({ setFieldValue, aircraftId }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
@@ -104,4 +104,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TailPicker;
+export default TailnumberPicker;

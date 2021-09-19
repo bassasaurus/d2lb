@@ -17,7 +17,7 @@ import * as yup from "yup";
 import CalendarPicker from "react-native-calendar-picker";
 import AircraftPicker from "../components/AircraftPicker";
 import AppTextInput from "../components/AppTextInput";
-import TailPicker from "../components/TailPicker";
+import TailnumberPicker from "../components/TailnumberPicker";
 import ApproachPicker from "../components/ApproachPicker";
 import AppText from "../components/AppText";
 import Checkbox from "../components/Checkbox";
@@ -199,12 +199,12 @@ function FlightCreateScreen(props) {
 
                   <View style={{ flex: 0.5 }}>
                     {aircraftId ? (
-                      <TailPicker
+                      <TailnumberPicker
                         onChangeText={handleChange("tailnumber")}
                         setFieldValue={setFieldValue}
                         filterBy={values.aircraft}
                         aircraftId={aircraftId}
-                      ></TailPicker>
+                      ></TailnumberPicker>
                     ) : (
                       <View>
                         <AppTextInput
