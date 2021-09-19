@@ -30,7 +30,7 @@ function TailPicker({ setFieldValue, aircraftId }) {
         onPress={() => {
           setVisible(false);
           setFieldValue("tailnumber", item.id);
-          setValue(item.registraton);
+          setValue(item.registration);
         }}
       >
         <Text style={styles.listItem}>{item.registration}</Text>

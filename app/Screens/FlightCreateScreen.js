@@ -184,7 +184,6 @@ function FlightCreateScreen(props) {
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
                       style={{ flex: 0.5 }}
-                      value={values.aircraft}
                       onChangeText={handleChange("aircraft")}
                       setFieldValue={setFieldValue}
                       handleAircraftId={handleAircraftId}
@@ -201,7 +200,6 @@ function FlightCreateScreen(props) {
                   <View style={{ flex: 0.5 }}>
                     {aircraftId ? (
                       <TailPicker
-                        value={values.tailnumber}
                         onChangeText={handleChange("tailnumber")}
                         setFieldValue={setFieldValue}
                         filterBy={values.aircraft}
