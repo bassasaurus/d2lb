@@ -46,8 +46,12 @@ function FlightCreateScreen(props) {
   const post = (data) => {
     api
       .post("/api/flights/", data)
-      .then((res) => alert("Form Submitted"))
-      .catch((errors) => console.log(errors));
+      .then((res) => {
+        alert("Form Submitted");
+        console.log(res);
+      })
+
+      .catch((errors) => console.log(errors.response.data));
   };
 
   const required = "*required";
@@ -640,7 +644,7 @@ function FlightCreateScreen(props) {
                       <CalendarPicker
                         selectedDayColor='lightblue'
                         onDateChange={(date) => {
-                          setFieldValue("date", date.format("M-D-YYYY"));
+                          setFieldValue("date", date.format("M/D/YYYY"));
                           setVisible(false);
                         }}
                       />
