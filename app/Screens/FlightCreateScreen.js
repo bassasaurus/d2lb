@@ -630,9 +630,9 @@ function FlightCreateScreen(props) {
                   ></Button>
                 )}
 
-                {/* <View style={{ marginTop: 30 }}>
-                <Text>{JSON.stringify(values, null, "  ")}</Text>
-              </View> */}
+                <View style={{ marginTop: 30 }}>
+                  <Text>{JSON.stringify(values, null, "  ")}</Text>
+                </View>
 
                 <Modal
                   animationType='slide'

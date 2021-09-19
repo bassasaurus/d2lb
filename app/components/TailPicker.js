@@ -14,9 +14,10 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function TailPicker({ setFieldValue, value, aircraftId }) {
+function TailPicker({ setFieldValue, aircraftId }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [value, setValue] = useState("");
 
   const fetchData = async () => {
     const result = await api.get(`/api/tailnumber_picker/${aircraftId}`);
@@ -28,7 +29,8 @@ function TailPicker({ setFieldValue, value, aircraftId }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("tailnumber", item.registration);
+          setFieldValue("tailnumber", item.id);
+          setValue(item.registraton);
         }}
       >
         <Text style={styles.listItem}>{item.registration}</Text>
