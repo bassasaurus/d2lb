@@ -30,7 +30,7 @@ function AircraftPicker({ setFieldValue, handleAircraftId }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("aircraft", item.id);
+          setFieldValue("aircraft_type", item.id);
           handleAircraftId(item.id);
           setValue(item.aircraft_type);
         }}

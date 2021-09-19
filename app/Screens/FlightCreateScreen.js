@@ -60,8 +60,8 @@ function FlightCreateScreen(props) {
   let flightSchema = yup.object().shape({
     date: yup.string().required(required),
     route: yup.string().required(required),
-    aircraft: yup.string().required(required),
-    tailnumber: yup.string().required(required),
+    aircraft_type: yup.string().required(required),
+    registration: yup.string().required(required),
     duration: yup
       .number()
       .positive(positive)
@@ -94,8 +94,8 @@ function FlightCreateScreen(props) {
             initialValues={{
               date: "",
               route: "",
-              aircraft: "",
-              tailnumber: "",
+              aircraft_type: "",
+              registration: "",
               duration: "",
               pilot_in_command: false,
               second_in_command: false,
@@ -184,13 +184,15 @@ function FlightCreateScreen(props) {
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
                       style={{ flex: 0.5 }}
-                      onChangeText={handleChange("aircraft")}
+                      onChangeText={handleChange("aircraft_type")}
                       setFieldValue={setFieldValue}
                       handleAircraftId={handleAircraftId}
                     ></AircraftPicker>
                     <View>
-                      {errors.aircraft ? (
-                        <Text style={styles.errors}>{errors.aircraft}</Text>
+                      {errors.aircraft_type ? (
+                        <Text style={styles.errors}>
+                          {errors.aircraft_type}
+                        </Text>
                       ) : (
                         <View></View>
                       )}
@@ -200,9 +202,9 @@ function FlightCreateScreen(props) {
                   <View style={{ flex: 0.5 }}>
                     {aircraftId ? (
                       <TailnumberPicker
-                        onChangeText={handleChange("tailnumber")}
+                        onChangeText={handleChange("registration")}
                         setFieldValue={setFieldValue}
-                        filterBy={values.aircraft}
+                        filterBy={values.aircraft_type}
                         aircraftId={aircraftId}
                       ></TailnumberPicker>
                     ) : (
@@ -214,8 +216,8 @@ function FlightCreateScreen(props) {
                       </View>
                     )}
                     <View>
-                      {errors.tailnumber ? (
-                        <Text style={styles.errors}>{errors.tailnumber}</Text>
+                      {errors.registration ? (
+                        <Text style={styles.errors}>{errors.registration}</Text>
                       ) : (
                         <View></View>
                       )}

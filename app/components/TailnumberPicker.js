@@ -29,7 +29,7 @@ function TailnumberPicker({ setFieldValue, aircraftId }) {
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("tailnumber", item.id);
+          setFieldValue("registration", item.id);
           setValue(item.registration);
         }}
       >
