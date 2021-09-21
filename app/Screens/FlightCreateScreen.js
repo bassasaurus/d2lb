@@ -114,6 +114,7 @@ function FlightCreateScreen(props) {
                 { approach_type: "", number: "" },
                 { approach_type: "", number: "" },
               ],
+              holding: false,
               remarks: "",
             }}
             validationSchema={flightSchema}
@@ -586,6 +587,16 @@ function FlightCreateScreen(props) {
                   ) : (
                     <View style={{ paddingLeft: 125 }}></View>
                   )}
+                </View>
+
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    onPress={() => {
+                      setFieldValue("holding", !values.holding);
+                    }}
+                    isChecked={values.holding}
+                  ></Checkbox>
+                  <AppText>Holding</AppText>
                 </View>
 
                 <AppTextInput
