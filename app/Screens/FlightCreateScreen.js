@@ -47,7 +47,7 @@ function FlightCreateScreen(props) {
     api
       .post("/api/flights/", data)
       .then((res) => {
-        alert("Form Submitted");
+        Alert.alert("Form Submitted");
         console.log(res);
       })
 

@@ -29,10 +29,6 @@ function ApproachPicker({
       approach: "ILS",
     },
     {
-      id: 1,
-      approach: "CAT I",
-    },
-    {
       id: 2,
       approach: "CAT II",
     },
