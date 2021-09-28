@@ -368,7 +368,7 @@ function FlightCreateScreen(props) {
                       onChangeText={(val) => {
                         setFieldValue("landings_day", val);
                       }}
-                      placeholder='Day Landings'
+                      placeholder='X'
                       autoCorrect={false}
                       keyboardType={"numeric"}
                       clearButtonMode={"while-editing"}
@@ -390,7 +390,7 @@ function FlightCreateScreen(props) {
                       onChangeText={(val) => {
                         setFieldValue("landings_night", val);
                       }}
-                      placeholder='Night Landings'
+                      placeholder='X'
                       autoCorrect={false}
                       keyboardType={"numeric"}
                       clearButtonMode={"while-editing"}
@@ -422,7 +422,7 @@ function FlightCreateScreen(props) {
                       onChangeText={(val) => {
                         setFieldValue("instrument", val);
                       }}
-                      placeholder='IFR'
+                      placeholder='X.X'
                       autoCorrect={false}
                       keyboardType={"numeric"}
                       clearButtonMode={"while-editing"}
@@ -444,7 +444,7 @@ function FlightCreateScreen(props) {
                       onChangeText={(val) => {
                         setFieldValue("simulated_instrument", val);
                       }}
-                      placeholder='Simulated IFR'
+                      placeholder='X.X'
                       autoCorrect={false}
                       keyboardType={"numeric"}
                       clearButtonMode={"while-editing"}
@@ -620,14 +620,20 @@ function FlightCreateScreen(props) {
                   )}
                 </View>
 
-                <View style={styles.checkboxContainer}>
-                  <Checkbox
-                    onPress={() => {
-                      setFieldValue("holding", !values.holding);
-                    }}
-                    isChecked={values.holding}
-                  ></Checkbox>
-                  <AppText>Holding</AppText>
+                <View
+                  style={{ flexDirection: "row", marginTop: 10, flex: 0.5 }}
+                >
+                  <View style={styles.checkboxContainer}>
+                    <Checkbox
+                      onPress={() => {
+                        setFieldValue("holding", !values.holding);
+                      }}
+                      isChecked={values.holding}
+                    ></Checkbox>
+                    <View>
+                      <AppText>Holding</AppText>
+                    </View>
+                  </View>
                 </View>
 
                 <AppTextInput
@@ -666,10 +672,7 @@ function FlightCreateScreen(props) {
                     }}
                   ></Button>
                 ) : (
-                  <Button
-                    title='Please complete all required fields'
-                    onPress={() => console.log(isValid)}
-                  ></Button>
+                  <Button title='Please complete all required fields'></Button>
                 )}
 
                 {/* <View style={{ marginTop: 30 }}>

@@ -117,7 +117,7 @@ function ApproachPicker({
 
         <AppTextInput
           width={80}
-          placeholder='#'
+          placeholder='X'
           keyboardType='numeric'
           clearButtonMode={"always"}
           value={numberValue.toString()}
