@@ -31,15 +31,16 @@ function FlightCreateScreen() {
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [acTailMatch, setAcTailMatch] = useState(false);
 
   function handleAircraftId(id) {
     if (aircraftId === id) {
-      console.log("true");
-      return false;
+      setAcTailMatch(true);
+      console.log(acTailMatch);
     } else {
-      console.log("false");
+      setAcTailMatch(false);
+      console.log(acTailMatch);
       setAircraftId(id);
-      return true;
     }
   }
 
@@ -202,6 +203,13 @@ function FlightCreateScreen() {
                         <View></View>
                       )}
                     </View>
+                    <View>
+                      {acTailMatch === false ? (
+                        <Text style={styles.errors}>Aircraft mismatch</Text>
+                      ) : (
+                        <View></View>
+                      )}
+                    </View>
                   </View>
 
                   <View style={{ flex: 0.5 }}>
@@ -209,6 +217,7 @@ function FlightCreateScreen() {
                       <TailnumberPicker
                         setFieldValue={setFieldValue}
                         filterBy={values.aircraft_type}
+                        setAcTailMatch={setAcTailMatch}
                         aircraftId={aircraftId}
                       ></TailnumberPicker>
                     ) : (

@@ -14,7 +14,7 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function TailnumberPicker({ setFieldValue, aircraftId }) {
+function TailnumberPicker({ setFieldValue, aircraftId, setAcTailMatch }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
@@ -31,6 +31,7 @@ function TailnumberPicker({ setFieldValue, aircraftId }) {
           setVisible(false);
           setFieldValue("registration", item.id);
           setValue(item.registration);
+          setAcTailMatch(true);
         }}
       >
         <Text style={styles.listItem}>{item.registration}</Text>
