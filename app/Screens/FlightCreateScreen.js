@@ -409,46 +409,59 @@ function FlightCreateScreen(props) {
                   </View>
                 </View>
 
-                <AppTextInput
-                  value={values.instrument.toString()}
-                  onChangeText={(val) => {
-                    setFieldValue("instrument", val);
-                  }}
-                  placeholder='IFR'
-                  autoCorrect={false}
-                  keyboardType={"numeric"}
-                  clearButtonMode={"while-editing"}
-                ></AppTextInput>
-                <View>
-                  {errors.instrument ? (
-                    <Text style={styles.errors}>{errors.instrument}</Text>
-                  ) : (
+                <View style={{ flexDirection: "row" }}>
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      flex: 0.5,
+                      marginRight: 10,
+                    }}
+                  >
+                    <AppTextInput
+                      value={values.instrument.toString()}
+                      onChangeText={(val) => {
+                        setFieldValue("instrument", val);
+                      }}
+                      placeholder='IFR'
+                      autoCorrect={false}
+                      keyboardType={"numeric"}
+                      clearButtonMode={"while-editing"}
+                    ></AppTextInput>
                     <View>
-                      <AppText>IFR</AppText>
+                      {errors.instrument ? (
+                        <Text style={styles.errors}>{errors.instrument}</Text>
+                      ) : (
+                        <View>
+                          <AppText>IFR</AppText>
+                        </View>
+                      )}
                     </View>
-                  )}
-                </View>
+                  </View>
 
-                <AppTextInput
-                  value={values.simulated_instrument.toString()}
-                  onChangeText={(val) => {
-                    setFieldValue("simulated_instrument", val);
-                  }}
-                  placeholder='Simulated IFR'
-                  autoCorrect={false}
-                  keyboardType={"numeric"}
-                  clearButtonMode={"while-editing"}
-                ></AppTextInput>
-                <View>
-                  {errors.simulated_instrument ? (
-                    <Text style={styles.errors}>
-                      {errors.simulated_instrument}
-                    </Text>
-                  ) : (
+                  <View style={{ flexDirection: "column", flex: 0.5 }}>
+                    <AppTextInput
+                      value={values.simulated_instrument.toString()}
+                      onChangeText={(val) => {
+                        setFieldValue("simulated_instrument", val);
+                      }}
+                      placeholder='Simulated IFR'
+                      autoCorrect={false}
+                      keyboardType={"numeric"}
+                      clearButtonMode={"while-editing"}
+                    ></AppTextInput>
+
                     <View>
-                      <AppText>Hood</AppText>
+                      {errors.simulated_instrument ? (
+                        <Text style={styles.errors}>
+                          {errors.simulated_instrument}
+                        </Text>
+                      ) : (
+                        <View>
+                          <AppText>Hood</AppText>
+                        </View>
+                      )}
                     </View>
-                  )}
+                  </View>
                 </View>
 
                 <View style={{ flexDirection: "row" }}>
