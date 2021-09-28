@@ -681,9 +681,9 @@ function FlightCreateScreen() {
                   <Button title='Please complete all required fields'></Button>
                 )}
 
-                <View style={{ marginTop: 30 }}>
+                {/* <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
-                </View>
+                </View> */}
 
                 <Modal
                   animationType='slide'
