@@ -36,10 +36,8 @@ function FlightCreateScreen() {
   function handleAircraftId(id) {
     if (aircraftId === id) {
       setAcTailMatch(true);
-      console.log(acTailMatch);
     } else {
       setAcTailMatch(false);
-      console.log(acTailMatch);
       setAircraftId(id);
     }
   }
@@ -203,13 +201,6 @@ function FlightCreateScreen() {
                         <View></View>
                       )}
                     </View>
-                    <View>
-                      {acTailMatch === false ? (
-                        <Text style={styles.errors}>Aircraft mismatch</Text>
-                      ) : (
-                        <View></View>
-                      )}
-                    </View>
                   </View>
 
                   <View style={{ flex: 0.5 }}>
@@ -231,6 +222,13 @@ function FlightCreateScreen() {
                     <View>
                       {errors.registration ? (
                         <Text style={styles.errors}>{errors.registration}</Text>
+                      ) : (
+                        <View></View>
+                      )}
+                    </View>
+                    <View>
+                      {acTailMatch === false ? (
+                        <Text style={styles.errors}>Registration mismatch</Text>
                       ) : (
                         <View></View>
                       )}
