@@ -351,44 +351,62 @@ function FlightCreateScreen(props) {
                   </View>
                 </View>
 
-                <AppTextInput
-                  value={values.landings_day.toString()}
-                  onChangeText={(val) => {
-                    setFieldValue("landings_day", val);
+                <View
+                  style={{
+                    flexDirection: "row",
                   }}
-                  placeholder='Day Landings'
-                  autoCorrect={false}
-                  keyboardType={"numeric"}
-                  clearButtonMode={"while-editing"}
-                ></AppTextInput>
-                <View>
-                  {errors.landings_day ? (
-                    <Text style={styles.errors}>{errors.landings_day}</Text>
-                  ) : (
+                >
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      flex: 0.5,
+                      marginRight: 10,
+                    }}
+                  >
+                    <AppTextInput
+                      value={values.landings_day.toString()}
+                      onChangeText={(val) => {
+                        setFieldValue("landings_day", val);
+                      }}
+                      placeholder='Day Landings'
+                      autoCorrect={false}
+                      keyboardType={"numeric"}
+                      clearButtonMode={"while-editing"}
+                    ></AppTextInput>
                     <View>
-                      <AppText>Day Landings</AppText>
+                      {errors.landings_day ? (
+                        <Text style={styles.errors}>{errors.landings_day}</Text>
+                      ) : (
+                        <View>
+                          <AppText>Day Landings</AppText>
+                        </View>
+                      )}
                     </View>
-                  )}
-                </View>
+                  </View>
 
-                <AppTextInput
-                  value={values.landings_night.toString()}
-                  onChangeText={(val) => {
-                    setFieldValue("landings_night", val);
-                  }}
-                  placeholder='Night Landings'
-                  autoCorrect={false}
-                  keyboardType={"numeric"}
-                  clearButtonMode={"while-editing"}
-                ></AppTextInput>
-                <View>
-                  {errors.landings_night ? (
-                    <Text style={styles.errors}>{errors.landings_night}</Text>
-                  ) : (
+                  <View style={{ flexDirection: "column", flex: 0.5 }}>
+                    <AppTextInput
+                      value={values.landings_night.toString()}
+                      onChangeText={(val) => {
+                        setFieldValue("landings_night", val);
+                      }}
+                      placeholder='Night Landings'
+                      autoCorrect={false}
+                      keyboardType={"numeric"}
+                      clearButtonMode={"while-editing"}
+                    ></AppTextInput>
                     <View>
-                      <AppText>Night Landings</AppText>
+                      {errors.landings_night ? (
+                        <Text style={styles.errors}>
+                          {errors.landings_night}
+                        </Text>
+                      ) : (
+                        <View>
+                          <AppText>Night Landings</AppText>
+                        </View>
+                      )}
                     </View>
-                  )}
+                  </View>
                 </View>
 
                 <AppTextInput
@@ -641,9 +659,9 @@ function FlightCreateScreen(props) {
                   ></Button>
                 )}
 
-                <View style={{ marginTop: 30 }}>
+                {/* <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
-                </View>
+                </View> */}
 
                 <Modal
                   animationType='slide'
