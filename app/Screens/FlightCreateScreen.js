@@ -26,16 +26,21 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import { ScrollView } from "react-native-gesture-handler";
 
-function FlightCreateScreen(props) {
+function FlightCreateScreen() {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
-  const [acTailPair, setAcTailPair] = useState(["", ""]);
-
   function handleAircraftId(id) {
-    setAircraftId(id);
+    if (aircraftId === id) {
+      console.log("true");
+      return false;
+    } else {
+      console.log("false");
+      setAircraftId(id);
+      return true;
+    }
   }
 
   const dashNotSpace = (str) => {
@@ -185,7 +190,6 @@ function FlightCreateScreen(props) {
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
                       style={{ flex: 0.5 }}
-                      onChangeText={handleChange("aircraft_type")}
                       setFieldValue={setFieldValue}
                       handleAircraftId={handleAircraftId}
                     ></AircraftPicker>
@@ -203,7 +207,6 @@ function FlightCreateScreen(props) {
                   <View style={{ flex: 0.5 }}>
                     {aircraftId ? (
                       <TailnumberPicker
-                        onChangeText={handleChange("registration")}
                         setFieldValue={setFieldValue}
                         filterBy={values.aircraft_type}
                         aircraftId={aircraftId}
@@ -620,19 +623,15 @@ function FlightCreateScreen(props) {
                   )}
                 </View>
 
-                <View
-                  style={{ flexDirection: "row", marginTop: 10, flex: 0.5 }}
-                >
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      onPress={() => {
-                        setFieldValue("holding", !values.holding);
-                      }}
-                      isChecked={values.holding}
-                    ></Checkbox>
-                    <View>
-                      <AppText>Holding</AppText>
-                    </View>
+                <View style={{ flexDirection: "row", marginTop: 10 }}>
+                  <Checkbox
+                    onPress={() => {
+                      setFieldValue("holding", !values.holding);
+                    }}
+                    isChecked={values.holding}
+                  ></Checkbox>
+                  <View>
+                    <AppText>Holding</AppText>
                   </View>
                 </View>
 
@@ -675,9 +674,9 @@ function FlightCreateScreen(props) {
                   <Button title='Please complete all required fields'></Button>
                 )}
 
-                {/* <View style={{ marginTop: 30 }}>
+                <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
-                </View> */}
+                </View>
 
                 <Modal
                   animationType='slide'
