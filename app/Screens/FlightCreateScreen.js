@@ -26,7 +26,7 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import { ScrollView } from "react-native-gesture-handler";
 
-function FlightCreateScreen() {
+function FlightCreateScreen({ navigation }) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
@@ -51,11 +51,13 @@ function FlightCreateScreen() {
     api
       .post("/api/flights/", data)
       .then((res) => {
-        Alert.alert("Form Submitted");
         console.log(res);
+        navigation.navigate("FlightList");
       })
 
-      .catch((errors) => console.log(errors.response.data));
+      .catch((errors) =>
+        Alert.alert("An error occurred. \n Please try again.")
+      );
   };
 
   const required = "*required";
@@ -676,6 +678,7 @@ function FlightCreateScreen() {
                     onPress={() => {
                       onSubmit;
                       post(values);
+                      navigation.navigate("FlightList");
                     }}
                   ></Button>
                 ) : (
