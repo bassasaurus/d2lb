@@ -156,7 +156,7 @@ function FlightCreateScreen() {
                 </Pressable>
 
                 <View>
-                  {errors.date ? (
+                  {touched.date ? (
                     <Text style={styles.errors}>{errors.date}</Text>
                   ) : (
                     <View></View>
@@ -176,11 +176,11 @@ function FlightCreateScreen() {
                 />
 
                 <View>
-                  {errors.route ? (
+                  {touched.route ? (
                     <Text style={styles.errors}>{errors.route}</Text>
                   ) : (
                     <View>
-                      <AppText>Route</AppText>
+                      <AppText>*Route</AppText>
                     </View>
                   )}
                 </View>
@@ -193,7 +193,7 @@ function FlightCreateScreen() {
                       handleAircraftId={handleAircraftId}
                     ></AircraftPicker>
                     <View>
-                      {errors.aircraft_type ? (
+                      {touched.aircraft_type ? (
                         <Text style={styles.errors}>
                           {errors.aircraft_type}
                         </Text>
@@ -220,12 +220,13 @@ function FlightCreateScreen() {
                       </View>
                     )}
                     <View>
-                      {errors.registration ? (
+                      {touched.registration ? (
                         <Text style={styles.errors}>{errors.registration}</Text>
                       ) : (
                         <View></View>
                       )}
                     </View>
+
                     <View>
                       {acTailMatch === false ? (
                         <Text style={styles.errors}>Registration mismatch</Text>
@@ -250,11 +251,11 @@ function FlightCreateScreen() {
                 ></AppTextInput>
 
                 <View>
-                  {errors.duration ? (
+                  {touched.duration ? (
                     <Text style={styles.errors}>{errors.duration}</Text>
                   ) : (
                     <View>
-                      <AppText>Duration</AppText>
+                      <AppText>*Duration</AppText>
                     </View>
                   )}
                 </View>
@@ -678,7 +679,7 @@ function FlightCreateScreen() {
                     }}
                   ></Button>
                 ) : (
-                  <Button title='Please complete all required fields'></Button>
+                  <Button title='*Required'></Button>
                 )}
 
                 {/* <View style={{ marginTop: 30 }}>
