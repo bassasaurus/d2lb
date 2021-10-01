@@ -23,7 +23,7 @@ function FlightDetailScreen({ route, navigation }) {
     api.delete(url).then(function (response) {
       if (response.status === 204) {
         Alert.alert(
-          "Succesfully Deleted\n",
+          "Succesfully Deleted",
           date + " " + route + " " + "#" + primary_key
         );
         navigation.goBack();

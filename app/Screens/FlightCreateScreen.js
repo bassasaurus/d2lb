@@ -50,7 +50,8 @@ function FlightCreateScreen({ navigation }) {
   const post = (data) => {
     api.post("/api/flights/", data).then(function (response) {
       if (response.status == 201) {
-        Alert.alert("Succesfully Created"), navigation.navigate("FlightList");
+        Alert.alert("Flight Succesfully Created"),
+          navigation.navigate("FlightList");
       } else {
         Alert.alert("Something went wrong,\nPlease try again.");
       }

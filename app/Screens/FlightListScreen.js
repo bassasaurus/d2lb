@@ -21,10 +21,8 @@ const FlightListScreen = ({ navigation }) => {
 
   const fetchData = async () => {
     const response = await api.get("/api/flights/");
-    if (response.data != data) {
-      Refresh();
-      setData(response.data);
-    }
+    setData(response.data);
+    onRefresh();
   };
 
   useEffect(() => {
@@ -35,21 +33,11 @@ const FlightListScreen = ({ navigation }) => {
     return refreshOnBack;
   }, [navigation]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await api.get("/api/flights/");
-      // console.log(result);
-      setData(result.data);
-    };
-
-    fetchData();
-  }, []);
-
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
 
-  const Refresh = useCallback(() => {
+  const onRefresh = useCallback(() => {
     const fetchData = async () => {
       const result = await api.get("/api/flights/");
       setData(result.data);
@@ -86,7 +74,7 @@ const FlightListScreen = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         refreshControl={
-          <RefreshControl refreshing={refreshing} Refresh={Refresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
       <RoundButton
