@@ -20,11 +20,12 @@ function FlightDetailScreen({ route, navigation }) {
 
   const deleteItem = (primary_key, date, route) => {
     const url = "/api/flights/" + primary_key + "/";
-    api.delete(url).then(function (response)
-    {
-      if (response.status === 204)
-      {
-        Alert.alert("Succesfully Deleted",  date + " " + route + " " + "#" + primary_key);
+    api.delete(url).then(function (response) {
+      if (response.status === 204) {
+        Alert.alert(
+          "Succesfully Deleted\n",
+          date + " " + route + " " + "#" + primary_key
+        );
         navigation.goBack();
       } else {
         Alert.alert("Something went wrong, please try again");
@@ -64,7 +65,11 @@ function FlightDetailScreen({ route, navigation }) {
           <TouchableOpacity
             style={styles.topArea}
             onPress={() => {
-              showAlert(route.params.item.id, route.params.item.date, route.params.item.route);
+              showAlert(
+                route.params.item.id,
+                route.params.item.date,
+                route.params.item.route
+              );
             }}
           >
             <View>

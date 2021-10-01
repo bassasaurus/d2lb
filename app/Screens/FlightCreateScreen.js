@@ -48,16 +48,13 @@ function FlightCreateScreen({ navigation }) {
   };
 
   const post = (data) => {
-    api
-      .post("/api/flights/", data)
-      .then((res) => {
-        console.log(res);
-        navigation.navigate("FlightList");
-      })
-
-      .catch((errors) =>
-        Alert.alert("An error occurred. \n Please try again.")
-      );
+    api.post("/api/flights/", data).then(function (response) {
+      if (response.status == 201) {
+        Alert.alert("Succesfully Created"), navigation.navigate("FlightList");
+      } else {
+        Alert.alert("Something went wrong,\nPlease try again.");
+      }
+    });
   };
 
   const required = "*required";
