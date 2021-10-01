@@ -17,7 +17,7 @@ import RoundButton from "../components/RoundButton";
 
 const FlightListScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
     const response = await api.get("/api/flights/");
@@ -38,12 +38,6 @@ const FlightListScreen = ({ navigation }) => {
   };
 
   const onRefresh = useCallback(() => {
-    const fetchData = async () => {
-      const result = await api.get("/api/flights/");
-      setData(result.data);
-    };
-
-    fetchData();
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
   }, []);
