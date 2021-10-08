@@ -1,9 +1,12 @@
 import api from "./axiosConfig";
 
 import storeData from "../asyncStorage/storeAsyncData";
+import removeAsyncData from "../asyncStorage/removeAsyncData";
 
 const getApiToken = (username, password) => {
   console.log(username, password);
+
+  removeAsyncData("token");
 
   api({
     method: "post",
