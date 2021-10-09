@@ -47,15 +47,13 @@ function FlightCreateScreen({ navigation }) {
     return str;
   };
 
+  const navigate = () => navigation.navigate("FlightList");
+
   const createItem = (data) => {
-    api.post("/api/flights/", data).then(function (response) {
-      if (response.status == 201) {
-        Alert.alert("Flight Succesfully Created");
-        navigation.navigate("FlightList");
-      } else {
-        Alert.alert("Something went wrong,\nPlease try again.");
-      }
-    });
+    api
+      .post("/api/flights/", data)
+      .then(() => navigate())
+      .catch(() => Alert.alert("An error occurred. \n Please try again."));
   };
 
   const required = "*required";
@@ -676,7 +674,6 @@ function FlightCreateScreen({ navigation }) {
                     onPress={() => {
                       onSubmit;
                       createItem(values);
-                      navigation.navigate("FlightList");
                     }}
                   ></Button>
                 ) : (
