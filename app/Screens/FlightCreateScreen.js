@@ -10,6 +10,7 @@ import {
   Platform,
   Button,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -28,6 +29,7 @@ import { ScrollView } from "react-native-gesture-handler";
 
 function FlightCreateScreen({ navigation }) {
   const [visible, setVisible] = useState(false);
+  const [loadingVisible, setLoadingVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -134,11 +136,9 @@ function FlightCreateScreen({ navigation }) {
               errors,
               isValid,
               touched,
-              isSubmitting,
               onSubmit,
               handleChange,
               setFieldValue,
-              handleSubmit,
             }) => (
               <>
                 <Pressable
@@ -670,7 +670,7 @@ function FlightCreateScreen({ navigation }) {
                   )}
                 </View>
 
-                {isValid && submitting === false ? (
+                {isValid ? (
                   <Button
                     title='Submit'
                     onPress={() => {
@@ -680,8 +680,21 @@ function FlightCreateScreen({ navigation }) {
                     }}
                   ></Button>
                 ) : (
-                  <Button title=''></Button>
+                  <Button title='Please complete required fields'></Button>
                 )}
+
+                {submitting ? (
+                  <Modal>
+                    <View style={styles.centeredView}>
+                      <View style={styles.modalView}>
+                        <ActivityIndicator
+                          size='large'
+                          color={STYLES.blue}
+                        ></ActivityIndicator>
+                      </View>
+                    </View>
+                  </Modal>
+                ) : null}
 
                 {/* <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
