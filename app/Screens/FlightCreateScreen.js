@@ -47,11 +47,11 @@ function FlightCreateScreen({ navigation }) {
     return str;
   };
 
-  const post = (data) => {
+  const createItem = (data) => {
     api.post("/api/flights/", data).then(function (response) {
       if (response.status == 201) {
-        Alert.alert("Flight Succesfully Created"),
-          navigation.navigate("FlightList");
+        Alert.alert("Flight Succesfully Created");
+        navigation.navigate("FlightList");
       } else {
         Alert.alert("Something went wrong,\nPlease try again.");
       }
@@ -675,7 +675,7 @@ function FlightCreateScreen({ navigation }) {
                     title='Submit'
                     onPress={() => {
                       onSubmit;
-                      post(values);
+                      createItem(values);
                       navigation.navigate("FlightList");
                     }}
                   ></Button>
