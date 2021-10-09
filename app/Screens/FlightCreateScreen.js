@@ -684,7 +684,7 @@ function FlightCreateScreen({ navigation }) {
                 )}
 
                 {submitting ? (
-                  <Modal>
+                  <Modal transparent={true}>
                     <View style={styles.centeredView}>
                       <View style={styles.modalView}>
                         <ActivityIndicator
