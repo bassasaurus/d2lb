@@ -20,17 +20,16 @@ function FlightDetailScreen({ route, navigation }) {
 
   const deleteItem = (primary_key, date, route) => {
     const url = "/api/flights/" + primary_key + "/";
-    api.delete(url).then(function (response) {
-      if (response.status === 204) {
+    api
+      .delete(url)
+      .then(() => {
+        navigation.goBack();
         Alert.alert(
           "Succesfully Deleted",
           date + " " + route + " " + "#" + primary_key
         );
-        navigation.goBack();
-      } else {
-        Alert.alert("Something went wrong, please try again");
-      }
-    });
+      })
+      .catch(() => Alert.alert("Something went wrong, please try again"));
   };
 
   const showAlert = (primary_key, date, route) =>
