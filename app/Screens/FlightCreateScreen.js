@@ -672,7 +672,7 @@ function FlightCreateScreen({ navigation }) {
 
                 {isValid ? (
                   <Button
-                    title='Submit'
+                    title={submitting ? "" : "Submit"}
                     onPress={() => {
                       onSubmit;
                       createItem(values);
@@ -680,7 +680,7 @@ function FlightCreateScreen({ navigation }) {
                     }}
                   ></Button>
                 ) : (
-                  <Button title='Please complete required fields'></Button>
+                  <Button title='Complete required fields.'></Button>
                 )}
 
                 {submitting ? (

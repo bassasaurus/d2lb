@@ -39,7 +39,7 @@ const FlightListScreen = ({ navigation }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
+    wait(100).then(() => setRefreshing(false));
   }, []);
 
   const renderItem = ({ item }) => (

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import {
   StyleSheet,
@@ -7,6 +7,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 
 import { STYLES } from "../styles/styles";
@@ -17,6 +19,7 @@ function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const deleteItem = (primary_key, date, route) => {
     const url = "/api/flights/" + primary_key + "/";
@@ -30,7 +33,10 @@ function FlightDetailScreen({ route, navigation }) {
     Alert.alert("Are you sure?", "This can't be undone", [
       {
         text: "Yes",
-        onPress: () => deleteItem(primary_key, date, route),
+        onPress: () => {
+          deleteItem(primary_key, date, route);
+          setSubmitting(true);
+        },
       },
       {
         text: "Cancel",
@@ -104,6 +110,19 @@ function FlightDetailScreen({ route, navigation }) {
           coordinates={polylines}
         />
       </MapView>
+
+      {submitting ? (
+        <Modal transparent={true}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <ActivityIndicator
+                size='large'
+                color={STYLES.blue}
+              ></ActivityIndicator>
+            </View>
+          </View>
+        </Modal>
+      ) : null}
     </View>
   );
 }
@@ -173,6 +192,27 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
     borderRadius: STYLES.borderRadius,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
   },
 });
 
