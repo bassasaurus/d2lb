@@ -22,13 +22,7 @@ function FlightDetailScreen({ route, navigation }) {
     const url = "/api/flights/" + primary_key + "/";
     api
       .delete(url)
-      .then(() => {
-        navigation.goBack();
-        Alert.alert(
-          "Succesfully Deleted",
-          date + " " + route + " " + "#" + primary_key
-        );
-      })
+      .then(() => navigation.goBack())
       .catch(() => Alert.alert("Something went wrong, please try again"));
   };
 

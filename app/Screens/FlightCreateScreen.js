@@ -32,6 +32,7 @@ function FlightCreateScreen({ navigation }) {
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [acTailMatch, setAcTailMatch] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   function handleAircraftId(id) {
     if (aircraftId === id) {
@@ -47,13 +48,14 @@ function FlightCreateScreen({ navigation }) {
     return str;
   };
 
-  const navigate = () => navigation.navigate("FlightList");
-
   const createItem = (data) => {
     api
       .post("/api/flights/", data)
-      .then(() => navigate())
-      .catch(() => Alert.alert("An error occurred. \n Please try again."));
+      .then(() => navigation.navigate("FlightList"))
+      .catch(() => {
+        setSubmitting(false);
+        Alert.alert("An error occurred. \n Please try again.");
+      });
   };
 
   const required = "*required";
@@ -668,16 +670,17 @@ function FlightCreateScreen({ navigation }) {
                   )}
                 </View>
 
-                {isValid ? (
+                {isValid && submitting === false ? (
                   <Button
                     title='Submit'
                     onPress={() => {
                       onSubmit;
                       createItem(values);
+                      setSubmitting(true);
                     }}
                   ></Button>
                 ) : (
-                  <Button title='*Required'></Button>
+                  <Button title=''></Button>
                 )}
 
                 {/* <View style={{ marginTop: 30 }}>
