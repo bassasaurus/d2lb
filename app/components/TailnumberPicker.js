@@ -14,7 +14,12 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function TailnumberPicker({ setFieldValue, aircraftId, setAcTailMatch }) {
+function TailnumberPicker({
+  setFieldValue,
+  aircraftId,
+  setAcTailMatch,
+  isValid,
+}) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
@@ -48,7 +53,11 @@ function TailnumberPicker({ setFieldValue, aircraftId, setAcTailMatch }) {
         }}
       >
         <View pointerEvents={"none"}>
-          <AppTextInput value={value} placeholder={"Tailnumber"}></AppTextInput>
+          <AppTextInput
+            isValid={isValid}
+            value={value}
+            placeholder={"Tailnumber"}
+          ></AppTextInput>
         </View>
       </Pressable>
 

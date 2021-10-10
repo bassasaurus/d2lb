@@ -14,7 +14,7 @@ import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function AircraftPicker({ setFieldValue, handleAircraftId }) {
+function AircraftPicker({ setFieldValue, handleAircraftId, isValid }) {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
@@ -49,7 +49,11 @@ function AircraftPicker({ setFieldValue, handleAircraftId }) {
         }}
       >
         <View pointerEvents={"none"}>
-          <AppTextInput value={value} placeholder={"Aircraft"}></AppTextInput>
+          <AppTextInput
+            isValid={isValid}
+            value={value}
+            placeholder={"Aircraft"}
+          ></AppTextInput>
         </View>
       </Pressable>
 

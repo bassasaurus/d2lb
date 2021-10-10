@@ -19,6 +19,7 @@ function ApproachPicker({
   approachValue,
   numberKey,
   numberValue,
+  isValid,
 }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
@@ -107,6 +108,7 @@ function ApproachPicker({
           >
             <View pointerEvents={"none"}>
               <AppTextInput
+                isValid={true}
                 width={150}
                 value={approachValue}
                 placeholder={"Approach Type"}
@@ -116,6 +118,7 @@ function ApproachPicker({
         </View>
 
         <AppTextInput
+          isValid={true}
           width={80}
           placeholder='X'
           keyboardType='numeric'

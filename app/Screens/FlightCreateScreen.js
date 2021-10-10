@@ -29,7 +29,6 @@ import { ScrollView } from "react-native-gesture-handler";
 
 function FlightCreateScreen({ navigation }) {
   const [visible, setVisible] = useState(false);
-  const [loadingVisible, setLoadingVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -149,6 +148,7 @@ function FlightCreateScreen({ navigation }) {
                 >
                   <View pointerEvents='none'>
                     <AppTextInput
+                      isValid={isValid}
                       value={values.date.toString()}
                       onChangeText={handleChange("date")}
                       placeholder='Date'
@@ -165,6 +165,7 @@ function FlightCreateScreen({ navigation }) {
                 </View>
 
                 <AppTextInput
+                  isValid={isValid}
                   value={dashNotSpace(values.route)}
                   onChangeText={handleChange("route")}
                   placeholder='Route'
@@ -189,6 +190,7 @@ function FlightCreateScreen({ navigation }) {
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
+                      isValid={isValid}
                       style={{ flex: 0.5 }}
                       setFieldValue={setFieldValue}
                       handleAircraftId={handleAircraftId}
@@ -207,6 +209,7 @@ function FlightCreateScreen({ navigation }) {
                   <View style={{ flex: 0.5 }}>
                     {aircraftId ? (
                       <TailnumberPicker
+                        isValid={isValid}
                         setFieldValue={setFieldValue}
                         filterBy={values.aircraft_type}
                         setAcTailMatch={setAcTailMatch}
@@ -239,6 +242,7 @@ function FlightCreateScreen({ navigation }) {
                 </View>
 
                 <AppTextInput
+                  isValid={isValid}
                   value={values.duration}
                   onChangeText={(val) => {
                     setFieldValue("duration", val); //function to return zero if blank
@@ -376,6 +380,7 @@ function FlightCreateScreen({ navigation }) {
                     }}
                   >
                     <AppTextInput
+                      isValid={true}
                       value={values.landings_day.toString()}
                       onChangeText={(val) => {
                         setFieldValue("landings_day", val);
@@ -398,6 +403,7 @@ function FlightCreateScreen({ navigation }) {
 
                   <View style={{ flexDirection: "column", flex: 0.5 }}>
                     <AppTextInput
+                      isValid={true}
                       value={values.landings_night.toString()}
                       onChangeText={(val) => {
                         setFieldValue("landings_night", val);
@@ -430,6 +436,7 @@ function FlightCreateScreen({ navigation }) {
                     }}
                   >
                     <AppTextInput
+                      isValid={true}
                       value={values.instrument.toString()}
                       onChangeText={(val) => {
                         setFieldValue("instrument", val);
@@ -452,6 +459,7 @@ function FlightCreateScreen({ navigation }) {
 
                   <View style={{ flexDirection: "column", flex: 0.5 }}>
                     <AppTextInput
+                      isValid={true}
                       value={values.simulated_instrument.toString()}
                       onChangeText={(val) => {
                         setFieldValue("simulated_instrument", val);
@@ -478,6 +486,7 @@ function FlightCreateScreen({ navigation }) {
 
                 <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
+                    isValid={true}
                     setFieldValue={setFieldValue}
                     approachKey={"approaches[0].approach_type"}
                     approachValue={values.approaches[0].approach_type}
@@ -510,6 +519,7 @@ function FlightCreateScreen({ navigation }) {
                 {formCount > 0 ? (
                   <View style={{ flexDirection: "row" }}>
                     <ApproachPicker
+                      isValid={true}
                       setFieldValue={setFieldValue}
                       approachKey={"approaches[1].approach_type"}
                       approachValue={values.approaches[1].approach_type}
@@ -545,6 +555,7 @@ function FlightCreateScreen({ navigation }) {
                 {formCount > 1 ? (
                   <View style={{ flexDirection: "row" }}>
                     <ApproachPicker
+                      isValid={true}
                       setFieldValue={setFieldValue}
                       approachKey={"approaches[2].approach_type"}
                       approachValue={values.approaches[2].approach_type}
@@ -580,6 +591,7 @@ function FlightCreateScreen({ navigation }) {
                 {formCount > 2 ? (
                   <View style={{ flexDirection: "row" }}>
                     <ApproachPicker
+                      isValid={true}
                       setFieldValue={setFieldValue}
                       approachKey={"approaches[3].approach_type"}
                       approachValue={values.approaches[3].approach_type}
@@ -645,6 +657,7 @@ function FlightCreateScreen({ navigation }) {
                 </View>
 
                 <AppTextInput
+                  isValid={true}
                   style={{
                     paddingRight: 10,
                     paddingLeft: 10,
