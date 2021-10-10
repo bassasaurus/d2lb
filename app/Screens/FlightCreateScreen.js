@@ -135,8 +135,9 @@ function FlightCreateScreen({ navigation }) {
               values,
               errors,
               isValid,
-              touched,
+
               onSubmit,
+
               handleChange,
               setFieldValue,
             }) => (
@@ -148,7 +149,7 @@ function FlightCreateScreen({ navigation }) {
                 >
                   <View pointerEvents='none'>
                     <AppTextInput
-                      isValid={isValid}
+                      isValid={values.date.length > 1 ? true : false}
                       value={values.date.toString()}
                       onChangeText={handleChange("date")}
                       placeholder='Date'
@@ -157,7 +158,7 @@ function FlightCreateScreen({ navigation }) {
                 </Pressable>
 
                 <View>
-                  {touched.date ? (
+                  {errors.date ? (
                     <Text style={styles.errors}>{errors.date}</Text>
                   ) : (
                     <View></View>
@@ -165,7 +166,7 @@ function FlightCreateScreen({ navigation }) {
                 </View>
 
                 <AppTextInput
-                  isValid={isValid}
+                  isValid={values.route.length > 1 ? true : false}
                   value={dashNotSpace(values.route)}
                   onChangeText={handleChange("route")}
                   placeholder='Route'
@@ -178,11 +179,11 @@ function FlightCreateScreen({ navigation }) {
                 />
 
                 <View>
-                  {touched.route ? (
+                  {errors.route ? (
                     <Text style={styles.errors}>{errors.route}</Text>
                   ) : (
                     <View>
-                      <AppText>*Route</AppText>
+                      <AppText>Route - ATA or ICAO Airport codes</AppText>
                     </View>
                   )}
                 </View>
@@ -190,13 +191,13 @@ function FlightCreateScreen({ navigation }) {
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
-                      isValid={isValid}
+                      isValid={values.aircraft_type ? true : false}
                       style={{ flex: 0.5 }}
                       setFieldValue={setFieldValue}
                       handleAircraftId={handleAircraftId}
                     ></AircraftPicker>
                     <View>
-                      {touched.aircraft_type ? (
+                      {errors.aircraft_type ? (
                         <Text style={styles.errors}>
                           {errors.aircraft_type}
                         </Text>
@@ -209,7 +210,7 @@ function FlightCreateScreen({ navigation }) {
                   <View style={{ flex: 0.5 }}>
                     {aircraftId ? (
                       <TailnumberPicker
-                        isValid={isValid}
+                        isValid={values.registration ? true : false}
                         setFieldValue={setFieldValue}
                         filterBy={values.aircraft_type}
                         setAcTailMatch={setAcTailMatch}
@@ -224,7 +225,7 @@ function FlightCreateScreen({ navigation }) {
                       </View>
                     )}
                     <View>
-                      {touched.registration ? (
+                      {errors.registration ? (
                         <Text style={styles.errors}>{errors.registration}</Text>
                       ) : (
                         <View></View>
@@ -242,7 +243,7 @@ function FlightCreateScreen({ navigation }) {
                 </View>
 
                 <AppTextInput
-                  isValid={isValid}
+                  isValid={values.duration.length > 1 ? true : false}
                   value={values.duration}
                   onChangeText={(val) => {
                     setFieldValue("duration", val); //function to return zero if blank
@@ -256,11 +257,11 @@ function FlightCreateScreen({ navigation }) {
                 ></AppTextInput>
 
                 <View>
-                  {touched.duration ? (
+                  {errors.duration ? (
                     <Text style={styles.errors}>{errors.duration}</Text>
                   ) : (
                     <View>
-                      <AppText>*Duration</AppText>
+                      <AppText>Duration</AppText>
                     </View>
                   )}
                 </View>
