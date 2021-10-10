@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -97,6 +97,7 @@ function FlightCreateScreen({ navigation }) {
       <ScrollView>
         <View style={styles.container}>
           <Formik
+            validateOnMount={true}
             initialValues={{
               date: "",
               route: "",
