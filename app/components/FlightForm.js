@@ -59,6 +59,16 @@ function FlightCreateScreen({ navigation }) {
       });
   };
 
+  const updateItem = (data) => {
+    api
+      .put("/api/flights/", data)
+      .then(() => navigation.navigate("FlightList"))
+      .catch(() => {
+        setSubmitting(false);
+        Alert.alert("An error occurred. \n Please try again.");
+      });
+  };
+
   const required = "*required";
   const positive = "Must be positive number.";
 
