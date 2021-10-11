@@ -21,7 +21,7 @@ function FlightDetailScreen({ route, navigation }) {
   const mapRef = useRef(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const deleteItem = (primary_key, date, route) => {
+  const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
     api
       .delete(url)
@@ -78,7 +78,9 @@ function FlightDetailScreen({ route, navigation }) {
 
           <TouchableOpacity
             style={styles.bottomArea}
-            onPress={() => navigation.navigate("FlightUpdate")}
+            onPress={() => {
+              navigation.navigate("FlightUpdate", { item: route.params.item });
+            }}
           >
             <View>
               <Icon name={"update"}></Icon>
