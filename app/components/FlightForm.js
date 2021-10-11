@@ -16,12 +16,12 @@ import { Formik } from "formik";
 import * as yup from "yup";
 
 import CalendarPicker from "react-native-calendar-picker";
-import AircraftPicker from "../components/AircraftPicker";
-import AppTextInput from "../components/AppTextInput";
-import TailnumberPicker from "../components/TailnumberPicker";
-import ApproachPicker from "../components/ApproachPicker";
-import AppText from "../components/AppText";
-import Checkbox from "../components/Checkbox";
+import AircraftPicker from "./AircraftPicker";
+import AppTextInput from "./AppTextInput";
+import TailnumberPicker from "./TailnumberPicker";
+import ApproachPicker from "./ApproachPicker";
+import AppText from "./AppText";
+import Checkbox from "./Checkbox";
 import api from "../api/axiosConfig";
 
 import { STYLES } from "../styles/styles";
