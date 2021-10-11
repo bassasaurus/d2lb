@@ -78,7 +78,7 @@ function FlightDetailScreen({ route, navigation }) {
 
           <TouchableOpacity
             style={styles.bottomArea}
-            onPress={() => console.log("update")}
+            onPress={() => navigation.navigate("FlightUpdate")}
           >
             <View>
               <Icon name={"update"}></Icon>
