@@ -11,6 +11,7 @@ import {
   Button,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -25,15 +26,18 @@ import Checkbox from "./Checkbox";
 import api from "../api/axiosConfig";
 
 import { STYLES } from "../styles/styles";
-import { ScrollView } from "react-native-gesture-handler";
 
-function FlightCreateScreen({ navigation }) {
+import { useNavigation } from "@react-navigation/native";
+
+function FlightForm(update, updateData) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [acTailMatch, setAcTailMatch] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const navigation = useNavigation();
 
   function handleAircraftId(id) {
     if (aircraftId === id) {
@@ -53,7 +57,7 @@ function FlightCreateScreen({ navigation }) {
     api
       .post("/api/flights/", data)
       .then(() => navigation.navigate("FlightList"))
-      .catch(() => {
+      .catch(function (error) {
         setSubmitting(false);
         Alert.alert("An error occurred. \n Please try again.");
       });
@@ -803,4 +807,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FlightCreateScreen;
+export default FlightForm;
