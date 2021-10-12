@@ -29,7 +29,7 @@ import { STYLES } from "../styles/styles";
 
 import { useNavigation } from "@react-navigation/native";
 
-function FlightForm(update, updateData) {
+function FlightForm(update, dataToUpdate) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
@@ -38,6 +38,8 @@ function FlightForm(update, updateData) {
   const [submitting, setSubmitting] = useState(false);
 
   const navigation = useNavigation();
+
+  console.log(update, dataToUpdate);
 
   function handleAircraftId(id) {
     if (aircraftId === id) {
