@@ -3,16 +3,16 @@ import { View, StyleSheet } from "react-native";
 import FlightForm from "../components/FlightForm";
 
 function FlightUpdateScreen({ route }) {
-  const dataToUpdate = route.params.item;
+  const apiData = route.params.item;
 
-  Object.keys(dataToUpdate).forEach(function (key) {
-    if (dataToUpdate[key] === null) {
-      dataToUpdate[key] = "";
+  Object.keys(apiData).forEach(function (key) {
+    if (apiData[key] === null) {
+      apiData[key] = "";
     }
-    console.log(dataToUpdate);
+    console.log(apiData);
   });
 
-  return <FlightForm update={true} dataToUpdate={dataToUpdate}></FlightForm>;
+  return <FlightForm></FlightForm>;
 }
 const styles = StyleSheet.create({
   container: {},

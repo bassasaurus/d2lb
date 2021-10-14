@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -29,7 +29,7 @@ import { STYLES } from "../styles/styles";
 
 import { useNavigation } from "@react-navigation/native";
 
-function FlightForm(update, dataToUpdate) {
+function FlightForm({ initialValues }) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
@@ -39,7 +39,7 @@ function FlightForm(update, dataToUpdate) {
 
   const navigation = useNavigation();
 
-  console.log(update, dataToUpdate);
+  console.log(initialValues);
 
   function handleAircraftId(id) {
     if (aircraftId === id) {
@@ -113,32 +113,7 @@ function FlightForm(update, dataToUpdate) {
         <View style={styles.container}>
           <Formik
             validateOnMount={true}
-            initialValues={{
-              date: "",
-              route: "",
-              aircraft_type: "",
-              registration: "",
-              duration: "",
-              pilot_in_command: false,
-              second_in_command: false,
-              solo: false,
-              dual: false,
-              instructor: false,
-              simulator: false,
-              cross_country: false,
-              landings_day: "",
-              landings_night: "",
-              instrument: "",
-              simulated_instrument: "",
-              approaches: [
-                { approach_type: "", number: "" },
-                { approach_type: "", number: "" },
-                { approach_type: "", number: "" },
-                { approach_type: "", number: "" },
-              ],
-              holding: false,
-              remarks: "",
-            }}
+            initialValues={initialValues}
             validationSchema={flightSchema}
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
