@@ -39,6 +39,8 @@ function FlightForm({ initialValues }) {
 
   const navigation = useNavigation();
 
+  console.log(initialValues);
+
   function handleAircraftId(id) {
     if (aircraftId === id) {
       setAcTailMatch(true);
@@ -180,6 +182,7 @@ function FlightForm({ initialValues }) {
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
+                      initialValue={initialValues.aircraft_type}
                       isValid={values.aircraft_type ? true : false}
                       style={{ flex: 0.5 }}
                       setFieldValue={setFieldValue}
@@ -199,6 +202,7 @@ function FlightForm({ initialValues }) {
                   <View style={{ flex: 0.5 }}>
                     {aircraftId ? (
                       <TailnumberPicker
+                        initialValue={initialValues.aircraft_type}
                         isValid={values.registration ? true : false}
                         setFieldValue={setFieldValue}
                         filterBy={values.aircraft_type}
