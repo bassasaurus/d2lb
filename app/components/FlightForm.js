@@ -39,8 +39,6 @@ function FlightForm({ initialValues }) {
 
   const navigation = useNavigation();
 
-  console.log(initialValues);
-
   function handleAircraftId(id) {
     if (aircraftId === id) {
       setAcTailMatch(true);
