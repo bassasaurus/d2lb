@@ -9,10 +9,9 @@ function FlightUpdateScreen({ route }) {
     if (apiData[key] === null) {
       apiData[key] = "";
     }
-    console.log(apiData);
   });
 
-  return <FlightForm></FlightForm>;
+  return <FlightForm initialValues={apiData}></FlightForm>;
 }
 const styles = StyleSheet.create({
   container: {},
