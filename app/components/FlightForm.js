@@ -39,8 +39,6 @@ function FlightForm({ initialValues }) {
 
   const navigation = useNavigation();
 
-  console.log(initialValues);
-
   function handleAircraftId(id) {
     if (aircraftId === id) {
       setAcTailMatch(true);
@@ -117,7 +115,6 @@ function FlightForm({ initialValues }) {
             validationSchema={flightSchema}
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
                 setSubmitting(false);
               }, 400);
             }}
@@ -126,9 +123,7 @@ function FlightForm({ initialValues }) {
               values,
               errors,
               isValid,
-
               onSubmit,
-
               handleChange,
               setFieldValue,
             }) => (
@@ -200,23 +195,15 @@ function FlightForm({ initialValues }) {
                   </View>
 
                   <View style={{ flex: 0.5 }}>
-                    {aircraftId ? (
-                      <TailnumberPicker
-                        initialValue={initialValues.aircraft_type}
-                        isValid={values.registration ? true : false}
-                        setFieldValue={setFieldValue}
-                        filterBy={values.aircraft_type}
-                        setAcTailMatch={setAcTailMatch}
-                        aircraftId={aircraftId}
-                      ></TailnumberPicker>
-                    ) : (
-                      <View>
-                        <AppTextInput
-                          placeholder={"Aircraft choice required."}
-                          editable={false}
-                        ></AppTextInput>
-                      </View>
-                    )}
+                    <TailnumberPicker
+                      initialValue={initialValues.registration}
+                      isValid={values.registration ? true : false}
+                      setFieldValue={setFieldValue}
+                      filterBy={values.aircraft_type}
+                      setAcTailMatch={setAcTailMatch}
+                      aircraftId={aircraftId}
+                    ></TailnumberPicker>
+
                     <View>
                       {errors.registration ? (
                         <Text style={styles.errors}>{errors.registration}</Text>
@@ -225,13 +212,13 @@ function FlightForm({ initialValues }) {
                       )}
                     </View>
 
-                    <View>
+                    {/* <View>
                       {acTailMatch === false ? (
                         <Text style={styles.errors}>Registration mismatch</Text>
                       ) : (
                         <View></View>
                       )}
-                    </View>
+                    </View> */}
                   </View>
                 </View>
 

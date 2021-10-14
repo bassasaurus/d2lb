@@ -15,6 +15,7 @@ import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
 function TailnumberPicker({
+  initialValue,
   setFieldValue,
   aircraftId,
   setAcTailMatch,
@@ -55,7 +56,7 @@ function TailnumberPicker({
         <View pointerEvents={"none"}>
           <AppTextInput
             isValid={isValid}
-            value={value}
+            value={initialValue ? initialValue : value}
             placeholder={"Tailnumber"}
           ></AppTextInput>
         </View>
