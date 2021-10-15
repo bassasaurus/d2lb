@@ -30,7 +30,19 @@ function FlightCreateScreen() {
     remarks: "",
   };
 
-  return <FlightForm initialValues={initialValues}></FlightForm>;
+  const create = (data) => {
+    api
+      .post("/api/flights/", data)
+      .then(() => navigation.navigate("FlightList"))
+      .catch(function (error) {
+        setSubmitting(false);
+        Alert.alert("An error occurred. \n Please try again.");
+      });
+  };
+
+  return (
+    <FlightForm method={create} initialValues={initialValues}></FlightForm>
+  );
 }
 
 const styles = StyleSheet.create({

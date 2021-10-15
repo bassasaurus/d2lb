@@ -29,7 +29,7 @@ import { STYLES } from "../styles/styles";
 
 import { useNavigation } from "@react-navigation/native";
 
-function FlightForm({ initialValues }) {
+function FlightForm({ initialValues, method }) {
   const [visible, setVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
@@ -42,9 +42,11 @@ function FlightForm({ initialValues }) {
   function handleAircraftId(id) {
     if (aircraftId === id) {
       setAcTailMatch(true);
+      return true;
     } else {
       setAcTailMatch(false);
       setAircraftId(id);
+      return false;
     }
   }
 
@@ -58,16 +60,6 @@ function FlightForm({ initialValues }) {
       .post("/api/flights/", data)
       .then(() => navigation.navigate("FlightList"))
       .catch(function (error) {
-        setSubmitting(false);
-        Alert.alert("An error occurred. \n Please try again.");
-      });
-  };
-
-  const updateItem = (data) => {
-    api
-      .put("/api/flights/", data)
-      .then(() => navigation.navigate("FlightList"))
-      .catch(() => {
         setSubmitting(false);
         Alert.alert("An error occurred. \n Please try again.");
       });
@@ -670,7 +662,7 @@ function FlightForm({ initialValues }) {
                     title={submitting ? "" : "Submit"}
                     onPress={() => {
                       onSubmit;
-                      createItem(values);
+                      method(values);
                       setSubmitting(true);
                     }}
                   ></Button>
