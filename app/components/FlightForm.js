@@ -23,11 +23,8 @@ import TailnumberPicker from "./TailnumberPicker";
 import ApproachPicker from "./ApproachPicker";
 import AppText from "./AppText";
 import Checkbox from "./Checkbox";
-import api from "../api/axiosConfig";
 
 import { STYLES } from "../styles/styles";
-
-import { useNavigation } from "@react-navigation/native";
 
 function FlightForm({ initialValues, method }) {
   const [visible, setVisible] = useState(false);
@@ -36,8 +33,6 @@ function FlightForm({ initialValues, method }) {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [acTailMatch, setAcTailMatch] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  const navigation = useNavigation();
 
   function handleAircraftId(id) {
     if (aircraftId === id) {
@@ -53,16 +48,6 @@ function FlightForm({ initialValues, method }) {
   const dashNotSpace = (str) => {
     str = str.replace(/\s/g, "-");
     return str;
-  };
-
-  const createItem = (data) => {
-    api
-      .post("/api/flights/", data)
-      .then(() => navigation.navigate("FlightList"))
-      .catch(function (error) {
-        setSubmitting(false);
-        Alert.alert("An error occurred. \n Please try again.");
-      });
   };
 
   const required = "*required";

@@ -1,7 +1,9 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import FlightForm from "../components/FlightForm";
 import api from "../api/axiosConfig";
+
+import { useNavigation } from "@react-navigation/native";
 
 function FlightUpdateScreen({ route }) {
   const apiData = route.params.item;
@@ -15,13 +17,16 @@ function FlightUpdateScreen({ route }) {
     }
   });
 
+  const navigation = useNavigation();
+
   const update = (data) => {
     const primary_key = data.id;
     api
       .put("/api/flights/" + primary_key + "/", data)
       .then(() => navigation.navigate("FlightList"))
-      .catch(() => {
-        setSubmitting(false);
+      .catch((error) => {
+        console.log(error);
+        // setSubmitting(false);
         Alert.alert("An error occurred. \n Please try again.");
       });
   };

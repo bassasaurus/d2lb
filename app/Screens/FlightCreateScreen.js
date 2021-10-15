@@ -1,6 +1,9 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import FlightForm from "../components/FlightForm";
+import api from "../api/axiosConfig";
+
+import { useNavigation } from "@react-navigation/native";
 
 function FlightCreateScreen() {
   const initialValues = {
@@ -30,12 +33,14 @@ function FlightCreateScreen() {
     remarks: "",
   };
 
+  const navigation = useNavigation();
+
   const create = (data) => {
     api
       .post("/api/flights/", data)
       .then(() => navigation.navigate("FlightList"))
       .catch(function (error) {
-        setSubmitting(false);
+        // setSubmitting(false);
         Alert.alert("An error occurred. \n Please try again.");
       });
   };
