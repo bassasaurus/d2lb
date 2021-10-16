@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Alert } from "react-native";
 import FlightForm from "../components/FlightForm";
 import api from "../api/axiosConfig";
 
@@ -23,6 +23,7 @@ function FlightCreateScreen() {
     landings_night: "",
     instrument: "",
     simulated_instrument: "",
+    night: "",
     approaches: [
       { approach_type: "", number: "" },
       { approach_type: "", number: "" },
@@ -40,6 +41,7 @@ function FlightCreateScreen() {
       .post("/api/flights/", data)
       .then(() => navigation.navigate("FlightList"))
       .catch(function (error) {
+        console.log(error.response.data);
         // setSubmitting(false);
         Alert.alert("An error occurred. \n Please try again.");
       });

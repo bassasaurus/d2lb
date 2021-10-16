@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Alert } from "react-native";
 import FlightForm from "../components/FlightForm";
 import api from "../api/axiosConfig";
 
@@ -25,7 +25,7 @@ function FlightUpdateScreen({ route }) {
       .put("/api/flights/" + primary_key + "/", data)
       .then(() => navigation.navigate("FlightList"))
       .catch((error) => {
-        console.log(error);
+        console.log(error.response.data);
         // setSubmitting(false);
         Alert.alert("An error occurred. \n Please try again.");
       });

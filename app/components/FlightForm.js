@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Button,
-  Alert,
   ActivityIndicator,
   ScrollView,
 } from "react-native";
@@ -72,6 +71,7 @@ function FlightForm({ initialValues, method }) {
       .number()
       .positive(positive)
       .integer("Integers only, no decimals."),
+    night: yup.number().positive(positive),
     instrument: yup.number().positive(positive),
     simulated_instrument: yup.number().positive(positive),
     remarks: yup.string().max(256, "256 Character Maximum"),
@@ -436,6 +436,30 @@ function FlightForm({ initialValues, method }) {
                       ) : (
                         <View>
                           <AppText>Hood</AppText>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  <View style={{ flexDirection: "column", flex: 0.5 }}>
+                    <AppTextInput
+                      isValid={true}
+                      value={values.night.toString()}
+                      onChangeText={(val) => {
+                        setFieldValue("night", val);
+                      }}
+                      placeholder='X.X'
+                      autoCorrect={false}
+                      keyboardType={"numeric"}
+                      clearButtonMode={"while-editing"}
+                    ></AppTextInput>
+
+                    <View>
+                      {errors.night ? (
+                        <Text style={styles.errors}>{errors.night}</Text>
+                      ) : (
+                        <View>
+                          <AppText>Night</AppText>
                         </View>
                       )}
                     </View>
