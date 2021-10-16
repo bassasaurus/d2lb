@@ -441,7 +441,13 @@ function FlightForm({ initialValues, method }) {
                     </View>
                   </View>
 
-                  <View style={{ flexDirection: "column", flex: 0.5 }}>
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      flex: 0.5,
+                      marginLeft: 10,
+                    }}
+                  >
                     <AppTextInput
                       isValid={true}
                       value={values.night.toString()}
