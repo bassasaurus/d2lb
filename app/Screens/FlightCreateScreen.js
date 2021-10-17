@@ -30,7 +30,7 @@ function FlightCreateScreen() {
       { approach_type: "", number: "" },
       { approach_type: "", number: "" },
     ],
-    holding: false,
+    hold: false,
     remarks: "",
   };
 

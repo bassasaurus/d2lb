@@ -635,12 +635,12 @@ function FlightForm({ initialValues, method }) {
                 <View style={{ flexDirection: "row", marginTop: 10 }}>
                   <Checkbox
                     onPress={() => {
-                      setFieldValue("holding", !values.holding);
+                      setFieldValue("hold", !values.hold);
                     }}
-                    isChecked={values.holding}
+                    isChecked={values.hold}
                   ></Checkbox>
                   <View>
-                    <AppText>Holding</AppText>
+                    <AppText>Hold</AppText>
                   </View>
                 </View>
 
@@ -698,9 +698,9 @@ function FlightForm({ initialValues, method }) {
                   </Modal>
                 ) : null}
 
-                {/* <View style={{ marginTop: 30 }}>
+                <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
-                </View> */}
+                </View>
 
                 <Modal
                   animationType='slide'

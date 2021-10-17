@@ -35,7 +35,7 @@ function AircraftPicker({
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("aircraft_type", item.id);
+          setFieldValue("aircraft_type", item.aircraft_type);
           handleAircraftId(item.id);
           setValue(item.aircraft_type);
         }}
@@ -56,7 +56,7 @@ function AircraftPicker({
         <View pointerEvents={"none"}>
           <AppTextInput
             isValid={isValid}
-            value={initialValue ? initialValue : value}
+            value={!value ? initialValue : value}
             placeholder={"Aircraft"}
           ></AppTextInput>
         </View>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -35,7 +35,7 @@ function TailnumberPicker({
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("registration", item.id);
+          setFieldValue("registration", item.registration);
           setValue(item.registration);
           setAcTailMatch(true);
         }}
@@ -56,7 +56,7 @@ function TailnumberPicker({
         <View pointerEvents={"none"}>
           <AppTextInput
             isValid={isValid}
-            value={initialValue ? initialValue : value}
+            value={!value ? initialValue : value}
             placeholder={"Tailnumber"}
           ></AppTextInput>
         </View>
