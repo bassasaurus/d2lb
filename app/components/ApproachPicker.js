@@ -19,7 +19,6 @@ function ApproachPicker({
   approachValue,
   numberKey,
   numberValue,
-  isValid,
 }) {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
