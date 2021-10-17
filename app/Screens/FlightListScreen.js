@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   SafeAreaView,
-  View,
   FlatList,
   StyleSheet,
-  Text,
   StatusBar,
   TouchableOpacity,
   RefreshControl,

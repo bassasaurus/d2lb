@@ -5,7 +5,7 @@ import FlightDetailScreen from "../screens/FlightDetailScreen";
 import FlightCreateScreen from "../screens/FlightCreateScreen";
 import FlightUpdateScreen from "../screens/FlightUpdateScreen";
 
-function StackNavigator(props) {
+function FlightStackNavigator(props) {
   const Stack = createStackNavigator();
 
   const forFade = ({ current }) => ({
@@ -60,4 +60,4 @@ function StackNavigator(props) {
   );
 }
 
-export default StackNavigator;
+export default FlightStackNavigator;
