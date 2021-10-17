@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import StackNavigator from "./app/navigation/StackNavigator";
 import LoginScreen from "./app/screens/LoginScreen";
+import DrawerNavigator from "./app/navigation/DrawerNavigator";
 
 export default function App() {
   return (
@@ -15,9 +16,11 @@ export default function App() {
       {/* <LoginScreen></LoginScreen> */}
       {/* </SafeAreaView> */}
 
-      <NavigationContainer>
+      {/* <NavigationContainer>
         <StackNavigator></StackNavigator>
-      </NavigationContainer>
+      </NavigationContainer> */}
+
+      <DrawerNavigator></DrawerNavigator>
     </>
   );
 }

@@ -7,7 +7,7 @@ import AppButton from "../components/AppButton";
 import AppTextInput from "../components/AppTextInput";
 import getApiToken from "../api/getApiToken";
 
-function Login() {
+function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -40,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default LoginScreen;
