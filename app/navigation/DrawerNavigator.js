@@ -16,8 +16,6 @@ import { AppContext } from "../components/AppContext";
 function DrawerNavigator({ navigation }) {
   const appContext = useContext(AppContext);
 
-  const isSignedIn = appContext.isSignedinValue;
-
   const Drawer = createDrawerNavigator();
 
   function CustomDrawerContent(props) {
@@ -34,7 +32,7 @@ function DrawerNavigator({ navigation }) {
     );
   }
 
-  if (isSignedIn) {
+  if (appContext.isSignedInValue) {
     return (
       <NavigationContainer>
         <Drawer.Navigator
