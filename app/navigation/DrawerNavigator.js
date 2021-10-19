@@ -1,5 +1,5 @@
-import React from "react";
-import { Alert } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Alert } from "react-native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -7,18 +7,18 @@ import {
   DrawerItem,
 } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
-import FlightStackNavigator from "./FlightStackNavigator";
-import { SafeAreaView } from "react-native-safe-area-context";
-import storeAsyncData from "../asyncStorage/storeAsyncData";
-import useAsyncData from "../asyncStorage/useAsyncData";
 import LoginScreen from "../screens/LoginScreen";
+import FlightStackNavigator from "./FlightStackNavigator";
+import { createStackNavigator } from "@react-navigation/stack";
+import AsyncStorage, {
+  useAsyncStorage,
+} from "@react-native-async-storage/async-storage";
+import storeAsyncData from "../asyncStorage/storeAsyncData";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function DrawerNavigator({ navigation }) {
+  const isSignedIn = true;
   const Drawer = createDrawerNavigator();
-
-  const isSignedIn = useAsyncData("isSignedIn");
-
-  console.log(isSignedIn, "DrawerNavigator");
 
   function CustomDrawerContent(props) {
     return (
@@ -28,28 +28,34 @@ function DrawerNavigator({ navigation }) {
           label='Logout'
           onPress={() => {
             Alert.alert("Logged Out");
-            storeAsyncData("isSignedIn", "false");
           }}
         />
       </DrawerContentScrollView>
     );
   }
-  return (
-    <SafeAreaView>
+
+  if (isSignedIn) {
+    return (
       <NavigationContainer>
-        {isSignedIn === "true" ? (
-          <Drawer.Navigator
-            drawerContent={(props) => <CustomDrawerContent {...props} />}
-            initialRouteName='Home'
-          >
-            <Drawer.Screen name='Flights' component={FlightStackNavigator} />
-          </Drawer.Navigator>
-        ) : (
-          <LoginScreen />
-        )}
+        <Drawer.Navigator
+          drawerContent={(props) => <CustomDrawerContent {...props} />}
+          initialRouteName='Home'
+        >
+          <Drawer.Screen name='Flights' component={FlightStackNavigator} />
+        </Drawer.Navigator>
       </NavigationContainer>
-    </SafeAreaView>
-  );
+    );
+  } else {
+    return (
+      <SafeAreaView>
+        <LoginScreen />
+      </SafeAreaView>
+    );
+  }
 }
+
+const styles = StyleSheet.create({
+  container: {},
+});
 
 export default DrawerNavigator;
