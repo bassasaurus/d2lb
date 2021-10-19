@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Alert } from "react-native";
 import {
   createDrawerNavigator,
@@ -9,15 +9,15 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "../screens/LoginScreen";
 import FlightStackNavigator from "./FlightStackNavigator";
-import { createStackNavigator } from "@react-navigation/stack";
-import AsyncStorage, {
-  useAsyncStorage,
-} from "@react-native-async-storage/async-storage";
-import storeAsyncData from "../asyncStorage/storeAsyncData";
+
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AppContext } from "../components/AppContext";
 
 function DrawerNavigator({ navigation }) {
-  const isSignedIn = true;
+  const appContext = useContext(AppContext);
+
+  const isSignedIn = appContext.isSignedinValue;
+
   const Drawer = createDrawerNavigator();
 
   function CustomDrawerContent(props) {
