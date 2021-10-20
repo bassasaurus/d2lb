@@ -32,7 +32,7 @@ function DrawerNavigator({ navigation }) {
     );
   }
 
-  if (AppContext.isSignedInValue) {
+  if (Context.isSignedInValue) {
     return (
       <NavigationContainer>
         <Drawer.Navigator
