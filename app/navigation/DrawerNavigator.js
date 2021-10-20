@@ -9,12 +9,11 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "../screens/LoginScreen";
 import FlightStackNavigator from "./FlightStackNavigator";
-
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AppContext } from "../components/AppContext";
+import AppContext from "../components/AppContext";
 
 function DrawerNavigator({ navigation }) {
-  const appContext = useContext(AppContext);
+  const Context = useContext(AppContext);
 
   const Drawer = createDrawerNavigator();
 
@@ -26,13 +25,14 @@ function DrawerNavigator({ navigation }) {
           label='Logout'
           onPress={() => {
             Alert.alert("Logged Out");
+            Context.setIsSignedIn(false);
           }}
         />
       </DrawerContentScrollView>
     );
   }
 
-  if (appContext.isSignedInValue) {
+  if (AppContext.isSignedInValue) {
     return (
       <NavigationContainer>
         <Drawer.Navigator
