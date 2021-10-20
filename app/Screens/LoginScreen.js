@@ -7,6 +7,7 @@ import api from "../api/axiosConfig";
 import storeData from "../asyncStorage/storeAsyncData";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
 import AppContext from "../components/AppContext";
+import { flexDirection } from "styled-system";
 
 function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -31,38 +32,59 @@ function LoginScreen() {
 
       .catch(function (error) {
         if (error.response) {
+          Context.setIsSignedIn(false);
         } else if (error.request) {
+          Context.setIsSignedIn(false);
         } else {
+          Context.setIsSignedIn(false);
         }
       });
   };
 
   return (
     <View style={styles.container}>
-      <AppTextInput
-        title='username'
-        placeholder='Email'
-        onChangeText={(text) => setUsername(text)}
-        textContentType='emailAddress'
-      />
-      <AppTextInput
-        title='password'
-        placeholder='Password'
-        onChangeText={(text) => setPassword(text)}
-        textContentType='password'
-        secureTextEntry={true}
-      />
-      <AppButton
-        title='Login'
-        onPress={() => getApiToken(username, password)}
-      />
+      <View style={styles.input}>
+        <AppTextInput
+          title='username'
+          placeholder='Email'
+          onChangeText={(text) => setUsername(text)}
+          textContentType='emailAddress'
+          isValid={true}
+          autoCapitalize={false}
+          clearButtonMode='always'
+        />
+      </View>
+      <View style={styles.input}>
+        <AppTextInput
+          title='password'
+          placeholder='Password'
+          onChangeText={(text) => setPassword(text)}
+          textContentType='password'
+          secureTextEntry={true}
+          isValid={true}
+          clearButtonMode='always'
+        />
+      </View>
+      <View>
+        <AppButton
+          title='Login'
+          onPress={() => getApiToken(username, password)}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 300,
+    flexDirection: "column",
+    justifyContent: "center",
     alignItems: "center",
+    width: "100%",
+  },
+  input: {
+    width: "60%",
   },
 });
 

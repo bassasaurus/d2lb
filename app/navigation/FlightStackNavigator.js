@@ -23,6 +23,7 @@ function FlightStackNavigator(props) {
           title: "Flights",
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: "white" },
+          headerShown: false,
         }}
       />
 
@@ -54,6 +55,7 @@ function FlightStackNavigator(props) {
           title: "Update",
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: "white" },
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

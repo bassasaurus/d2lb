@@ -24,7 +24,6 @@ function DrawerNavigator({ navigation }) {
         <DrawerItem
           label='Logout'
           onPress={() => {
-            Alert.alert("Logged Out");
             Context.setIsSignedIn(false);
           }}
         />
