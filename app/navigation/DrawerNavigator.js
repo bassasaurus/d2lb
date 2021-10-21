@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, Alert } from "react-native";
+import { StyleSheet, Alert, SafeAreaView } from "react-native";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -9,7 +9,6 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "../screens/LoginScreen";
 import FlightStackNavigator from "./FlightStackNavigator";
-import { SafeAreaView } from "react-native-safe-area-context";
 import AppContext from "../components/AppContext";
 
 function DrawerNavigator({ navigation }) {
@@ -36,7 +35,6 @@ function DrawerNavigator({ navigation }) {
       <NavigationContainer>
         <Drawer.Navigator
           drawerContent={(props) => <CustomDrawerContent {...props} />}
-          initialRouteName='Home'
         >
           <Drawer.Screen name='Flights' component={FlightStackNavigator} />
         </Drawer.Navigator>
