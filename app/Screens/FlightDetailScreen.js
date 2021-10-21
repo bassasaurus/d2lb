@@ -7,7 +7,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
-  Modal,
   ActivityIndicator,
 } from "react-native";
 
@@ -26,7 +25,9 @@ function FlightDetailScreen({ route, navigation }) {
     api
       .delete(url)
       .then(() => navigation.goBack())
-      .catch(() => Alert.alert("Something went wrong, please try again"));
+      .catch(() => {
+        Alert.alert("Something went wrong, please try again");
+      });
   };
 
   const showAlert = (primary_key, date, route) =>
@@ -113,26 +114,32 @@ function FlightDetailScreen({ route, navigation }) {
         />
       </MapView>
 
-      {submitting ? (
-        <Modal transparent={true}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <ActivityIndicator
-                size='large'
-                color={STYLES.blue}
-              ></ActivityIndicator>
-            </View>
-          </View>
-        </Modal>
-      ) : null}
+      <View style={styles.activityIndicator}>
+        <ActivityIndicator
+          animating={submitting}
+          size='large'
+          color={STYLES.blue}
+        ></ActivityIndicator>
+      </View>
     </View>
   );
 }
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
+  },
+  activityIndicator: {
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    bottom: windowHeight / 2,
+    right: windowWidth / 2 - 25,
+    borderRadius: 100,
   },
   detailsPanel: {
     flexDirection: "row",
