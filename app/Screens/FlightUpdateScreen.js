@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Alert } from "react-native";
 import FlightForm from "../components/FlightForm";
 import api from "../api/axiosConfig";
@@ -6,6 +6,7 @@ import api from "../api/axiosConfig";
 import { useNavigation } from "@react-navigation/native";
 
 function FlightUpdateScreen({ route }) {
+  const [activityVisible, setActivityVisible] = useState(false);
   const apiData = route.params.item;
 
   Object.keys(apiData).forEach(function (key) {
