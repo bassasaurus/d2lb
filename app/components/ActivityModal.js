@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, StyleSheet, Modal, ActivityIndicator } from "react-native";
 import { STYLES } from "../styles/styles";
+import AppContext from "./AppContext";
 
-function ActivityModal({ visible }) {
-  console.log(visible);
+function ActivityModal(props) {
+  const Context = useContext(AppContext);
+  console.log(Context.activityVisibleValue);
   return (
-    <Modal visible={visible} transparent={true}>
+    <Modal visible={Context.activityVisibleValue} transparent={true}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <ActivityIndicator

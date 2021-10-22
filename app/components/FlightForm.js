@@ -96,6 +96,7 @@ function FlightForm({ initialValues, method, activityVisible }) {
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
                 setSubmitting(false);
+                Context.setActivityVisible(true);
               }, 400);
             }}
           >
@@ -682,6 +683,7 @@ function FlightForm({ initialValues, method, activityVisible }) {
                       onSubmit;
                       method(values);
                       setSubmitting(true);
+                      Context.setActivityVisible(true);
                     }}
                   ></Button>
                 ) : (
@@ -712,7 +714,7 @@ function FlightForm({ initialValues, method, activityVisible }) {
               </>
             )}
           </Formik>
-          <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
+          <ActivityModal></ActivityModal>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

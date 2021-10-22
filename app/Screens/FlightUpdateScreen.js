@@ -24,13 +24,11 @@ function FlightUpdateScreen({ route }) {
 
   const update = (data) => {
     const primary_key = data.id;
-    Context.setActivityVisible(true);
     api
       .put("/api/flights/" + primary_key + "/", data)
       .then(() => navigation.navigate("FlightList"))
       .catch((error) => {
         console.log(error.response.data);
-        // setSubmitting(false);
         Alert.alert("An error occurred. \n Please try again.");
       });
   };
