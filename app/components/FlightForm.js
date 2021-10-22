@@ -26,7 +26,7 @@ import Checkbox from "./Checkbox";
 import { STYLES } from "../styles/styles";
 
 function FlightForm({ initialValues, method }) {
-  const [visible, setVisible] = useState(false);
+  const [calVisible, setCalVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -107,7 +107,7 @@ function FlightForm({ initialValues, method }) {
               <>
                 <Pressable
                   onPress={() => {
-                    setVisible(true);
+                    setCalVisible(true);
                   }}
                 >
                   <View pointerEvents='none'>
@@ -705,7 +705,7 @@ function FlightForm({ initialValues, method }) {
                 <Modal
                   animationType='slide'
                   transparent={true}
-                  visible={visible}
+                  visible={calVisible}
                 >
                   <View style={styles.centeredView}>
                     <View style={styles.modalView}>
@@ -713,7 +713,7 @@ function FlightForm({ initialValues, method }) {
                         selectedDayColor='lightblue'
                         onDateChange={(date) => {
                           setFieldValue("date", date.format("M/D/YYYY"));
-                          setVisible(false);
+                          setCalVisible(false);
                         }}
                       />
                     </View>
