@@ -7,19 +7,18 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
-  Modal,
-  ActivityIndicator,
 } from "react-native";
 
 import { STYLES } from "../styles/styles";
 import Icon from "../components/Icon";
+import ActivityModal from "../components/ActivityModal";
 import api from "../api/axiosConfig";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
@@ -27,11 +26,11 @@ function FlightDetailScreen({ route, navigation }) {
       .delete(url)
       .then(() => {
         navigation.goBack();
-        setModalVisible(false);
+        setVisible(false);
       })
       .catch((error) => {
         Alert.alert("Something went wrong, please try again");
-        setModalVisible(false);
+        setVisible(false);
       });
   };
 
@@ -41,7 +40,7 @@ function FlightDetailScreen({ route, navigation }) {
         text: "Yes",
         onPress: () => {
           deleteItem(primary_key, date, route);
-          setModalVisible(true);
+          setVisible(true);
         },
       },
       {
@@ -118,17 +117,7 @@ function FlightDetailScreen({ route, navigation }) {
           coordinates={polylines}
         />
       </MapView>
-
-      <Modal visible={modalVisible} transparent={true}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <ActivityIndicator
-              size='large'
-              color={STYLES.blue}
-            ></ActivityIndicator>
-          </View>
-        </View>
-      </Modal>
+      <ActivityModal visible={visible}></ActivityModal>
     </View>
   );
 }
@@ -198,27 +187,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
     borderRadius: STYLES.borderRadius,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
   },
 });
 
