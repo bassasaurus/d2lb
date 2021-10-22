@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
+  Modal,
   ActivityIndicator,
 } from "react-native";
 
@@ -18,15 +19,19 @@ function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
     api
       .delete(url)
-      .then(() => navigation.goBack())
-      .catch(() => {
+      .then(() => {
+        navigation.goBack();
+        setModalVisible(false);
+      })
+      .catch((error) => {
         Alert.alert("Something went wrong, please try again");
+        setModalVisible(false);
       });
   };
 
@@ -36,7 +41,7 @@ function FlightDetailScreen({ route, navigation }) {
         text: "Yes",
         onPress: () => {
           deleteItem(primary_key, date, route);
-          setSubmitting(true);
+          setModalVisible(true);
         },
       },
       {
@@ -114,32 +119,24 @@ function FlightDetailScreen({ route, navigation }) {
         />
       </MapView>
 
-      <View style={styles.activityIndicator}>
-        <ActivityIndicator
-          animating={submitting}
-          size='large'
-          color={STYLES.blue}
-        ></ActivityIndicator>
-      </View>
+      <Modal visible={modalVisible} transparent={true}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <ActivityIndicator
+              size='large'
+              color={STYLES.blue}
+            ></ActivityIndicator>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
-
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-  },
-  activityIndicator: {
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    bottom: windowHeight / 2,
-    right: windowWidth / 2 - 25,
-    borderRadius: 100,
   },
   detailsPanel: {
     flexDirection: "row",
