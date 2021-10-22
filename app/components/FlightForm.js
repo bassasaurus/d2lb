@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   StyleSheet,
@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Button,
-  ActivityIndicator,
   ScrollView,
 } from "react-native";
 import { Formik } from "formik";
@@ -22,16 +21,20 @@ import TailnumberPicker from "./TailnumberPicker";
 import ApproachPicker from "./ApproachPicker";
 import AppText from "./AppText";
 import Checkbox from "./Checkbox";
+import ActivityModal from "./ActivityModal";
+import AppContext from "./AppContext";
 
 import { STYLES } from "../styles/styles";
 
-function FlightForm({ initialValues, method }) {
+function FlightForm({ initialValues, method, activityVisible }) {
   const [calVisible, setCalVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [acTailMatch, setAcTailMatch] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const Context = useContext(AppContext);
 
   function handleAircraftId(id) {
     if (aircraftId === id) {
@@ -685,19 +688,6 @@ function FlightForm({ initialValues, method }) {
                   <Button title='Complete required fields.'></Button>
                 )}
 
-                {submitting ? (
-                  <Modal transparent={true}>
-                    <View style={styles.centeredView}>
-                      <View style={styles.modalView}>
-                        <ActivityIndicator
-                          size='large'
-                          color={STYLES.blue}
-                        ></ActivityIndicator>
-                      </View>
-                    </View>
-                  </Modal>
-                ) : null}
-
                 {/* <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
                 </View> */}
@@ -722,6 +712,7 @@ function FlightForm({ initialValues, method }) {
               </>
             )}
           </Formik>
+          <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

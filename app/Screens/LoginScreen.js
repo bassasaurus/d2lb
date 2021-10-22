@@ -7,7 +7,6 @@ import api from "../api/axiosConfig";
 import storeData from "../asyncStorage/storeAsyncData";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
 import AppContext from "../components/AppContext";
-import { flexDirection } from "styled-system";
 
 function LoginScreen() {
   const [username, setUsername] = useState("");

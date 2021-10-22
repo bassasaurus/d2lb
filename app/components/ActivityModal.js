@@ -3,6 +3,7 @@ import { View, StyleSheet, Modal, ActivityIndicator } from "react-native";
 import { STYLES } from "../styles/styles";
 
 function ActivityModal({ visible }) {
+  console.log(visible);
   return (
     <Modal visible={visible} transparent={true}>
       <View style={styles.centeredView}>
