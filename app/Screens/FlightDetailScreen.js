@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import {
   StyleSheet,
@@ -13,12 +13,13 @@ import { STYLES } from "../styles/styles";
 import Icon from "../components/Icon";
 import ActivityModal from "../components/ActivityModal";
 import api from "../api/axiosConfig";
+import AppContext from "../components/AppContext";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
-  const [visible, setVisible] = useState(false);
+  const Context = useContext(AppContext);
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
@@ -26,11 +27,11 @@ function FlightDetailScreen({ route, navigation }) {
       .delete(url)
       .then(() => {
         navigation.goBack();
-        setVisible(false);
+        Context.setActivityVisible(false);
       })
       .catch((error) => {
+        Context.setActivityVisible(false);
         Alert.alert("Something went wrong, please try again");
-        setVisible(false);
       });
   };
 
@@ -40,7 +41,7 @@ function FlightDetailScreen({ route, navigation }) {
         text: "Yes",
         onPress: () => {
           deleteItem(primary_key, date, route);
-          setVisible(true);
+          Context.setActivityVisible(true);
         },
       },
       {
@@ -117,7 +118,7 @@ function FlightDetailScreen({ route, navigation }) {
           coordinates={polylines}
         />
       </MapView>
-      <ActivityModal visible={visible}></ActivityModal>
+      <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
     </View>
   );
 }

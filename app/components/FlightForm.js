@@ -26,7 +26,7 @@ import AppContext from "./AppContext";
 
 import { STYLES } from "../styles/styles";
 
-function FlightForm({ initialValues, method, activityVisible }) {
+function FlightForm({ initialValues, method }) {
   const [calVisible, setCalVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
@@ -678,7 +678,7 @@ function FlightForm({ initialValues, method, activityVisible }) {
 
                 {isValid ? (
                   <Button
-                    title={submitting ? "" : "Submit"}
+                    title={!Context.setActivityVisible ? "" : "Submit"}
                     onPress={() => {
                       onSubmit;
                       method(values);

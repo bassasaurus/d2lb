@@ -31,7 +31,6 @@ function FlightUpdateScreen({ route }) {
         Context.setActivityVisible(false);
       })
       .catch((error) => {
-        console.log(error.response.data);
         Context.setActivityVisible(false);
         Alert.alert("An error occurred. \n Please try again.");
       });
