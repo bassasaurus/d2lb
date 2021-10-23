@@ -7,12 +7,13 @@ import api from "../api/axiosConfig";
 import storeData from "../asyncStorage/storeAsyncData";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
 import AppContext from "../components/AppContext";
+import ActivityModal from "../components/ActivityModal";
 
 function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const Context = useContext(AppContext);
-  console.log(Context);
+
   const getApiToken = (username, password) => {
     removeAsyncData("token");
 
@@ -27,15 +28,14 @@ function LoginScreen() {
       .then(function (response) {
         storeData("token", response.data["token"]);
         Context.setIsSignedIn(true);
+        Context.setActivityVisible(false);
       })
-
       .catch(function (error) {
+        Context.setActivityVisible(false);
+        Context.setIsSignedIn(false);
         if (error.response) {
-          Context.setIsSignedIn(false);
         } else if (error.request) {
-          Context.setIsSignedIn(false);
         } else {
-          Context.setIsSignedIn(false);
         }
       });
   };
@@ -67,9 +67,13 @@ function LoginScreen() {
       <View>
         <AppButton
           title='Login'
-          onPress={() => getApiToken(username, password)}
+          onPress={() => {
+            getApiToken(username, password);
+            Context.setActivityVisible(true);
+          }}
         />
       </View>
+      <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
     </View>
   );
 }
