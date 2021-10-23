@@ -26,9 +26,13 @@ function FlightUpdateScreen({ route }) {
     const primary_key = data.id;
     api
       .put("/api/flights/" + primary_key + "/", data)
-      .then(() => navigation.navigate("FlightList"))
+      .then(() => {
+        navigation.navigate("FlightList");
+        Context.setActivityVisible(false);
+      })
       .catch((error) => {
         console.log(error.response.data);
+        Context.setActivityVisible(false);
         Alert.alert("An error occurred. \n Please try again.");
       });
   };
