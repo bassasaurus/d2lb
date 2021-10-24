@@ -34,6 +34,7 @@ function FlightStackNavigator(props) {
           title: "Detail",
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: "white" },
+          options: { headerShown: false },
         }}
       />
       {(props) => <DetailScreen {...props} id={id} />}
