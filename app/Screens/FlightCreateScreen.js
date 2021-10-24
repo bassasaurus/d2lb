@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, Alert } from "react-native";
+import { Alert } from "react-native";
 import FlightForm from "../components/FlightForm";
 import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
@@ -8,6 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 
 function FlightCreateScreen() {
   const Context = useContext(AppContext);
+  const navigation = useNavigation();
+
   const initialValues = {
     date: "",
     route: "",
@@ -36,8 +38,6 @@ function FlightCreateScreen() {
     remarks: "",
   };
 
-  const navigation = useNavigation();
-
   const create = (data) => {
     api
       .post("/api/flights/", data)
@@ -56,9 +56,5 @@ function FlightCreateScreen() {
     <FlightForm method={create} initialValues={initialValues}></FlightForm>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {},
-});
 
 export default FlightCreateScreen;

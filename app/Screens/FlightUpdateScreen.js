@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, Alert } from "react-native";
+import { Alert } from "react-native";
 import FlightForm from "../components/FlightForm";
 import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
@@ -10,6 +10,7 @@ function FlightUpdateScreen({ route }) {
   const apiData = route.params.item;
 
   const Context = useContext(AppContext);
+  const navigation = useNavigation();
 
   Object.keys(apiData).forEach(function (key) {
     if (apiData[key] === null) {
@@ -19,8 +20,6 @@ function FlightUpdateScreen({ route }) {
       apiData.approaches.push({ approach_type: "", number: "" });
     }
   });
-
-  const navigation = useNavigation();
 
   const update = (data) => {
     const primary_key = data.id;
@@ -38,8 +37,5 @@ function FlightUpdateScreen({ route }) {
 
   return <FlightForm method={update} initialValues={apiData}></FlightForm>;
 }
-const styles = StyleSheet.create({
-  container: {},
-});
 
 export default FlightUpdateScreen;
