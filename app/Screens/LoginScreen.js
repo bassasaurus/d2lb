@@ -49,7 +49,7 @@ function LoginScreen() {
           onChangeText={(text) => setUsername(text)}
           textContentType='emailAddress'
           isValid={true}
-          autoCapitalize={false}
+          autoCapitalize='none'
           clearButtonMode='always'
         />
       </View>
