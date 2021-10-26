@@ -6,7 +6,6 @@ const storeAsyncData = async (key, value) => {
   } catch (e) {
     // saving error
   }
-  // console.log(value);
 };
 
 export default storeAsyncData;

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import {
   StyleSheet,
@@ -11,32 +11,38 @@ import {
 
 import { STYLES } from "../styles/styles";
 import Icon from "../components/Icon";
+import ActivityModal from "../components/ActivityModal";
 import api from "../api/axiosConfig";
+import AppContext from "../components/AppContext";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
+  const Context = useContext(AppContext);
 
-  const deleteItem = (primary_key, date, route) => {
+  const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
-    api.delete(url).then(function (response)
-    {
-      if (response.status === 204)
-      {
-        Alert.alert("Succesfully Deleted",  date + " " + route + " " + "#" + primary_key);
+    api
+      .delete(url)
+      .then(() => {
         navigation.goBack();
-      } else {
+        Context.setActivityVisible(false);
+      })
+      .catch((error) => {
+        Context.setActivityVisible(false);
         Alert.alert("Something went wrong, please try again");
-      }
-    });
+      });
   };
 
   const showAlert = (primary_key, date, route) =>
     Alert.alert("Are you sure?", "This can't be undone", [
       {
         text: "Yes",
-        onPress: () => deleteItem(primary_key, date, route),
+        onPress: () => {
+          deleteItem(primary_key, date, route);
+          Context.setActivityVisible(true);
+        },
       },
       {
         text: "Cancel",
@@ -64,7 +70,11 @@ function FlightDetailScreen({ route, navigation }) {
           <TouchableOpacity
             style={styles.topArea}
             onPress={() => {
-              showAlert(route.params.item.id, route.params.item.date, route.params.item.route);
+              showAlert(
+                route.params.item.id,
+                route.params.item.date,
+                route.params.item.route
+              );
             }}
           >
             <View>
@@ -74,7 +84,9 @@ function FlightDetailScreen({ route, navigation }) {
 
           <TouchableOpacity
             style={styles.bottomArea}
-            onPress={() => console.log("update")}
+            onPress={() => {
+              navigation.navigate("FlightUpdate", { item: route.params.item });
+            }}
           >
             <View>
               <Icon name={"update"}></Icon>
@@ -106,6 +118,7 @@ function FlightDetailScreen({ route, navigation }) {
           coordinates={polylines}
         />
       </MapView>
+      <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
     </View>
   );
 }

@@ -3,8 +3,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import FlightListScreen from "../screens/FlightListScreen";
 import FlightDetailScreen from "../screens/FlightDetailScreen";
 import FlightCreateScreen from "../screens/FlightCreateScreen";
+import FlightUpdateScreen from "../screens/FlightUpdateScreen";
 
-function StackNavigator(props) {
+function FlightStackNavigator(props) {
   const Stack = createStackNavigator();
 
   const forFade = ({ current }) => ({
@@ -22,6 +23,7 @@ function StackNavigator(props) {
           title: "Flights",
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: "white" },
+          headerShown: false,
         }}
       />
 
@@ -45,8 +47,18 @@ function StackNavigator(props) {
           cardStyle: { backgroundColor: "white" },
         }}
       />
+
+      <Stack.Screen
+        name='FlightUpdate'
+        component={FlightUpdateScreen}
+        options={{
+          title: "Update",
+          cardStyleInterpolator: forFade,
+          cardStyle: { backgroundColor: "white" },
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
-export default StackNavigator;
+export default FlightStackNavigator;

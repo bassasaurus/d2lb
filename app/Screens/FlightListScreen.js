@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   SafeAreaView,
-  View,
   FlatList,
   StyleSheet,
-  Text,
   StatusBar,
   TouchableOpacity,
   RefreshControl,
@@ -17,23 +15,16 @@ import RoundButton from "../components/RoundButton";
 
 const FlightListScreen = ({ navigation }) => {
   const [data, setData] = useState([]);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await api.get("/api/flights/");
-      // console.log(result);
-      setData(result.data);
-    };
-
-    fetchData();
-  }, []);
+  const fetchData = async () => {
+    const response = await api.get("/api/flights/");
+    setData(response.data);
+    onRefresh();
+  };
 
   useEffect(() => {
     const refreshOnBack = navigation.addListener("focus", () => {
-      const fetchData = async () => {
-        const result = await api.get("/api/flights/");
-      };
       fetchData();
     });
 
@@ -45,14 +36,8 @@ const FlightListScreen = ({ navigation }) => {
   };
 
   const onRefresh = useCallback(() => {
-    const fetchData = async () => {
-      const result = await api.get("/api/flights/");
-      setData(result.data);
-    };
-
-    fetchData();
     setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
+    wait(250).then(() => setRefreshing(false));
   }, []);
 
   const renderItem = ({ item }) => (

@@ -29,10 +29,6 @@ function ApproachPicker({
       approach: "ILS",
     },
     {
-      id: 1,
-      approach: "CAT I",
-    },
-    {
       id: 2,
       approach: "CAT II",
     },
@@ -111,6 +107,7 @@ function ApproachPicker({
           >
             <View pointerEvents={"none"}>
               <AppTextInput
+                isValid={true}
                 width={150}
                 value={approachValue}
                 placeholder={"Approach Type"}
@@ -120,8 +117,9 @@ function ApproachPicker({
         </View>
 
         <AppTextInput
+          isValid={true}
           width={80}
-          placeholder='#'
+          placeholder='X'
           keyboardType='numeric'
           clearButtonMode={"always"}
           value={numberValue.toString()}
