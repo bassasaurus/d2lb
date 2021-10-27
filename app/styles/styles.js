@@ -12,7 +12,6 @@ export const STYLES = {
   red: "red",
   grey: "grey",
 
-  font: Platform.OS === "android" ? "Roboto" : "Avenir",
   fontWeightBold: "800",
   fontWeightNormal: "400",
   fontSizeNormal: 13,

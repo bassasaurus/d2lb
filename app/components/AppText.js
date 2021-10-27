@@ -12,7 +12,7 @@ function AppText({ children, ...props }) {
 
 const styles = StyleSheet.create({
   text: {
-    fontFamily: STYLES.font,
+    fontFamily: "sans-serif",
     fontSize: STYLES.fontSizeNormal,
   },
 });
