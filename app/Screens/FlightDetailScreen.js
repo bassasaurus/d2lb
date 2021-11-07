@@ -96,36 +96,50 @@ function FlightDetailScreen({ route, navigation }) {
           <View style={styles.thirdColumn}>
             <AppText size={16} color={STYLES.black}>
               {route.params.item.pilot_in_command ? "PIC" : ""}
+              {route.params.item.second_in_command ? "SIC" : ""}
+              {route.params.item.solo ? "Solo" : ""}
+              {route.params.item.dual ? "Dual" : ""}
+            </AppText>
+          </View>
+        </View>
+        <View style={styles.rowContainer}>
+          <View style={styles.thirdColumn}>
+            <AppText size={16} color={STYLES.black}>
+              {route.params.item.cross_country ? "XC" : ""}
+              {route.params.item.simulator ? "  Sim" : ""}
+              {route.params.item.instructor ? "  CFI" : ""}
             </AppText>
           </View>
         </View>
         <View style={styles.rowContainer}></View>
-        <View style={styles.rowContainer}></View>
 
         <View style={styles.rowContainer}>
-          <MaterialCommunityIcons
-            name={"delete"}
-            size={30}
-            color={STYLES.danger}
-            onPress={() => {
-              showAlert(
-                route.params.item.id,
-                route.params.item.date,
-                route.params.item.route
-              );
-            }}
-          />
-
-          <MaterialCommunityIcons
-            name={"update"}
-            size={30}
-            color={STYLES.blue}
-            onPress={() => {
-              navigation.navigate("FlightUpdate", {
-                item: route.params.item,
-              });
-            }}
-          />
+          <View style={styles.firstColumn}>
+            <MaterialCommunityIcons
+              name={"delete"}
+              size={30}
+              color={STYLES.danger}
+              onPress={() => {
+                showAlert(
+                  route.params.item.id,
+                  route.params.item.date,
+                  route.params.item.route
+                );
+              }}
+            />
+          </View>
+          <View style={styles.thirdColumn}>
+            <MaterialCommunityIcons
+              name={"update"}
+              size={30}
+              color={STYLES.blue}
+              onPress={() => {
+                navigation.navigate("FlightUpdate", {
+                  item: route.params.item,
+                });
+              }}
+            />
+          </View>
         </View>
       </View>
 
@@ -165,7 +179,7 @@ const styles = StyleSheet.create({
   },
   detailsPanel: {
     flexDirection: "column",
-    flex: 0.2,
+    flex: 0.3,
     width: "100%",
     margin: 0,
     backgroundColor: STYLES.white,
