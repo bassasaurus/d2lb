@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useContext } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import { StyleSheet, View, Dimensions, Alert } from "react-native";
+import { StyleSheet, View, Dimensions, Alert, Text } from "react-native";
 
 import { STYLES } from "../styles/styles";
 import ActivityModal from "../components/ActivityModal";
@@ -98,7 +98,25 @@ function FlightDetailScreen({ route, navigation }) {
         </View>
         {/* third row */}
         <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}></View>
+          <View style={styles.firstColumn}>
+            <View style={styles.rowContainer}>
+              <AppText size={16} color={STYLES.black}>
+                Landings:
+              </AppText>
+              {route.params.item.landings_day ? (
+                <AppText size={16} color={STYLES.black}>
+                  {" "}
+                  Day {route.params.item.landings_day}
+                </AppText>
+              ) : null}
+              {route.params.item.landings_night ? (
+                <AppText size={16} color={STYLES.black}>
+                  {" "}
+                  Night {route.params.item.landings_night}
+                </AppText>
+              ) : null}
+            </View>
+          </View>
           <View style={styles.secondColumn}></View>
           <View style={styles.thirdColumn}>
             <AppText size={16} color={STYLES.black}>
@@ -108,13 +126,39 @@ function FlightDetailScreen({ route, navigation }) {
             </AppText>
           </View>
         </View>
+
         {/* fourth row */}
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
-            <AppText>Remarks:{route.params.item.remarks}</AppText>
+            <View style={styles.rowContainer}>
+              {route.params.item.night ? (
+                <AppText size={16} color={STYLES.black}>
+                  Night: {route.params.item.night}
+                  {"  "}
+                </AppText>
+              ) : null}
+              {route.params.item.instrument ? (
+                <AppText size={16} color={STYLES.black}>
+                  Inst: {route.params.item.instrument}
+                  {"  "}
+                </AppText>
+              ) : null}
+              {route.params.item.simulated_instrument ? (
+                <AppText size={16} color={STYLES.black}>
+                  Hood: {route.params.item.simulated_instrument}
+                  {"  "}
+                </AppText>
+              ) : null}
+            </View>
           </View>
         </View>
-
+        {/* fifth row */}
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <AppText>{route.params.item.remarks}</AppText>
+          </View>
+        </View>
+        {/* sixth row */}
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <MaterialCommunityIcons
@@ -181,7 +225,7 @@ const styles = StyleSheet.create({
   },
   detailsPanel: {
     flexDirection: "column",
-    flex: 0.2,
+    flex: 0.3,
     width: "100%",
     margin: 0,
     backgroundColor: STYLES.white,
