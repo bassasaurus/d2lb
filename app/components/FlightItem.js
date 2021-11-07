@@ -1,50 +1,71 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { STYLES } from "../styles/styles";
+import AppText from "../components/AppText";
 
 function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
   return (
-    <View style={styles.container}>
-      <View style={styles.row}>
-        <View style={styles.firstColumn}>
-          <Text style={styles.text}>{date}</Text>
+    <>
+      <View style={styles.itemContainer}>
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <AppText style={styles.text}>{date}</AppText>
+          </View>
+          <View style={styles.secondColumn}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+              }}
+            >
+              <AppText style={styles.text}>{type}</AppText>
+              <AppText style={styles.text}>{"  "}</AppText>
+              <AppText style={styles.text}>{reg}</AppText>
+            </View>
+          </View>
+          <View style={styles.rowContainer}>
+            <View style={styles.thirdColumn}>
+              <AppText style={styles.text}>{dur}</AppText>
+            </View>
+          </View>
         </View>
-        <View style={styles.secondColumn}>
-          <Text style={styles.text}>{route}</Text>
-        </View>
-        <View style={styles.thirdColumn}>
-          <Text style={styles.text}>{type}</Text>
-          <Text style={styles.text}>{reg}</Text>
+
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <AppText style={styles.text}>{route}</AppText>
+          </View>
+          <View style={styles.thirdColumn}></View>
         </View>
       </View>
-    </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  itemContainer: {
+    width: "100%",
+    marginTop: 5,
+    paddingLeft: 5,
+    paddingRight: 5,
+    backgroundColor: STYLES.white,
+  },
+  rowContainer: {
     flex: 1,
     flexDirection: "row",
-  },
-  row: {
-    flexDirection: "row",
-    width: "100%",
     marginBottom: 5,
-    // paddingLeft: 5,
-    // paddingRight: 5,
-    // paddingTop: 10,
-    paddingBottom: 5,
-    padding: STYLES.borderRadius,
-    backgroundColor: STYLES.white,
-    borderRadius: STYLES.borderRadius,
   },
-  firstColumn: { flex: 0.6, flexDirection: "column", alignItems: "flex-start" },
-  secondColumn: { flex: 1, flexDirection: "column", alignItems: "flex-start" },
-  thirdColumn: { flex: 1, flexDirection: "column", alignItems: "flex-end" },
-
-  text: {
-    fontSize: 15,
-    color: STYLES.blue,
+  firstColumn: {
+    flexDirection: "column",
+  },
+  secondColumn: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  thirdColumn: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-end",
   },
 });
 

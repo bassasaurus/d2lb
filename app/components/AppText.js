@@ -1,13 +1,10 @@
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
+import { fontSize } from "styled-system";
 import { STYLES } from "../styles/styles";
 
-function AppText({ children }) {
-  return <Text style={styles.text}>{children}</Text>;
+function AppText({ children, size, color }) {
+  return <Text style={((fontSize: size), (color: color))}>{children}</Text>;
 }
-
-const styles = StyleSheet.create({
-  text: {},
-});
 
 export default AppText;
