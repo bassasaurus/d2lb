@@ -14,6 +14,7 @@ import ActivityModal from "../components/ActivityModal";
 import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AppText from "../components/AppText";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
@@ -60,40 +61,68 @@ function FlightDetailScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.detailsPanel}>
-        <View style={styles.firstColumn}>
-          <Text style={styles.text}>{route.params.item.date}</Text>
-          <Text style={styles.text}>{route.params.item.id}</Text>
-        </View>
-        <View style={styles.secondColumn}></View>
-        <View style={styles.thirdColumn}></View>
-        <View style={styles.fourthColumn}>
-          <TouchableOpacity
-            style={styles.topArea}
-            onPress={() => {
-              showAlert(
-                route.params.item.id,
-                route.params.item.date,
-                route.params.item.route
-              );
-            }}
-          >
-            <View>
-              <MaterialCommunityIcons name={"delete"} size={30} color='white' />
-            </View>
-          </TouchableOpacity>
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <AppText size={16} color={STYLES.blue} weight='bold'>
+              {route.params.item.date}
+            </AppText>
+            <AppText size={16} color={STYLES.blue} weight='bold'>
+              {route.params.item.id}
+            </AppText>
+          </View>
 
-          <TouchableOpacity
-            style={styles.bottomArea}
-            onPress={() => {
-              navigation.navigate("FlightUpdate", { item: route.params.item });
-            }}
-          >
-            <View>
-              <MaterialCommunityIcons name={"update"} size={30} color='white' />
+          <View style={styles.secondColumn}>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <AppText size={16} color={STYLES.blue} weight='bold'>
+                {route.params.item.aircraft_type}
+              </AppText>
+              <AppText>{"  "}</AppText>
+              <AppText size={16} color={STYLES.blue} weight='bold'>
+                {route.params.item.registration}
+              </AppText>
             </View>
-          </TouchableOpacity>
+          </View>
+          <View style={styles.thirdColumn}></View>
+          <View style={styles.fourthColumn}>
+            <TouchableOpacity
+              style={styles.topArea}
+              onPress={() => {
+                showAlert(
+                  route.params.item.id,
+                  route.params.item.date,
+                  route.params.item.route
+                );
+              }}
+            >
+              <View>
+                <MaterialCommunityIcons
+                  name={"delete"}
+                  size={30}
+                  color={STYLES.danger}
+                />
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.bottomArea}
+              onPress={() => {
+                navigation.navigate("FlightUpdate", {
+                  item: route.params.item,
+                });
+              }}
+            >
+              <View>
+                <MaterialCommunityIcons
+                  name={"update"}
+                  size={30}
+                  color={STYLES.blue}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
+
       <MapView
         style={styles.map}
         mapPadding={{
@@ -132,27 +161,32 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flex: 0.2,
     width: "100%",
-    margin: 5,
+    margin: 0,
     backgroundColor: STYLES.white,
     borderRadius: STYLES.borderRadius,
     padding: STYLES.borderRadius,
     backgroundColor: STYLES.white,
     borderRadius: STYLES.borderRadius,
   },
-  firstColumn: {
-    flexDirection: "column",
+  rowContainer: {
     flex: 1,
-    backgroundColor: STYLES.white,
+    flexDirection: "row",
+    marginBottom: 5,
+  },
+  firstColumn: {
+    flex: 1,
+    flexDirection: "column",
   },
   secondColumn: {
+    flex: 2,
     flexDirection: "column",
-    flex: 1,
-    backgroundColor: "blue",
+    alignItems: "center",
+    justifyContent: "center",
   },
   thirdColumn: {
-    flexDirection: "column",
     flex: 1,
-    backgroundColor: "green",
+    flexDirection: "column",
+    alignItems: "flex-end",
   },
   fourthColumn: {
     flexDirection: "column",
@@ -165,23 +199,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: STYLES.danger,
+    backgroundColor: STYLES.white,
   },
   bottomArea: {
     flexDirection: "row",
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: STYLES.blue,
+    backgroundColor: STYLES.white,
   },
   text: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-  },
-  selectableText: {
-    fontFamily: STYLES.font,
-    fontWeight: STYLES.fontWeightBold,
-    color: STYLES.white,
   },
   map: {
     flex: 1,
