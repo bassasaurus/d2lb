@@ -36,7 +36,11 @@ function DrawerNavigator({ navigation }) {
         <Drawer.Navigator
           drawerContent={(props) => <LogoutContent {...props} />}
         >
-          <Drawer.Screen name='Flights' component={FlightStackNavigator} />
+          <Drawer.Screen
+            name='Logbook'
+            component={FlightStackNavigator}
+            options={{ headerShown: false }}
+          />
         </Drawer.Navigator>
       </NavigationContainer>
     );

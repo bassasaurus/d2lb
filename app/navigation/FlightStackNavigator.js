@@ -4,9 +4,13 @@ import FlightListScreen from "../screens/FlightListScreen";
 import FlightDetailScreen from "../screens/FlightDetailScreen";
 import FlightCreateScreen from "../screens/FlightCreateScreen";
 import FlightUpdateScreen from "../screens/FlightUpdateScreen";
+import { Button, Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 function FlightStackNavigator(props) {
   const Stack = createStackNavigator();
+
+  const navigation = useNavigation();
 
   const forFade = ({ current }) => ({
     cardStyle: {
@@ -20,10 +24,13 @@ function FlightStackNavigator(props) {
         name='FlightList'
         component={FlightListScreen}
         options={{
-          title: "",
+          title: "Logbook",
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: "white" },
           headerShown: true,
+          headerLeft: () => (
+            <Button title='click' onPress={() => navigation.openDrawer()} />
+          ),
         }}
       />
 
