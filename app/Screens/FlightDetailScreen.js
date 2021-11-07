@@ -1,13 +1,6 @@
 import React, { useRef, useEffect, useContext } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { StyleSheet, View, Dimensions, Alert } from "react-native";
 
 import { STYLES } from "../styles/styles";
 import ActivityModal from "../components/ActivityModal";
@@ -63,13 +56,13 @@ function FlightDetailScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.detailsPanel}>
+        {/* first row */}
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <AppText size={16} color={STYLES.blue} weight='bold'>
               {route.params.item.date}
             </AppText>
           </View>
-
           <View style={styles.secondColumn}>
             <View style={{ flex: 1, flexDirection: "row" }}>
               <AppText size={16} color={STYLES.blue} weight='bold'>
@@ -87,6 +80,7 @@ function FlightDetailScreen({ route, navigation }) {
             </AppText>
           </View>
         </View>
+        {/* second row */}
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <AppText size={16} color={STYLES.black}>
@@ -102,7 +96,10 @@ function FlightDetailScreen({ route, navigation }) {
             </AppText>
           </View>
         </View>
+        {/* third row */}
         <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}></View>
+          <View style={styles.secondColumn}></View>
           <View style={styles.thirdColumn}>
             <AppText size={16} color={STYLES.black}>
               {route.params.item.cross_country ? "XC" : ""}
@@ -111,7 +108,12 @@ function FlightDetailScreen({ route, navigation }) {
             </AppText>
           </View>
         </View>
-        <View style={styles.rowContainer}></View>
+        {/* fourth row */}
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <AppText>Remarks:{route.params.item.remarks}</AppText>
+          </View>
+        </View>
 
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
   },
   detailsPanel: {
     flexDirection: "column",
-    flex: 0.3,
+    flex: 0.2,
     width: "100%",
     margin: 0,
     backgroundColor: STYLES.white,
@@ -189,9 +191,8 @@ const styles = StyleSheet.create({
     borderRadius: STYLES.borderRadius,
   },
   rowContainer: {
-    flex: 1,
     flexDirection: "row",
-    marginBottom: 5,
+    marginBottom: 7,
   },
   firstColumn: {
     flex: 1,
