@@ -22,6 +22,8 @@ function FlightDetailScreen({ route, navigation }) {
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
 
+  console.log(route.params.item);
+
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
     api
@@ -85,7 +87,18 @@ function FlightDetailScreen({ route, navigation }) {
             </AppText>
           </View>
         </View>
-        <View style={styles.rowContainer}></View>
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <AppText size={16} color={STYLES.black}>
+              {route.params.item.route}
+            </AppText>
+          </View>
+          <View style={styles.thirdColumn}>
+            <AppText size={16} color={STYLES.black}>
+              {route.params.item.pilot_in_command ? "PIC" : ""}
+            </AppText>
+          </View>
+        </View>
         <View style={styles.rowContainer}></View>
         <View style={styles.rowContainer}></View>
 
