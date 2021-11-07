@@ -26,7 +26,7 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
           </View>
           <View style={styles.rowContainer}>
             <View style={styles.thirdColumn}>
-              <AppText size={16} color={STYLES.black}>
+              <AppText size={16} color={STYLES.blue} weight='bold'>
                 {dur}
               </AppText>
             </View>
@@ -40,7 +40,7 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
             </AppText>
           </View>
           <View style={styles.thirdColumn}>
-            <AppText color={STYLES.blue}>{crew}</AppText>
+            <AppText color={STYLES.black}>{crew}</AppText>
           </View>
         </View>
       </View>
