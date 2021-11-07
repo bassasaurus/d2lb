@@ -10,10 +10,10 @@ import {
 } from "react-native";
 
 import { STYLES } from "../styles/styles";
-import Icon from "../components/Icon";
 import ActivityModal from "../components/ActivityModal";
 import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
@@ -78,7 +78,7 @@ function FlightDetailScreen({ route, navigation }) {
             }}
           >
             <View>
-              <Icon name={"delete"}></Icon>
+              <MaterialCommunityIcons name={"delete"} size={30} color='white' />
             </View>
           </TouchableOpacity>
 
@@ -89,7 +89,7 @@ function FlightDetailScreen({ route, navigation }) {
             }}
           >
             <View>
-              <Icon name={"update"}></Icon>
+              <MaterialCommunityIcons name={"update"} size={30} color='white' />
             </View>
           </TouchableOpacity>
         </View>
