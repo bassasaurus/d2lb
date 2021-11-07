@@ -9,30 +9,35 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
       <View style={styles.itemContainer}>
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
-            <AppText style={styles.text}>{date}</AppText>
+            <AppText size={18} color={STYLES.blue}>
+              {date}
+            </AppText>
           </View>
           <View style={styles.secondColumn}>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-              }}
-            >
-              <AppText style={styles.text}>{type}</AppText>
-              <AppText style={styles.text}>{"  "}</AppText>
-              <AppText style={styles.text}>{reg}</AppText>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <AppText size={18} color={STYLES.blue}>
+                {type}
+              </AppText>
+              <AppText>{"  "}</AppText>
+              <AppText size={18} color={STYLES.blue}>
+                {reg}
+              </AppText>
             </View>
           </View>
           <View style={styles.rowContainer}>
             <View style={styles.thirdColumn}>
-              <AppText style={styles.text}>{dur}</AppText>
+              <AppText size={18} color={STYLES.black}>
+                {dur}
+              </AppText>
             </View>
           </View>
         </View>
 
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
-            <AppText style={styles.text}>{route}</AppText>
+            <AppText size={18} color={STYLES.black}>
+              {route}
+            </AppText>
           </View>
           <View style={styles.thirdColumn}></View>
         </View>
@@ -45,6 +50,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: "100%",
     marginTop: 5,
+    paddingTop: 5,
     paddingLeft: 5,
     paddingRight: 5,
     backgroundColor: STYLES.white,
@@ -58,9 +64,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   secondColumn: {
-    flex: 1,
+    flex: 2.7,
     flexDirection: "column",
     alignItems: "center",
+    justifyContent: "center",
   },
   thirdColumn: {
     flex: 1,
