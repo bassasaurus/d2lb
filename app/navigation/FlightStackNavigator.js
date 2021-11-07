@@ -20,10 +20,10 @@ function FlightStackNavigator(props) {
         name='FlightList'
         component={FlightListScreen}
         options={{
-          title: "Flights",
+          title: "",
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: "white" },
-          headerShown: false,
+          headerShown: true,
         }}
       />
 

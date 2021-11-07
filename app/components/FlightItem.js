@@ -9,17 +9,17 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
       <View style={styles.itemContainer}>
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
-            <AppText size={16} color={STYLES.blue}>
+            <AppText size={16} color={STYLES.blue} weight='bold'>
               {date}
             </AppText>
           </View>
           <View style={styles.secondColumn}>
             <View style={{ flex: 1, flexDirection: "row" }}>
-              <AppText size={16} color={STYLES.blue}>
+              <AppText size={16} color={STYLES.blue} weight='bold'>
                 {type}
               </AppText>
               <AppText>{"  "}</AppText>
-              <AppText size={16} color={STYLES.blue}>
+              <AppText size={16} color={STYLES.blue} weight='bold'>
                 {reg}
               </AppText>
             </View>
@@ -39,7 +39,9 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
               {route}
             </AppText>
           </View>
-          <View style={styles.thirdColumn}></View>
+          <View style={styles.thirdColumn}>
+            <AppText color={STYLES.blue}>{crew}</AppText>
+          </View>
         </View>
       </View>
     </>

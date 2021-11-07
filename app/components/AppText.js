@@ -2,14 +2,14 @@ import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { STYLES } from "../styles/styles";
 
-function AppText({ children, size, color }) {
-  return <Text style={{ fontSize: size, color: color }}>{children}</Text>;
+function AppText({ children, size, color, weight }) {
+  return (
+    <Text style={{ fontSize: size, color: color, fontWeight: weight }}>
+      {children}
+    </Text>
+  );
 }
 
-const styles = StyleSheet.create({
-  text: {
-    backgroundColor: "white",
-  },
-});
+const styles = StyleSheet.create({});
 
 export default AppText;
