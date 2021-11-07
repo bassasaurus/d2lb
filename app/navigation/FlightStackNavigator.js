@@ -4,8 +4,10 @@ import FlightListScreen from "../screens/FlightListScreen";
 import FlightDetailScreen from "../screens/FlightDetailScreen";
 import FlightCreateScreen from "../screens/FlightCreateScreen";
 import FlightUpdateScreen from "../screens/FlightUpdateScreen";
-import { Button, Text } from "react-native";
+import { Button, Pressable, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 function FlightStackNavigator(props) {
   const Stack = createStackNavigator();
@@ -29,7 +31,12 @@ function FlightStackNavigator(props) {
           cardStyle: { backgroundColor: "white" },
           headerShown: true,
           headerLeft: () => (
-            <Button title='click' onPress={() => navigation.openDrawer()} />
+            <MaterialCommunityIcons
+              style={{ paddingLeft: 5 }}
+              name='menu-open'
+              size={30}
+              onPress={() => navigation.openDrawer()}
+            />
           ),
         }}
       />
