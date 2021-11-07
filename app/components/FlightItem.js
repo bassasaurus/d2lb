@@ -9,24 +9,24 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
       <View style={styles.itemContainer}>
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
-            <AppText size={18} color={STYLES.blue}>
+            <AppText size={16} color={STYLES.blue}>
               {date}
             </AppText>
           </View>
           <View style={styles.secondColumn}>
             <View style={{ flex: 1, flexDirection: "row" }}>
-              <AppText size={18} color={STYLES.blue}>
+              <AppText size={16} color={STYLES.blue}>
                 {type}
               </AppText>
               <AppText>{"  "}</AppText>
-              <AppText size={18} color={STYLES.blue}>
+              <AppText size={16} color={STYLES.blue}>
                 {reg}
               </AppText>
             </View>
           </View>
           <View style={styles.rowContainer}>
             <View style={styles.thirdColumn}>
-              <AppText size={18} color={STYLES.black}>
+              <AppText size={16} color={STYLES.black}>
                 {dur}
               </AppText>
             </View>
@@ -35,7 +35,7 @@ function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
 
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
-            <AppText size={18} color={STYLES.black}>
+            <AppText size={16} color={STYLES.black}>
               {route}
             </AppText>
           </View>
@@ -61,10 +61,11 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   firstColumn: {
+    flex: 1,
     flexDirection: "column",
   },
   secondColumn: {
-    flex: 2.7,
+    flex: 2,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
