@@ -66,9 +66,6 @@ function FlightDetailScreen({ route, navigation }) {
             <AppText size={16} color={STYLES.blue} weight='bold'>
               {route.params.item.date}
             </AppText>
-            <AppText size={16} color={STYLES.blue} weight='bold'>
-              {route.params.item.id}
-            </AppText>
           </View>
 
           <View style={styles.secondColumn}>
@@ -82,44 +79,40 @@ function FlightDetailScreen({ route, navigation }) {
               </AppText>
             </View>
           </View>
-          <View style={styles.thirdColumn}></View>
-          <View style={styles.fourthColumn}>
-            <TouchableOpacity
-              style={styles.topArea}
-              onPress={() => {
-                showAlert(
-                  route.params.item.id,
-                  route.params.item.date,
-                  route.params.item.route
-                );
-              }}
-            >
-              <View>
-                <MaterialCommunityIcons
-                  name={"delete"}
-                  size={30}
-                  color={STYLES.danger}
-                />
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.bottomArea}
-              onPress={() => {
-                navigation.navigate("FlightUpdate", {
-                  item: route.params.item,
-                });
-              }}
-            >
-              <View>
-                <MaterialCommunityIcons
-                  name={"update"}
-                  size={30}
-                  color={STYLES.blue}
-                />
-              </View>
-            </TouchableOpacity>
+          <View style={styles.thirdColumn}>
+            <AppText size={16} color={STYLES.blue} weight='bold'>
+              {route.params.item.duration}
+            </AppText>
           </View>
+        </View>
+        <View style={styles.rowContainer}></View>
+        <View style={styles.rowContainer}></View>
+        <View style={styles.rowContainer}></View>
+
+        <View style={styles.rowContainer}>
+          <MaterialCommunityIcons
+            name={"delete"}
+            size={30}
+            color={STYLES.danger}
+            onPress={() => {
+              showAlert(
+                route.params.item.id,
+                route.params.item.date,
+                route.params.item.route
+              );
+            }}
+          />
+
+          <MaterialCommunityIcons
+            name={"update"}
+            size={30}
+            color={STYLES.blue}
+            onPress={() => {
+              navigation.navigate("FlightUpdate", {
+                item: route.params.item,
+              });
+            }}
+          />
         </View>
       </View>
 
@@ -158,7 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   detailsPanel: {
-    flexDirection: "row",
+    flexDirection: "column",
     flex: 0.2,
     width: "100%",
     margin: 0,
@@ -188,26 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-end",
   },
-  fourthColumn: {
-    flexDirection: "column",
-    flex: 0.4,
-    paddingRight: STYLES.borderRadius,
-    borderRadius: STYLES.borderRadius,
-  },
-  topArea: {
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: STYLES.white,
-  },
-  bottomArea: {
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: STYLES.white,
-  },
+
   text: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
