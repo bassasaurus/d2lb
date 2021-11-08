@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   },
   detailsPanel: {
     flexDirection: "column",
-    flex: 0.3,
+    flex: 0.25,
     width: "100%",
     margin: 0,
     backgroundColor: STYLES.white,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: "row",
-    marginBottom: 7,
+    paddingBottom: 5,
   },
   firstColumn: {
     flex: 1,
