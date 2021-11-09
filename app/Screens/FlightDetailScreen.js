@@ -15,7 +15,7 @@ function FlightDetailScreen({ route, navigation }) {
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
 
-  console.log(route.params.item);
+  const approaches = route.params.item.approaches;
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
@@ -149,6 +149,15 @@ function FlightDetailScreen({ route, navigation }) {
                   {"  "}
                 </AppText>
               ) : null}
+            </View>
+          </View>
+          <View style={styles.thirdColumn}>
+            <View style={styles.rowContainer}>
+              {approaches.map((appr) => (
+                <Text>
+                  {appr.approach_type}-{appr.number}{" "}
+                </Text>
+              ))}
             </View>
           </View>
         </View>
