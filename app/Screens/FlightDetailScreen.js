@@ -133,19 +133,19 @@ function FlightDetailScreen({ route, navigation }) {
             <View style={styles.rowContainer}>
               {route.params.item.night ? (
                 <AppText size={16} color={STYLES.black}>
-                  Night: {route.params.item.night}
+                  Night {route.params.item.night}
                   {"  "}
                 </AppText>
               ) : null}
               {route.params.item.instrument ? (
                 <AppText size={16} color={STYLES.black}>
-                  Inst: {route.params.item.instrument}
+                  Inst {route.params.item.instrument}
                   {"  "}
                 </AppText>
               ) : null}
               {route.params.item.simulated_instrument ? (
                 <AppText size={16} color={STYLES.black}>
-                  Hood: {route.params.item.simulated_instrument}
+                  Hood {route.params.item.simulated_instrument}
                   {"  "}
                 </AppText>
               ) : null}
@@ -154,9 +154,9 @@ function FlightDetailScreen({ route, navigation }) {
           <View style={styles.thirdColumn}>
             <View style={styles.rowContainer}>
               {approaches.map((appr) => (
-                <Text>
+                <AppText size={16} color={STYLES.black}>
                   {appr.approach_type}-{appr.number}{" "}
-                </Text>
+                </AppText>
               ))}
             </View>
           </View>
