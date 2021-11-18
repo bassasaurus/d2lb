@@ -1,6 +1,12 @@
 import React, { useRef, useEffect, useContext } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import { StyleSheet, View, Dimensions, Alert, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 
 import { STYLES } from "../styles/styles";
 import ActivityModal from "../components/ActivityModal";
@@ -8,7 +14,6 @@ import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
-import { backgroundColor } from "styled-system";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
@@ -82,6 +87,9 @@ function FlightDetailScreen({ route, navigation }) {
           </View>
         </View>
         {/* second row */}
+        <View style={styles.rowContainer}>
+          <View backgroundColor='gray' height={1} width='100%'></View>
+        </View>
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <AppText size={16} color={STYLES.black}>
@@ -174,47 +182,48 @@ function FlightDetailScreen({ route, navigation }) {
         </View>
         {/* sixth row */}
         <View style={styles.rowContainer}>
-          <View backgroundColor='gray' height={2} width='100%'></View>
+          <View backgroundColor='gray' height={1} width='100%'></View>
         </View>
         <View style={styles.rowContainer}>
-          <View
+          <TouchableOpacity
             style={{
               flex: 2,
               backgroundColor: STYLES.danger,
               alignItems: "center",
+            }}
+            onPress={() => {
+              showAlert(
+                route.params.item.id,
+                route.params.item.date,
+                route.params.item.route
+              );
             }}
           >
             <MaterialCommunityIcons
               name={"delete"}
               size={30}
               color={STYLES.white}
-              onPress={() => {
-                showAlert(
-                  route.params.item.id,
-                  route.params.item.date,
-                  route.params.item.route
-                );
-              }}
             />
-          </View>
-          <View
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={{
               flex: 2,
               backgroundColor: STYLES.blue,
               alignItems: "center",
+            }}
+            onPress={() => {
+              navigation.navigate("FlightUpdate", {
+                item: route.params.item,
+              });
             }}
           >
             <MaterialCommunityIcons
               name={"update"}
               size={30}
               color={STYLES.white}
-              onPress={() => {
-                navigation.navigate("FlightUpdate", {
-                  item: route.params.item,
-                });
-              }}
             />
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
 
