@@ -151,7 +151,9 @@ function FlightDetailScreen({ route, navigation }) {
               ) : null}
             </View>
           </View>
-          <View style={styles.thirdColumn}>
+        </View>
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
             <View style={styles.rowContainer}>
               {approaches.map((appr) => (
                 <AppText size={16} color={STYLES.black}>
@@ -161,6 +163,7 @@ function FlightDetailScreen({ route, navigation }) {
             </View>
           </View>
         </View>
+
         {/* fifth row */}
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
@@ -234,7 +237,7 @@ const styles = StyleSheet.create({
   },
   detailsPanel: {
     flexDirection: "column",
-    flex: 0.25,
+    flex: 0.325,
     width: "100%",
     margin: 0,
     backgroundColor: STYLES.white,
