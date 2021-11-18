@@ -14,6 +14,8 @@ import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
+import Separator from "../components/Separator";
+import { flexDirection } from "styled-system";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
@@ -87,9 +89,7 @@ function FlightDetailScreen({ route, navigation }) {
           </View>
         </View>
         {/* second row */}
-        <View style={styles.rowContainer}>
-          <View backgroundColor='gray' height={1} width='100%'></View>
-        </View>
+        <Separator />
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <AppText size={16} color={STYLES.black}>
@@ -181,15 +181,15 @@ function FlightDetailScreen({ route, navigation }) {
           </View>
         </View>
         {/* sixth row */}
-        <View style={styles.rowContainer}>
-          <View backgroundColor='gray' height={1} width='100%'></View>
-        </View>
-        <View style={styles.rowContainer}>
+        <Separator />
+        <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
             style={{
               flex: 2,
               backgroundColor: STYLES.danger,
               alignItems: "center",
+              justifyContent: "center",
+              height: 40,
             }}
             onPress={() => {
               showAlert(
@@ -211,6 +211,8 @@ function FlightDetailScreen({ route, navigation }) {
               flex: 2,
               backgroundColor: STYLES.blue,
               alignItems: "center",
+              justifyContent: "center",
+              height: 40,
             }}
             onPress={() => {
               navigation.navigate("FlightUpdate", {
@@ -263,7 +265,7 @@ const styles = StyleSheet.create({
   },
   detailsPanel: {
     flexDirection: "column",
-    flex: 0.325,
+    flex: 0.375,
     width: "100%",
     margin: 0,
     backgroundColor: STYLES.white,
