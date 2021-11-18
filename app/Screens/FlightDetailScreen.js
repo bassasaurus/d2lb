@@ -177,8 +177,13 @@ function FlightDetailScreen({ route, navigation }) {
           <View backgroundColor='gray' height={2} width='100%'></View>
         </View>
         <View style={styles.rowContainer}>
-          <View></View>
-          <View style={{ flex: 2, backgroundColor: STYLES.danger }}>
+          <View
+            style={{
+              flex: 2,
+              backgroundColor: STYLES.danger,
+              alignItems: "center",
+            }}
+          >
             <MaterialCommunityIcons
               name={"delete"}
               size={30}
@@ -192,7 +197,13 @@ function FlightDetailScreen({ route, navigation }) {
               }}
             />
           </View>
-          <View style={{ flex: 2, backgroundColor: STYLES.blue }}>
+          <View
+            style={{
+              flex: 2,
+              backgroundColor: STYLES.blue,
+              alignItems: "center",
+            }}
+          >
             <MaterialCommunityIcons
               name={"update"}
               size={30}
