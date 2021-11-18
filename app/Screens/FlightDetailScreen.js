@@ -16,6 +16,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
 import Separator from "../components/Separator";
 import { flexDirection } from "styled-system";
+import { paddingTop } from "styled-system";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
@@ -65,25 +66,26 @@ function FlightDetailScreen({ route, navigation }) {
     <View style={styles.container}>
       <View style={styles.detailsPanel}>
         {/* first row */}
+
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
-            <AppText size={16} color={STYLES.blue} weight='bold'>
+            <AppText size={18} color={STYLES.blue} weight='bold'>
               {route.params.item.date}
             </AppText>
           </View>
           <View style={styles.secondColumn}>
             <View style={{ flex: 1, flexDirection: "row" }}>
-              <AppText size={16} color={STYLES.blue} weight='bold'>
+              <AppText size={18} color={STYLES.blue} weight='bold'>
                 {route.params.item.aircraft_type}
               </AppText>
               <AppText>{"  "}</AppText>
-              <AppText size={16} color={STYLES.blue} weight='bold'>
+              <AppText size={18} color={STYLES.blue} weight='bold'>
                 {route.params.item.registration}
               </AppText>
             </View>
           </View>
           <View style={styles.thirdColumn}>
-            <AppText size={16} color={STYLES.blue} weight='bold'>
+            <AppText size={18} color={STYLES.blue} weight='bold'>
               {route.params.item.duration}
             </AppText>
           </View>
@@ -164,7 +166,6 @@ function FlightDetailScreen({ route, navigation }) {
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <View style={styles.rowContainer}>
-              <AppText size={16}>Approaches </AppText>
               {approaches.map((appr) => (
                 <AppText size={16} color={STYLES.black}>
                   {appr.approach_type}-{appr.number}{" "}
@@ -182,14 +183,13 @@ function FlightDetailScreen({ route, navigation }) {
         </View>
         {/* sixth row */}
         <Separator />
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <TouchableOpacity
             style={{
               flex: 2,
               backgroundColor: STYLES.danger,
               alignItems: "center",
               justifyContent: "center",
-              height: 40,
             }}
             onPress={() => {
               showAlert(
@@ -212,7 +212,6 @@ function FlightDetailScreen({ route, navigation }) {
               backgroundColor: STYLES.blue,
               alignItems: "center",
               justifyContent: "center",
-              height: 40,
             }}
             onPress={() => {
               navigation.navigate("FlightUpdate", {
@@ -224,6 +223,7 @@ function FlightDetailScreen({ route, navigation }) {
               name={"update"}
               size={30}
               color={STYLES.white}
+              style={{ padding: 5 }}
             />
           </TouchableOpacity>
         </View>
@@ -265,7 +265,6 @@ const styles = StyleSheet.create({
   },
   detailsPanel: {
     flexDirection: "column",
-    flex: 0.375,
     width: "100%",
     margin: 0,
     backgroundColor: STYLES.white,
