@@ -8,6 +8,7 @@ import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
+import { backgroundColor } from "styled-system";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
@@ -173,11 +174,15 @@ function FlightDetailScreen({ route, navigation }) {
         </View>
         {/* sixth row */}
         <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
+          <View backgroundColor='gray' height={2} width='100%'></View>
+        </View>
+        <View style={styles.rowContainer}>
+          <View></View>
+          <View style={{ flex: 2, backgroundColor: STYLES.danger }}>
             <MaterialCommunityIcons
               name={"delete"}
               size={30}
-              color={STYLES.danger}
+              color={STYLES.white}
               onPress={() => {
                 showAlert(
                   route.params.item.id,
@@ -187,11 +192,11 @@ function FlightDetailScreen({ route, navigation }) {
               }}
             />
           </View>
-          <View style={styles.thirdColumn}>
+          <View style={{ flex: 2, backgroundColor: STYLES.blue }}>
             <MaterialCommunityIcons
               name={"update"}
               size={30}
-              color={STYLES.blue}
+              color={STYLES.white}
               onPress={() => {
                 navigation.navigate("FlightUpdate", {
                   item: route.params.item,
