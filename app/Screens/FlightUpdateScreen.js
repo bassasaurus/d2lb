@@ -26,7 +26,7 @@ function FlightUpdateScreen({ route }) {
     api
       .put("/api/flights/" + primary_key + "/", data)
       .then(() => {
-        navigation.navigate("FlightList");
+        navigation.navigate("FlightDetail", { item: data });
         Context.setActivityVisible(false);
       })
       .catch((error) => {
