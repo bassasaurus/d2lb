@@ -173,6 +173,9 @@ function FlightDetailScreen({ route, navigation }) {
               ))}
             </View>
           </View>
+          <View style={styles.thirdColumn}>
+            {route.params.item.hold ? <AppText size={16}>Hold</AppText> : null}
+          </View>
         </View>
 
         {/* fifth row */}
