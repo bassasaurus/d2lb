@@ -69,23 +69,23 @@ function FlightDetailScreen({ route, navigation }) {
 
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
-            <AppText size={18} color={STYLES.blue} weight='bold'>
+            <AppText size={16} color={STYLES.blue} weight='bold'>
               {route.params.item.date}
             </AppText>
           </View>
           <View style={styles.secondColumn}>
             <View style={{ flex: 1, flexDirection: "row" }}>
-              <AppText size={18} color={STYLES.blue} weight='bold'>
+              <AppText size={16} color={STYLES.blue} weight='bold'>
                 {route.params.item.aircraft_type}
               </AppText>
               <AppText>{"  "}</AppText>
-              <AppText size={18} color={STYLES.blue} weight='bold'>
+              <AppText size={16} color={STYLES.blue} weight='bold'>
                 {route.params.item.registration}
               </AppText>
             </View>
           </View>
           <View style={styles.thirdColumn}>
-            <AppText size={18} color={STYLES.blue} weight='bold'>
+            <AppText size={16} color={STYLES.blue} weight='bold'>
               {route.params.item.duration}
             </AppText>
           </View>
