@@ -5,7 +5,6 @@ import AppContext from "./AppContext";
 
 function ActivityModal(props) {
   const Context = useContext(AppContext);
-  console.log(Context.activityVisibleValue);
   return (
     <Modal visible={Context.activityVisibleValue} transparent={true}>
       <View style={styles.centeredView}>
