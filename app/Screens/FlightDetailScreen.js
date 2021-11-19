@@ -131,8 +131,6 @@ function FlightDetailScreen({ route, navigation }) {
           <View style={styles.secondColumn}></View>
           <View style={styles.thirdColumn}>
             <AppText size={16} color={STYLES.black}>
-              {route.params.item.cross_country ? "XC" : ""}
-              {route.params.item.simulator ? "  Sim" : ""}
               {route.params.item.instructor ? "  CFI" : ""}
             </AppText>
           </View>
@@ -161,6 +159,12 @@ function FlightDetailScreen({ route, navigation }) {
                 </AppText>
               ) : null}
             </View>
+          </View>
+          <View style={styles.thirdColumn}>
+            <AppText size={16} color={STYLES.black}>
+              {route.params.item.cross_country ? "XC" : ""}
+              {route.params.item.simulator ? "  Sim" : ""}
+            </AppText>
           </View>
         </View>
         <View style={styles.rowContainer}>
