@@ -6,8 +6,6 @@ const removeAsyncData = async (key) => {
   } catch (e) {
     // remove error
   }
-
-  console.log("Done.");
 };
 
 export default removeAsyncData;
