@@ -4,7 +4,13 @@ import { STYLES } from "../styles/styles";
 
 function AppText({ children, size, color, weight, ...props }) {
   return (
-    <Text style={{ fontSize: size, color: color, fontWeight: weight }}>
+    <Text
+      style={{
+        fontSize: size,
+        color: color,
+        fontWeight: weight,
+      }}
+    >
       {children}
     </Text>
   );

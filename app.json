@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./app/assets/icon.png",
     "splash": {
-      "image": "./app/assets/splash.png",
+      "image": "./app/assets/D2LB_LOGO_Dark_top.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
