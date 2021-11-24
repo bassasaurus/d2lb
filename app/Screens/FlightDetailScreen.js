@@ -170,8 +170,8 @@ function FlightDetailScreen({ route, navigation }) {
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <View style={styles.rowContainer}>
-              {approaches.map((appr) => (
-                <AppText size={16} color={STYLES.black}>
+              {approaches.map((appr, index) => (
+                <AppText size={16} color={STYLES.black} key={index}>
                   {appr.approach_type}-{appr.number}{" "}
                 </AppText>
               ))}
