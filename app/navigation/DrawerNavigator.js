@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import {
   createDrawerNavigator,
@@ -10,6 +10,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "../screens/LoginScreen";
 import FlightStackNavigator from "./FlightStackNavigator";
 import AppContext from "../components/AppContext";
+
+import useAsyncData from "../asyncStorage/useAsyncData";
 
 function DrawerNavigator({ navigation }) {
   const Context = useContext(AppContext);
