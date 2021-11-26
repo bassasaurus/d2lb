@@ -1,6 +1,5 @@
 import axios from "axios";
 import { Platform } from "react-native";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 if (process.env.NODE_ENV == "development") {
