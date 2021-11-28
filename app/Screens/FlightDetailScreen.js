@@ -15,8 +15,6 @@ import AppContext from "../components/AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
 import Separator from "../components/Separator";
-import { flexDirection } from "styled-system";
-import { paddingTop } from "styled-system";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
@@ -214,16 +212,16 @@ function FlightDetailScreen({ route, navigation }) {
           </TouchableOpacity>
 
           <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("FlightUpdate", {
+                item: route.params.item,
+              });
+            }}
             style={{
               flex: 2,
               backgroundColor: STYLES.blue,
               alignItems: "center",
               justifyContent: "center",
-            }}
-            onPress={() => {
-              navigation.navigate("FlightUpdate", {
-                item: route.params.item,
-              });
             }}
           >
             <MaterialCommunityIcons
