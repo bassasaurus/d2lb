@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   input: {
-    width: "60%",
+    width: "80%",
   },
 });
 

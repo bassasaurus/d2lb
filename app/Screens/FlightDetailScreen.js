@@ -204,11 +204,13 @@ function FlightDetailScreen({ route, navigation }) {
               );
             }}
           >
-            <MaterialCommunityIcons
-              name={"delete"}
-              size={30}
-              color={STYLES.white}
-            />
+            <View>
+              <MaterialCommunityIcons
+                name={"delete"}
+                size={30}
+                color={STYLES.white}
+              />
+            </View>
           </TouchableOpacity>
 
           <TouchableOpacity
