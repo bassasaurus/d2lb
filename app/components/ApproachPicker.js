@@ -6,8 +6,9 @@ import {
   Text,
   FlatList,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 import AppTextInput from "./AppTextInput";
 
 import { STYLES } from "../styles/styles";
