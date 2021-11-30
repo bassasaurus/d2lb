@@ -226,12 +226,14 @@ function FlightDetailScreen({ route, navigation }) {
               justifyContent: "center",
             }}
           >
-            <MaterialCommunityIcons
-              name={"update"}
-              size={30}
-              color={STYLES.white}
-              style={{ padding: 5 }}
-            />
+            <View>
+              <MaterialCommunityIcons
+                name={"update"}
+                size={30}
+                color={STYLES.white}
+                style={{ padding: 5 }}
+              />
+            </View>
           </TouchableOpacity>
         </View>
       </View>
