@@ -56,189 +56,54 @@ function FlightDetailScreen({ route, navigation }) {
       },
     ]);
 
-  useEffect(() => {
-    mapRef.current.fitToCoordinates(polylines);
-  }, []);
+  // useEffect(() => {
+  //   mapRef.current.fitToCoordinates(polylines);
+  // }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.detailsPanel}>
-        {/* first row */}
+    <>
+      <TouchableOpacity
+        style={{
+          backgroundColor: STYLES.danger,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        onPress={() => {
+          showAlert(
+            route.params.item.id,
+            route.params.item.date,
+            route.params.item.route
+          );
+        }}
+      >
+        <MaterialCommunityIcons
+          name={"delete"}
+          size={30}
+          color={STYLES.white}
+        />
+      </TouchableOpacity>
 
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <AppText size={16} color={STYLES.blue} weight='bold'>
-              {route.params.item.date}
-            </AppText>
-          </View>
-          <View style={styles.secondColumn}>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <AppText size={16} color={STYLES.blue} weight='bold'>
-                {route.params.item.aircraft_type}
-              </AppText>
-              <AppText>{"  "}</AppText>
-              <AppText size={16} color={STYLES.blue} weight='bold'>
-                {route.params.item.registration}
-              </AppText>
-            </View>
-          </View>
-          <View style={styles.thirdColumn}>
-            <AppText size={16} color={STYLES.blue} weight='bold'>
-              {route.params.item.duration}
-            </AppText>
-          </View>
-        </View>
-        {/* second row */}
-        <Separator />
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <AppText size={16} color={STYLES.black}>
-              {route.params.item.route}
-            </AppText>
-          </View>
-          <View style={styles.thirdColumn}>
-            <AppText size={16} color={STYLES.black}>
-              {route.params.item.pilot_in_command ? "PIC" : ""}
-              {route.params.item.second_in_command ? "SIC" : ""}
-              {route.params.item.solo ? "Solo" : ""}
-              {route.params.item.dual ? "Dual" : ""}
-            </AppText>
-          </View>
-        </View>
-        {/* third row */}
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <View style={styles.rowContainer}>
-              <AppText size={16} color={STYLES.black}>
-                Landings:
-              </AppText>
-              {route.params.item.landings_day ? (
-                <AppText size={16} color={STYLES.black}>
-                  {" "}
-                  Day {route.params.item.landings_day}
-                </AppText>
-              ) : null}
-              {route.params.item.landings_night ? (
-                <AppText size={16} color={STYLES.black}>
-                  {" "}
-                  Night {route.params.item.landings_night}
-                </AppText>
-              ) : null}
-            </View>
-          </View>
-          <View style={styles.secondColumn}></View>
-          <View style={styles.thirdColumn}>
-            <AppText size={16} color={STYLES.black}>
-              {route.params.item.instructor ? "  CFI" : ""}
-            </AppText>
-          </View>
-        </View>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("FlightUpdate", {
+            item: route.params.item,
+          });
+        }}
+        style={{
+          backgroundColor: STYLES.blue,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <MaterialCommunityIcons
+          name={"update"}
+          size={30}
+          color={STYLES.white}
+          style={{ padding: 5 }}
+        />
+      </TouchableOpacity>
 
-        {/* fourth row */}
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <View style={styles.rowContainer}>
-              {route.params.item.night ? (
-                <AppText size={16} color={STYLES.black}>
-                  Night {route.params.item.night}
-                  {"  "}
-                </AppText>
-              ) : null}
-              {route.params.item.instrument ? (
-                <AppText size={16} color={STYLES.black}>
-                  Inst {route.params.item.instrument}
-                  {"  "}
-                </AppText>
-              ) : null}
-              {route.params.item.simulated_instrument ? (
-                <AppText size={16} color={STYLES.black}>
-                  Hood {route.params.item.simulated_instrument}
-                  {"  "}
-                </AppText>
-              ) : null}
-            </View>
-          </View>
-          <View style={styles.thirdColumn}>
-            <AppText size={16} color={STYLES.black}>
-              {route.params.item.cross_country ? "XC" : ""}
-              {route.params.item.simulator ? "  Sim" : ""}
-            </AppText>
-          </View>
-        </View>
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <View style={styles.rowContainer}>
-              {approaches.map((appr, index) => (
-                <AppText size={16} color={STYLES.black} key={index}>
-                  {appr.approach_type}-{appr.number}{" "}
-                </AppText>
-              ))}
-            </View>
-          </View>
-          <View style={styles.thirdColumn}>
-            {route.params.item.hold ? <AppText size={16}>Hold</AppText> : null}
-          </View>
-        </View>
-
-        {/* fifth row */}
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <AppText>{route.params.item.remarks}</AppText>
-          </View>
-        </View>
-        {/* sixth row */}
-        <Separator />
-        <View style={{ flexDirection: "row", marginBottom: 5 }}>
-          <TouchableOpacity
-            style={{
-              flex: 2,
-              backgroundColor: STYLES.danger,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onPress={() => {
-              showAlert(
-                route.params.item.id,
-                route.params.item.date,
-                route.params.item.route
-              );
-            }}
-          >
-            <View>
-              <MaterialCommunityIcons
-                name={"delete"}
-                size={30}
-                color={STYLES.white}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("FlightUpdate", {
-                item: route.params.item,
-              });
-            }}
-            style={{
-              flex: 2,
-              backgroundColor: STYLES.blue,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <View>
-              <MaterialCommunityIcons
-                name={"update"}
-                size={30}
-                color={STYLES.white}
-                style={{ padding: 5 }}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <MapView
+      {/* <MapView
         style={styles.map}
         mapPadding={{
           top: 60,
@@ -262,8 +127,8 @@ function FlightDetailScreen({ route, navigation }) {
           coordinates={polylines}
         />
       </MapView>
-      <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
-    </View>
+      <ActivityModal visible={Context.activityVisibleValue}></ActivityModal> */}
+    </>
   );
 }
 
