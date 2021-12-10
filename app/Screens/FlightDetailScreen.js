@@ -274,6 +274,40 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
   },
+  detailsPanel: {
+    flexDirection: "column",
+    width: "100%",
+    margin: 0,
+    backgroundColor: STYLES.white,
+    borderRadius: STYLES.borderRadius,
+    padding: STYLES.borderRadius,
+    backgroundColor: STYLES.white,
+    borderRadius: STYLES.borderRadius,
+  },
+  rowContainer: {
+    flexDirection: "row",
+    paddingBottom: 5,
+  },
+  firstColumn: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  secondColumn: {
+    flex: 2,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  thirdColumn: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-end",
+  },
+
+  text: {
+    fontFamily: STYLES.font,
+    color: STYLES.blue,
+  },
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
