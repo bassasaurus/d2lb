@@ -6,6 +6,7 @@ import {
   Dimensions,
   Alert,
   TouchableOpacity,
+  Text,
 } from "react-native";
 
 import { STYLES } from "../styles/styles";
@@ -61,7 +62,7 @@ function FlightDetailScreen({ route, navigation }) {
   // }, []);
 
   return (
-    <>
+    <View style={styles.container}>
       <TouchableOpacity
         style={{
           backgroundColor: STYLES.danger,
@@ -126,9 +127,10 @@ function FlightDetailScreen({ route, navigation }) {
           geodesic={true}
           coordinates={polylines}
         />
-      </MapView>
-      <ActivityModal visible={Context.activityVisibleValue}></ActivityModal> */}
-    </>
+      </MapView> */}
+
+      {/* <ActivityModal visible={Context.activityVisibleValue}></ActivityModal> */}
+    </View>
   );
 }
 
@@ -137,42 +139,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
   },
-  detailsPanel: {
-    flexDirection: "column",
-    width: "100%",
-    margin: 0,
-    backgroundColor: STYLES.white,
-    borderRadius: STYLES.borderRadius,
-    padding: STYLES.borderRadius,
-    backgroundColor: STYLES.white,
-    borderRadius: STYLES.borderRadius,
-  },
-  rowContainer: {
-    flexDirection: "row",
-    paddingBottom: 5,
-  },
-  firstColumn: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  secondColumn: {
-    flex: 2,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  thirdColumn: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "flex-end",
-  },
-
-  text: {
-    fontFamily: STYLES.font,
-    color: STYLES.blue,
-  },
   map: {
-    flex: 1,
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
     borderRadius: STYLES.borderRadius,

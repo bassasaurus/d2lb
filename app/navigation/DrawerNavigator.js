@@ -11,8 +11,6 @@ import LoginScreen from "../screens/LoginScreen";
 import FlightStackNavigator from "./FlightStackNavigator";
 import AppContext from "../components/AppContext";
 
-import useAsyncData from "../asyncStorage/useAsyncData";
-
 function DrawerNavigator({ navigation }) {
   const Context = useContext(AppContext);
 
