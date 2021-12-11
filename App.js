@@ -4,7 +4,7 @@ import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
 
 export default function App() {
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(true);
   const [activityVisible, setActivityVisible] = useState(false);
 
   const appSettings = {
