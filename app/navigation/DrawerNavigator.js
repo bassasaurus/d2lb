@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import {
   createDrawerNavigator,
@@ -36,7 +36,11 @@ function DrawerNavigator({ navigation }) {
         <Drawer.Navigator
           drawerContent={(props) => <LogoutContent {...props} />}
         >
-          <Drawer.Screen name='Flights' component={FlightStackNavigator} />
+          <Drawer.Screen
+            name='Logbook'
+            component={FlightStackNavigator}
+            options={{ headerShown: false }}
+          />
         </Drawer.Navigator>
       </NavigationContainer>
     );

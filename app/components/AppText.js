@@ -2,19 +2,20 @@ import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { STYLES } from "../styles/styles";
 
-function AppText({ children, ...props }) {
+function AppText({ children, size, color, weight, ...props }) {
   return (
-    <Text style={styles.text} {...props}>
+    <Text
+      style={{
+        fontSize: size,
+        color: color,
+        fontWeight: weight,
+      }}
+    >
       {children}
     </Text>
   );
 }
 
-const styles = StyleSheet.create({
-  text: {
-    fontFamily: STYLES.font,
-    fontSize: STYLES.fontSizeNormal,
-  },
-});
+const styles = StyleSheet.create({});
 
 export default AppText;

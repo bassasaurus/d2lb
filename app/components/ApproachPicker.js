@@ -6,8 +6,9 @@ import {
   Text,
   FlatList,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+
 import AppTextInput from "./AppTextInput";
 
 import { STYLES } from "../styles/styles";
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
   },
   listItem: {
     fontFamily: STYLES.font,
-    fontSize: STYLES.fontSizeExtraLarge,
+    fontSize: 20,
     color: STYLES.blue,
     marginTop: 20,
   },

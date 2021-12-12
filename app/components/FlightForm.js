@@ -494,13 +494,7 @@ function FlightForm({ initialValues, method }) {
                           setFormCount(0);
                         }}
                       >
-                        <AppText
-                          style={{
-                            color: STYLES.red,
-                          }}
-                        >
-                          Remove
-                        </AppText>
+                        <AppText color='red'>Remove</AppText>
                       </TouchableOpacity>
                     ) : (
                       <View></View>
@@ -527,13 +521,7 @@ function FlightForm({ initialValues, method }) {
                             setFormCount(0);
                           }}
                         >
-                          <AppText
-                            style={{
-                              color: STYLES.red,
-                            }}
-                          >
-                            Remove
-                          </AppText>
+                          <AppText color='red'>Remove</AppText>
                         </TouchableOpacity>
                       ) : (
                         <View></View>
@@ -563,13 +551,7 @@ function FlightForm({ initialValues, method }) {
                             setFormCount(formCount - 1);
                           }}
                         >
-                          <AppText
-                            style={{
-                              color: STYLES.red,
-                            }}
-                          >
-                            Remove
-                          </AppText>
+                          <AppText color='red'>Remove</AppText>
                         </TouchableOpacity>
                       ) : (
                         <View></View>
@@ -599,13 +581,7 @@ function FlightForm({ initialValues, method }) {
                             setFormCount(formCount - 1);
                           }}
                         >
-                          <AppText
-                            style={{
-                              color: STYLES.red,
-                            }}
-                          >
-                            Remove
-                          </AppText>
+                          <AppText color='red'>Remove</AppText>
                         </TouchableOpacity>
                       ) : (
                         <View></View>
@@ -621,15 +597,9 @@ function FlightForm({ initialValues, method }) {
                     <TouchableOpacity
                       onPress={() => setFormCount(formCount + 1)}
                     >
-                      <AppText
-                        style={{
-                          color: STYLES.green,
-                          marginRight: 35,
-                          marginTop: 10,
-                        }}
-                      >
+                      <Text style={{ marginTop: 10, color: "green" }}>
                         Add approach
-                      </AppText>
+                      </Text>
                     </TouchableOpacity>
                   ) : (
                     <View style={{ paddingLeft: 125 }}></View>

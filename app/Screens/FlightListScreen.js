@@ -3,7 +3,6 @@ import {
   SafeAreaView,
   FlatList,
   StyleSheet,
-  StatusBar,
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
@@ -19,7 +18,11 @@ const FlightListScreen = ({ navigation }) => {
 
   const fetchData = async () => {
     const response = await api.get("/api/flights/");
-    setData(response.data);
+    if (data != response.data) {
+      setData(response.data);
+    } else {
+      null;
+    }
     onRefresh();
   };
 
@@ -83,7 +86,6 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
   },
   item: {
     width: "100%",

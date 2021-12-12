@@ -1,10 +1,10 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import Icon from "./Icon";
-import { STYLES } from "../styles/styles";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
-function RoundButton({ onPress, buttonSize, buttonColor, iconName }) {
-  const iconSize = buttonSize * 1.8;
+import { STYLES } from "../styles/styles";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+function RoundButton({ onPress, buttonSize, buttonColor }) {
   return (
     <TouchableOpacity
       style={[
@@ -13,7 +13,7 @@ function RoundButton({ onPress, buttonSize, buttonColor, iconName }) {
       ]}
       onPress={onPress}
     >
-      <Icon name={iconName} size={iconSize} iconColor={STYLES.white} />
+      <MaterialCommunityIcons name='plus' size={50} color={STYLES.white} />
     </TouchableOpacity>
   );
 }

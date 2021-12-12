@@ -2,24 +2,28 @@ import React, { useRef, useEffect, useContext } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import {
   StyleSheet,
-  Text,
   View,
   Dimensions,
-  TouchableOpacity,
   Alert,
+  TouchableOpacity,
+  Text,
 } from "react-native";
 
 import { STYLES } from "../styles/styles";
-import Icon from "../components/Icon";
 import ActivityModal from "../components/ActivityModal";
 import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AppText from "../components/AppText";
+import Separator from "../components/Separator";
 
 function FlightDetailScreen({ route, navigation }) {
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
+
+  const approaches = route.params.item.approaches;
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
@@ -53,22 +57,146 @@ function FlightDetailScreen({ route, navigation }) {
       },
     ]);
 
-  useEffect(() => {
-    mapRef.current.fitToCoordinates(polylines);
-  }, []);
+  // useEffect(() => {
+  //   mapRef.current.fitToCoordinates(polylines);
+  // }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.detailsPanel}>
-        <View style={styles.firstColumn}>
-          <Text style={styles.text}>{route.params.item.date}</Text>
-          <Text style={styles.text}>{route.params.item.id}</Text>
+        {/* first row */}
+
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <AppText size={16} color={STYLES.blue} weight='bold'>
+              {route.params.item.date}
+            </AppText>
+          </View>
+          <View style={styles.secondColumn}>
+            <View style={{ flex: 1, flexDirection: "row" }}>
+              <AppText size={16} color={STYLES.blue} weight='bold'>
+                {route.params.item.aircraft_type}
+              </AppText>
+              <AppText>{"  "}</AppText>
+              <AppText size={16} color={STYLES.blue} weight='bold'>
+                {route.params.item.registration}
+              </AppText>
+            </View>
+          </View>
+          <View style={styles.thirdColumn}>
+            <AppText size={16} color={STYLES.blue} weight='bold'>
+              {route.params.item.duration}
+            </AppText>
+          </View>
         </View>
-        <View style={styles.secondColumn}></View>
-        <View style={styles.thirdColumn}></View>
-        <View style={styles.fourthColumn}>
+        {/* second row */}
+        <Separator />
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <AppText size={16} color={STYLES.black}>
+              {route.params.item.route}
+            </AppText>
+          </View>
+          <View style={styles.thirdColumn}>
+            <AppText size={16} color={STYLES.black}>
+              {route.params.item.pilot_in_command ? "PIC" : ""}
+              {route.params.item.second_in_command ? "SIC" : ""}
+              {route.params.item.solo ? "Solo" : ""}
+              {route.params.item.dual ? "Dual" : ""}
+            </AppText>
+          </View>
+        </View>
+        {/* third row */}
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <View style={styles.rowContainer}>
+              <AppText size={16} color={STYLES.black}>
+                Landings:
+              </AppText>
+              {route.params.item.landings_day ? (
+                <AppText size={16} color={STYLES.black}>
+                  {" "}
+                  Day {route.params.item.landings_day}
+                </AppText>
+              ) : null}
+              {route.params.item.landings_night ? (
+                <AppText size={16} color={STYLES.black}>
+                  {" "}
+                  Night {route.params.item.landings_night}
+                </AppText>
+              ) : null}
+            </View>
+          </View>
+          <View style={styles.secondColumn}></View>
+          <View style={styles.thirdColumn}>
+            <AppText size={16} color={STYLES.black}>
+              {route.params.item.instructor ? "  CFI" : ""}
+            </AppText>
+          </View>
+        </View>
+
+        {/* fourth row */}
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <View style={styles.rowContainer}>
+              {route.params.item.night ? (
+                <AppText size={16} color={STYLES.black}>
+                  Night {route.params.item.night}
+                  {"  "}
+                </AppText>
+              ) : null}
+              {route.params.item.instrument ? (
+                <AppText size={16} color={STYLES.black}>
+                  Inst {route.params.item.instrument}
+                  {"  "}
+                </AppText>
+              ) : null}
+              {route.params.item.simulated_instrument ? (
+                <AppText size={16} color={STYLES.black}>
+                  Hood {route.params.item.simulated_instrument}
+                  {"  "}
+                </AppText>
+              ) : null}
+            </View>
+          </View>
+          <View style={styles.thirdColumn}>
+            <AppText size={16} color={STYLES.black}>
+              {route.params.item.cross_country ? "XC" : ""}
+              {route.params.item.simulator ? "  Sim" : ""}
+            </AppText>
+          </View>
+        </View>
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <View style={styles.rowContainer}>
+              {approaches.map((appr, index) => (
+                <AppText size={16} color={STYLES.black} key={index}>
+                  {appr.approach_type}-{appr.number}{" "}
+                </AppText>
+              ))}
+            </View>
+          </View>
+          <View style={styles.thirdColumn}>
+            {route.params.item.hold ? <AppText size={16}>Hold</AppText> : null}
+          </View>
+        </View>
+
+        {/* fifth row */}
+        <View style={styles.rowContainer}>
+          <View style={styles.firstColumn}>
+            <AppText>{route.params.item.remarks}</AppText>
+          </View>
+        </View>
+        {/* sixth row */}
+        <Separator />
+        <View style={{ flexDirection: "row", marginBottom: 5 }}>
           <TouchableOpacity
-            style={styles.topArea}
+            style={{
+              flex: 2,
+              backgroundColor: STYLES.danger,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
             onPress={() => {
               showAlert(
                 route.params.item.id,
@@ -78,46 +206,65 @@ function FlightDetailScreen({ route, navigation }) {
             }}
           >
             <View>
-              <Icon name={"delete"}></Icon>
+              <MaterialCommunityIcons
+                name={"delete"}
+                size={30}
+                color={STYLES.white}
+              />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.bottomArea}
             onPress={() => {
-              navigation.navigate("FlightUpdate", { item: route.params.item });
+              navigation.navigate("FlightUpdate", {
+                item: route.params.item,
+              });
+            }}
+            style={{
+              flex: 2,
+              backgroundColor: STYLES.blue,
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <View>
-              <Icon name={"update"}></Icon>
+              <MaterialCommunityIcons
+                name={"update"}
+                size={30}
+                color={STYLES.white}
+                style={{ padding: 5 }}
+              />
             </View>
           </TouchableOpacity>
         </View>
       </View>
-      <MapView
-        style={styles.map}
-        mapPadding={{
-          top: 60,
-          bottom: 10,
-          right: 40,
-          left: 40,
-        }}
-        ref={mapRef}
-      >
-        {markers.map((marker) => (
-          <Marker
-            key={marker.key}
-            coordinate={marker.coordinates}
-            title={marker.title}
+
+      {/* <View style={styles.mapView}>
+        <MapView
+          style={{ width: "100%", height: "100%" }}
+          mapPadding={{
+            right: 40,
+            left: 40,
+            bottom: 500,
+          }}
+          ref={mapRef}
+        >
+          {markers.map((marker) => (
+            <Marker
+              key={marker.key}
+              coordinate={marker.coordinates}
+              title={marker.title}
+            />
+          ))}
+          <Polyline
+            strokeColor={STYLES.blue}
+            strokeWidth={3}
+            geodesic={true}
+            coordinates={polylines}
           />
-        ))}
-        <Polyline
-          strokeColor={STYLES.blue}
-          strokeWidth={3}
-          geodesic={true}
-          coordinates={polylines}
-        />
-      </MapView>
+        </MapView>
+      </View> */}
+
       <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
     </View>
   );
@@ -125,69 +272,43 @@ function FlightDetailScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: "column",
+    justifyContent: "flex-start",
   },
   detailsPanel: {
-    flexDirection: "row",
-    flex: 0.2,
+    flexDirection: "column",
     width: "100%",
-    margin: 5,
+    margin: 0,
     backgroundColor: STYLES.white,
     borderRadius: STYLES.borderRadius,
     padding: STYLES.borderRadius,
     backgroundColor: STYLES.white,
     borderRadius: STYLES.borderRadius,
   },
+  mapView: {},
+  rowContainer: {
+    flexDirection: "row",
+    paddingBottom: 5,
+  },
   firstColumn: {
-    flexDirection: "column",
     flex: 1,
-    backgroundColor: STYLES.white,
+    flexDirection: "column",
   },
   secondColumn: {
+    flex: 2,
     flexDirection: "column",
-    flex: 1,
-    backgroundColor: "blue",
+    alignItems: "center",
+    justifyContent: "center",
   },
   thirdColumn: {
+    flex: 1,
     flexDirection: "column",
-    flex: 1,
-    backgroundColor: "green",
+    alignItems: "flex-end",
   },
-  fourthColumn: {
-    flexDirection: "column",
-    flex: 0.4,
-    paddingRight: STYLES.borderRadius,
-    borderRadius: STYLES.borderRadius,
-  },
-  topArea: {
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: STYLES.danger,
-  },
-  bottomArea: {
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: STYLES.blue,
-  },
+
   text: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-  },
-  selectableText: {
-    fontFamily: STYLES.font,
-    fontWeight: STYLES.fontWeightBold,
-    color: STYLES.white,
-  },
-  map: {
-    flex: 1,
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-    borderRadius: STYLES.borderRadius,
   },
 });
 

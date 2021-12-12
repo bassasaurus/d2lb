@@ -12,12 +12,11 @@ export const STYLES = {
   red: "red",
   grey: "grey",
 
-  font: Platform.OS === "android" ? "Roboto" : "Avenir",
   fontWeightBold: "800",
   fontWeightNormal: "400",
   fontSizeNormal: 13,
   fontSizeLarge: 15,
-  fontSizeExtraLarge: 20,
+  fontSizeExtraLarge: 14,
 
   borderRadius: 5,
   inputBorderWidth: 1,
