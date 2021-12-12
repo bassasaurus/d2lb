@@ -57,9 +57,9 @@ function FlightDetailScreen({ route, navigation }) {
       },
     ]);
 
-  useEffect(() => {
-    mapRef.current.fitToCoordinates(polylines);
-  }, []);
+  // useEffect(() => {
+  //   mapRef.current.fitToCoordinates(polylines);
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -239,30 +239,31 @@ function FlightDetailScreen({ route, navigation }) {
         </View>
       </View>
 
-      <MapView
-        style={styles.map}
-        mapPadding={{
-          top: 60,
-          bottom: 10,
-          right: 40,
-          left: 40,
-        }}
-        ref={mapRef}
-      >
-        {markers.map((marker) => (
-          <Marker
-            key={marker.key}
-            coordinate={marker.coordinates}
-            title={marker.title}
+      {/* <View style={styles.mapView}>
+        <MapView
+          style={{ width: "100%", height: "100%" }}
+          mapPadding={{
+            right: 40,
+            left: 40,
+            bottom: 500,
+          }}
+          ref={mapRef}
+        >
+          {markers.map((marker) => (
+            <Marker
+              key={marker.key}
+              coordinate={marker.coordinates}
+              title={marker.title}
+            />
+          ))}
+          <Polyline
+            strokeColor={STYLES.blue}
+            strokeWidth={3}
+            geodesic={true}
+            coordinates={polylines}
           />
-        ))}
-        <Polyline
-          strokeColor={STYLES.blue}
-          strokeWidth={3}
-          geodesic={true}
-          coordinates={polylines}
-        />
-      </MapView>
+        </MapView>
+      </View> */}
 
       <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
     </View>
@@ -271,8 +272,8 @@ function FlightDetailScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: "column",
+    justifyContent: "flex-start",
   },
   detailsPanel: {
     flexDirection: "column",
@@ -284,6 +285,7 @@ const styles = StyleSheet.create({
     backgroundColor: STYLES.white,
     borderRadius: STYLES.borderRadius,
   },
+  mapView: {},
   rowContainer: {
     flexDirection: "row",
     paddingBottom: 5,
@@ -307,11 +309,6 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: STYLES.font,
     color: STYLES.blue,
-  },
-  map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-    borderRadius: STYLES.borderRadius,
   },
 });
 
