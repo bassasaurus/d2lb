@@ -57,9 +57,9 @@ function FlightDetailScreen({ route, navigation }) {
       },
     ]);
 
-  // useEffect(() => {
-  //   mapRef.current.fitToCoordinates(polylines);
-  // }, []);
+  useEffect(() => {
+    mapRef.current.fitToCoordinates(polylines);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -239,7 +239,7 @@ function FlightDetailScreen({ route, navigation }) {
         </View>
       </View>
 
-      {/* <View style={styles.mapView}>
+      <View style={styles.mapView}>
         <MapView
           style={{ width: "100%", height: "100%" }}
           mapPadding={{
@@ -256,14 +256,14 @@ function FlightDetailScreen({ route, navigation }) {
               title={marker.title}
             />
           ))}
-          <Polyline
+          {/* <Polyline
             strokeColor={STYLES.blue}
             strokeWidth={3}
             geodesic={true}
             coordinates={polylines}
-          />
+          /> */}
         </MapView>
-      </View> */}
+      </View>
 
       <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
     </View>
