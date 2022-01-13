@@ -256,12 +256,12 @@ function FlightDetailScreen({ route, navigation }) {
               title={marker.title}
             />
           ))}
-          <Polyline
+          {/* <Polyline
             strokeColor={STYLES.blue}
             strokeWidth={3}
             geodesic={true}
             coordinates={polylines}
-          />
+          /> */}
         </MapView>
       </View>
 
