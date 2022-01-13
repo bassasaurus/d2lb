@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useContext } from "react";
-import MapView, { Marker, Polyline } from "react-native-maps";
+import MapView, { Marker, Polyline, Circle } from "react-native-maps";
 import {
   StyleSheet,
   View,
@@ -22,8 +22,9 @@ function FlightDetailScreen({ route, navigation }) {
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
-
   const approaches = route.params.item.approaches;
+
+  console.log(polylines);
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
@@ -260,7 +261,16 @@ function FlightDetailScreen({ route, navigation }) {
             strokeColor={STYLES.blue}
             strokeWidth={3}
             geodesic={true}
-            coordinates={polylines}
+            coordinates={[
+              {
+                latitude: 42.362944444444445,
+                longitude: -71.00638888888889,
+              },
+              {
+                latitude: 35.87763888888889,
+                longitude: -78.78747222222222,
+              },
+            ]}
           /> */}
         </MapView>
       </View>
@@ -291,7 +301,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   firstColumn: {
-    flex: 1,
+    flex: 1.2,
     flexDirection: "column",
   },
   secondColumn: {

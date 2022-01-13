@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   firstColumn: {
-    flex: 1,
+    flex: 1.2,
     flexDirection: "column",
   },
   secondColumn: {
