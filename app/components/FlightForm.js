@@ -23,6 +23,7 @@ import AppText from "./AppText";
 import Checkbox from "./Checkbox";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { STYLES } from "../styles/styles";
 
@@ -202,20 +203,58 @@ function FlightForm({ initialValues, method }) {
                     </View> */}
                   </View>
                 </View>
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flex: 3 }}>
+                    <AppTextInput
+                      isValid={values.duration.length > 1 ? true : false}
+                      value={values.duration}
+                      onChangeText={(val) => {
+                        setFieldValue("duration", val); //function to return zero if blank
+                      }}
+                      placeholder='Duration - XX.X'
+                      autoCorrect={false}
+                      keyboardType={"numeric"}
+                      clearButtonMode={"while-editing"}
+                      onFocus={() => setScrollEnabled(false)}
+                      onBlur={() => setScrollEnabled(true)}
+                    ></AppTextInput>
+                  </View>
 
-                <AppTextInput
-                  isValid={values.duration.length > 1 ? true : false}
-                  value={values.duration}
-                  onChangeText={(val) => {
-                    setFieldValue("duration", val); //function to return zero if blank
-                  }}
-                  placeholder='Duration - XX.X'
-                  autoCorrect={false}
-                  keyboardType={"numeric"}
-                  clearButtonMode={"while-editing"}
-                  onFocus={() => setScrollEnabled(false)}
-                  onBlur={() => setScrollEnabled(true)}
-                ></AppTextInput>
+                  <View
+                    style={{
+                      paddingTop: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name='plus'
+                      size={30}
+                      color='black'
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <AppTextInput
+                      placeholder={"XX.X"}
+                      onFocus={() => setScrollEnabled(false)}
+                      onBlur={() => setScrollEnabled(true)}
+                    ></AppTextInput>
+                  </View>
+
+                  <View
+                    style={{
+                      paddingTop: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name='keyboard-return'
+                      size={30}
+                      color='black'
+                    />
+                  </View>
+                </View>
 
                 <View>
                   {errors.duration ? (
