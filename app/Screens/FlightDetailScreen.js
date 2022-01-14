@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     paddingBottom: 5,
   },
   firstColumn: {
-    flex: 1.2,
+    flex: 1.1,
     flexDirection: "column",
   },
   secondColumn: {
