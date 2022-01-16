@@ -26,8 +26,11 @@ function AircraftPicker({
 
   const fetchData = async () => {
     const result = await api.get("/api/aircraft/");
-    // console.log(result.data);
-    setData(result.data);
+    if (data != result.data) {
+      setData(result.data);
+    } else {
+      null;
+    }
   };
 
   const renderItem = ({ item }) => (

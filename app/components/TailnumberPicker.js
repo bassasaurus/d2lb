@@ -27,7 +27,11 @@ function TailnumberPicker({
 
   const fetchData = async () => {
     const result = await api.get(`/api/tailnumber_picker/${aircraftId}`);
-    setData(result.data);
+    if (data != result.data) {
+      setData(result.data);
+    } else {
+      null;
+    }
   };
 
   const renderItem = ({ item }) => (
