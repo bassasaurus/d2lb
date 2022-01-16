@@ -236,7 +236,10 @@ function FlightForm({ initialValues, method }) {
                   </View>
                   <View style={{ flex: 1 }}>
                     <AppTextInput
+                      isValid={true}
                       placeholder={"XX.X"}
+                      clearButtonMode={"while-editing"}
+                      keyboardType={"numeric"}
                       onChangeText={(val) => setAddedDuration(val)}
                       onFocus={() => setScrollEnabled(false)}
                       onBlur={() => setScrollEnabled(true)}
@@ -262,10 +265,7 @@ function FlightForm({ initialValues, method }) {
                             Number(values.duration) + Number(addedDuration)
                           )
                         ),
-                          console.log(
-                            typeof values.duration,
-                            typeof addedDuration
-                          );
+                          setAddedDuration(0);
                       }}
                     />
                   </View>
@@ -714,9 +714,9 @@ function FlightForm({ initialValues, method }) {
                   <Button title='Complete required fields.'></Button>
                 )}
 
-                <View style={{ marginTop: 30 }}>
+                {/* <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
-                </View>
+                </View> */}
 
                 <Modal
                   animationType='slide'
