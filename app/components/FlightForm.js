@@ -204,12 +204,15 @@ function FlightForm({ initialValues, method }) {
                     </View>
                   </View>
                   <View style={{ paddingTop: 15, paddingLeft: 7 }}>
-                    <MaterialCommunityIcons
+                    <TouchableOpacity
                       onPress={() => console.log("new tailnumber")}
-                      name='plus'
-                      size={30}
-                      color='green'
-                    />
+                    >
+                      <MaterialCommunityIcons
+                        name='plus'
+                        size={30}
+                        color='green'
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
                 <View style={{ flexDirection: "row" }}>
@@ -262,10 +265,7 @@ function FlightForm({ initialValues, method }) {
                       alignItems: "center",
                     }}
                   >
-                    <MaterialCommunityIcons
-                      name='keyboard-return'
-                      size={30}
-                      color='green'
+                    <TouchableOpacity
                       onPress={() => {
                         setFieldValue(
                           "duration",
@@ -276,7 +276,13 @@ function FlightForm({ initialValues, method }) {
                           )
                         );
                       }}
-                    />
+                    >
+                      <MaterialCommunityIcons
+                        name='keyboard-return'
+                        size={30}
+                        color='green'
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
 
