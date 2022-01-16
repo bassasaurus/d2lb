@@ -195,13 +195,13 @@ function FlightForm({ initialValues, method }) {
                       )}
                     </View>
 
-                    {/* <View>
+                    <View>
                       {acTailMatch === false ? (
                         <Text style={styles.errors}>Registration mismatch</Text>
                       ) : (
                         <View></View>
                       )}
-                    </View> */}
+                    </View>
                   </View>
                 </View>
                 <View style={{ flexDirection: "row" }}>
