@@ -210,7 +210,7 @@ function FlightForm({ initialValues, method }) {
                       isValid={values.duration.length > 1 ? true : false}
                       value={values.duration}
                       onChangeText={(val) => {
-                        setFieldValue("duration", val); //function to return zero if blank
+                        setFieldValue("duration", val);
                       }}
                       placeholder='Duration - XX.X'
                       autoCorrect={false}
@@ -262,10 +262,11 @@ function FlightForm({ initialValues, method }) {
                         setFieldValue(
                           "duration",
                           String(
-                            Number(values.duration) + Number(addedDuration)
+                            (
+                              Number(values.duration) + Number(addedDuration)
+                            ).toFixed(1)
                           )
-                        ),
-                          setAddedDuration(0);
+                        );
                       }}
                     />
                   </View>
