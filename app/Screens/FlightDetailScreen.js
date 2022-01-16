@@ -3,10 +3,9 @@ import MapView, { Marker, Polyline, Circle } from "react-native-maps";
 import {
   StyleSheet,
   View,
-  Dimensions,
   Alert,
   TouchableOpacity,
-  Text,
+  Platform,
 } from "react-native";
 
 import { STYLES } from "../styles/styles";
@@ -244,9 +243,10 @@ function FlightDetailScreen({ route, navigation }) {
         <MapView
           style={{ width: "100%", height: "100%" }}
           mapPadding={{
+            top: 40,
             right: 40,
             left: 40,
-            bottom: 500,
+            bottom: 420,
           }}
           ref={mapRef}
         >
