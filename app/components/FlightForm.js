@@ -237,9 +237,7 @@ function FlightForm({ initialValues, method }) {
                   <View style={{ flex: 1 }}>
                     <AppTextInput
                       placeholder={"XX.X"}
-                      onChangeText={(val) => {
-                        setAddedDuration(val), console.log(addedDuration);
-                      }}
+                      onChangeText={(val) => setAddedDuration(val)}
                       onFocus={() => setScrollEnabled(false)}
                       onBlur={() => setScrollEnabled(true)}
                     ></AppTextInput>
@@ -257,7 +255,13 @@ function FlightForm({ initialValues, method }) {
                       name='keyboard-return'
                       size={30}
                       color='green'
-                      onPress={() => console.log("pressed")}
+                      onPress={() => {
+                        setFieldValue(
+                          "duration",
+                          values.duration + addedDuration
+                        );
+                        console.log(values.duration);
+                      }}
                     />
                   </View>
                 </View>
