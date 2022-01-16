@@ -203,6 +203,18 @@ function FlightForm({ initialValues, method }) {
                       )}
                     </View>
                   </View>
+                  <View
+                    style={{
+                      paddingTop: 10,
+                      paddingLeft: 7,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Pressable onPress={() => console.log("new tailnumber")}>
+                      <Text style={{ color: "green" }}>New</Text>
+                    </Pressable>
+                  </View>
                 </View>
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flex: 3 }}>
