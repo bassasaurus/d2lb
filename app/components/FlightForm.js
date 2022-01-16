@@ -258,9 +258,14 @@ function FlightForm({ initialValues, method }) {
                       onPress={() => {
                         setFieldValue(
                           "duration",
-                          values.duration + addedDuration
-                        );
-                        console.log(values.duration);
+                          String(
+                            Number(values.duration) + Number(addedDuration)
+                          )
+                        ),
+                          console.log(
+                            typeof values.duration,
+                            typeof addedDuration
+                          );
                       }}
                     />
                   </View>
@@ -709,9 +714,9 @@ function FlightForm({ initialValues, method }) {
                   <Button title='Complete required fields.'></Button>
                 )}
 
-                {/* <View style={{ marginTop: 30 }}>
+                <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
-                </View> */}
+                </View>
 
                 <Modal
                   animationType='slide'
