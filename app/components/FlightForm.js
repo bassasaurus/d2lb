@@ -34,6 +34,7 @@ function FlightForm({ initialValues, method }) {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [acTailMatch, setAcTailMatch] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [addedDuration, setAddedDuration] = useState(0);
 
   const Context = useContext(AppContext);
 
@@ -236,6 +237,9 @@ function FlightForm({ initialValues, method }) {
                   <View style={{ flex: 1 }}>
                     <AppTextInput
                       placeholder={"XX.X"}
+                      onChangeText={(val) => {
+                        setAddedDuration(val), console.log(addedDuration);
+                      }}
                       onFocus={() => setScrollEnabled(false)}
                       onBlur={() => setScrollEnabled(true)}
                     ></AppTextInput>
@@ -243,7 +247,8 @@ function FlightForm({ initialValues, method }) {
 
                   <View
                     style={{
-                      paddingTop: 10,
+                      paddingLeft: 5,
+                      paddingTop: 12,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
@@ -251,7 +256,8 @@ function FlightForm({ initialValues, method }) {
                     <MaterialCommunityIcons
                       name='keyboard-return'
                       size={30}
-                      color='black'
+                      color='green'
+                      onPress={() => console.log("pressed")}
                     />
                   </View>
                 </View>
