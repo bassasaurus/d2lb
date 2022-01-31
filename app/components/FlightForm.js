@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -11,7 +11,7 @@ import {
   Button,
   ScrollView,
 } from "react-native";
-import { Formik } from "formik";
+import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
 import CalendarPicker from "react-native-calendar-picker";
@@ -27,7 +27,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { STYLES } from "../styles/styles";
 
-function FlightForm({ initialValues, method }) {
+function FlightForm({ initialValues, method, validateTailnumber }) {
   const [calVisible, setCalVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
@@ -184,7 +184,7 @@ function FlightForm({ initialValues, method }) {
                       setFieldValue={setFieldValue}
                       filterBy={values.aircraft_type}
                       setAcTailMatch={setAcTailMatch}
-                      aircraftId={aircraftId}
+                      aircraftId={values.aircraft_type}
                     ></TailnumberPicker>
 
                     <View>

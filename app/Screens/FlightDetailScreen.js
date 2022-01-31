@@ -23,7 +23,7 @@ function FlightDetailScreen({ route, navigation }) {
   const Context = useContext(AppContext);
   const approaches = route.params.item.approaches;
 
-  console.log(polylines);
+  // console.log(polylines);
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
