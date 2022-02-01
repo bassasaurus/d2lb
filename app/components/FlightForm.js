@@ -27,7 +27,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { STYLES } from "../styles/styles";
 
-function FlightForm({ initialValues, method, validateTailnumber }) {
+function FlightForm({ initialValues, method }) {
   const [calVisible, setCalVisible] = useState(false);
   const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
