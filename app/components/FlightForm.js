@@ -196,7 +196,7 @@ function FlightForm({ initialValues, method }) {
                     </View>
 
                     <View>
-                      {acTailMatch === false ? (
+                      {acTailMatch === false && method.name === "create" ? (
                         <Text style={styles.errors}>Registration mismatch</Text>
                       ) : (
                         <View></View>
