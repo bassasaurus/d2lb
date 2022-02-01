@@ -26,8 +26,22 @@ function TailnumberPicker({
   const [value, setValue] = useState("");
 
   const fetchData = async () => {
-    const result = await api.get(`/api/tailnumber_picker/${aircraftId}`);
-    setData(result.data);
+    try {
+      const result = await api.get(`/api/tailnumbers/`, {
+        params: {
+          aircraft: aircraftId,
+        },
+      });
+
+      if (data != result.data) {
+        setData(result.data);
+      } else {
+        null;
+      }
+    } catch (error) {
+      // console.log(error.response);
+      null;
+    }
   };
 
   const renderItem = ({ item }) => (

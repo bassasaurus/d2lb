@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -11,7 +11,7 @@ import {
   Button,
   ScrollView,
 } from "react-native";
-import { Formik } from "formik";
+import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
 import CalendarPicker from "react-native-calendar-picker";
@@ -23,6 +23,7 @@ import AppText from "./AppText";
 import Checkbox from "./Checkbox";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { STYLES } from "../styles/styles";
 
@@ -33,6 +34,7 @@ function FlightForm({ initialValues, method }) {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [acTailMatch, setAcTailMatch] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [addedDuration, setAddedDuration] = useState(0);
 
   const Context = useContext(AppContext);
 
@@ -182,7 +184,7 @@ function FlightForm({ initialValues, method }) {
                       setFieldValue={setFieldValue}
                       filterBy={values.aircraft_type}
                       setAcTailMatch={setAcTailMatch}
-                      aircraftId={aircraftId}
+                      aircraftId={values.aircraft_type}
                     ></TailnumberPicker>
 
                     <View>
@@ -193,29 +195,96 @@ function FlightForm({ initialValues, method }) {
                       )}
                     </View>
 
-                    {/* <View>
-                      {acTailMatch === false ? (
+                    <View>
+                      {acTailMatch === false && method.name === "create" ? (
                         <Text style={styles.errors}>Registration mismatch</Text>
                       ) : (
                         <View></View>
                       )}
-                    </View> */}
+                    </View>
+                  </View>
+                  <View style={{ paddingTop: 15, paddingLeft: 7 }}>
+                    <TouchableOpacity
+                      onPress={() => console.log("new tailnumber")}
+                    >
+                      <MaterialCommunityIcons
+                        name='plus'
+                        size={30}
+                        color='green'
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
+                <View style={{ flexDirection: "row" }}>
+                  <View style={{ flex: 3 }}>
+                    <AppTextInput
+                      isValid={values.duration.length > 1 ? true : false}
+                      value={values.duration}
+                      onChangeText={(val) => {
+                        setFieldValue("duration", val);
+                      }}
+                      placeholder='Duration - XX.X'
+                      autoCorrect={false}
+                      keyboardType={"numeric"}
+                      clearButtonMode={"while-editing"}
+                      onFocus={() => setScrollEnabled(false)}
+                      onBlur={() => setScrollEnabled(true)}
+                    ></AppTextInput>
+                  </View>
 
-                <AppTextInput
-                  isValid={values.duration.length > 1 ? true : false}
-                  value={values.duration}
-                  onChangeText={(val) => {
-                    setFieldValue("duration", val); //function to return zero if blank
-                  }}
-                  placeholder='Duration - XX.X'
-                  autoCorrect={false}
-                  keyboardType={"numeric"}
-                  clearButtonMode={"while-editing"}
-                  onFocus={() => setScrollEnabled(false)}
-                  onBlur={() => setScrollEnabled(true)}
-                ></AppTextInput>
+                  <View
+                    style={{
+                      paddingTop: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name='plus'
+                      size={30}
+                      color='black'
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <AppTextInput
+                      isValid={true}
+                      placeholder={"XX.X"}
+                      clearButtonMode={"while-editing"}
+                      keyboardType={"numeric"}
+                      onChangeText={(val) => setAddedDuration(val)}
+                      onFocus={() => setScrollEnabled(false)}
+                      onBlur={() => setScrollEnabled(true)}
+                    ></AppTextInput>
+                  </View>
+
+                  <View
+                    style={{
+                      paddingLeft: 5,
+                      paddingTop: 12,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TouchableOpacity
+                      onPress={() => {
+                        setFieldValue(
+                          "duration",
+                          String(
+                            (
+                              Number(values.duration) + Number(addedDuration)
+                            ).toFixed(1)
+                          )
+                        );
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name='keyboard-return'
+                        size={30}
+                        color='green'
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
 
                 <View>
                   {errors.duration ? (
