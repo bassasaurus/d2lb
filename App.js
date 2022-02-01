@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
 
+import TailCreateScreen from "./app/screens/TailCreateScreen";
+
 export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(true);
   const [activityVisible, setActivityVisible] = useState(false);
@@ -18,7 +20,8 @@ export default function App() {
     <>
       <StatusBar style='auto' />
       <AppContext.Provider value={appSettings}>
-        <DrawerNavigator></DrawerNavigator>
+        {/* <DrawerNavigator></DrawerNavigator> */}
+        <TailCreateScreen></TailCreateScreen>
       </AppContext.Provider>
     </>
   );
