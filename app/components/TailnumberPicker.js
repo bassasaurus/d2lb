@@ -32,12 +32,7 @@ function TailnumberPicker({
           aircraft: aircraftId,
         },
       });
-
-      if (data != result.data) {
-        setData(result.data);
-      } else {
-        null;
-      }
+      setData(result.data);
     } catch (error) {
       // console.log(error.response);
       null;
