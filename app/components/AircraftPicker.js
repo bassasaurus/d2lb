@@ -39,7 +39,7 @@ function AircraftPicker({
         onPress={() => {
           setVisible(false);
           setFieldValue("aircraft_type", item.aircraft_type);
-          handleAircraftId(item.id);
+          // handleAircraftId(item.id);
           setValue(item.aircraft_type);
         }}
       >
