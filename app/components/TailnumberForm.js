@@ -5,6 +5,7 @@ import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 import AppTextInput from "./AppTextInput";
 import Checkbox from "./Checkbox";
+import AppText from "./AppText";
 
 function TailnumberForm(props) {
   const initialValues = {};
@@ -32,10 +33,15 @@ function TailnumberForm(props) {
         }) => (
           <>
             <AircraftPicker></AircraftPicker>
-            <AppTextInput></AppTextInput>
-            <Checkbox></Checkbox>
-            <Checkbox></Checkbox>
-            <Checkbox></Checkbox>
+            <AppTextInput placeholder={"New Tailnumber"}></AppTextInput>
+            <View style={{ flexDirection: "row" }}>
+              <Checkbox></Checkbox>
+              <AppText>121</AppText>
+              <Checkbox></Checkbox>
+              <AppText>135</AppText>
+              <Checkbox></Checkbox>
+              <AppText>91</AppText>
+            </View>
 
             <View style={{ marginTop: 30 }}>
               <Text>{JSON.stringify(values, null, "  ")}</Text>
