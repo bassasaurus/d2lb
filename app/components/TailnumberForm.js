@@ -44,7 +44,7 @@ function TailnumberForm(method) {
               ></AircraftPicker>
               <AppTextInput
                 placeholder={"New Tailnumber"}
-                // isValid={values.registration.length > 4 ? true : false}
+                isValid={values.registration.length > 3 ? true : false}
                 onChangeText={handleChange("registration")}
                 autoCorrect={false}
                 autoCapitalize={"characters"}
