@@ -39,7 +39,16 @@ function TailnumberForm(props) {
                 fieldName={"aircraft"}
                 setFieldValue={setFieldValue}
               ></AircraftPicker>
-              <AppTextInput placeholder={"New Tailnumber"}></AppTextInput>
+              <AppTextInput
+                placeholder={"New Tailnumber"}
+                // isValid={values.registration.length > 2 ? true : false}
+                onChangeText={handleChange("registraion")}
+                placeholder='Route'
+                autoCorrect={false}
+                autoCapitalize={"characters"}
+                keyboardType={"default"}
+                clearButtonMode={"while-editing"}
+              ></AppTextInput>
               <View style={{ flexDirection: "row" }}>
                 <Checkbox></Checkbox>
                 <AppText>121</AppText>
