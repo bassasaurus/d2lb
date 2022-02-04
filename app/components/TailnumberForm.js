@@ -1,14 +1,17 @@
-import React from "react";
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
+import React, { useContext } from "react";
+import { View, Text, StyleSheet, SafeAreaView, Button } from "react-native";
 import AircraftPicker from "./AircraftPicker";
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 import AppTextInput from "./AppTextInput";
 import Checkbox from "./Checkbox";
 import AppText from "./AppText";
+import ActivityModal from "./ActivityModal";
+import AppContext from "./AppContext";
 
-function TailnumberForm(props) {
+function TailnumberForm(method) {
   const initialValues = {};
+  const Context = useContext(AppContext);
 
   return (
     <View style={styles.container}>
@@ -41,9 +44,8 @@ function TailnumberForm(props) {
               ></AircraftPicker>
               <AppTextInput
                 placeholder={"New Tailnumber"}
-                // isValid={values.registration.length > 2 ? true : false}
-                onChangeText={handleChange("registraion")}
-                placeholder='Route'
+                // isValid={values.registration.length > 4 ? true : false}
+                onChangeText={handleChange("registration")}
                 autoCorrect={false}
                 autoCapitalize={"characters"}
                 keyboardType={"default"}
@@ -95,6 +97,19 @@ function TailnumberForm(props) {
                   </View>
                 </View>
               </View>
+              {isValid ? (
+                <Button
+                  title={!Context.setActivityVisible ? "" : "Submit"}
+                  onPress={() => {
+                    onSubmit;
+                    method(values);
+                    setSubmitting(true);
+                    Context.setActivityVisible(true);
+                  }}
+                ></Button>
+              ) : (
+                <Button title='Complete required fields.'></Button>
+              )}
 
               <View style={{ marginTop: 30 }}>
                 <Text>{JSON.stringify(values, null, "  ")}</Text>
@@ -103,6 +118,7 @@ function TailnumberForm(props) {
           </>
         )}
       </Formik>
+      <ActivityModal></ActivityModal>
     </View>
   );
 }
