@@ -49,34 +49,51 @@ function TailnumberForm(props) {
                 keyboardType={"default"}
                 clearButtonMode={"while-editing"}
               ></AppTextInput>
-              <View style={{ flexDirection: "row" }}>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue("is_91", !values.is_91);
-                    setFieldValue("is_135", false);
-                    setFieldValue("is_121", false);
-                  }}
-                  isChecked={values.is_91}
-                ></Checkbox>
-                <AppText>91</AppText>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue("is_135", !values.is_135);
-                    setFieldValue("is_91", false);
-                    setFieldValue("is_121", false);
-                  }}
-                  isChecked={values.is_135}
-                ></Checkbox>
-                <AppText>135</AppText>
-                <Checkbox
-                  onPress={() => {
-                    setFieldValue("is_121", !values.is_121);
-                    setFieldValue("is_91", false);
-                    setFieldValue("is_135", false);
-                  }}
-                  isChecked={values.is_121}
-                ></Checkbox>
-                <AppText>121</AppText>
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginTop: 10,
+                }}
+              >
+                <View style={{ flex: 0.3 }}>
+                  <View style={{ flexDirection: "row" }}>
+                    <Checkbox
+                      onPress={() => {
+                        setFieldValue("is_91", !values.is_91);
+                        setFieldValue("is_135", false);
+                        setFieldValue("is_121", false);
+                      }}
+                      isChecked={values.is_91}
+                    ></Checkbox>
+                    <AppText>91</AppText>
+                  </View>
+                </View>
+                <View style={{ flex: 0.3 }}>
+                  <View style={{ flexDirection: "row" }}>
+                    <Checkbox
+                      onPress={() => {
+                        setFieldValue("is_135", !values.is_135);
+                        setFieldValue("is_91", false);
+                        setFieldValue("is_121", false);
+                      }}
+                      isChecked={values.is_135}
+                    ></Checkbox>
+                    <AppText>135</AppText>
+                  </View>
+                </View>
+                <View style={{ flex: 0.3 }}>
+                  <View style={{ flexDirection: "row" }}>
+                    <Checkbox
+                      onPress={() => {
+                        setFieldValue("is_121", !values.is_121);
+                        setFieldValue("is_91", false);
+                        setFieldValue("is_135", false);
+                      }}
+                      isChecked={values.is_121}
+                    ></Checkbox>
+                    <AppText>121</AppText>
+                  </View>
+                </View>
               </View>
 
               <View style={{ marginTop: 30 }}>
