@@ -38,7 +38,7 @@ function TailnumberForm(method) {
             <SafeAreaView>
               <AircraftPicker
                 initialValue={initialValues.aircraft}
-                isValid={values.aircraft_type ? true : false}
+                isValid={values.aircraft ? true : false}
                 fieldName={"aircraft"}
                 setFieldValue={setFieldValue}
               ></AircraftPicker>
