@@ -19,12 +19,11 @@ export default function App() {
   return (
     <>
       <StatusBar style='auto' />
-      <SafeAreaView>
-        <AppContext.Provider value={appSettings}>
-          {/* <DrawerNavigator></DrawerNavigator> */}
-          <TailnumberForm></TailnumberForm>
-        </AppContext.Provider>
-      </SafeAreaView>
+
+      <AppContext.Provider value={appSettings}>
+        <DrawerNavigator></DrawerNavigator>
+        {/* <TailnumberForm></TailnumberForm> */}
+      </AppContext.Provider>
     </>
   );
 }

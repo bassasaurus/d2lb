@@ -163,6 +163,7 @@ function FlightForm({ initialValues, method }) {
                       initialValue={initialValues.aircraft_type}
                       isValid={values.aircraft_type ? true : false}
                       style={{ flex: 0.5 }}
+                      fieldName={"aircraft_type"}
                       setFieldValue={setFieldValue}
                     ></AircraftPicker>
                     <View>

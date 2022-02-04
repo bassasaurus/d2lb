@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, SafeAreaView } from "react-native";
 import AircraftPicker from "./AircraftPicker";
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
@@ -32,20 +32,22 @@ function TailnumberForm(props) {
           setFieldValue,
         }) => (
           <>
-            <AircraftPicker></AircraftPicker>
-            <AppTextInput placeholder={"New Tailnumber"}></AppTextInput>
-            <View style={{ flexDirection: "row" }}>
-              <Checkbox></Checkbox>
-              <AppText>121</AppText>
-              <Checkbox></Checkbox>
-              <AppText>135</AppText>
-              <Checkbox></Checkbox>
-              <AppText>91</AppText>
-            </View>
+            <SafeAreaView>
+              <AircraftPicker></AircraftPicker>
+              <AppTextInput placeholder={"New Tailnumber"}></AppTextInput>
+              <View style={{ flexDirection: "row" }}>
+                <Checkbox></Checkbox>
+                <AppText>121</AppText>
+                <Checkbox></Checkbox>
+                <AppText>135</AppText>
+                <Checkbox></Checkbox>
+                <AppText>91</AppText>
+              </View>
 
-            <View style={{ marginTop: 30 }}>
-              <Text>{JSON.stringify(values, null, "  ")}</Text>
-            </View>
+              <View style={{ marginTop: 30 }}>
+                <Text>{JSON.stringify(values, null, "  ")}</Text>
+              </View>
+            </SafeAreaView>
           </>
         )}
       </Formik>

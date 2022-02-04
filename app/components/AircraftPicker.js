@@ -17,6 +17,7 @@ import FlatListItemSeparator from "./FlatListItemSeparator";
 function AircraftPicker({
   setFieldValue,
   handleAircraftId,
+  fieldName,
   isValid,
   initialValue,
 }) {
@@ -38,7 +39,7 @@ function AircraftPicker({
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("aircraft_type", item.aircraft_type);
+          setFieldValue(fieldName, item.aircraft_type);
           // handleAircraftId(item.id);
           setValue(item.aircraft_type);
         }}
