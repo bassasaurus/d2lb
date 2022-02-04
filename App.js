@@ -19,10 +19,9 @@ export default function App() {
   return (
     <>
       <StatusBar style='auto' />
-
       <AppContext.Provider value={appSettings}>
-        <DrawerNavigator></DrawerNavigator>
-        {/* <TailnumberForm></TailnumberForm> */}
+        {/* <DrawerNavigator></DrawerNavigator> */}
+        <TailnumberForm></TailnumberForm>
       </AppContext.Provider>
     </>
   );

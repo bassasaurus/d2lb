@@ -33,7 +33,12 @@ function TailnumberForm(props) {
         }) => (
           <>
             <SafeAreaView>
-              <AircraftPicker></AircraftPicker>
+              <AircraftPicker
+                initialValue={initialValues.aircraft}
+                isValid={values.aircraft_type ? true : false}
+                fieldName={"aircraft"}
+                setFieldValue={setFieldValue}
+              ></AircraftPicker>
               <AppTextInput placeholder={"New Tailnumber"}></AppTextInput>
               <View style={{ flexDirection: "row" }}>
                 <Checkbox></Checkbox>
