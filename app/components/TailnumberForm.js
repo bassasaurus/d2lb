@@ -21,12 +21,16 @@ function TailnumberForm(props) {
     registration: yup.string().min(3).max(8).required(required),
     reg: yup
       .object({
-        is_91: yup.bool(),
-        is_135: yup.bool(),
-        is_121: yup.bool(),
+        is_91: yup.boolean(),
+        is_135: yup.boolean(),
+        is_121: yup.boolean(),
       })
-      .test("checkOne", "1 Must be checked", (reg) => {
-        reg.is_91 || reg.is_135 || reg.is_121 === true;
+      .test("oneChecked", "Select 1", (reg) => {
+        if (reg.is_91 || reg.is_135 || reg.is_121) {
+          return true;
+        } else {
+          return false;
+        }
       }),
   });
 
