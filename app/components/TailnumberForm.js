@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Button } from "react-native";
 import AircraftPicker from "./AircraftPicker";
-import { Formik, validateYupSchema } from "formik";
+import { Formik, validateYupSchema, yupToFormErrors } from "formik";
 import * as yup from "yup";
 import AppTextInput from "./AppTextInput";
 import Checkbox from "./Checkbox";
@@ -18,7 +18,16 @@ function TailnumberForm(props) {
 
   let schema = yup.object().shape({
     aircraft: yup.string().required(required),
-    registration: yup.string().min(3).required(required),
+    registration: yup.string().min(3).max(8).required(required),
+    reg: yup
+      .object({
+        is_91: yup.bool(),
+        is_135: yup.bool(),
+        is_121: yup.bool(),
+      })
+      .test("checkOne", "1 Must be checked", (reg) => {
+        reg.is_91 || reg.is_135 || reg.is_121 === true;
+      }),
   });
 
   return (
@@ -85,8 +94,8 @@ function TailnumberForm(props) {
                     <Checkbox
                       onPress={() => {
                         setFieldValue("is_91", !values.is_91);
-                        setFieldValue("is_135", false);
-                        setFieldValue("is_121", false);
+                        setFieldValue("is_135", null);
+                        setFieldValue("is_121", null);
                       }}
                       isChecked={values.is_91}
                     ></Checkbox>
@@ -98,8 +107,8 @@ function TailnumberForm(props) {
                     <Checkbox
                       onPress={() => {
                         setFieldValue("is_135", !values.is_135);
-                        setFieldValue("is_91", false);
-                        setFieldValue("is_121", false);
+                        setFieldValue("is_91", null);
+                        setFieldValue("is_121", null);
                       }}
                       isChecked={values.is_135}
                     ></Checkbox>
@@ -111,13 +120,20 @@ function TailnumberForm(props) {
                     <Checkbox
                       onPress={() => {
                         setFieldValue("is_121", !values.is_121);
-                        setFieldValue("is_91", false);
-                        setFieldValue("is_135", false);
+                        setFieldValue("is_91", null);
+                        setFieldValue("is_135", null);
                       }}
                       isChecked={values.is_121}
                     ></Checkbox>
                     <AppText>121</AppText>
                   </View>
+                </View>
+                <View>
+                  {errors.reg ? (
+                    <Text style={styles.errors}>{errors.reg}</Text>
+                  ) : (
+                    <View></View>
+                  )}
                 </View>
               </View>
               {isValid ? (
