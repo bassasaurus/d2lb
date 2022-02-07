@@ -18,10 +18,7 @@ function TailnumberForm(props) {
 
   let schema = yup.object().shape({
     aircraft: yup.string().required(required),
-    registration: yup
-      .string()
-      .required(required)
-      .test("len", "Must be more than 3 characters.", (val) => val.length >= 3),
+    registration: yup.string().min(3).required(required),
   });
 
   return (
@@ -63,7 +60,7 @@ function TailnumberForm(props) {
               <AppTextInput
                 placeholder={"New Tailnumber"}
                 onChangeText={handleChange("registration")}
-                isValid={errors.registrationN ? false : true}
+                isValid={errors.registration ? false : true}
                 autoCorrect={false}
                 autoCapitalize={"characters"}
                 keyboardType={"default"}
