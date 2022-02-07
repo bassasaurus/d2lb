@@ -8,17 +8,28 @@ import Checkbox from "./Checkbox";
 import AppText from "./AppText";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
+import { STYLES } from "../styles/styles";
 
-function TailnumberForm(method) {
+function TailnumberForm(props) {
   const initialValues = {};
   const Context = useContext(AppContext);
+
+  const required = "*required";
+
+  let schema = yup.object().shape({
+    aircraft: yup.string().required(required),
+    registration: yup
+      .string()
+      .required(required)
+      .test("len", "Must be more than 3 characters.", (val) => val.length >= 3),
+  });
 
   return (
     <View style={styles.container}>
       <Formik
         validateOnMount={true}
         initialValues={initialValues}
-        // validationSchema={flightSchema}
+        validationSchema={schema}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
             setSubmitting(false);
@@ -38,19 +49,34 @@ function TailnumberForm(method) {
             <SafeAreaView>
               <AircraftPicker
                 initialValue={initialValues.aircraft}
-                isValid={values.aircraft ? true : false}
+                isValid={errors.aircraft ? false : true}
                 fieldName={"aircraft"}
                 setFieldValue={setFieldValue}
               ></AircraftPicker>
+              <View>
+                {errors.aircraft ? (
+                  <Text style={styles.errors}>{errors.aircraft}</Text>
+                ) : (
+                  <View></View>
+                )}
+              </View>
               <AppTextInput
                 placeholder={"New Tailnumber"}
-                isValid={values.registration.length > 3 ? true : false}
                 onChangeText={handleChange("registration")}
+                isValid={errors.registrationN ? false : true}
                 autoCorrect={false}
                 autoCapitalize={"characters"}
                 keyboardType={"default"}
                 clearButtonMode={"while-editing"}
               ></AppTextInput>
+              <View>
+                {errors.registration ? (
+                  <Text style={styles.errors}>{errors.registration}</Text>
+                ) : (
+                  <View></View>
+                )}
+              </View>
+
               <View
                 style={{
                   flexDirection: "row",
@@ -102,7 +128,7 @@ function TailnumberForm(method) {
                   title={!Context.setActivityVisible ? "" : "Submit"}
                   onPress={() => {
                     onSubmit;
-                    method(values);
+                    // method(values);
                     setSubmitting(true);
                     Context.setActivityVisible(true);
                   }}
@@ -130,6 +156,9 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     marginBottom: 20,
+  },
+  errors: {
+    color: STYLES.danger,
   },
 });
 
