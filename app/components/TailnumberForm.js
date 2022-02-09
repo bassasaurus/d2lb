@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Button } from "react-native";
 import AircraftPicker from "./AircraftPicker";
 import { Formik, validateYupSchema, yupToFormErrors } from "formik";
@@ -9,8 +9,9 @@ import AppText from "./AppText";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { STYLES } from "../styles/styles";
+import { set } from "react-native-reanimated";
 
-function TailnumberForm(props) {
+function TailnumberForm({ intitialValues }) {
   const initialValues = {};
   const Context = useContext(AppContext);
 
@@ -19,18 +20,33 @@ function TailnumberForm(props) {
   let schema = yup.object().shape({
     aircraft: yup.string().required(required),
     registration: yup.string().min(3).max(8).required(required),
-    reg: yup
-      .object({
-        is_91: yup.boolean(),
-        is_135: yup.boolean(),
-        is_121: yup.boolean(),
-      })
-      .test("oneChecked", "Select 1", (reg) => {
-        if (reg.is_91 || reg.is_135 || reg.is_121) {
-          return true;
-        } else {
-          return false;
-        }
+
+    is_91: yup
+      .boolean()
+      .test("oneOfRequired", "One must be selected", (item, testContext) => {
+        return (
+          testContext.parent.is_91 ||
+          testContext.parent.is_135 ||
+          testContext.parent.is_121
+        );
+      }),
+    is_135: yup
+      .boolean()
+      .test("oneOfRequired", "One must be selected", (item, testContext) => {
+        return (
+          testContext.parent.is_91 ||
+          testContext.parent.is_135 ||
+          testContext.parent.is_121
+        );
+      }),
+    is_121: yup
+      .boolean()
+      .test("oneOfRequired", "One must be selected", (item, testContext) => {
+        return (
+          testContext.parent.is_91 ||
+          testContext.parent.is_135 ||
+          testContext.parent.is_121
+        );
       }),
   });
 
@@ -38,7 +54,13 @@ function TailnumberForm(props) {
     <View style={styles.container}>
       <Formik
         validateOnMount={true}
-        initialValues={initialValues}
+        initialValues={{
+          aircraft: "",
+          registration: "",
+          is_91: false,
+          is_135: false,
+          is_121: false,
+        }}
         validationSchema={schema}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
@@ -98,8 +120,8 @@ function TailnumberForm(props) {
                     <Checkbox
                       onPress={() => {
                         setFieldValue("is_91", !values.is_91);
-                        setFieldValue("is_135", null);
-                        setFieldValue("is_121", null);
+                        setFieldValue("is_135", false);
+                        setFieldValue("is_121", false);
                       }}
                       isChecked={values.is_91}
                     ></Checkbox>
@@ -111,8 +133,8 @@ function TailnumberForm(props) {
                     <Checkbox
                       onPress={() => {
                         setFieldValue("is_135", !values.is_135);
-                        setFieldValue("is_91", null);
-                        setFieldValue("is_121", null);
+                        setFieldValue("is_91", false);
+                        setFieldValue("is_121", false);
                       }}
                       isChecked={values.is_135}
                     ></Checkbox>
@@ -124,17 +146,18 @@ function TailnumberForm(props) {
                     <Checkbox
                       onPress={() => {
                         setFieldValue("is_121", !values.is_121);
-                        setFieldValue("is_91", null);
-                        setFieldValue("is_135", null);
+                        setFieldValue("is_91", false);
+                        setFieldValue("is_135", false);
                       }}
                       isChecked={values.is_121}
                     ></Checkbox>
                     <AppText>121</AppText>
                   </View>
                 </View>
+
                 <View>
-                  {errors.reg ? (
-                    <Text style={styles.errors}>{errors.reg}</Text>
+                  {errors.is_91 ? (
+                    <Text style={styles.errors}>{errors.is_91}</Text>
                   ) : (
                     <View></View>
                   )}
