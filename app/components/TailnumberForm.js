@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, Button } from "react-native";
 import AircraftPicker from "./AircraftPicker";
-import { Formik, validateYupSchema, yupToFormErrors } from "formik";
+import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 import AppTextInput from "./AppTextInput";
 import Checkbox from "./Checkbox";
@@ -9,45 +9,32 @@ import AppText from "./AppText";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { STYLES } from "../styles/styles";
-import { set } from "react-native-reanimated";
 
 function TailnumberForm({ intitialValues }) {
   const initialValues = {};
   const Context = useContext(AppContext);
+  //   const [is91, setIs91] = useState(false);
+  //   const [is135, setIs135] = useState(false);
+  //   const [is121, setIs121] = useState(false);
+
+  const checkboxValidation = (is91, is135, is121) => {
+    if (is91 || is135 || is121) {
+      console.log(true);
+      return true;
+    } else {
+      console.log(false);
+      return false;
+    }
+  };
 
   const required = "*required";
 
   let schema = yup.object().shape({
     aircraft: yup.string().required(required),
     registration: yup.string().min(3).max(8).required(required),
-
-    is_91: yup
-      .boolean()
-      .test("oneOfRequired", "One must be selected", (item, testContext) => {
-        return (
-          testContext.parent.is_91 ||
-          testContext.parent.is_135 ||
-          testContext.parent.is_121
-        );
-      }),
-    is_135: yup
-      .boolean()
-      .test("oneOfRequired", "One must be selected", (item, testContext) => {
-        return (
-          testContext.parent.is_91 ||
-          testContext.parent.is_135 ||
-          testContext.parent.is_121
-        );
-      }),
-    is_121: yup
-      .boolean()
-      .test("oneOfRequired", "One must be selected", (item, testContext) => {
-        return (
-          testContext.parent.is_91 ||
-          testContext.parent.is_135 ||
-          testContext.parent.is_121
-        );
-      }),
+    is_91: yup.boolean(),
+    is_135: yup.boolean(),
+    is_121: yup.boolean(),
   });
 
   return (
@@ -94,6 +81,7 @@ function TailnumberForm({ intitialValues }) {
               </View>
               <AppTextInput
                 placeholder={"New Tailnumber"}
+                initialValue={initialValues ? initialValues.registration : ""}
                 onChangeText={handleChange("registration")}
                 isValid={errors.registration ? false : true}
                 autoCorrect={false}
@@ -118,10 +106,12 @@ function TailnumberForm({ intitialValues }) {
                 <View style={{ flex: 0.3 }}>
                   <View style={{ flexDirection: "row" }}>
                     <Checkbox
+                      initialValue={initialValues.is_91}
                       onPress={() => {
                         setFieldValue("is_91", !values.is_91);
                         setFieldValue("is_135", false);
                         setFieldValue("is_121", false);
+                        checkboxValidation(!values.is_91, false, false);
                       }}
                       isChecked={values.is_91}
                     ></Checkbox>
@@ -131,10 +121,12 @@ function TailnumberForm({ intitialValues }) {
                 <View style={{ flex: 0.3 }}>
                   <View style={{ flexDirection: "row" }}>
                     <Checkbox
+                      initialValue={initialValues.is_135}
                       onPress={() => {
                         setFieldValue("is_135", !values.is_135);
                         setFieldValue("is_91", false);
                         setFieldValue("is_121", false);
+                        checkboxValidation(false, !values.is_135, false);
                       }}
                       isChecked={values.is_135}
                     ></Checkbox>
@@ -144,10 +136,12 @@ function TailnumberForm({ intitialValues }) {
                 <View style={{ flex: 0.3 }}>
                   <View style={{ flexDirection: "row" }}>
                     <Checkbox
+                      initialValue={initialValues.is_121}
                       onPress={() => {
                         setFieldValue("is_121", !values.is_121);
                         setFieldValue("is_91", false);
                         setFieldValue("is_135", false);
+                        checkboxValidation(false, false, !values.is_121);
                       }}
                       isChecked={values.is_121}
                     ></Checkbox>
@@ -156,8 +150,10 @@ function TailnumberForm({ intitialValues }) {
                 </View>
 
                 <View>
-                  {errors.is_91 ? (
-                    <Text style={styles.errors}>{errors.is_91}</Text>
+                  {isValid ? (
+                    <View>
+                      <Text>{isValid}</Text>
+                    </View>
                   ) : (
                     <View></View>
                   )}
