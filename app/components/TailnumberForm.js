@@ -13,19 +13,21 @@ import { STYLES } from "../styles/styles";
 function TailnumberForm({ intitialValues }) {
   const initialValues = {};
   const Context = useContext(AppContext);
-  //   const [is91, setIs91] = useState(false);
-  //   const [is135, setIs135] = useState(false);
-  //   const [is121, setIs121] = useState(false);
+
+  const [checkValid, setCheckValid] = useState(false);
 
   const checkboxValidation = (is91, is135, is121) => {
     if (is91 || is135 || is121) {
-      console.log(true);
+      setCheckValid(true);
+
       return true;
     } else {
-      console.log(false);
+      setCheckValid(false);
+
       return false;
     }
   };
+  console.log(checkValid);
 
   const required = "*required";
 
@@ -150,9 +152,9 @@ function TailnumberForm({ intitialValues }) {
                 </View>
 
                 <View>
-                  {isValid ? (
+                  {!checkValid ? (
                     <View>
-                      <Text>{isValid}</Text>
+                      <Text style={styles.errors}>Must select one</Text>
                     </View>
                   ) : (
                     <View></View>
