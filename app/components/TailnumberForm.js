@@ -34,9 +34,21 @@ function TailnumberForm({ intitialValues }) {
   let schema = yup.object().shape({
     aircraft: yup.string().required(required),
     registration: yup.string().min(3).max(8).required(required),
-    is_91: yup.boolean(),
-    is_135: yup.boolean(),
-    is_121: yup.boolean(),
+    is_91: yup.boolean().test({
+      name: "check91",
+      message: "Must select one.",
+      test: (checkValid) => true,
+    }),
+    is_135: yup.boolean().test({
+      name: "check135",
+      message: "Must select one.",
+      test: (checkValid) => true,
+    }),
+    is_121: yup.boolean().test({
+      name: "check121",
+      message: "Must select one.",
+      test: (checkValid) => true,
+    }),
   });
 
   return (
