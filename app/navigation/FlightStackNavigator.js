@@ -8,6 +8,7 @@ import { Button, Pressable, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import TailnumberCreateScreen from "../screens/TailnumberCreateScreen";
 
 function FlightStackNavigator(props) {
   const Stack = createStackNavigator();
@@ -67,6 +68,16 @@ function FlightStackNavigator(props) {
         component={FlightUpdateScreen}
         options={{
           title: "Update",
+          cardStyleInterpolator: forFade,
+          cardStyle: { backgroundColor: "white" },
+        }}
+      />
+
+      <Stack.Screen
+        name='TailnumberCreate'
+        component={TailnumberCreateScreen}
+        options={{
+          title: "Create",
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: "white" },
         }}

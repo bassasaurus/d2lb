@@ -4,6 +4,8 @@ import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
 import TailnumberForm from "./app/components/TailnumberForm";
 import { SafeAreaView } from "react-native";
+import TailnumberCreate from "./app/screens/TailnumberCreateScreen";
+import TailnumberCreateScreen from "./app/screens/TailnumberCreateScreen";
 
 export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(true);
@@ -20,8 +22,7 @@ export default function App() {
     <>
       <StatusBar style='auto' />
       <AppContext.Provider value={appSettings}>
-        {/* <DrawerNavigator></DrawerNavigator> */}
-        <TailnumberForm></TailnumberForm>
+        <DrawerNavigator></DrawerNavigator>
       </AppContext.Provider>
     </>
   );

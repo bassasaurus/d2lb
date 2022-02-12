@@ -55,13 +55,7 @@ function TailnumberForm({ intitialValues }) {
     <View style={styles.container}>
       <Formik
         validateOnMount={true}
-        initialValues={{
-          aircraft: "",
-          registration: "",
-          is_91: false,
-          is_135: false,
-          is_121: false,
-        }}
+        initialValues={initialValues}
         validationSchema={schema}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {

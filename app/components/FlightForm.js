@@ -24,6 +24,7 @@ import Checkbox from "./Checkbox";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 import { STYLES } from "../styles/styles";
 
@@ -35,6 +36,8 @@ function FlightForm({ initialValues, method }) {
   const [acTailMatch, setAcTailMatch] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [addedDuration, setAddedDuration] = useState(0);
+
+  const navigation = useNavigation();
 
   const Context = useContext(AppContext);
 
@@ -205,7 +208,7 @@ function FlightForm({ initialValues, method }) {
                   </View>
                   <View style={{ paddingTop: 15, paddingLeft: 7 }}>
                     <TouchableOpacity
-                      onPress={() => console.log("new tailnumber")}
+                      onPress={() => navigation.navigate("TailnumberCreate")}
                     >
                       <MaterialCommunityIcons
                         name='plus'
