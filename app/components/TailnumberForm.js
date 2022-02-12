@@ -173,7 +173,7 @@ function TailnumberForm({ intitialValues }) {
                   )}
                 </View>
               </View>
-              {isValid ? (
+              {isValid && checkValid ? (
                 <Button
                   title={!Context.setActivityVisible ? "" : "Submit"}
                   onPress={() => {
