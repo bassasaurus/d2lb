@@ -18,7 +18,7 @@ function TailnumberCreateScreen(props) {
 
   const create = (data) => {
     api
-      .post("/api/tailnumbers/", data)
+      .post("/api/tailnumbers/create/", data)
       .then(() => {
         navigation.navigate("FlightCreateScreen");
         Context.setActivityVisible(false);

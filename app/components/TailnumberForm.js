@@ -27,7 +27,6 @@ function TailnumberForm({ initialValues, method }) {
       return false;
     }
   };
-  console.log(checkValid);
 
   const required = "*required";
 
@@ -174,6 +173,7 @@ function TailnumberForm({ initialValues, method }) {
                     onSubmit;
                     method(values);
                     setSubmitting(true);
+                    Context.setActivityVisible(true);
                   }}
                 ></Button>
               ) : (

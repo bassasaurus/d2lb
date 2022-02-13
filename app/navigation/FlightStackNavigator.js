@@ -77,7 +77,7 @@ function FlightStackNavigator(props) {
         name='TailnumberCreate'
         component={TailnumberCreateScreen}
         options={{
-          title: "Create",
+          title: "New Tailnumber",
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: "white" },
         }}
