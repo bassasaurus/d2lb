@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Alert } from "react-native";
 import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
 import TailnumberForm from "../components/TailnumberForm";
@@ -18,9 +18,9 @@ function TailnumberCreateScreen(props) {
 
   const create = (data) => {
     api
-      .post("/api/flights/", data)
+      .post("/api/tailnumbers/", data)
       .then(() => {
-        navigation.navigate("FlightList");
+        navigation.navigate("FlightCreateScreen");
         Context.setActivityVisible(false);
       })
       .catch(function (error) {

@@ -10,11 +10,11 @@ import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { STYLES } from "../styles/styles";
 
-function TailnumberForm({ intitialValues }) {
-  const initialValues = {};
+function TailnumberForm({ initialValues, method }) {
   const Context = useContext(AppContext);
 
   const [checkValid, setCheckValid] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const checkboxValidation = (is91, is135, is121) => {
     if (is91 || is135 || is121) {
@@ -172,18 +172,17 @@ function TailnumberForm({ intitialValues }) {
                   title={!Context.setActivityVisible ? "" : "Submit"}
                   onPress={() => {
                     onSubmit;
-                    // method(values);
+                    method(values);
                     setSubmitting(true);
-                    Context.setActivityVisible(true);
                   }}
                 ></Button>
               ) : (
                 <Button title='Complete required fields.'></Button>
               )}
 
-              <View style={{ marginTop: 30 }}>
+              {/* <View style={{ marginTop: 30 }}>
                 <Text>{JSON.stringify(values, null, "  ")}</Text>
-              </View>
+              </View> */}
             </SafeAreaView>
           </>
         )}
