@@ -24,6 +24,7 @@ import Checkbox from "./Checkbox";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 import { STYLES } from "../styles/styles";
 
@@ -35,6 +36,8 @@ function FlightForm({ initialValues, method }) {
   const [acTailMatch, setAcTailMatch] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [addedDuration, setAddedDuration] = useState(0);
+
+  const navigation = useNavigation();
 
   const Context = useContext(AppContext);
 
@@ -163,6 +166,7 @@ function FlightForm({ initialValues, method }) {
                       initialValue={initialValues.aircraft_type}
                       isValid={values.aircraft_type ? true : false}
                       style={{ flex: 0.5 }}
+                      fieldName={"aircraft_type"}
                       setFieldValue={setFieldValue}
                       handleAircraftId={handleAircraftId}
                     ></AircraftPicker>
@@ -178,14 +182,18 @@ function FlightForm({ initialValues, method }) {
                   </View>
 
                   <View style={{ flex: 0.5 }}>
-                    <TailnumberPicker
-                      initialValue={initialValues.registration}
-                      isValid={values.registration ? true : false}
-                      setFieldValue={setFieldValue}
-                      filterBy={values.aircraft_type}
-                      setAcTailMatch={setAcTailMatch}
-                      aircraftId={values.aircraft_type}
-                    ></TailnumberPicker>
+                    {values.aircraft_type ? (
+                      <TailnumberPicker
+                        initialValue={initialValues.registration}
+                        isValid={values.registration ? true : false}
+                        setFieldValue={setFieldValue}
+                        filterBy={values.aircraft_type}
+                        setAcTailMatch={setAcTailMatch}
+                        aircraftId={values.aircraft_type}
+                      ></TailnumberPicker>
+                    ) : (
+                      <View></View>
+                    )}
 
                     <View>
                       {errors.registration ? (
@@ -205,7 +213,7 @@ function FlightForm({ initialValues, method }) {
                   </View>
                   <View style={{ paddingTop: 15, paddingLeft: 7 }}>
                     <TouchableOpacity
-                      onPress={() => console.log("new tailnumber")}
+                      onPress={() => navigation.navigate("TailnumberCreate")}
                     >
                       <MaterialCommunityIcons
                         name='plus'
