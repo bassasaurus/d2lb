@@ -41,16 +41,16 @@ function FlightForm({ initialValues, method }) {
 
   const Context = useContext(AppContext);
 
-  // function handleAircraftId(id) {
-  //   if (aircraftId === id) {
-  //     setAcTailMatch(true);
-  //     return true;
-  //   } else {
-  //     setAcTailMatch(false);
-  //     setAircraftId(id);
-  //     return false;
-  //   }
-  // }
+  function handleAircraftId(id) {
+    if (aircraftId === id) {
+      setAcTailMatch(true);
+      return true;
+    } else {
+      setAcTailMatch(false);
+      setAircraftId(id);
+      return false;
+    }
+  }
 
   const dashNotSpace = (str) => {
     str = str.replace(/\s/g, "-");
@@ -168,6 +168,7 @@ function FlightForm({ initialValues, method }) {
                       style={{ flex: 0.5 }}
                       fieldName={"aircraft_type"}
                       setFieldValue={setFieldValue}
+                      handleAircraftId={handleAircraftId}
                     ></AircraftPicker>
                     <View>
                       {errors.aircraft_type ? (
