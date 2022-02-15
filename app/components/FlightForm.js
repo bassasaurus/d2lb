@@ -183,33 +183,37 @@ function FlightForm({ initialValues, method }) {
 
                   <View style={{ flex: 0.5 }}>
                     {values.aircraft_type ? (
-                      <TailnumberPicker
-                        initialValue={initialValues.registration}
-                        isValid={values.registration ? true : false}
-                        setFieldValue={setFieldValue}
-                        filterBy={values.aircraft_type}
-                        setAcTailMatch={setAcTailMatch}
-                        aircraftId={values.aircraft_type}
-                      ></TailnumberPicker>
+                      <>
+                        <TailnumberPicker
+                          initialValue={initialValues.registration}
+                          isValid={values.registration ? true : false}
+                          setFieldValue={setFieldValue}
+                          filterBy={values.aircraft_type}
+                          setAcTailMatch={setAcTailMatch}
+                          aircraftId={values.aircraft_type}
+                        ></TailnumberPicker>
+                        <View>
+                          {errors.registration ? (
+                            <Text style={styles.errors}>
+                              {errors.registration}
+                            </Text>
+                          ) : (
+                            <View></View>
+                          )}
+                        </View>
+                        <View>
+                          {acTailMatch === false && method.name === "create" ? (
+                            <Text style={styles.errors}>
+                              Registration mismatch
+                            </Text>
+                          ) : (
+                            <View></View>
+                          )}
+                        </View>
+                      </>
                     ) : (
                       <View></View>
                     )}
-
-                    <View>
-                      {errors.registration ? (
-                        <Text style={styles.errors}>{errors.registration}</Text>
-                      ) : (
-                        <View></View>
-                      )}
-                    </View>
-
-                    <View>
-                      {acTailMatch === false && method.name === "create" ? (
-                        <Text style={styles.errors}>Registration mismatch</Text>
-                      ) : (
-                        <View></View>
-                      )}
-                    </View>
                   </View>
                   <View style={{ paddingTop: 15, paddingLeft: 7 }}>
                     <TouchableOpacity
