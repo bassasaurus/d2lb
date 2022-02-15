@@ -57,8 +57,7 @@ function FlightForm({ initialValues, method }) {
     return str;
   };
 
-  const required = "*required";
-  const positive = "Must be positive number.";
+  const required = "*Required";
 
   let flightSchema = yup.object().shape({
     date: yup.string().required(required),
@@ -67,23 +66,22 @@ function FlightForm({ initialValues, method }) {
     registration: yup.string().required(required),
     duration: yup
       .number()
-      .positive(positive)
       .required(required)
       .min(0.1, "Must be greater than 0.1")
       .max(30.0, "Seems unlikely."),
     landings_day: yup
       .number()
-      .positive(positive)
+      .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
     landings_night: yup
       .number()
-      .positive(positive)
+      .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
-    night: yup.number().positive(positive),
-    instrument: yup.number().positive(positive),
-    simulated_instrument: yup.number().positive(positive),
+    night: yup.number().moreThan(0, "Leave blank for 0"),
+    instrument: yup.number().moreThan(0, "Leave blank for 0"),
+    simulated_instrument: yup.number().moreThan(0, "Leave blank for 0"),
     remarks: yup.string().max(256, "256 Character Maximum"),
-    number: yup.number().positive(positive),
+    number: yup.number().moreThan(0, "Leave blank for 0"),
   });
 
   return (
