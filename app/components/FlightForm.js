@@ -181,14 +181,18 @@ function FlightForm({ initialValues, method }) {
                   </View>
 
                   <View style={{ flex: 0.5 }}>
-                    <TailnumberPicker
-                      initialValue={initialValues.registration}
-                      isValid={values.registration ? true : false}
-                      setFieldValue={setFieldValue}
-                      filterBy={values.aircraft_type}
-                      setAcTailMatch={setAcTailMatch}
-                      aircraftId={values.aircraft_type}
-                    ></TailnumberPicker>
+                    {values.aircraft_type ? (
+                      <TailnumberPicker
+                        initialValue={initialValues.registration}
+                        isValid={values.registration ? true : false}
+                        setFieldValue={setFieldValue}
+                        filterBy={values.aircraft_type}
+                        setAcTailMatch={setAcTailMatch}
+                        aircraftId={values.aircraft_type}
+                      ></TailnumberPicker>
+                    ) : (
+                      <View></View>
+                    )}
 
                     <View>
                       {errors.registration ? (
