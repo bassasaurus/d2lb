@@ -20,7 +20,7 @@ function TailnumberCreateScreen(props) {
     api
       .post("/api/tailnumbers/", data)
       .then(() => {
-        navigation.navigate("FlightCreateScreen");
+        navigation.navigate("FlightCreate");
         Context.setActivityVisible(false);
       })
       .catch(function (error) {
