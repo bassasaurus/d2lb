@@ -78,6 +78,10 @@ function TailnumberForm({ initialValues, method }) {
                 isValid={errors.aircraft ? false : true}
                 fieldName={"aircraft"}
                 setFieldValue={setFieldValue}
+                //dummy prop used in registration match on flight form
+                handleAircraftId={() => {
+                  return true;
+                }}
               ></AircraftPicker>
               <View>
                 {errors.aircraft ? (
