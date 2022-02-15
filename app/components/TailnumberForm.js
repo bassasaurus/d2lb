@@ -170,19 +170,21 @@ function TailnumberForm({ initialValues, method }) {
                   )}
                 </View>
               </View>
-              {isValid && checkValid ? (
-                <Button
-                  title={!Context.setActivityVisible ? "" : "Submit"}
-                  onPress={() => {
-                    onSubmit;
-                    method(values);
-                    setSubmitting(true);
-                    Context.setActivityVisible(true);
-                  }}
-                ></Button>
-              ) : (
-                <Button title='Complete required fields.'></Button>
-              )}
+              <View style={{ paddingTop: 10 }}>
+                {isValid && checkValid ? (
+                  <Button
+                    title={!Context.setActivityVisible ? "" : "Submit"}
+                    onPress={() => {
+                      onSubmit;
+                      method(values);
+                      setSubmitting(true);
+                      Context.setActivityVisible(true);
+                    }}
+                  ></Button>
+                ) : (
+                  <Button title='Complete required fields.'></Button>
+                )}
+              </View>
 
               {/* <View style={{ marginTop: 30 }}>
                 <Text>{JSON.stringify(values, null, "  ")}</Text>
