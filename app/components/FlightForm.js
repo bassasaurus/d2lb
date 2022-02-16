@@ -222,72 +222,76 @@ function FlightForm({ initialValues, method }) {
                   </View>
                 </View>
                 {/* duration row */}
-
                 <View style={{ flexDirection: "row" }}>
-                  <View style={{ flexDirection: "column" }}>
-                    <AppTextInput
-                      isValid={values.duration.length > 1 ? true : false}
-                      value={values.duration}
-                      onChangeText={(val) => {
-                        setFieldValue("duration", val);
-                      }}
-                      placeholder='Duration - XX.X'
-                      autoCorrect={false}
-                      keyboardType={"numeric"}
-                      clearButtonMode={"while-editing"}
-                      onFocus={() => setScrollEnabled(false)}
-                      onBlur={() => setScrollEnabled(true)}
-                    ></AppTextInput>
-                    <View>
-                      {errors.duration ? (
-                        <Text style={styles.errors}>{errors.duration}</Text>
-                      ) : (
-                        <View>
-                          <AppText>Duration</AppText>
-                        </View>
-                      )}
+                  <View>
+                    <View style={{ flexDirection: "column" }}>
+                      <AppTextInput
+                        isValid={values.duration.length > 1 ? true : false}
+                        value={values.duration}
+                        onChangeText={(val) => {
+                          setFieldValue("duration", val);
+                        }}
+                        placeholder='Duration - XX.X'
+                        autoCorrect={false}
+                        keyboardType={"numeric"}
+                        clearButtonMode={"while-editing"}
+                        onFocus={() => setScrollEnabled(false)}
+                        onBlur={() => setScrollEnabled(true)}
+                      ></AppTextInput>
+                      <View>
+                        {errors.duration ? (
+                          <Text style={styles.errors}>{errors.duration}</Text>
+                        ) : (
+                          <View>
+                            <AppText>Duration</AppText>
+                          </View>
+                        )}
+                      </View>
                     </View>
                   </View>
-                  <View>
-                    <MaterialCommunityIcons
-                      name='plus'
-                      size={30}
-                      color='black'
-                    />
-                  </View>
-                  <View>
-                    <AppTextInput
-                      isValid={true}
-                      placeholder={"XX.X"}
-                      clearButtonMode={"while-editing"}
-                      keyboardType={"numeric"}
-                      onChangeText={(val) => setAddedDuration(val)}
-                      onFocus={() => setScrollEnabled(false)}
-                      onBlur={() => setScrollEnabled(true)}
-                    ></AppTextInput>
-                    <AppText color='gray'>Next leg</AppText>
-                  </View>
-                  <View>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setFieldValue(
-                          "duration",
-                          String(
-                            (
-                              Number(values.duration) + Number(addedDuration)
-                            ).toFixed(1)
-                          )
-                        );
-                      }}
-                    >
+                  <View style={{ flexDirection: "column" }}>
+                    <View style={{ flexDirection: "row" }}>
                       <MaterialCommunityIcons
-                        name='keyboard-return'
+                        style={{ paddingTop: 15 }}
+                        name='plus'
                         size={30}
-                        color='green'
+                        color='black'
                       />
-                    </TouchableOpacity>
+                      <View style={{ flexDirection: "column" }}>
+                        <AppTextInput
+                          isValid={true}
+                          placeholder={"XX.X"}
+                          clearButtonMode={"while-editing"}
+                          keyboardType={"numeric"}
+                          onChangeText={(val) => setAddedDuration(val)}
+                          onFocus={() => setScrollEnabled(false)}
+                          onBlur={() => setScrollEnabled(true)}
+                        ></AppTextInput>
+                        <AppText color='gray'>Next leg</AppText>
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setFieldValue(
+                            "duration",
+                            String(
+                              (
+                                Number(values.duration) + Number(addedDuration)
+                              ).toFixed(1)
+                            )
+                          );
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          style={{ paddingTop: 15, paddingLeft: 5 }}
+                          name='keyboard-return'
+                          size={30}
+                          color='green'
+                        />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
+
                 {/* end duration row */}
                 <View
                   style={{
