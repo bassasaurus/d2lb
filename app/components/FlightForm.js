@@ -225,85 +225,89 @@ function FlightForm({ initialValues, method }) {
                     </TouchableOpacity>
                   </View>
                 </View>
+
                 <View style={{ flexDirection: "row" }}>
-                  <View style={{ flex: 3 }}>
-                    <AppTextInput
-                      isValid={values.duration.length > 1 ? true : false}
-                      value={values.duration}
-                      onChangeText={(val) => {
-                        setFieldValue("duration", val);
-                      }}
-                      placeholder='Duration - XX.X'
-                      autoCorrect={false}
-                      keyboardType={"numeric"}
-                      clearButtonMode={"while-editing"}
-                      onFocus={() => setScrollEnabled(false)}
-                      onBlur={() => setScrollEnabled(true)}
-                    ></AppTextInput>
+                  <View style={{ flexDirection: "column" }}>
+                    <View style={{ flex: 3 }}>
+                      <AppTextInput
+                        isValid={values.duration.length > 1 ? true : false}
+                        value={values.duration}
+                        onChangeText={(val) => {
+                          setFieldValue("duration", val);
+                        }}
+                        placeholder='Duration - XX.X'
+                        autoCorrect={false}
+                        keyboardType={"numeric"}
+                        clearButtonMode={"while-editing"}
+                        onFocus={() => setScrollEnabled(false)}
+                        onBlur={() => setScrollEnabled(true)}
+                      ></AppTextInput>
+                    </View>
+                    <View>
+                      {errors.duration ? (
+                        <Text style={styles.errors}>{errors.duration}</Text>
+                      ) : (
+                        <View>
+                          <AppText>Duration</AppText>
+                        </View>
+                      )}
+                    </View>
                   </View>
-
-                  <View
-                    style={{
-                      paddingTop: 10,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                      name='plus'
-                      size={30}
-                      color='black'
-                    />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <AppTextInput
-                      isValid={true}
-                      placeholder={"XX.X"}
-                      clearButtonMode={"while-editing"}
-                      keyboardType={"numeric"}
-                      onChangeText={(val) => setAddedDuration(val)}
-                      onFocus={() => setScrollEnabled(false)}
-                      onBlur={() => setScrollEnabled(true)}
-                    ></AppTextInput>
-                  </View>
-
-                  <View
-                    style={{
-                      paddingLeft: 5,
-                      paddingTop: 12,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <TouchableOpacity
-                      onPress={() => {
-                        setFieldValue(
-                          "duration",
-                          String(
-                            (
-                              Number(values.duration) + Number(addedDuration)
-                            ).toFixed(1)
-                          )
-                        );
+                  <View style={{ flexDirection: "row" }}>
+                    <View
+                      style={{
+                        paddingBottom: 5,
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                     >
                       <MaterialCommunityIcons
-                        name='keyboard-return'
+                        name='plus'
                         size={30}
-                        color='green'
+                        color='black'
                       />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                <View>
-                  {errors.duration ? (
-                    <Text style={styles.errors}>{errors.duration}</Text>
-                  ) : (
-                    <View>
-                      <AppText>Duration</AppText>
                     </View>
-                  )}
+                    <View style={{}}>
+                      <AppTextInput
+                        isValid={true}
+                        placeholder={"XX.X"}
+                        clearButtonMode={"while-editing"}
+                        keyboardType={"numeric"}
+                        onChangeText={(val) => setAddedDuration(val)}
+                        onFocus={() => setScrollEnabled(false)}
+                        onBlur={() => setScrollEnabled(true)}
+                      ></AppTextInput>
+                      <AppText color='gray'>Next leg</AppText>
+                    </View>
+
+                    <View
+                      style={{
+                        paddingLeft: 5,
+                        paddingBottom: 5,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <TouchableOpacity
+                        onPress={() => {
+                          setFieldValue(
+                            "duration",
+                            String(
+                              (
+                                Number(values.duration) + Number(addedDuration)
+                              ).toFixed(1)
+                            )
+                          );
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          name='keyboard-return'
+                          size={30}
+                          color='green'
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
                 </View>
 
                 <View
