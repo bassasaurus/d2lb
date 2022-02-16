@@ -126,7 +126,6 @@ function FlightForm({ initialValues, method }) {
                     />
                   </View>
                 </Pressable>
-
                 <View>
                   {errors.date ? (
                     <Text style={styles.errors}>{errors.date}</Text>
@@ -134,7 +133,6 @@ function FlightForm({ initialValues, method }) {
                     <View></View>
                   )}
                 </View>
-
                 <AppTextInput
                   isValid={values.route.length > 1 ? true : false}
                   value={dashNotSpace(values.route)}
@@ -147,7 +145,6 @@ function FlightForm({ initialValues, method }) {
                   onFocus={() => setScrollEnabled(false)}
                   onBlur={() => setScrollEnabled(true)}
                 />
-
                 <View>
                   {errors.route ? (
                     <Text style={styles.errors}>{errors.route}</Text>
@@ -157,7 +154,6 @@ function FlightForm({ initialValues, method }) {
                     </View>
                   )}
                 </View>
-
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
@@ -225,24 +221,23 @@ function FlightForm({ initialValues, method }) {
                     </TouchableOpacity>
                   </View>
                 </View>
+                {/* duration row */}
 
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flexDirection: "column" }}>
-                    <View style={{ flex: 3 }}>
-                      <AppTextInput
-                        isValid={values.duration.length > 1 ? true : false}
-                        value={values.duration}
-                        onChangeText={(val) => {
-                          setFieldValue("duration", val);
-                        }}
-                        placeholder='Duration - XX.X'
-                        autoCorrect={false}
-                        keyboardType={"numeric"}
-                        clearButtonMode={"while-editing"}
-                        onFocus={() => setScrollEnabled(false)}
-                        onBlur={() => setScrollEnabled(true)}
-                      ></AppTextInput>
-                    </View>
+                    <AppTextInput
+                      isValid={values.duration.length > 1 ? true : false}
+                      value={values.duration}
+                      onChangeText={(val) => {
+                        setFieldValue("duration", val);
+                      }}
+                      placeholder='Duration - XX.X'
+                      autoCorrect={false}
+                      keyboardType={"numeric"}
+                      clearButtonMode={"while-editing"}
+                      onFocus={() => setScrollEnabled(false)}
+                      onBlur={() => setScrollEnabled(true)}
+                    ></AppTextInput>
                     <View>
                       {errors.duration ? (
                         <Text style={styles.errors}>{errors.duration}</Text>
@@ -253,63 +248,47 @@ function FlightForm({ initialValues, method }) {
                       )}
                     </View>
                   </View>
-                  <View style={{ flexDirection: "row" }}>
-                    <View
-                      style={{
-                        paddingBottom: 5,
-                        justifyContent: "center",
-                        alignItems: "center",
+                  <View>
+                    <MaterialCommunityIcons
+                      name='plus'
+                      size={30}
+                      color='black'
+                    />
+                  </View>
+                  <View>
+                    <AppTextInput
+                      isValid={true}
+                      placeholder={"XX.X"}
+                      clearButtonMode={"while-editing"}
+                      keyboardType={"numeric"}
+                      onChangeText={(val) => setAddedDuration(val)}
+                      onFocus={() => setScrollEnabled(false)}
+                      onBlur={() => setScrollEnabled(true)}
+                    ></AppTextInput>
+                    <AppText color='gray'>Next leg</AppText>
+                  </View>
+                  <View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setFieldValue(
+                          "duration",
+                          String(
+                            (
+                              Number(values.duration) + Number(addedDuration)
+                            ).toFixed(1)
+                          )
+                        );
                       }}
                     >
                       <MaterialCommunityIcons
-                        name='plus'
+                        name='keyboard-return'
                         size={30}
-                        color='black'
+                        color='green'
                       />
-                    </View>
-                    <View style={{}}>
-                      <AppTextInput
-                        isValid={true}
-                        placeholder={"XX.X"}
-                        clearButtonMode={"while-editing"}
-                        keyboardType={"numeric"}
-                        onChangeText={(val) => setAddedDuration(val)}
-                        onFocus={() => setScrollEnabled(false)}
-                        onBlur={() => setScrollEnabled(true)}
-                      ></AppTextInput>
-                      <AppText color='gray'>Next leg</AppText>
-                    </View>
-
-                    <View
-                      style={{
-                        paddingLeft: 5,
-                        paddingBottom: 5,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <TouchableOpacity
-                        onPress={() => {
-                          setFieldValue(
-                            "duration",
-                            String(
-                              (
-                                Number(values.duration) + Number(addedDuration)
-                              ).toFixed(1)
-                            )
-                          );
-                        }}
-                      >
-                        <MaterialCommunityIcons
-                          name='keyboard-return'
-                          size={30}
-                          color='green'
-                        />
-                      </TouchableOpacity>
-                    </View>
+                    </TouchableOpacity>
                   </View>
                 </View>
-
+                {/* end duration row */}
                 <View
                   style={{
                     flexDirection: "row",
@@ -411,7 +390,6 @@ function FlightForm({ initialValues, method }) {
                     <AppText>XC</AppText>
                   </View>
                 </View>
-
                 <View
                   style={{
                     flexDirection: "row",
@@ -471,7 +449,6 @@ function FlightForm({ initialValues, method }) {
                     </View>
                   </View>
                 </View>
-
                 <View style={{ flexDirection: "row" }}>
                   <View
                     style={{
@@ -558,7 +535,6 @@ function FlightForm({ initialValues, method }) {
                     </View>
                   </View>
                 </View>
-
                 <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
                     isValid={true}
@@ -584,7 +560,6 @@ function FlightForm({ initialValues, method }) {
                     )}
                   </View>
                 </View>
-
                 {formCount > 0 ? (
                   <View style={{ flexDirection: "row" }}>
                     <ApproachPicker
@@ -614,7 +589,6 @@ function FlightForm({ initialValues, method }) {
                 ) : (
                   <View></View>
                 )}
-
                 {formCount > 1 ? (
                   <View style={{ flexDirection: "row" }}>
                     <ApproachPicker
@@ -644,7 +618,6 @@ function FlightForm({ initialValues, method }) {
                 ) : (
                   <View></View>
                 )}
-
                 {formCount > 2 ? (
                   <View style={{ flexDirection: "row" }}>
                     <ApproachPicker
@@ -674,7 +647,6 @@ function FlightForm({ initialValues, method }) {
                 ) : (
                   <View></View>
                 )}
-
                 <View style={{ flexDirection: "row" }}>
                   {formCount < 3 ? (
                     <TouchableOpacity
@@ -688,7 +660,6 @@ function FlightForm({ initialValues, method }) {
                     <View style={{ paddingLeft: 125 }}></View>
                   )}
                 </View>
-
                 <View style={{ flexDirection: "row", marginTop: 10 }}>
                   <Checkbox
                     onPress={() => {
@@ -700,7 +671,6 @@ function FlightForm({ initialValues, method }) {
                     <AppText>Hold</AppText>
                   </View>
                 </View>
-
                 <AppTextInput
                   isValid={true}
                   style={{
@@ -720,7 +690,6 @@ function FlightForm({ initialValues, method }) {
                   autoCorrect={false}
                   multiline={true}
                 ></AppTextInput>
-
                 <View>
                   {errors.remarks ? (
                     <Text style={styles.errors}>{errors.remarks}</Text>
@@ -743,11 +712,9 @@ function FlightForm({ initialValues, method }) {
                     <Button title='Complete required fields.'></Button>
                   )}
                 </View>
-
                 {/* <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
                 </View> */}
-
                 <Modal
                   animationType='slide'
                   transparent={true}
