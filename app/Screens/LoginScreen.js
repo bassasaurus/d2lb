@@ -69,7 +69,7 @@ function LoginScreen() {
       >
         <ScrollView>
           <View style={styles.container}>
-            <View style={{ paddingTop: 140 }}>
+            <View style={{ paddingTop: 140, alignItems: "center" }}>
               <Image
                 source={require("../assets/D2LB_LOGO_Dark_top.png")}
               ></Image>
@@ -171,7 +171,7 @@ function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { marginRight: 10, marginLeft: 10 },
+  container: { flexDirection: "column", marginRight: 10, marginLeft: 10 },
   errors: {
     color: STYLES.danger,
   },
