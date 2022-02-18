@@ -70,12 +70,15 @@ function LoginScreen() {
       >
         <ScrollView>
           <View style={styles.container}>
-            <View style={{ paddingTop: 120, alignItems: "center" }}>
+            <View style={{ paddingTop: 100, alignItems: "center" }}>
               <Image
                 source={require("../assets/D2LB_LOGO_Dark_top.png")}
               ></Image>
+              <View style={{ marginTop: 10 }}>
+                <AppText size={20}>No memory items. No limitations.</AppText>
+              </View>
             </View>
-            <View style={{ paddingTop: 30 }}>
+            <View style={{ paddingTop: 15 }}>
               <Formik
                 initialValues={initialValues}
                 validationSchema={schema}
