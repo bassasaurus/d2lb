@@ -58,66 +58,68 @@ function LoginScreen() {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <View>
+        <View style={{ paddingTop: 140 }}>
           <Image source={require("../assets/D2LB_LOGO_Dark_top.png")}></Image>
         </View>
-        <Formik
-          validateOnMount={true}
-          initialValues={initialValues}
-          validationSchema={schema}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              setSubmitting(false);
-              Context.setActivityVisible(true);
-            }, 400);
-          }}
-        >
-          {({
-            values,
-            errors,
-            isValid,
-            onSubmit,
-            handleChange,
-            setFieldValue,
-          }) => (
-            <>
-              <AppTextInput
-                placeholder='email'
-                autoCorrect={false}
-                autoCapitalize={"none"}
-                keyboardType={"default"}
-                clearButtonMode={"while-editing"}
-                onChangeText={handleChange("username")}
-                isValid={errors.username ? false : true}
-              ></AppTextInput>
-              <AppTextInput
-                placeholder='password'
-                autoCorrect={false}
-                autoCapitalize={"none"}
-                keyboardType={"default"}
-                clearButtonMode={"while-editing"}
-                password={true}
-                onChangeText={handleChange("password")}
-                isValid={errors.password ? false : true}
-              ></AppTextInput>
-              <View style={{ paddingTop: 10 }}>
-                {isValid ? (
-                  <Button
-                    title={!Context.setActivityVisible ? "" : "Submit"}
-                    onPress={() => {
-                      onSubmit;
-                      method(values);
-                      setSubmitting(true);
-                      Context.setActivityVisible(true);
-                    }}
-                  ></Button>
-                ) : (
-                  <Button title='Complete required fields.'></Button>
-                )}
-              </View>
-            </>
-          )}
-        </Formik>
+        <View style={{ paddingTop: 30 }}>
+          <Formik
+            validateOnMount={true}
+            initialValues={initialValues}
+            validationSchema={schema}
+            onSubmit={(values, { setSubmitting }) => {
+              setTimeout(() => {
+                setSubmitting(false);
+                Context.setActivityVisible(true);
+              }, 400);
+            }}
+          >
+            {({
+              values,
+              errors,
+              isValid,
+              onSubmit,
+              handleChange,
+              setFieldValue,
+            }) => (
+              <>
+                <AppTextInput
+                  placeholder='email'
+                  autoCorrect={false}
+                  autoCapitalize={"none"}
+                  keyboardType={"default"}
+                  clearButtonMode={"while-editing"}
+                  onChangeText={handleChange("username")}
+                  isValid={errors.username ? false : true}
+                ></AppTextInput>
+                <AppTextInput
+                  placeholder='password'
+                  autoCorrect={false}
+                  autoCapitalize={"none"}
+                  keyboardType={"default"}
+                  clearButtonMode={"while-editing"}
+                  password={true}
+                  onChangeText={handleChange("password")}
+                  isValid={errors.password ? false : true}
+                ></AppTextInput>
+                <View style={{ paddingTop: 10 }}>
+                  {isValid ? (
+                    <Button
+                      title={!Context.setActivityVisible ? "" : "Submit"}
+                      onPress={() => {
+                        onSubmit;
+                        method(values);
+                        setSubmitting(true);
+                        Context.setActivityVisible(true);
+                      }}
+                    ></Button>
+                  ) : (
+                    <Button title='Complete required fields.'></Button>
+                  )}
+                </View>
+              </>
+            )}
+          </Formik>
+        </View>
         <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
       </View>
     </SafeAreaView>
