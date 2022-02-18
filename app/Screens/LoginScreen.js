@@ -69,7 +69,7 @@ function LoginScreen() {
       >
         <ScrollView>
           <View style={styles.container}>
-            <View style={{ paddingTop: 140, alignItems: "center" }}>
+            <View style={{ paddingTop: 120, alignItems: "center" }}>
               <Image
                 source={require("../assets/D2LB_LOGO_Dark_top.png")}
               ></Image>
