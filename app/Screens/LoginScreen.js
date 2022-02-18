@@ -8,6 +8,7 @@ import {
   Image,
   KeyboardAvoidingView,
   ScrollView,
+  Pressable,
 } from "react-native";
 import { STYLES } from "../styles/styles";
 import AppTextInput from "../components/AppTextInput";
@@ -18,9 +19,10 @@ import AppContext from "../components/AppContext";
 import ActivityModal from "../components/ActivityModal";
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
+import AppText from "../components/AppText";
 
 function LoginScreen() {
-  const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [passwordSecure, setPasswordSecure] = useState(true);
   const Context = useContext(AppContext);
 
   const initialValues = {
@@ -63,7 +65,7 @@ function LoginScreen() {
       <KeyboardAvoidingView
         behavior={Platform.select({ android: undefined, ios: "position" })}
         keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
-        enabled={scrollEnabled}
+        enabled={true}
       >
         <ScrollView>
           <View style={styles.container}>
@@ -112,16 +114,35 @@ function LoginScreen() {
                       onChangeText={handleChange("password")}
                       isValid={errors.password ? false : true}
                       textContentType='password'
-                      secureTextEntry
+                      secureTextEntry={passwordSecure}
+                      inlineImageRight='eye'
                     ></AppTextInput>
-                    <View>
-                      {errors.password ? (
-                        <Text style={styles.errors}>{errors.password}</Text>
-                      ) : (
-                        <View></View>
-                      )}
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <View>
+                        {errors.password ? (
+                          <Text style={styles.errors}>{errors.password}</Text>
+                        ) : (
+                          <View></View>
+                        )}
+                      </View>
+
+                      <Pressable
+                        onPress={() => setPasswordSecure(!passwordSecure)}
+                      >
+                        {passwordSecure ? (
+                          <AppText color='gray'>show</AppText>
+                        ) : (
+                          <AppText color='gray'>hide</AppText>
+                        )}
+                      </Pressable>
                     </View>
-                    <View style={{ paddingTop: 10 }}>
+
+                    <View style={{}}>
                       {isValid ? (
                         <Button
                           title={!Context.setActivityVisible ? "" : "Submit"}
