@@ -6,6 +6,8 @@ import {
   Button,
   Text,
   Image,
+  KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
 import { STYLES } from "../styles/styles";
 import AppTextInput from "../components/AppTextInput";
@@ -18,6 +20,7 @@ import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
 function LoginScreen() {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
   const Context = useContext(AppContext);
 
   const initialValues = {
@@ -28,7 +31,7 @@ function LoginScreen() {
   const required = "*required";
 
   let schema = yup.object().shape({
-    username: yup.string().required(required),
+    username: yup.string().email().required(required),
     password: yup.string().required(required),
   });
 
@@ -57,69 +60,98 @@ function LoginScreen() {
 
   return (
     <SafeAreaView>
-      <View style={styles.container}>
-        <View style={{ paddingTop: 140 }}>
-          <Image source={require("../assets/D2LB_LOGO_Dark_top.png")}></Image>
-        </View>
-        <View style={{ paddingTop: 30 }}>
-          <Formik
-            validateOnMount={true}
-            initialValues={initialValues}
-            validationSchema={schema}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                setSubmitting(false);
-                Context.setActivityVisible(true);
-              }, 400);
-            }}
-          >
-            {({ values, errors, isValid, onSubmit, handleChange }) => (
-              <>
-                <AppTextInput
-                  placeholder='email'
-                  autoCorrect={false}
-                  autoCapitalize={"none"}
-                  keyboardType={"default"}
-                  clearButtonMode={"while-editing"}
-                  onChangeText={handleChange("username")}
-                  isValid={errors.username ? false : true}
-                ></AppTextInput>
-                <AppTextInput
-                  placeholder='password'
-                  autoCorrect={false}
-                  autoCapitalize={"none"}
-                  keyboardType={"default"}
-                  clearButtonMode={"while-editing"}
-                  password={true}
-                  onChangeText={handleChange("password")}
-                  isValid={errors.password ? false : true}
-                ></AppTextInput>
-                <View style={{ paddingTop: 10 }}>
-                  {isValid ? (
-                    <Button
-                      title={!Context.setActivityVisible ? "" : "Submit"}
-                      onPress={() => {
-                        onSubmit;
-                        getApiToken(values);
-                        Context.setActivityVisible(true);
-                      }}
-                    ></Button>
-                  ) : (
-                    <Button title='Complete required fields.'></Button>
-                  )}
-                </View>
-              </>
-            )}
-          </Formik>
-        </View>
-        <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
-      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.select({ android: undefined, ios: "position" })}
+        keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
+        enabled={scrollEnabled}
+      >
+        <ScrollView>
+          <View style={styles.container}>
+            <View style={{ paddingTop: 140 }}>
+              <Image
+                source={require("../assets/D2LB_LOGO_Dark_top.png")}
+              ></Image>
+            </View>
+            <View style={{ paddingTop: 30 }}>
+              <Formik
+                validateOnMount={true}
+                initialValues={initialValues}
+                validationSchema={schema}
+                onSubmit={(values, { setSubmitting }) => {
+                  setTimeout(() => {
+                    setSubmitting(false);
+                    Context.setActivityVisible(true);
+                  }, 400);
+                }}
+              >
+                {({ values, errors, isValid, onSubmit, handleChange }) => (
+                  <>
+                    <AppTextInput
+                      placeholder='email'
+                      autoCorrect={false}
+                      autoCapitalize={"none"}
+                      keyboardType={"default"}
+                      clearButtonMode={"while-editing"}
+                      onChangeText={handleChange("username")}
+                      isValid={errors.username ? false : true}
+                    ></AppTextInput>
+                    <View>
+                      {errors.username ? (
+                        <Text style={styles.errors}>{errors.username}</Text>
+                      ) : (
+                        <View></View>
+                      )}
+                    </View>
+                    <AppTextInput
+                      placeholder='password'
+                      autoCorrect={false}
+                      autoCapitalize={"none"}
+                      keyboardType={"default"}
+                      clearButtonMode={"while-editing"}
+                      password={true}
+                      onChangeText={handleChange("password")}
+                      isValid={errors.password ? false : true}
+                    ></AppTextInput>
+                    <View>
+                      {errors.password ? (
+                        <Text style={styles.errors}>{errors.password}</Text>
+                      ) : (
+                        <View></View>
+                      )}
+                    </View>
+                    <View style={{ paddingTop: 10 }}>
+                      {isValid ? (
+                        <Button
+                          title={!Context.setActivityVisible ? "" : "Submit"}
+                          onPress={() => {
+                            onSubmit;
+                            getApiToken(values);
+                            Context.setActivityVisible(true);
+                          }}
+                        ></Button>
+                      ) : (
+                        <Button title='Complete required fields.'></Button>
+                      )}
+                    </View>
+                  </>
+                )}
+              </Formik>
+            </View>
+            <ActivityModal
+              visible={Context.activityVisibleValue}
+            ></ActivityModal>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { marginRight: 10, marginLeft: 10 },
+  errors: {
+    color: STYLES.danger,
+  },
 });
 
 export default LoginScreen;
