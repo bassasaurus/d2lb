@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { View, StyleSheet, SafeAreaView, Button } from "react-native";
+import { View, StyleSheet, SafeAreaView, Button, Text } from "react-native";
 import { STYLES } from "../styles/styles";
 import AppTextInput from "../components/AppTextInput";
 import api from "../api/axiosConfig";
@@ -78,6 +78,7 @@ function LoginScreen() {
                 keyboardType={"default"}
                 clearButtonMode={"while-editing"}
                 onChangeText={handleChange("username")}
+                isValid={errors.username ? false : true}
               ></AppTextInput>
               <AppTextInput
                 placeholder='password'
@@ -85,7 +86,9 @@ function LoginScreen() {
                 autoCapitalize={"none"}
                 keyboardType={"default"}
                 clearButtonMode={"while-editing"}
+                password={true}
                 onChangeText={handleChange("password")}
+                isValid={errors.password ? false : true}
               ></AppTextInput>
               <View style={{ paddingTop: 10 }}>
                 {isValid ? (
@@ -102,10 +105,6 @@ function LoginScreen() {
                   <Button title='Complete required fields.'></Button>
                 )}
               </View>
-
-              {/* <View style={{ marginTop: 30 }}>
-                <Text>{JSON.stringify(values, null, "  ")}</Text>
-              </View> */}
             </>
           )}
         </Formik>
