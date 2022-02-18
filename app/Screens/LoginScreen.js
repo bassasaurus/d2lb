@@ -101,7 +101,6 @@ function LoginScreen() {
                       onPress={() => {
                         onSubmit;
                         getApiToken(values);
-
                         Context.setActivityVisible(true);
                       }}
                     ></Button>
