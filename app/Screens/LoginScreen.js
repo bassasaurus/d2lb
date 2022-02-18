@@ -8,22 +8,31 @@ import storeData from "../asyncStorage/storeAsyncData";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
 import AppContext from "../components/AppContext";
 import ActivityModal from "../components/ActivityModal";
+import { Formik, validateYupSchema } from "formik";
+import * as yup from "yup";
 
 function LoginScreen() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const Context = useContext(AppContext);
 
-  const getApiToken = (username, password) => {
+  const initialValues = {
+    username: "",
+    password: "",
+  };
+
+  const required = "*required";
+
+  let schema = yup.object().shape({
+    username: yup.string().required(required),
+    password: yup.string().required(required),
+  });
+
+  const getApiToken = (values) => {
     removeAsyncData("token");
 
     api({
       method: "post",
       url: "/api/token-auth/",
-      data: {
-        username: username,
-        password: password,
-      },
+      data: values,
     })
       .then(function (response) {
         storeData("token", response.data["token"]);
@@ -42,37 +51,31 @@ function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.input}>
-        <AppTextInput
-          title='username'
-          placeholder='Email'
-          onChangeText={(text) => setUsername(text)}
-          textContentType='emailAddress'
-          isValid={true}
-          autoCapitalize='none'
-          clearButtonMode='always'
-        />
-      </View>
-      <View style={styles.input}>
-        <AppTextInput
-          title='password'
-          placeholder='Password'
-          onChangeText={(text) => setPassword(text)}
-          textContentType='password'
-          secureTextEntry={true}
-          isValid={true}
-          clearButtonMode='always'
-        />
-      </View>
-      <View>
-        <AppButton
-          title='Login'
-          onPress={() => {
-            getApiToken(username, password);
+      <Formik
+        validateOnMount={true}
+        initialValues={initialValues}
+        validationSchema={schema}
+        onSubmit={(values, { setSubmitting }) => {
+          setTimeout(() => {
+            setSubmitting(false);
             Context.setActivityVisible(true);
-          }}
-        />
-      </View>
+          }, 400);
+        }}
+      >
+        {({
+          values,
+          errors,
+          isValid,
+          onSubmit,
+          handleChange,
+          setFieldValue,
+        }) => (
+          <>
+            <AppTextInput placeholder='email'></AppTextInput>
+            <AppTextInput placeholder='password'></AppTextInput>
+          </>
+        )}
+      </Formik>
       <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
     </View>
   );
@@ -85,9 +88,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-  },
-  input: {
-    width: "80%",
   },
 });
 
