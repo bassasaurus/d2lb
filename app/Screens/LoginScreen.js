@@ -1,5 +1,12 @@
 import React, { useState, useContext } from "react";
-import { View, StyleSheet, SafeAreaView, Button, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Button,
+  Text,
+  Image,
+} from "react-native";
 import { STYLES } from "../styles/styles";
 import AppTextInput from "../components/AppTextInput";
 import api from "../api/axiosConfig";
@@ -51,6 +58,9 @@ function LoginScreen() {
   return (
     <SafeAreaView>
       <View style={styles.container}>
+        <View>
+          <Image source={require("../assets/D2LB_LOGO_Dark_top.png")}></Image>
+        </View>
         <Formik
           validateOnMount={true}
           initialValues={initialValues}
