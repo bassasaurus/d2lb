@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, SafeAreaView, Button } from "react-native";
 import { STYLES } from "../styles/styles";
-import AppButton from "../components/AppButton";
 import AppTextInput from "../components/AppTextInput";
 import api from "../api/axiosConfig";
 import storeData from "../asyncStorage/storeAsyncData";
@@ -50,45 +49,74 @@ function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Formik
-        validateOnMount={true}
-        initialValues={initialValues}
-        validationSchema={schema}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            setSubmitting(false);
-            Context.setActivityVisible(true);
-          }, 400);
-        }}
-      >
-        {({
-          values,
-          errors,
-          isValid,
-          onSubmit,
-          handleChange,
-          setFieldValue,
-        }) => (
-          <>
-            <AppTextInput placeholder='email'></AppTextInput>
-            <AppTextInput placeholder='password'></AppTextInput>
-          </>
-        )}
-      </Formik>
-      <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
-    </View>
+    <SafeAreaView>
+      <View style={styles.container}>
+        <Formik
+          validateOnMount={true}
+          initialValues={initialValues}
+          validationSchema={schema}
+          onSubmit={(values, { setSubmitting }) => {
+            setTimeout(() => {
+              setSubmitting(false);
+              Context.setActivityVisible(true);
+            }, 400);
+          }}
+        >
+          {({
+            values,
+            errors,
+            isValid,
+            onSubmit,
+            handleChange,
+            setFieldValue,
+          }) => (
+            <>
+              <AppTextInput
+                placeholder='email'
+                autoCorrect={false}
+                autoCapitalize={"none"}
+                keyboardType={"default"}
+                clearButtonMode={"while-editing"}
+                onChangeText={handleChange("username")}
+              ></AppTextInput>
+              <AppTextInput
+                placeholder='password'
+                autoCorrect={false}
+                autoCapitalize={"none"}
+                keyboardType={"default"}
+                clearButtonMode={"while-editing"}
+                onChangeText={handleChange("password")}
+              ></AppTextInput>
+              <View style={{ paddingTop: 10 }}>
+                {isValid ? (
+                  <Button
+                    title={!Context.setActivityVisible ? "" : "Submit"}
+                    onPress={() => {
+                      onSubmit;
+                      method(values);
+                      setSubmitting(true);
+                      Context.setActivityVisible(true);
+                    }}
+                  ></Button>
+                ) : (
+                  <Button title='Complete required fields.'></Button>
+                )}
+              </View>
+
+              {/* <View style={{ marginTop: 30 }}>
+                <Text>{JSON.stringify(values, null, "  ")}</Text>
+              </View> */}
+            </>
+          )}
+        </Formik>
+        <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 300,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-  },
+  container: { marginRight: 10, marginLeft: 10 },
 });
 
 export default LoginScreen;
