@@ -73,14 +73,7 @@ function LoginScreen() {
               }, 400);
             }}
           >
-            {({
-              values,
-              errors,
-              isValid,
-              onSubmit,
-              handleChange,
-              setFieldValue,
-            }) => (
+            {({ values, errors, isValid, onSubmit, handleChange }) => (
               <>
                 <AppTextInput
                   placeholder='email'
@@ -107,8 +100,8 @@ function LoginScreen() {
                       title={!Context.setActivityVisible ? "" : "Submit"}
                       onPress={() => {
                         onSubmit;
-                        method(values);
-                        setSubmitting(true);
+                        getApiToken(values);
+
                         Context.setActivityVisible(true);
                       }}
                     ></Button>
