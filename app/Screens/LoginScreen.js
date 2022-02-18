@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Pressable,
+  TouchableNativeFeedbackBase,
 } from "react-native";
 import { STYLES } from "../styles/styles";
 import AppTextInput from "../components/AppTextInput";
@@ -30,11 +31,11 @@ function LoginScreen() {
     password: "",
   };
 
-  const required = "*Required";
+  const required = "Required";
 
   let schema = yup.object().shape({
-    username: yup.string().email().required(required),
-    password: yup.string().min(8).required(required),
+    username: yup.string().email("Valid email required").required(required),
+    password: yup.string().min(8, "Min 8 characters").required(required),
   });
 
   const getApiToken = (values) => {
@@ -76,7 +77,6 @@ function LoginScreen() {
             </View>
             <View style={{ paddingTop: 30 }}>
               <Formik
-                validateOnMount={true}
                 initialValues={initialValues}
                 validationSchema={schema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -86,7 +86,14 @@ function LoginScreen() {
                   }, 400);
                 }}
               >
-                {({ values, errors, isValid, onSubmit, handleChange }) => (
+                {({
+                  values,
+                  errors,
+                  isValid,
+                  onSubmit,
+                  touched,
+                  handleChange,
+                }) => (
                   <>
                     <AppTextInput
                       placeholder='email'
@@ -115,7 +122,6 @@ function LoginScreen() {
                       isValid={errors.password ? false : true}
                       textContentType='password'
                       secureTextEntry={passwordSecure}
-                      inlineImageRight='eye'
                     ></AppTextInput>
                     <View
                       style={{
