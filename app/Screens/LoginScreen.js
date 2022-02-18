@@ -111,6 +111,8 @@ function LoginScreen() {
                       password={true}
                       onChangeText={handleChange("password")}
                       isValid={errors.password ? false : true}
+                      textContentType='password'
+                      secureTextEntry
                     ></AppTextInput>
                     <View>
                       {errors.password ? (
