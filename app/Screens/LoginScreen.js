@@ -30,11 +30,11 @@ function LoginScreen() {
     password: "",
   };
 
-  const required = "*required";
+  const required = "*Required";
 
   let schema = yup.object().shape({
     username: yup.string().email().required(required),
-    password: yup.string().required(required),
+    password: yup.string().min(8).required(required),
   });
 
   const getApiToken = (values) => {
