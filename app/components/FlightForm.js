@@ -57,7 +57,7 @@ function FlightForm({ initialValues, method }) {
     return str;
   };
 
-  const required = "*Required";
+  const required = "Required";
 
   let flightSchema = yup.object().shape({
     date: yup.string().required(required),

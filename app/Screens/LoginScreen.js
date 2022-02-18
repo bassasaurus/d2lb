@@ -75,7 +75,7 @@ function LoginScreen() {
                 source={require("../assets/D2LB_LOGO_Dark_top.png")}
               ></Image>
               <View style={{ marginTop: 10 }}>
-                <AppText size={20}>No memory items. No limitations.</AppText>
+                <AppText size={18}>No memory items. No limitations.</AppText>
               </View>
             </View>
             <View style={{ paddingTop: 15 }}>
@@ -151,7 +151,7 @@ function LoginScreen() {
                       </Pressable>
                     </View>
 
-                    <View style={{}}>
+                    <View style={{ marginTop: 10 }}>
                       {isValid ? (
                         <Button
                           title={!Context.setActivityVisible ? "" : "Submit"}
