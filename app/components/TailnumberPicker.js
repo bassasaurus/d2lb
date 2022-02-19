@@ -88,15 +88,19 @@ function TailnumberPicker({
             />
             <Separator></Separator>
             <View style={{ paddingBottom: 30 }}>
-              <MaterialCommunityIcons
-                name='plus'
-                size={40}
-                color='green'
+              <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("TailnumberCreate");
                   setVisible(false);
                 }}
-              ></MaterialCommunityIcons>
+              >
+                <MaterialCommunityIcons
+                  name='plus'
+                  size={40}
+                  color='green'
+                  backgroundColor={STYLES.white}
+                ></MaterialCommunityIcons>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
