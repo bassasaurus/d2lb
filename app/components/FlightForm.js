@@ -58,30 +58,31 @@ function FlightForm({ initialValues, method }) {
   };
 
   const required = "Required";
+  const numbers = "Numbers only";
 
   let flightSchema = yup.object().shape({
     date: yup.string().required(required),
-    route: yup.string().required(required),
+    route: yup.string().min(3).required(required),
     aircraft_type: yup.string().required(required),
     registration: yup.string().required(required),
     duration: yup
-      .number()
+      .number(numbers)
       .required(required)
       .min(0.1, "Must be greater than 0.1")
       .max(30.0, "Seems unlikely."),
     landings_day: yup
-      .number()
+      .number(numbers)
       .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
     landings_night: yup
-      .number()
+      .number(numbers)
       .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
-    night: yup.number().moreThan(0, "Leave blank for 0"),
-    instrument: yup.number().moreThan(0, "Leave blank for 0"),
-    simulated_instrument: yup.number().moreThan(0, "Leave blank for 0"),
+    night: yup.number(numbers).moreThan(0, "Leave blank for 0"),
+    instrument: yup.number(numbers).moreThan(0, "Leave blank for 0"),
+    simulated_instrument: yup.number(numbers).moreThan(0, "Leave blank for 0"),
     remarks: yup.string().max(256, "256 Character Maximum"),
-    number: yup.number().moreThan(0, "Leave blank for 0"),
+    number: yup.number(numbers).moreThan(0, "Leave blank for 0"),
   });
 
   return (
@@ -108,8 +109,10 @@ function FlightForm({ initialValues, method }) {
               errors,
               isValid,
               onSubmit,
+              touched,
               handleChange,
               setFieldValue,
+              handleBlur,
             }) => (
               <>
                 <Pressable
@@ -119,22 +122,23 @@ function FlightForm({ initialValues, method }) {
                 >
                   <View pointerEvents='none'>
                     <AppTextInput
-                      isValid={values.date.length > 1 ? true : false}
+                      isValid={errors.date ? false : true}
                       value={values.date.toString()}
                       onChangeText={handleChange("date")}
                       placeholder='Date'
+                      onBlur={handleBlur("date")}
                     />
                   </View>
                 </Pressable>
                 <View>
-                  {errors.date ? (
+                  {errors.date && touched.date ? (
                     <Text style={styles.errors}>{errors.date}</Text>
                   ) : (
                     <View></View>
                   )}
                 </View>
                 <AppTextInput
-                  isValid={values.route.length > 1 ? true : false}
+                  isValid={errors.route ? false : true}
                   value={dashNotSpace(values.route)}
                   onChangeText={handleChange("route")}
                   placeholder='Route'
@@ -143,14 +147,19 @@ function FlightForm({ initialValues, method }) {
                   keyboardType={"default"}
                   clearButtonMode={"while-editing"}
                   onFocus={() => setScrollEnabled(false)}
-                  onBlur={() => setScrollEnabled(true)}
+                  onBlur={() => {
+                    setScrollEnabled(true);
+                    handleBlur("route");
+                  }}
                 />
                 <View>
-                  {errors.route ? (
+                  {errors.route && touched.route ? (
                     <Text style={styles.errors}>{errors.route}</Text>
                   ) : (
                     <View>
-                      <AppText>Route - ATA or ICAO Airport codes</AppText>
+                      <AppText color='gray'>
+                        ATA or ICAO Airport codes only
+                      </AppText>
                     </View>
                   )}
                 </View>
@@ -158,14 +167,15 @@ function FlightForm({ initialValues, method }) {
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
                       initialValue={initialValues.aircraft_type}
-                      isValid={values.aircraft_type ? true : false}
+                      isValid={errors.aircraft_type ? false : true}
                       style={{ flex: 0.5 }}
                       fieldName={"aircraft_type"}
                       setFieldValue={setFieldValue}
                       handleAircraftId={handleAircraftId}
+                      onBlur={handleBlur("aircraft_type")}
                     ></AircraftPicker>
                     <View>
-                      {errors.aircraft_type ? (
+                      {errors.aircraft_type && touched.aircraft_type ? (
                         <Text style={styles.errors}>
                           {errors.aircraft_type}
                         </Text>
@@ -180,14 +190,15 @@ function FlightForm({ initialValues, method }) {
                       <>
                         <TailnumberPicker
                           initialValue={initialValues.registration}
-                          isValid={values.registration ? true : false}
+                          isValid={errors.registration ? false : true}
                           setFieldValue={setFieldValue}
                           filterBy={values.aircraft_type}
                           setAcTailMatch={setAcTailMatch}
                           aircraftId={values.aircraft_type}
+                          onBlur={handleBlur("registration")}
                         ></TailnumberPicker>
                         <View>
-                          {errors.registration ? (
+                          {errors.registration && touched.registration ? (
                             <Text style={styles.errors}>
                               {errors.registration}
                             </Text>
@@ -229,7 +240,7 @@ function FlightForm({ initialValues, method }) {
                 >
                   <View style={{ flexDirection: "column", flex: 0.7 }}>
                     <AppTextInput
-                      isValid={values.duration.length > 1 ? true : false}
+                      isValid={errors.duration ? false : true}
                       value={values.duration}
                       onChangeText={(val) => {
                         setFieldValue("duration", val);
@@ -239,7 +250,10 @@ function FlightForm({ initialValues, method }) {
                       keyboardType={"numeric"}
                       clearButtonMode={"while-editing"}
                       onFocus={() => setScrollEnabled(false)}
-                      onBlur={() => setScrollEnabled(true)}
+                      onBlur={() => {
+                        setScrollEnabled(true);
+                        handleBlur("duration");
+                      }}
                     ></AppTextInput>
                     <View>
                       {errors.duration ? (
