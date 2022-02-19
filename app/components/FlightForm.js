@@ -24,7 +24,6 @@ import Checkbox from "./Checkbox";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 
 import { STYLES } from "../styles/styles";
 
@@ -35,9 +34,16 @@ function FlightForm({ initialValues, method }) {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [acTailMatch, setAcTailMatch] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [addedDuration, setAddedDuration] = useState(0);
+  const [addedDuration, setAddedDuration] = useState("");
+  const [undoAdd, setUndoAdd] = useState(false);
 
-  const navigation = useNavigation();
+  const nextLegValidation = (addedDuration) => {
+    if (addedDuration === Number.isInteger(addedDuration)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const Context = useContext(AppContext);
 
@@ -269,6 +275,7 @@ function FlightForm({ initialValues, method }) {
 
                   <View style={{ flexDirection: "column", flex: 0.3 }}>
                     <AppTextInput
+                      value={String(addedDuration)}
                       isValid={true}
                       placeholder={"XX.X"}
                       clearButtonMode={"while-editing"}
@@ -280,25 +287,51 @@ function FlightForm({ initialValues, method }) {
                     <AppText color={STYLES.black}>Next leg</AppText>
                   </View>
 
-                  <TouchableOpacity
-                    onPress={() => {
-                      setFieldValue(
-                        "duration",
-                        String(
-                          (
-                            Number(values.duration) + Number(addedDuration)
-                          ).toFixed(1)
-                        )
-                      );
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                      style={{ paddingTop: 15, paddingLeft: 5 }}
-                      name='keyboard-return'
-                      size={30}
-                      color='green'
-                    />
-                  </TouchableOpacity>
+                  {!undoAdd ? (
+                    <TouchableOpacity
+                      disabled={addedDuration === "" ? true : false}
+                      onPress={() => {
+                        setUndoAdd(true);
+                        setFieldValue(
+                          "duration",
+                          String(
+                            (
+                              Number(values.duration) + Number(addedDuration)
+                            ).toFixed(1)
+                          )
+                        );
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        style={{ paddingTop: 15, paddingLeft: 5 }}
+                        name='keyboard-return'
+                        size={30}
+                        color='green'
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setUndoAdd(false);
+                        setFieldValue(
+                          "duration",
+                          String(
+                            (
+                              Number(values.duration) - Number(addedDuration)
+                            ).toFixed(1)
+                          )
+                        );
+                        setAddedDuration("");
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        style={{ paddingTop: 15, paddingLeft: 5 }}
+                        name='undo'
+                        size={30}
+                        color='red'
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
 
                 {/* end duration row */}
