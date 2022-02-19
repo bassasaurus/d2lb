@@ -58,7 +58,7 @@ function FlightForm({ initialValues, method }) {
   };
 
   const required = "Required";
-  const numbers = "Numbers only";
+  const number = "Numbers only";
 
   let flightSchema = yup.object().shape({
     date: yup.string().required(required),
@@ -66,23 +66,29 @@ function FlightForm({ initialValues, method }) {
     aircraft_type: yup.string().required(required),
     registration: yup.string().required(required),
     duration: yup
-      .number(numbers)
+      .number()
+      .typeError(number)
       .required(required)
       .min(0.1, "Must be greater than 0.1")
       .max(30.0, "Seems unlikely."),
     landings_day: yup
-      .number(numbers)
+      .number()
+      .typeError(number)
       .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
     landings_night: yup
-      .number(numbers)
+      .number()
+      .typeError(number)
       .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
-    night: yup.number(numbers).moreThan(0, "Leave blank for 0"),
-    instrument: yup.number(numbers).moreThan(0, "Leave blank for 0"),
-    simulated_instrument: yup.number(numbers).moreThan(0, "Leave blank for 0"),
+    night: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
+    instrument: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
+    simulated_instrument: yup
+      .number()
+      .typeError(number)
+      .moreThan(0, "Leave blank for 0"),
     remarks: yup.string().max(256, "256 Character Maximum"),
-    number: yup.number(numbers).moreThan(0, "Leave blank for 0"),
+    number: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
   });
 
   return (
@@ -131,7 +137,7 @@ function FlightForm({ initialValues, method }) {
                   </View>
                 </Pressable>
                 <View>
-                  {errors.date && touched.date ? (
+                  {errors.date ? (
                     <Text style={styles.errors}>{errors.date}</Text>
                   ) : (
                     <View></View>
@@ -153,7 +159,7 @@ function FlightForm({ initialValues, method }) {
                   }}
                 />
                 <View>
-                  {errors.route && touched.route ? (
+                  {errors.route ? (
                     <Text style={styles.errors}>{errors.route}</Text>
                   ) : (
                     <View>
@@ -175,7 +181,7 @@ function FlightForm({ initialValues, method }) {
                       onBlur={handleBlur("aircraft_type")}
                     ></AircraftPicker>
                     <View>
-                      {errors.aircraft_type && touched.aircraft_type ? (
+                      {errors.aircraft_type ? (
                         <Text style={styles.errors}>
                           {errors.aircraft_type}
                         </Text>
@@ -198,7 +204,7 @@ function FlightForm({ initialValues, method }) {
                           onBlur={handleBlur("registration")}
                         ></TailnumberPicker>
                         <View>
-                          {errors.registration && touched.registration ? (
+                          {errors.registration ? (
                             <Text style={styles.errors}>
                               {errors.registration}
                             </Text>
@@ -555,7 +561,7 @@ function FlightForm({ initialValues, method }) {
                 </View>
                 <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
-                    isValid={true}
+                    isValid={errors.number ? false : true}
                     setFieldValue={setFieldValue}
                     approachKey={"approaches[0].approach_type"}
                     approachValue={values.approaches[0].approach_type}
