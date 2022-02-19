@@ -226,17 +226,6 @@ function FlightForm({ initialValues, method }) {
                       <View></View>
                     )}
                   </View>
-                  <View style={{ paddingTop: 15, paddingLeft: 7 }}>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("TailnumberCreate")}
-                    >
-                      <MaterialCommunityIcons
-                        name='plus'
-                        size={30}
-                        color='green'
-                      />
-                    </TouchableOpacity>
-                  </View>
                 </View>
                 {/* duration row */}
                 <View
