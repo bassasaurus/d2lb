@@ -80,6 +80,7 @@ function LoginScreen() {
             </View>
             <View style={{ paddingTop: 15 }}>
               <Formik
+                validateOnMount={true}
                 initialValues={initialValues}
                 validationSchema={schema}
                 onSubmit={(values, { setSubmitting }) => {
@@ -96,6 +97,7 @@ function LoginScreen() {
                   onSubmit,
                   touched,
                   handleChange,
+                  handleBlur,
                 }) => (
                   <>
                     <AppTextInput
@@ -106,9 +108,10 @@ function LoginScreen() {
                       clearButtonMode={"while-editing"}
                       onChangeText={handleChange("username")}
                       isValid={errors.username ? false : true}
+                      onblur={handleBlur("username")}
                     ></AppTextInput>
                     <View>
-                      {errors.username ? (
+                      {errors.username && touched.password ? (
                         <Text style={styles.errors}>{errors.username}</Text>
                       ) : (
                         <View></View>
@@ -125,6 +128,7 @@ function LoginScreen() {
                       isValid={errors.password ? false : true}
                       textContentType='password'
                       secureTextEntry={passwordSecure}
+                      onBlur={handleBlur("password")}
                     ></AppTextInput>
                     <View
                       style={{
@@ -133,7 +137,7 @@ function LoginScreen() {
                       }}
                     >
                       <View>
-                        {errors.password ? (
+                        {errors.password && touched.password ? (
                           <Text style={styles.errors}>{errors.password}</Text>
                         ) : (
                           <View></View>
