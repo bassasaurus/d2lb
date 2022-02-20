@@ -36,25 +36,6 @@ function FlightForm({ initialValues, method }) {
   const [submitting, setSubmitting] = useState(false);
   const [addedDuration, setAddedDuration] = useState("");
   const [undoAdd, setUndoAdd] = useState(false);
-  const [routeValid, setRouteValid] = useState(false);
-  const [route, setRoute] = useState("");
-
-  const nextLegValidation = (addedDuration) => {
-    if (addedDuration === Number.isInteger(addedDuration)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  function routeValidation(route) {
-    let regex = /[a-zA-Z]+-[a-zA-Z]+-[a-zA-Z]+-[a-zA-Z]+/i;
-    if (regex.test(route) === true) {
-      setRouteValid(true);
-    } else {
-      setRouteValid(false);
-    }
-  }
 
   const Context = useContext(AppContext);
 
