@@ -118,7 +118,12 @@ function FlightDetailScreen({ route, navigation }) {
                   {" "}
                   Day {route.params.item.landings_day}
                 </AppText>
-              ) : null}
+              ) : (
+                <AppText size={16} color={STYLES.black}>
+                  {" "}
+                  none
+                </AppText>
+              )}
               {route.params.item.landings_night ? (
                 <AppText size={16} color={STYLES.black}>
                   {" "}
@@ -139,6 +144,9 @@ function FlightDetailScreen({ route, navigation }) {
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <View style={styles.rowContainer}>
+              <AppText size={16} color={STYLES.black}>
+                Conditions:{" "}
+              </AppText>
               {route.params.item.night ? (
                 <AppText size={16} color={STYLES.black}>
                   Night {route.params.item.night}
@@ -169,6 +177,9 @@ function FlightDetailScreen({ route, navigation }) {
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <View style={styles.rowContainer}>
+              <AppText size={16} color={STYLES.black}>
+                Approaches:{" "}
+              </AppText>
               {approaches.map((appr, index) => (
                 <AppText size={16} color={STYLES.black} key={index}>
                   {appr.approach_type}-{appr.number}{" "}
