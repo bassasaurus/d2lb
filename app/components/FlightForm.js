@@ -39,6 +39,8 @@ function FlightForm({ initialValues, method }) {
 
   const Context = useContext(AppContext);
 
+  const arrow = "U+1F814";
+
   function handleAircraftId(id) {
     if (aircraftId === id) {
       setAcTailMatch(true);
@@ -267,10 +269,9 @@ function FlightForm({ initialValues, method }) {
 
                   <View style={{ flexDirection: "column", flex: 0.3 }}>
                     <AppTextInput
-                      value={String(addedDuration)}
+                      value={undoAdd ? "<---" : String(addedDuration)}
                       isValid={true}
                       placeholder={"XX.X"}
-                      clearButtonMode={"while-editing"}
                       keyboardType={"numeric"}
                       onChangeText={(val) => setAddedDuration(val)}
                       onFocus={() => setScrollEnabled(false)}
