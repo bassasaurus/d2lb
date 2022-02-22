@@ -39,8 +39,6 @@ function FlightForm({ initialValues, method }) {
 
   const Context = useContext(AppContext);
 
-  const arrow = "U+1F814";
-
   function handleAircraftId(id) {
     if (aircraftId === id) {
       setAcTailMatch(true);
@@ -70,7 +68,10 @@ function FlightForm({ initialValues, method }) {
       .typeError(number)
       .required(required)
       .min(0.1, "Must be greater than 0.1")
-      .max(30.0, "Seems unlikely."),
+      .max(30.0, "Seems unlikely.")
+      .test("maxDigitsAfterDecimal", "max 1 decimal place", (number) =>
+        /^\d+(\.\d{1,1})?$/.test(number)
+      ),
     landings_day: yup
       .number()
       .typeError(number)
