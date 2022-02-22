@@ -118,12 +118,7 @@ function FlightDetailScreen({ route, navigation }) {
                   {" "}
                   Day {route.params.item.landings_day}
                 </AppText>
-              ) : (
-                <AppText size={16} color={STYLES.black}>
-                  {" "}
-                  none
-                </AppText>
-              )}
+              ) : null}
               {route.params.item.landings_night ? (
                 <AppText size={16} color={STYLES.black}>
                   {" "}
@@ -268,7 +263,7 @@ function FlightDetailScreen({ route, navigation }) {
               title={marker.title}
             />
           ))}
-          {/* <Polyline
+          <Polyline
             strokeColor={STYLES.blue}
             strokeWidth={3}
             geodesic={true}
@@ -282,7 +277,7 @@ function FlightDetailScreen({ route, navigation }) {
                 longitude: -78.78747222222222,
               },
             ]}
-          /> */}
+          />
         </MapView>
       </View>
 
