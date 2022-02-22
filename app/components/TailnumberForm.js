@@ -28,7 +28,7 @@ function TailnumberForm({ initialValues, method }) {
     }
   };
 
-  const required = "*required";
+  const required = "Required";
 
   let schema = yup.object().shape({
     aircraft: yup.string().required(required),

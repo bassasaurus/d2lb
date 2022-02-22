@@ -9,10 +9,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import AppTextInput from "./AppTextInput";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
+import AppText from "./AppText";
+import Separator from "./Separator";
+import { useNavigation } from "@react-navigation/native";
 
 function TailnumberPicker({
   initialValue,
@@ -24,6 +28,8 @@ function TailnumberPicker({
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
+
+  const navigation = useNavigation();
 
   const fetchData = async () => {
     try {
@@ -80,6 +86,22 @@ function TailnumberPicker({
               keyExtractor={(item) => item.id.toString()}
               ItemSeparatorComponent={FlatListItemSeparator}
             />
+            <Separator></Separator>
+            <View style={{ paddingBottom: 30 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("TailnumberCreate");
+                  setVisible(false);
+                }}
+              >
+                <MaterialCommunityIcons
+                  name='plus'
+                  size={40}
+                  color='green'
+                  backgroundColor={STYLES.white}
+                ></MaterialCommunityIcons>
+              </TouchableOpacity>
+            </View>
           </View>
         </Modal>
       </View>
@@ -95,10 +117,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   modalView: {
-    margin: 20,
+    margin: 50,
+    paddingBottom: 30,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 35,
+    padding: 10,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {

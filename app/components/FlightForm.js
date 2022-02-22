@@ -24,7 +24,6 @@ import Checkbox from "./Checkbox";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 
 import { STYLES } from "../styles/styles";
 
@@ -35,9 +34,8 @@ function FlightForm({ initialValues, method }) {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [acTailMatch, setAcTailMatch] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [addedDuration, setAddedDuration] = useState(0);
-
-  const navigation = useNavigation();
+  const [addedDuration, setAddedDuration] = useState("");
+  const [undoAdd, setUndoAdd] = useState(false);
 
   const Context = useContext(AppContext);
 
@@ -57,33 +55,41 @@ function FlightForm({ initialValues, method }) {
     return str;
   };
 
-  const required = "*required";
-  const positive = "Must be positive number.";
+  const required = "Required";
+  const number = "Numbers only";
 
   let flightSchema = yup.object().shape({
     date: yup.string().required(required),
-    route: yup.string().required(required),
+    route: yup.string().min(3).required(required),
     aircraft_type: yup.string().required(required),
     registration: yup.string().required(required),
     duration: yup
       .number()
-      .positive(positive)
+      .typeError(number)
       .required(required)
       .min(0.1, "Must be greater than 0.1")
-      .max(30.0, "Seems unlikely."),
+      .max(30.0, "Seems unlikely.")
+      .test("maxDigitsAfterDecimal", "max 1 decimal place", (number) =>
+        /^\d+(\.\d{1,1})?$/.test(number)
+      ),
     landings_day: yup
       .number()
-      .positive(positive)
+      .typeError(number)
+      .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
     landings_night: yup
       .number()
-      .positive(positive)
+      .typeError(number)
+      .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
-    night: yup.number().positive(positive),
-    instrument: yup.number().positive(positive),
-    simulated_instrument: yup.number().positive(positive),
+    night: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
+    instrument: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
+    simulated_instrument: yup
+      .number()
+      .typeError(number)
+      .moreThan(0, "Leave blank for 0"),
     remarks: yup.string().max(256, "256 Character Maximum"),
-    number: yup.number().positive(positive),
+    number: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
   });
 
   return (
@@ -110,8 +116,10 @@ function FlightForm({ initialValues, method }) {
               errors,
               isValid,
               onSubmit,
+              touched,
               handleChange,
               setFieldValue,
+              handleBlur,
             }) => (
               <>
                 <Pressable
@@ -121,14 +129,14 @@ function FlightForm({ initialValues, method }) {
                 >
                   <View pointerEvents='none'>
                     <AppTextInput
-                      isValid={values.date.length > 1 ? true : false}
+                      isValid={errors.date ? false : true}
                       value={values.date.toString()}
                       onChangeText={handleChange("date")}
                       placeholder='Date'
+                      onBlur={handleBlur("date")}
                     />
                   </View>
                 </Pressable>
-
                 <View>
                   {errors.date ? (
                     <Text style={styles.errors}>{errors.date}</Text>
@@ -136,9 +144,8 @@ function FlightForm({ initialValues, method }) {
                     <View></View>
                   )}
                 </View>
-
                 <AppTextInput
-                  isValid={values.route.length > 1 ? true : false}
+                  isValid={errors.route ? false : true}
                   value={dashNotSpace(values.route)}
                   onChangeText={handleChange("route")}
                   placeholder='Route'
@@ -147,28 +154,32 @@ function FlightForm({ initialValues, method }) {
                   keyboardType={"default"}
                   clearButtonMode={"while-editing"}
                   onFocus={() => setScrollEnabled(false)}
-                  onBlur={() => setScrollEnabled(true)}
+                  onBlur={() => {
+                    setScrollEnabled(true);
+                    handleBlur("route");
+                  }}
                 />
-
                 <View>
                   {errors.route ? (
                     <Text style={styles.errors}>{errors.route}</Text>
                   ) : (
                     <View>
-                      <AppText>Route - ATA or ICAO Airport codes</AppText>
+                      <AppText color='gray'>
+                        ATA or ICAO Airport codes only
+                      </AppText>
                     </View>
                   )}
                 </View>
-
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
                       initialValue={initialValues.aircraft_type}
-                      isValid={values.aircraft_type ? true : false}
+                      isValid={errors.aircraft_type ? false : true}
                       style={{ flex: 0.5 }}
                       fieldName={"aircraft_type"}
                       setFieldValue={setFieldValue}
                       handleAircraftId={handleAircraftId}
+                      onBlur={handleBlur("aircraft_type")}
                     ></AircraftPicker>
                     <View>
                       {errors.aircraft_type ? (
@@ -183,50 +194,49 @@ function FlightForm({ initialValues, method }) {
 
                   <View style={{ flex: 0.5 }}>
                     {values.aircraft_type ? (
-                      <TailnumberPicker
-                        initialValue={initialValues.registration}
-                        isValid={values.registration ? true : false}
-                        setFieldValue={setFieldValue}
-                        filterBy={values.aircraft_type}
-                        setAcTailMatch={setAcTailMatch}
-                        aircraftId={values.aircraft_type}
-                      ></TailnumberPicker>
+                      <>
+                        <TailnumberPicker
+                          initialValue={initialValues.registration}
+                          isValid={errors.registration ? false : true}
+                          setFieldValue={setFieldValue}
+                          filterBy={values.aircraft_type}
+                          setAcTailMatch={setAcTailMatch}
+                          aircraftId={values.aircraft_type}
+                          onBlur={handleBlur("registration")}
+                        ></TailnumberPicker>
+                        <View>
+                          {errors.registration ? (
+                            <Text style={styles.errors}>
+                              {errors.registration}
+                            </Text>
+                          ) : (
+                            <View></View>
+                          )}
+                        </View>
+                        <View>
+                          {acTailMatch === false && method.name === "create" ? (
+                            <Text style={styles.errors}>
+                              Registration mismatch
+                            </Text>
+                          ) : (
+                            <View></View>
+                          )}
+                        </View>
+                      </>
                     ) : (
                       <View></View>
                     )}
-
-                    <View>
-                      {errors.registration ? (
-                        <Text style={styles.errors}>{errors.registration}</Text>
-                      ) : (
-                        <View></View>
-                      )}
-                    </View>
-
-                    <View>
-                      {acTailMatch === false && method.name === "create" ? (
-                        <Text style={styles.errors}>Registration mismatch</Text>
-                      ) : (
-                        <View></View>
-                      )}
-                    </View>
-                  </View>
-                  <View style={{ paddingTop: 15, paddingLeft: 7 }}>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("TailnumberCreate")}
-                    >
-                      <MaterialCommunityIcons
-                        name='plus'
-                        size={30}
-                        color='green'
-                      />
-                    </TouchableOpacity>
                   </View>
                 </View>
-                <View style={{ flexDirection: "row" }}>
-                  <View style={{ flex: 3 }}>
+                {/* duration row */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                  }}
+                >
+                  <View style={{ flexDirection: "column", flex: 0.7 }}>
                     <AppTextInput
-                      isValid={values.duration.length > 1 ? true : false}
+                      isValid={errors.duration ? false : true}
                       value={values.duration}
                       onChangeText={(val) => {
                         setFieldValue("duration", val);
@@ -236,45 +246,46 @@ function FlightForm({ initialValues, method }) {
                       keyboardType={"numeric"}
                       clearButtonMode={"while-editing"}
                       onFocus={() => setScrollEnabled(false)}
-                      onBlur={() => setScrollEnabled(true)}
+                      onBlur={() => {
+                        setScrollEnabled(true);
+                        handleBlur("duration");
+                      }}
                     ></AppTextInput>
+                    <View>
+                      {errors.duration ? (
+                        <Text style={styles.errors}>{errors.duration}</Text>
+                      ) : (
+                        <View>
+                          <AppText>Duration</AppText>
+                        </View>
+                      )}
+                    </View>
                   </View>
+                  <MaterialCommunityIcons
+                    style={{ paddingTop: 15 }}
+                    name='plus'
+                    size={30}
+                    color='black'
+                  />
 
-                  <View
-                    style={{
-                      paddingTop: 10,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                      name='plus'
-                      size={30}
-                      color='black'
-                    />
-                  </View>
-                  <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: "column", flex: 0.3 }}>
                     <AppTextInput
+                      value={undoAdd ? "<---" : String(addedDuration)}
                       isValid={true}
                       placeholder={"XX.X"}
-                      clearButtonMode={"while-editing"}
                       keyboardType={"numeric"}
                       onChangeText={(val) => setAddedDuration(val)}
                       onFocus={() => setScrollEnabled(false)}
                       onBlur={() => setScrollEnabled(true)}
                     ></AppTextInput>
+                    <AppText color={STYLES.black}>Next leg</AppText>
                   </View>
 
-                  <View
-                    style={{
-                      paddingLeft: 5,
-                      paddingTop: 12,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
+                  {!undoAdd ? (
                     <TouchableOpacity
+                      disabled={addedDuration === "" ? true : false}
                       onPress={() => {
+                        setUndoAdd(true);
                         setFieldValue(
                           "duration",
                           String(
@@ -286,24 +297,38 @@ function FlightForm({ initialValues, method }) {
                       }}
                     >
                       <MaterialCommunityIcons
+                        style={{ paddingTop: 15, paddingLeft: 5 }}
                         name='keyboard-return'
                         size={30}
                         color='green'
                       />
                     </TouchableOpacity>
-                  </View>
-                </View>
-
-                <View>
-                  {errors.duration ? (
-                    <Text style={styles.errors}>{errors.duration}</Text>
                   ) : (
-                    <View>
-                      <AppText>Duration</AppText>
-                    </View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setUndoAdd(false);
+                        setFieldValue(
+                          "duration",
+                          String(
+                            (
+                              Number(values.duration) - Number(addedDuration)
+                            ).toFixed(1)
+                          )
+                        );
+                        setAddedDuration("");
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        style={{ paddingTop: 15, paddingLeft: 5 }}
+                        name='undo'
+                        size={30}
+                        color='red'
+                      />
+                    </TouchableOpacity>
                   )}
                 </View>
 
+                {/* end duration row */}
                 <View
                   style={{
                     flexDirection: "row",
@@ -405,7 +430,6 @@ function FlightForm({ initialValues, method }) {
                     <AppText>XC</AppText>
                   </View>
                 </View>
-
                 <View
                   style={{
                     flexDirection: "row",
@@ -465,7 +489,6 @@ function FlightForm({ initialValues, method }) {
                     </View>
                   </View>
                 </View>
-
                 <View style={{ flexDirection: "row" }}>
                   <View
                     style={{
@@ -552,10 +575,9 @@ function FlightForm({ initialValues, method }) {
                     </View>
                   </View>
                 </View>
-
                 <View style={{ flexDirection: "row" }}>
                   <ApproachPicker
-                    isValid={true}
+                    isValid={errors.number ? false : true}
                     setFieldValue={setFieldValue}
                     approachKey={"approaches[0].approach_type"}
                     approachValue={values.approaches[0].approach_type}
@@ -578,7 +600,6 @@ function FlightForm({ initialValues, method }) {
                     )}
                   </View>
                 </View>
-
                 {formCount > 0 ? (
                   <View style={{ flexDirection: "row" }}>
                     <ApproachPicker
@@ -608,7 +629,6 @@ function FlightForm({ initialValues, method }) {
                 ) : (
                   <View></View>
                 )}
-
                 {formCount > 1 ? (
                   <View style={{ flexDirection: "row" }}>
                     <ApproachPicker
@@ -638,7 +658,6 @@ function FlightForm({ initialValues, method }) {
                 ) : (
                   <View></View>
                 )}
-
                 {formCount > 2 ? (
                   <View style={{ flexDirection: "row" }}>
                     <ApproachPicker
@@ -668,7 +687,6 @@ function FlightForm({ initialValues, method }) {
                 ) : (
                   <View></View>
                 )}
-
                 <View style={{ flexDirection: "row" }}>
                   {formCount < 3 ? (
                     <TouchableOpacity
@@ -682,7 +700,6 @@ function FlightForm({ initialValues, method }) {
                     <View style={{ paddingLeft: 125 }}></View>
                   )}
                 </View>
-
                 <View style={{ flexDirection: "row", marginTop: 10 }}>
                   <Checkbox
                     onPress={() => {
@@ -694,7 +711,6 @@ function FlightForm({ initialValues, method }) {
                     <AppText>Hold</AppText>
                   </View>
                 </View>
-
                 <AppTextInput
                   isValid={true}
                   style={{
@@ -714,7 +730,6 @@ function FlightForm({ initialValues, method }) {
                   autoCorrect={false}
                   multiline={true}
                 ></AppTextInput>
-
                 <View>
                   {errors.remarks ? (
                     <Text style={styles.errors}>{errors.remarks}</Text>
@@ -737,11 +752,9 @@ function FlightForm({ initialValues, method }) {
                     <Button title='Complete required fields.'></Button>
                   )}
                 </View>
-
                 {/* <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
                 </View> */}
-
                 <Modal
                   animationType='slide'
                   transparent={true}
