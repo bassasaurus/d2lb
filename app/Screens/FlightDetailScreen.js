@@ -267,16 +267,7 @@ function FlightDetailScreen({ route, navigation }) {
             strokeColor={STYLES.blue}
             strokeWidth={3}
             geodesic={true}
-            coordinates={[
-              {
-                latitude: 42.362944444444445,
-                longitude: -71.00638888888889,
-              },
-              {
-                latitude: 35.87763888888889,
-                longitude: -78.78747222222222,
-              },
-            ]}
+            coordinates={polylines}
           />
         </MapView>
       </View>

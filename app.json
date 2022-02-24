@@ -18,6 +18,17 @@
     "ios": {
       "supportsTablet": true
     },
+    "build": {
+      "prod": {
+        "relaeaseChannel": "prod"
+      },
+      "beta": {
+        "releaseChannel": "beta"
+      },
+      "dev": {
+        "releaseChannel": "dev"
+      }
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
