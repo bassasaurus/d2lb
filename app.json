@@ -16,7 +16,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false
     },
 
     "android": {
@@ -27,14 +27,6 @@
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
-    }
-  },
-  "build": {
-    "beta": {
-      "releaseChannel": "beta"
-    },
-    "dev": {
-      "releaseChannel": "dev"
     }
   }
 }
