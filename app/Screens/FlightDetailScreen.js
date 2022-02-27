@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useContext } from "react";
-import MapView, { Marker, Polyline, Circle } from "react-native-maps";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import {
   StyleSheet,
   View,
@@ -23,7 +23,7 @@ function FlightDetailScreen({ route, navigation }) {
   const Context = useContext(AppContext);
   const approaches = route.params.item.approaches;
 
-  // console.log(polylines);
+  console.log(polylines);
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
@@ -111,18 +111,16 @@ function FlightDetailScreen({ route, navigation }) {
           <View style={styles.firstColumn}>
             <View style={styles.rowContainer}>
               <AppText size={16} color={STYLES.black}>
-                Landings:
+                Landings:{" "}
               </AppText>
               {route.params.item.landings_day ? (
                 <AppText size={16} color={STYLES.black}>
-                  {" "}
-                  Day {route.params.item.landings_day}
+                  Day {route.params.item.landings_day}{" "}
                 </AppText>
               ) : null}
               {route.params.item.landings_night ? (
                 <AppText size={16} color={STYLES.black}>
-                  {" "}
-                  Night {route.params.item.landings_night}
+                  Night {route.params.item.landings_night}{" "}
                 </AppText>
               ) : null}
             </View>
@@ -177,7 +175,7 @@ function FlightDetailScreen({ route, navigation }) {
               </AppText>
               {approaches.map((appr, index) => (
                 <AppText size={16} color={STYLES.black} key={index}>
-                  {appr.approach_type}-{appr.number}{" "}
+                  ({appr.approach_type}-){appr.number}{" "}
                 </AppText>
               ))}
             </View>
@@ -268,6 +266,7 @@ function FlightDetailScreen({ route, navigation }) {
             strokeWidth={3}
             geodesic={true}
             coordinates={polylines}
+            lineDashPattern={[1]}
           />
         </MapView>
       </View>
