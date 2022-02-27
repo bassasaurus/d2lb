@@ -1,0 +1,10 @@
+{
+  "build": {
+    "beta": {
+      "releaseChannel": "beta"
+    },
+    "dev": {
+      "releaseChannel": "dev"
+    }
+  }
+}

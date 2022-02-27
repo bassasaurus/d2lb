@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useContext } from "react";
-import MapView, { Marker, Polyline, Circle } from "react-native-maps";
+import React, { useRef, useEffect, useContext, useState } from "react";
+import MapView, { Marker, Polyline } from "react-native-maps";
 import {
   StyleSheet,
   View,
@@ -17,13 +17,14 @@ import AppText from "../components/AppText";
 import Separator from "../components/Separator";
 
 function FlightDetailScreen({ route, navigation }) {
+  const [lineDashPattern, setLineDashPattern] = useState([0]);
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
   const approaches = route.params.item.approaches;
 
-  // console.log(polylines);
+  console.log(polylines);
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
@@ -59,6 +60,7 @@ function FlightDetailScreen({ route, navigation }) {
 
   useEffect(() => {
     mapRef.current.fitToCoordinates(polylines);
+    setTimeout(() => setLineDashPattern(null), 0.4);
   }, []);
 
   return (
@@ -111,18 +113,16 @@ function FlightDetailScreen({ route, navigation }) {
           <View style={styles.firstColumn}>
             <View style={styles.rowContainer}>
               <AppText size={16} color={STYLES.black}>
-                Landings:
+                Landings:{" "}
               </AppText>
               {route.params.item.landings_day ? (
                 <AppText size={16} color={STYLES.black}>
-                  {" "}
-                  Day {route.params.item.landings_day}
+                  Day {route.params.item.landings_day}{" "}
                 </AppText>
               ) : null}
               {route.params.item.landings_night ? (
                 <AppText size={16} color={STYLES.black}>
-                  {" "}
-                  Night {route.params.item.landings_night}
+                  Night {route.params.item.landings_night}{" "}
                 </AppText>
               ) : null}
             </View>
@@ -139,6 +139,9 @@ function FlightDetailScreen({ route, navigation }) {
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <View style={styles.rowContainer}>
+              <AppText size={16} color={STYLES.black}>
+                Conditions:{" "}
+              </AppText>
               {route.params.item.night ? (
                 <AppText size={16} color={STYLES.black}>
                   Night {route.params.item.night}
@@ -169,9 +172,12 @@ function FlightDetailScreen({ route, navigation }) {
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <View style={styles.rowContainer}>
+              <AppText size={16} color={STYLES.black}>
+                Approaches:{" "}
+              </AppText>
               {approaches.map((appr, index) => (
                 <AppText size={16} color={STYLES.black} key={index}>
-                  {appr.approach_type}-{appr.number}{" "}
+                  ({appr.approach_type}-){appr.number}{" "}
                 </AppText>
               ))}
             </View>
@@ -257,21 +263,13 @@ function FlightDetailScreen({ route, navigation }) {
               title={marker.title}
             />
           ))}
-          {/* <Polyline
+          <Polyline
             strokeColor={STYLES.blue}
             strokeWidth={3}
             geodesic={true}
-            coordinates={[
-              {
-                latitude: 42.362944444444445,
-                longitude: -71.00638888888889,
-              },
-              {
-                latitude: 35.87763888888889,
-                longitude: -78.78747222222222,
-              },
-            ]}
-          /> */}
+            coordinates={polylines}
+            lineDashPattern={lineDashPattern}
+          />
         </MapView>
       </View>
 
