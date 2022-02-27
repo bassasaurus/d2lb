@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext } from "react";
+import React, { useRef, useEffect, useContext, useState } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import {
   StyleSheet,
@@ -17,6 +17,7 @@ import AppText from "../components/AppText";
 import Separator from "../components/Separator";
 
 function FlightDetailScreen({ route, navigation }) {
+  const [lineDashPattern, setLineDashPattern] = useState([0]);
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
@@ -59,6 +60,7 @@ function FlightDetailScreen({ route, navigation }) {
 
   useEffect(() => {
     mapRef.current.fitToCoordinates(polylines);
+    setTimeout(() => setLineDashPattern(null), 0.4);
   }, []);
 
   return (
@@ -266,7 +268,7 @@ function FlightDetailScreen({ route, navigation }) {
             strokeWidth={3}
             geodesic={true}
             coordinates={polylines}
-            lineDashPattern={[1]}
+            lineDashPattern={lineDashPattern}
           />
         </MapView>
       </View>
