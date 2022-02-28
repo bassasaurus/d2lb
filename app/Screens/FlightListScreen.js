@@ -18,15 +18,12 @@ const FlightListScreen = ({ navigation }) => {
 
   const fetchData = async () => {
     const response = await api.get("/api/flights/");
-    if (data != response.data) {
-      setData(response.data);
-    } else {
-      null;
-    }
+    setData(response.data);
     onRefresh();
   };
 
   useEffect(() => {
+    fetchData();
     const refreshOnBack = navigation.addListener("focus", () => {
       fetchData();
     });
@@ -47,7 +44,11 @@ const FlightListScreen = ({ navigation }) => {
     <TouchableOpacity
       activeOpacity={0.7}
       style={styles.touchable}
-      onPress={() => navigation.navigate("FlightDetail", { item: item })}
+      onPress={() =>
+        navigation.navigate("FlightDetail", {
+          item: item,
+        })
+      }
     >
       <FlightItem
         date={item.date}

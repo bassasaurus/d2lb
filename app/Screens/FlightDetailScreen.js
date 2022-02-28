@@ -6,6 +6,7 @@ import {
   Alert,
   TouchableOpacity,
   Platform,
+  Dimensions,
 } from "react-native";
 
 import { STYLES } from "../styles/styles";
@@ -17,14 +18,28 @@ import AppText from "../components/AppText";
 import Separator from "../components/Separator";
 
 function FlightDetailScreen({ route, navigation }) {
-  const [lineDashPattern, setLineDashPattern] = useState([0]);
-  const markers = route.params.item.app_markers;
-  const polylines = route.params.item.app_polylines.coordinates;
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
+  const [lineDashPattern, setLineDashPattern] = useState([0]);
+
+  const markers = route.params.item.app_markers;
+  const polylines = route.params.item.app_polylines.coordinates;
   const approaches = route.params.item.approaches;
 
-  console.log(polylines);
+  let { height } = Dimensions.get("window");
+
+  const iosPadding = {
+    top: 60,
+    right: 30,
+    left: 30,
+    bottom: 500,
+  };
+  const androidPadding = {
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: height / 4,
+  };
 
   const deleteItem = (primary_key) => {
     const url = "/api/flights/" + primary_key + "/";
@@ -60,7 +75,7 @@ function FlightDetailScreen({ route, navigation }) {
 
   useEffect(() => {
     mapRef.current.fitToCoordinates(polylines);
-    setTimeout(() => setLineDashPattern(null), 0.4);
+    setTimeout(() => setLineDashPattern(null), 0.2);
   }, []);
 
   return (
@@ -248,12 +263,7 @@ function FlightDetailScreen({ route, navigation }) {
       <View style={styles.mapView}>
         <MapView
           style={{ width: "100%", height: "100%" }}
-          mapPadding={{
-            top: 40,
-            right: 40,
-            left: 40,
-            bottom: 420,
-          }}
+          mapPadding={Platform.OS === "ios" ? iosPadding : androidPadding}
           ref={mapRef}
         >
           {markers.map((marker) => (
@@ -263,9 +273,11 @@ function FlightDetailScreen({ route, navigation }) {
               title={marker.title}
             />
           ))}
+
+          {/* add logic for circle here */}
           <Polyline
             strokeColor={STYLES.blue}
-            strokeWidth={3}
+            strokeWidth={2}
             geodesic={true}
             coordinates={polylines}
             lineDashPattern={lineDashPattern}
