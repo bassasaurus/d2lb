@@ -14,9 +14,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false
     },
@@ -27,10 +25,21 @@
       }
     },
     "web": {
-      "favicon": "./app/assets/favicon.png"
+      "favicon": "./app/assets/favicon.png",
+      "plugins": ["sentry-expo"]
     },
-    "plugins": [
-      "sentry-expo"
-    ]
+
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "blaketheappmaker",
+            "project": "d2lb_mobile",
+            "authToken": ""
+          }
+        }
+      ]
+    }
   }
 }

@@ -9,7 +9,7 @@ import TailnumberCreateScreen from "./app/screens/TailnumberCreateScreen";
 import * as Sentry from "sentry-expo";
 
 Sentry.init({
-  dsn: "YOUR DSN HERE",
+  dsn: "https://12606d21be6543b293a319ba73c60074@o369988.ingest.sentry.io/6320770",
   enableInExpoDevelopment: true,
   debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
 });
