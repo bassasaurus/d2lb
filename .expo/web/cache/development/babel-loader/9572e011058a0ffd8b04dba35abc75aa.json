@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var colors = {\n  blue: \"mediumblue\"\n};","map":{"version":3,"sources":["/Users/blake/react_native/d2lb/app/styles/colors.js"],"names":["colors","blue"],"mappings":"AAAA,OAAO,IAAMA,MAAM,GAAG;AACpBC,EAAAA,IAAI,EAAE;AADc,CAAf","sourcesContent":["export const colors = {\n  blue: \"mediumblue\",\n};\n"]},"metadata":{},"sourceType":"module"}
