@@ -75,7 +75,7 @@ function FlightDetailScreen({ route, navigation }) {
 
   useEffect(() => {
     mapRef.current.fitToCoordinates(polylines);
-    setTimeout(() => setLineDashPattern(null), 0.2);
+    setTimeout(() => setLineDashPattern(null), 0.5);
   }, []);
 
   return (
