@@ -34,9 +34,9 @@
         {
           "file": "sentry-expo/upload-sourcemaps",
           "config": {
-            "organization": "blaketheappmaker",
+            "organization": "direct2logbook",
             "project": "d2lb_mobile",
-            "authToken": ""
+            "authToken": "d2f68a21e3724a6bafc8a04320573586aa7b56a9139d4106ace02180a5771ee7"
           }
         }
       ]

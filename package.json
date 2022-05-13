@@ -33,6 +33,7 @@
     "react-native-animated-flatlist": "^0.0.3",
     "react-native-async-storage": "^0.0.1",
     "react-native-calendar-picker": "^7.1.2",
+    "react-native-dotenv": "^3.3.1",
     "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-maps": "0.28.1",
