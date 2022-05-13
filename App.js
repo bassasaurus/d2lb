@@ -15,7 +15,6 @@ Sentry.init({
 });
 
 export default function App() {
-  console.log(process.env);
   const [isSignedIn, setIsSignedIn] = useState(true);
   const [activityVisible, setActivityVisible] = useState(false);
 
