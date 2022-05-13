@@ -7,6 +7,8 @@ import { SafeAreaView } from "react-native";
 import TailnumberCreate from "./app/screens/TailnumberCreateScreen";
 import TailnumberCreateScreen from "./app/screens/TailnumberCreateScreen";
 import * as Sentry from "sentry-expo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { setIn } from "formik";
 
 Sentry.init({
   dsn: "https://45a431f2fa3541a09ba6320ae658b609@o369988.ingest.sentry.io/6397150",
@@ -17,6 +19,17 @@ Sentry.init({
 export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(true);
   const [activityVisible, setActivityVisible] = useState(false);
+
+  // const isSignedInHandler = async () => {
+  //   const value = await AsyncStorage.getItem("token");
+  //   if (value == null) {
+  //     setIsSignedIn(true);
+  //   } else {
+  //     setIsSignedIn(false);
+  //   }
+  // };
+
+  // isSignedInHandler();
 
   const appSettings = {
     isSignedInValue: isSignedIn,
