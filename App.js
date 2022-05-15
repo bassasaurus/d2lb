@@ -24,12 +24,12 @@ export default function App() {
   //   const value = await AsyncStorage.getItem("token");
   //   if (value == null) {
   //     setIsSignedIn(true);
+  //     console.log("true");
   //   } else {
   //     setIsSignedIn(false);
+  //     console.log("false");
   //   }
   // };
-
-  // isSignedInHandler();
 
   const appSettings = {
     isSignedInValue: isSignedIn,

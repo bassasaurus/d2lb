@@ -10,6 +10,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "../screens/LoginScreen";
 import FlightStackNavigator from "./FlightStackNavigator";
 import AppContext from "../components/AppContext";
+import removeAsyncData from "../asyncStorage/removeAsyncData";
 
 function DrawerNavigator({ navigation }) {
   const Context = useContext(AppContext);
@@ -23,6 +24,7 @@ function DrawerNavigator({ navigation }) {
         <DrawerItem
           label='Logout'
           onPress={() => {
+            removeAsyncData("token");
             Context.setIsSignedIn(false);
           }}
         />
