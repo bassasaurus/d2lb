@@ -17,7 +17,7 @@ const FlightListScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
-    setData("");
+    setData([]);
     const response = await api.get("/api/flights/");
     setData(response.data);
     onRefresh();
