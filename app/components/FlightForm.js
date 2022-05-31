@@ -101,7 +101,7 @@ function FlightForm({ initialValues, method }) {
       <ScrollView>
         <View style={styles.container}>
           <Formik
-            validateOnMount={true}
+            validateOnMount={false}
             initialValues={initialValues}
             validationSchema={flightSchema}
             onSubmit={(values, { setSubmitting }) => {
