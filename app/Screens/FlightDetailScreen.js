@@ -38,7 +38,7 @@ function FlightDetailScreen({ route, navigation }) {
     top: 0,
     right: 0,
     left: 0,
-    bottom: height / 4,
+    bottom: 500,
   };
 
   const deleteItem = (primary_key) => {
@@ -58,7 +58,6 @@ function FlightDetailScreen({ route, navigation }) {
   const showAlert = (primary_key, date, route) =>
     Alert.alert("Are you sure?", "This can't be undone", [
       {
-        text: "Yes",
         onPress: () => {
           deleteItem(primary_key, date, route);
           Context.setActivityVisible(true);
@@ -69,7 +68,7 @@ function FlightDetailScreen({ route, navigation }) {
         style: "cancel",
       },
       {
-        cancelable: false,
+        cancelable: true,
       },
     ]);
 
