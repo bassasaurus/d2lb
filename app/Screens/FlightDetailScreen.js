@@ -64,20 +64,11 @@ function FlightDetailScreen({ route, navigation }) {
           Context.setActivityVisible(true);
         },
       },
-
-      {
-        text: Platform.OS === "ios" ? "Cancel" : "",
-        style: Platform.OS === "ios" ? "cancel" : "",
-      },
-      { text: Platform.OS === "android" ? "Cancel" : "" },
-      {
-        cancelable: true,
-      },
+      { text: Platform.OS === "android" ? "Cancel" : "Cancel" },
     ]);
 
   useEffect(() => {
-    mapRef.current.fitToCoordinates(polylines);
-    setTimeout(() => setLineDashPattern(null), 0.5);
+    setTimeout(() => mapRef.current.fitToCoordinates(polylines), 0.5);
   }, []);
 
   return (
