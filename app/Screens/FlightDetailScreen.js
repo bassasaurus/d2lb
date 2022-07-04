@@ -171,7 +171,7 @@ function FlightDetailScreen({ route, navigation }) {
           </View>
           <View style={styles.thirdColumn}>
             <AppText size={16} color={STYLES.black}>
-              {route.params.item.cross_country ? "XC  " : ""}
+              {route.params.item.cross_country ? "XC" : ""}
               {route.params.item.simulator ? "Sim" : ""}
             </AppText>
           </View>
@@ -209,6 +209,7 @@ function FlightDetailScreen({ route, navigation }) {
               backgroundColor: STYLES.danger,
               alignItems: "center",
               justifyContent: "center",
+              marginRight: 2.5,
             }}
             onPress={() => {
               showAlert(
@@ -238,6 +239,7 @@ function FlightDetailScreen({ route, navigation }) {
               backgroundColor: STYLES.blue,
               alignItems: "center",
               justifyContent: "center",
+              marginLeft: 2.5,
             }}
           >
             <View>
@@ -274,7 +276,7 @@ function FlightDetailScreen({ route, navigation }) {
           {/* add logic for circle here */}
           <Polyline
             strokeColor={STYLES.blue}
-            strokeWidth={2}
+            strokeWidth={Platform.OS === "android" ? 3 : 1}
             geodesic={true}
             coordinates={polylines}
             lineDashPattern={lineDashPattern}
