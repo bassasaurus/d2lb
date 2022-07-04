@@ -26,8 +26,6 @@ function FlightDetailScreen({ route, navigation }) {
   const polylines = route.params.item.app_polylines.coordinates;
   const approaches = route.params.item.approaches;
 
-  let { height } = Dimensions.get("window");
-
   const iosPadding = {
     top: 60,
     right: 30,
@@ -35,10 +33,10 @@ function FlightDetailScreen({ route, navigation }) {
     bottom: 500,
   };
   const androidPadding = {
-    top: 0,
-    right: 0,
+    top: 30,
+    right: 20,
     left: 0,
-    bottom: height / 4,
+    bottom: 300,
   };
 
   const deleteItem = (primary_key) => {
@@ -58,25 +56,19 @@ function FlightDetailScreen({ route, navigation }) {
   const showAlert = (primary_key, date, route) =>
     Alert.alert("Are you sure?", "This can't be undone", [
       {
-        text: "Yes",
+        text: "Delete",
         onPress: () => {
           deleteItem(primary_key, date, route);
           Context.setActivityVisible(true);
         },
       },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        cancelable: false,
-      },
+      { text: Platform.OS === "android" ? "Cancel" : "Cancel" },
     ]);
 
-  useEffect(() => {
+  const fitMap = () => {
+    mapRef.current.fitToElements({ edgePadding: 20, animated: true });
     mapRef.current.fitToCoordinates(polylines);
-    setTimeout(() => setLineDashPattern(null), 0.5);
-  }, []);
+  };
 
   return (
     <View style={styles.container}>
@@ -179,7 +171,7 @@ function FlightDetailScreen({ route, navigation }) {
           </View>
           <View style={styles.thirdColumn}>
             <AppText size={16} color={STYLES.black}>
-              {route.params.item.cross_country ? "XC  " : ""}
+              {route.params.item.cross_country ? "XC" : ""}
               {route.params.item.simulator ? "Sim" : ""}
             </AppText>
           </View>
@@ -217,6 +209,7 @@ function FlightDetailScreen({ route, navigation }) {
               backgroundColor: STYLES.danger,
               alignItems: "center",
               justifyContent: "center",
+              marginRight: 2.5,
             }}
             onPress={() => {
               showAlert(
@@ -246,6 +239,7 @@ function FlightDetailScreen({ route, navigation }) {
               backgroundColor: STYLES.blue,
               alignItems: "center",
               justifyContent: "center",
+              marginLeft: 2.5,
             }}
           >
             <View>
@@ -262,9 +256,14 @@ function FlightDetailScreen({ route, navigation }) {
 
       <View style={styles.mapView}>
         <MapView
-          style={{ width: "100%", height: "100%" }}
+          style={
+            Platform.OS === "ios"
+              ? { width: "100%", height: "100%" }
+              : { width: "100%", height: "90%" }
+          }
           mapPadding={Platform.OS === "ios" ? iosPadding : androidPadding}
           ref={mapRef}
+          onLayout={fitMap}
         >
           {markers.map((marker) => (
             <Marker
@@ -277,7 +276,7 @@ function FlightDetailScreen({ route, navigation }) {
           {/* add logic for circle here */}
           <Polyline
             strokeColor={STYLES.blue}
-            strokeWidth={2}
+            strokeWidth={Platform.OS === "android" ? 3 : 1}
             geodesic={true}
             coordinates={polylines}
             lineDashPattern={lineDashPattern}
