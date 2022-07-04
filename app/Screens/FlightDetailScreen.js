@@ -33,10 +33,10 @@ function FlightDetailScreen({ route, navigation }) {
     bottom: 500,
   };
   const androidPadding = {
-    top: 0,
+    top: 30,
     right: 20,
     left: 0,
-    bottom: 500,
+    bottom: 300,
   };
 
   const deleteItem = (primary_key) => {
