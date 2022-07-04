@@ -26,7 +26,9 @@ function FlightDetailScreen({ route, navigation }) {
   const polylines = route.params.item.app_polylines.coordinates;
   const approaches = route.params.item.approaches;
 
-  let { height } = Dimensions.get("window");
+  useEffect(() => {
+    setTimeout(() => mapRef.current.fitToCoordinates(polylines), 0.5);
+  }, []);
 
   const iosPadding = {
     top: 60,
@@ -36,9 +38,9 @@ function FlightDetailScreen({ route, navigation }) {
   };
   const androidPadding = {
     top: 0,
-    right: 0,
-    left: 0,
-    bottom: 0,
+    right: 20,
+    left: 20,
+    bottom: 500,
   };
 
   const deleteItem = (primary_key) => {
@@ -66,10 +68,6 @@ function FlightDetailScreen({ route, navigation }) {
       },
       { text: Platform.OS === "android" ? "Cancel" : "Cancel" },
     ]);
-
-  useEffect(() => {
-    setTimeout(() => mapRef.current.fitToCoordinates(polylines), 0.5);
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -255,7 +253,11 @@ function FlightDetailScreen({ route, navigation }) {
 
       <View style={styles.mapView}>
         <MapView
-          style={{ width: "100%", height: "100%" }}
+          style={
+            Platform.OS === "ios"
+              ? { width: "100%", height: "100%" }
+              : { width: "100%", height: "90%" }
+          }
           mapPadding={Platform.OS === "ios" ? iosPadding : androidPadding}
           ref={mapRef}
         >
