@@ -2,13 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
-import TailnumberForm from "./app/components/TailnumberForm";
-import { SafeAreaView } from "react-native";
-import TailnumberCreate from "./app/screens/TailnumberCreateScreen";
-import TailnumberCreateScreen from "./app/screens/TailnumberCreateScreen";
 import * as Sentry from "sentry-expo";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setIn } from "formik";
 
 Sentry.init({
   dsn: "https://45a431f2fa3541a09ba6320ae658b609@o369988.ingest.sentry.io/6397150",
