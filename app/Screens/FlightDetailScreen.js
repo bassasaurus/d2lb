@@ -184,7 +184,8 @@ function FlightDetailScreen({ route, navigation }) {
               </AppText>
               {approaches.map((appr, index) => (
                 <AppText size={16} color={STYLES.black} key={index}>
-                  {appr.approach_type}-{appr.number}{" "}
+                  {appr.approach_type + "-"}
+                  {appr.number + " "}
                 </AppText>
               ))}
             </View>
