@@ -1,9 +1,9 @@
 {
   "expo": {
     "owner": "direct2logbook",
-    "name": "d2lb",
+    "name": "Direct2Logbook",
     "slug": "d2lb",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./app/assets/app_icon.png",
     "splash": {
