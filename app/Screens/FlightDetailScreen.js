@@ -16,6 +16,7 @@ import AppContext from "../components/AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
 import Separator from "../components/Separator";
+import DetailsPanel from "../components/DetailsPanel";
 
 function FlightDetailScreen({ route, navigation }) {
   const mapRef = useRef(null);
@@ -100,107 +101,7 @@ function FlightDetailScreen({ route, navigation }) {
         </View>
         {/* second row */}
         <Separator />
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <AppText size={16} color={STYLES.black}>
-              {route.params.item.route}
-            </AppText>
-          </View>
-          <View style={styles.thirdColumn}>
-            <AppText size={16} color={STYLES.black}>
-              {route.params.item.pilot_in_command ? "PIC" : ""}
-              {route.params.item.second_in_command ? "SIC" : ""}
-              {route.params.item.solo ? "Solo" : ""}
-              {route.params.item.dual ? "Dual" : ""}
-            </AppText>
-          </View>
-        </View>
-        {/* third row */}
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <View style={styles.rowContainer}>
-              <AppText size={16} color={STYLES.black}>
-                Landings:{" "}
-              </AppText>
-              {route.params.item.landings_day ? (
-                <AppText size={16} color={STYLES.black}>
-                  Day {route.params.item.landings_day}{" "}
-                </AppText>
-              ) : null}
-              {route.params.item.landings_night ? (
-                <AppText size={16} color={STYLES.black}>
-                  Night {route.params.item.landings_night}{" "}
-                </AppText>
-              ) : null}
-            </View>
-          </View>
-          <View style={styles.secondColumn}></View>
-          <View style={styles.thirdColumn}>
-            <AppText size={16} color={STYLES.black}>
-              {route.params.item.instructor ? "  CFI" : ""}
-            </AppText>
-          </View>
-        </View>
-
-        {/* fourth row */}
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <View style={styles.rowContainer}>
-              <AppText size={16} color={STYLES.black}>
-                Conditions:{" "}
-              </AppText>
-              {route.params.item.night ? (
-                <AppText size={16} color={STYLES.black}>
-                  Night {route.params.item.night}
-                  {"  "}
-                </AppText>
-              ) : null}
-              {route.params.item.instrument ? (
-                <AppText size={16} color={STYLES.black}>
-                  Inst {route.params.item.instrument}
-                  {"  "}
-                </AppText>
-              ) : null}
-              {route.params.item.simulated_instrument ? (
-                <AppText size={16} color={STYLES.black}>
-                  Hood {route.params.item.simulated_instrument}
-                  {"  "}
-                </AppText>
-              ) : null}
-            </View>
-          </View>
-          <View style={styles.thirdColumn}>
-            <AppText size={16} color={STYLES.black}>
-              {route.params.item.cross_country ? "XC" : ""}
-              {route.params.item.simulator ? "Sim" : ""}
-            </AppText>
-          </View>
-        </View>
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <View style={styles.rowContainer}>
-              <AppText size={16} color={STYLES.black}>
-                Approaches:{" "}
-              </AppText>
-              {approaches.map((appr, index) => (
-                <AppText size={16} color={STYLES.black} key={index}>
-                  {appr.approach_type + "-"}
-                  {appr.number + " "}
-                </AppText>
-              ))}
-            </View>
-          </View>
-          <View style={styles.thirdColumn}>
-            {route.params.item.hold ? <AppText size={16}>Hold</AppText> : null}
-          </View>
-        </View>
-
-        {/* fifth row */}
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <AppText size={16}>Remarks: {route.params.item.remarks}</AppText>
-          </View>
-        </View>
+        <DetailsPanel route={route}></DetailsPanel>
         {/* sixth row */}
         <Separator />
         <View style={{ flexDirection: "row", marginBottom: 5 }}>
