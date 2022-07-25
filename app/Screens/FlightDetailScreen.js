@@ -167,6 +167,7 @@ function FlightDetailScreen({ route, navigation }) {
           ref={mapRef}
           onLayout={fitMap}
           maxZoomLevel={14}
+          toolbarEnabled={false}
         >
           {markers.map((marker) => (
             <Marker
