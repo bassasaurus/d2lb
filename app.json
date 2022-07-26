@@ -1,7 +1,7 @@
 {
   "expo": {
-    "owner": "Direct2logbook",
-    "name": "Direct2Logbook",
+    "owner": "bassasaurus",
+    "name": "d2lb",
     "slug": "direct2lobook",
     "orientation": "portrait",
     "icon": "./app/assets/app_icon.png",
@@ -21,9 +21,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.direct2logbook",
-      "versionCode": 1
+      }
     },
     "web": {
       "favicon": "./app/assets/favicon.png",
