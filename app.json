@@ -1,9 +1,9 @@
 {
   "expo": {
-    "owner": "direct2logbook",
-    "name": "d2lb",
-    "slug": "d2lb",
-    "version": "1.0.0",
+    "owner": "Direct2logbook",
+    "name": "Direct2Logbook",
+    "slug": "direct2lobook",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./app/assets/app_icon.png",
     "splash": {
@@ -16,13 +16,17 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.direct2logbook",
+      "buildNumber": "0.0.1"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.direct2logbook",
+      "versionCode": 1
     },
     "web": {
       "favicon": "./app/assets/favicon.png",

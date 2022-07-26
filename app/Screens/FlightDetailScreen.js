@@ -166,6 +166,8 @@ function FlightDetailScreen({ route, navigation }) {
           mapPadding={Platform.OS === "ios" ? iosPadding : androidPadding}
           ref={mapRef}
           onLayout={fitMap}
+          maxZoomLevel={14}
+          toolbarEnabled={false}
         >
           {markers.map((marker) => (
             <Marker
