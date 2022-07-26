@@ -46,7 +46,6 @@
     "react-native-svg": "12.1.1",
     "react-native-web": "0.17.1",
     "sentry-expo": "^4.0.0",
-    "standard-version-expo": "^1.0.3",
     "styled-components": "^5.3.0",
     "styled-system": "^5.1.5",
     "up": "^1.0.2",

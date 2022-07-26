@@ -3,7 +3,6 @@
     "owner": "Direct2logbook",
     "name": "Direct2Logbook",
     "slug": "direct2lobook",
-    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./app/assets/app_icon.png",
     "splash": {
@@ -16,9 +15,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.direct2logbook",
-      "buildNumber": "0.0.1"
+      "supportsTablet": false
     },
     "android": {
       "adaptiveIcon": {
