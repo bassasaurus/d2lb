@@ -7,6 +7,9 @@ import {
   RefreshControl,
 } from "react-native";
 
+import storeAsyncObject from "../asyncStorage/storeAsyncObject";
+import getAsyncObject from "../asyncStorage/getAsyncObject";
+
 import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
@@ -17,20 +20,15 @@ const FlightListScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
-    setData([]);
     const response = await api.get("/api/flights/");
-    setData(response.data);
-    onRefresh();
+    storeAsyncObject("flight_data", response.data);
+    setData(getAsyncObject("flight_data"));
+    console.log(getAsyncObject("flight_data"));
   };
 
   useEffect(() => {
     fetchData();
-    const refreshOnBack = navigation.addListener("focus", () => {
-      fetchData();
-    });
-
-    return refreshOnBack;
-  }, [navigation]);
+  }, []);
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
