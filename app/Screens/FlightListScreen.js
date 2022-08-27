@@ -27,8 +27,12 @@ const FlightListScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    const onFocus = navigation.addListener("focus", () => {
+      fetchData();
+    });
+
+    return onFocus;
+  }, [navigation]);
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
