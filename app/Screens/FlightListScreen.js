@@ -24,7 +24,6 @@ const FlightListScreen = ({ navigation }) => {
     storeAsyncObject("flight_data", response.data);
     const flight_data = await getAsyncObject("flight_data");
     setData(flight_data);
-    console.log(data);
   };
 
   useEffect(() => {
@@ -35,8 +34,9 @@ const FlightListScreen = ({ navigation }) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    fetchData();
     wait(250).then(() => setRefreshing(false));
   }, []);
 
