@@ -7,6 +7,8 @@ import {
   RefreshControl,
 } from "react-native";
 
+import { useNavigation } from "@react-navigation/native";
+
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import getAsyncObject from "../asyncStorage/getAsyncObject";
 
@@ -15,9 +17,11 @@ import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
 
-const FlightListScreen = ({ navigation }) => {
+const FlightListScreen = () => {
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+
+  const navigation = useNavigation();
 
   const fetchData = async () => {
     const response = await api.get("/api/flights/");
