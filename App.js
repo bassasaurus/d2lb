@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
 import * as Sentry from "sentry-expo";
+import api from "./app/api/axiosConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 Sentry.init({
@@ -22,7 +23,16 @@ export default function App() {
     setActivityVisible,
   };
 
+  const fetchData = async () => {
+    const response = await api.get("/api/tailnumbers/");
+    storeAsyncObject("tailnumbers_data", response.data);
+    const tailnumbers_data = await getAsyncObject("tailnumbers_data");
+    setData(tailnumbers_data);
+    console.log(tailnumbers_data);
+  };
+
   useEffect(() => {
+    fetchData();
     const isSignedInHandler = async () => {
       const value = await AsyncStorage.getItem("token");
       if (value !== null) {
