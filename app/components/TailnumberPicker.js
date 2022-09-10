@@ -25,7 +25,7 @@ function TailnumberPicker({
   setAcTailMatch,
   isValid,
 }) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState();
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
 
@@ -37,7 +37,7 @@ function TailnumberPicker({
       return obj.aircraft == aircraftId;
     });
     let arrayFromObject = filteredArray.map((obj) => obj.registration);
-    console.log(arrayFromObject);
+    setData(arrayFromObject);
   };
 
   const renderItem = ({ item }) => (
@@ -50,7 +50,7 @@ function TailnumberPicker({
           setAcTailMatch(true);
         }}
       >
-        <Text style={styles.listItem}>{item.registration}</Text>
+        <Text style={styles.listItem}>{item}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -76,9 +76,9 @@ function TailnumberPicker({
         <Modal animationType='slide' transparent={true} visible={visible}>
           <View style={styles.modalView}>
             <FlatList
-              data={data.results}
+              data={data}
               renderItem={renderItem}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item) => item}
               ItemSeparatorComponent={FlatListItemSeparator}
             />
             <Separator></Separator>
