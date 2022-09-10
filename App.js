@@ -27,7 +27,7 @@ export default function App() {
 
   const fetchData = async () => {
     const response = await api.get("/api/tailnumbers/");
-    storeAsyncObject("tailnumbers_data", response.data);
+    storeAsyncObject("tailnumbers_data", response.data.results);
   };
 
   useEffect(() => {
