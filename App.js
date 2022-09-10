@@ -28,8 +28,6 @@ export default function App() {
   const fetchData = async () => {
     const response = await api.get("/api/tailnumbers/");
     storeAsyncObject("tailnumbers_data", response.data);
-    const tailnumbers_data = await getAsyncObject("tailnumbers_data");
-    console.log(tailnumbers_data);
   };
 
   useEffect(() => {

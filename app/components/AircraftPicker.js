@@ -27,12 +27,14 @@ function AircraftPicker({
   const [value, setValue] = useState("");
 
   const fetchData = async () => {
-    const result = await api.get("/api/aircraft/");
-    if (data != result.data) {
-      setData(result.data);
-    } else {
-      null;
-    }
+    const tailnumbers_data = await getAsyncObject("tailnumbers_data");
+    console.log(tailnumbers_data);
+    // const result = await api.get("/api/aircraft/");
+    // if (data != result.data) {
+    //   setData(result.data);
+    // } else {
+    //   null;
+    // }
   };
 
   const renderItem = ({ item }) => (
@@ -54,7 +56,7 @@ function AircraftPicker({
     <>
       <Pressable
         onPress={() => {
-          tailData();
+          fetchData();
           setVisible(true);
         }}
       >
