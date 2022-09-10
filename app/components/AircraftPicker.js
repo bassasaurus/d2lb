@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import AppTextInput from "./AppTextInput";
+import getAsyncObject from "../asyncStorage/getAsyncObject";
 
 import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
@@ -53,7 +54,7 @@ function AircraftPicker({
     <>
       <Pressable
         onPress={() => {
-          fetchData();
+          tailData();
           setVisible(true);
         }}
       >
