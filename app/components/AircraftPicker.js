@@ -22,14 +22,16 @@ function AircraftPicker({
   isValid,
   initialValue,
 }) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState();
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
 
   const fetchData = async () => {
-    const data = await getAsyncObject("tailnumbers_data");
-    let result = data.map((a) => a.aircraft);
-    console.log(result);
+    const dataObject = await getAsyncObject("tailnumbers_data");
+    let arrayFromObject = dataObject.map((a) => a.aircraft);
+    let uniqueArray = [...new Set(arrayFromObject)];
+    setData(uniqueArray);
+    console.log(data);
     // const result = await api.get("/api/aircraft/");
     // if (data != result.data) {
     //   setData(result.data);
@@ -43,12 +45,12 @@ function AircraftPicker({
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue(fieldName, item.aircraft_type);
-          handleAircraftId(item.id);
-          setValue(item.aircraft_type);
+          setFieldValue(fieldName, item);
+          handleAircraftId(item);
+          setValue(item);
         }}
       >
-        <Text style={styles.listItem}>{item.aircraft_type}</Text>
+        <Text style={styles.listItem}>{item}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -74,9 +76,9 @@ function AircraftPicker({
         <Modal animationType='slide' transparent={true} visible={visible}>
           <View style={styles.modalView}>
             <FlatList
-              data={data.results}
+              data={data}
               renderItem={renderItem}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item) => item.toString()}
               ItemSeparatorComponent={FlatListItemSeparator}
             />
           </View>
