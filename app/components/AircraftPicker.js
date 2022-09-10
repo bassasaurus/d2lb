@@ -31,13 +31,6 @@ function AircraftPicker({
     let arrayFromObject = dataObject.map((a) => a.aircraft);
     let uniqueArray = [...new Set(arrayFromObject)];
     setData(uniqueArray);
-    console.log(data);
-    // const result = await api.get("/api/aircraft/");
-    // if (data != result.data) {
-    //   setData(result.data);
-    // } else {
-    //   null;
-    // }
   };
 
   const renderItem = ({ item }) => (

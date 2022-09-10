@@ -11,7 +11,7 @@ import {
 import AppTextInput from "./AppTextInput";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import api from "../api/axiosConfig";
+import getAsyncObject from "../asyncStorage/getAsyncObject";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 import AppText from "./AppText";
@@ -31,18 +31,13 @@ function TailnumberPicker({
 
   const navigation = useNavigation();
 
-  const fetchData = async () => {
-    try {
-      const result = await api.get(`/api/tailnumbers/`, {
-        params: {
-          aircraft: aircraftId,
-        },
-      });
-      setData(result.data);
-    } catch (error) {
-      // console.log(error.response);
-      null;
-    }
+  const filterData = async () => {
+    const dataArray = await getAsyncObject("tailnumbers_data");
+    const filteredArray = dataArray.filter((obj) => {
+      return obj.aircraft == aircraftId;
+    });
+    let arrayFromObject = filteredArray.map((obj) => obj.registration);
+    console.log(arrayFromObject);
   };
 
   const renderItem = ({ item }) => (
@@ -50,8 +45,8 @@ function TailnumberPicker({
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("registration", item.registration);
-          setValue(item.registration);
+          setFieldValue("registration", item);
+          setValue(item);
           setAcTailMatch(true);
         }}
       >
@@ -64,7 +59,7 @@ function TailnumberPicker({
     <>
       <Pressable
         onPress={() => {
-          fetchData();
+          filterData();
           setVisible(true);
         }}
       >
