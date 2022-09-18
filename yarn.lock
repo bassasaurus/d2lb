@@ -2016,16 +2016,6 @@
     "@sentry/utils" "7.7.0"
     tslib "^1.9.3"
 
-"@sentry/browser@7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@sentry/browser/-/browser-7.9.0.tgz#eb9aeebfd5fb758e484ebdc6ab420a2a620219bb"
-  integrity sha512-R0/EatdSBPZ+orsD5Mu/Gq8XmEfr/KCzJv05S35GVPDkIgczIJ2AYlHgchnEO0m63jDFyWLzUteQmPZ3pao9PQ==
-  dependencies:
-    "@sentry/core" "7.9.0"
-    "@sentry/types" "7.9.0"
-    "@sentry/utils" "7.9.0"
-    tslib "^1.9.3"
-
 "@sentry/cli@1.74.4":
   version "1.74.4"
   resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.74.4.tgz#7df82f68045a155e1885bfcbb5d303e5259eb18e"
@@ -2062,16 +2052,6 @@
     "@sentry/utils" "7.7.0"
     tslib "^1.9.3"
 
-"@sentry/core@7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-7.9.0.tgz#fb9308e067a4b5794eb49f8bac303bb9c627b1a9"
-  integrity sha512-WVGd2hV7Clcpl7/GL8LsRr4Zk9o/7o4rZHfs1Qed5lMRNYcxiMwucC1CYILVpJqVfY+8vIRP9v9Ss9ta2VUikw==
-  dependencies:
-    "@sentry/hub" "7.9.0"
-    "@sentry/types" "7.9.0"
-    "@sentry/utils" "7.9.0"
-    tslib "^1.9.3"
-
 "@sentry/hub@7.7.0":
   version "7.7.0"
   resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-7.7.0.tgz#9ad3471cf5ecaf1a9d3a3a04ca2515ffec9e2c09"
@@ -2081,15 +2061,6 @@
     "@sentry/utils" "7.7.0"
     tslib "^1.9.3"
 
-"@sentry/hub@7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@sentry/hub/-/hub-7.9.0.tgz#29d4c796006282a20e5f78a1bb156d8f5eacd772"
-  integrity sha512-KzPbGCB5mONgsXEzqHy6uOaOuqLnhmFmSpGg+M03J6UJnJaNM7nrNp80MhStmjLMq6whEYVE07DrMAn3+iaQdg==
-  dependencies:
-    "@sentry/types" "7.9.0"
-    "@sentry/utils" "7.9.0"
-    tslib "^1.9.3"
-
 "@sentry/integrations@7.7.0":
   version "7.7.0"
   resolved "https://registry.yarnpkg.com/@sentry/integrations/-/integrations-7.7.0.tgz#be4d89ccce756f3decc52b04cc09add19f142715"
@@ -2097,16 +2068,6 @@
   dependencies:
     "@sentry/types" "7.7.0"
     "@sentry/utils" "7.7.0"
-    localforage "^1.8.1"
-    tslib "^1.9.3"
-
-"@sentry/integrations@7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@sentry/integrations/-/integrations-7.9.0.tgz#f1db61ec426565ae70d98fa0d1d5a8e9f51761eb"
-  integrity sha512-HQX7Fxj9Kjobp8AVipPPusjpogRJuMYdCYtCJMUHpmGB9BVOZpKcnr5tUR39GNpTxlb0+L9/4ET6Bg+2HfIrRg==
-  dependencies:
-    "@sentry/types" "7.9.0"
-    "@sentry/utils" "7.9.0"
     localforage "^1.8.1"
     tslib "^1.9.3"
 
@@ -2126,22 +2087,6 @@
     "@sentry/utils" "7.7.0"
     "@sentry/wizard" "1.2.17"
 
-"@sentry/react-native@^4.1.3":
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/@sentry/react-native/-/react-native-4.2.3.tgz#3542917639a35dfe1403d7eee8c0eb21f119998f"
-  integrity sha512-I0IdNlgrTqR0z0nEMzI2xTWcAzraZRhqoBm+6ltLhGLX5/0tADVNiW/431nSta5xknSvc3EGpZZJ/gsv4CS8ZQ==
-  dependencies:
-    "@sentry/browser" "7.9.0"
-    "@sentry/cli" "1.74.4"
-    "@sentry/core" "7.9.0"
-    "@sentry/hub" "7.9.0"
-    "@sentry/integrations" "7.9.0"
-    "@sentry/react" "7.9.0"
-    "@sentry/tracing" "7.9.0"
-    "@sentry/types" "7.9.0"
-    "@sentry/utils" "7.9.0"
-    "@sentry/wizard" "1.2.17"
-
 "@sentry/react@7.7.0":
   version "7.7.0"
   resolved "https://registry.yarnpkg.com/@sentry/react/-/react-7.7.0.tgz#a519dd727f863c1abf1a77beac01a3336c856828"
@@ -2150,17 +2095,6 @@
     "@sentry/browser" "7.7.0"
     "@sentry/types" "7.7.0"
     "@sentry/utils" "7.7.0"
-    hoist-non-react-statics "^3.3.2"
-    tslib "^1.9.3"
-
-"@sentry/react@7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@sentry/react/-/react-7.9.0.tgz#555a4a6093621ee0c3ce90804d3be28ca342670e"
-  integrity sha512-T3jHDH0AYmbyyufvKEOCFnIeLTU/bHUZM+e3eTevcq/eXFHS7JTK/8qsRnK0sYUT7/JolbpG/iq7QDkeGvSxpQ==
-  dependencies:
-    "@sentry/browser" "7.9.0"
-    "@sentry/types" "7.9.0"
-    "@sentry/utils" "7.9.0"
     hoist-non-react-statics "^3.3.2"
     tslib "^1.9.3"
 
@@ -2174,25 +2108,10 @@
     "@sentry/utils" "7.7.0"
     tslib "^1.9.3"
 
-"@sentry/tracing@7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@sentry/tracing/-/tracing-7.9.0.tgz#0cbbf5b61ee76b934d2e4160a0ad3daf0001237b"
-  integrity sha512-X4HQ7jjP7qyc4saCtq31kLqQzcBpRNifE9KccgEbNXAkKoMrg5F22oUlfN2EcEWy0vm1C23juseDsOSSMXAM+A==
-  dependencies:
-    "@sentry/hub" "7.9.0"
-    "@sentry/types" "7.9.0"
-    "@sentry/utils" "7.9.0"
-    tslib "^1.9.3"
-
 "@sentry/types@7.7.0":
   version "7.7.0"
   resolved "https://registry.yarnpkg.com/@sentry/types/-/types-7.7.0.tgz#dd6bd3d119d7efea0e85dbaa4b17de1c22b63c7a"
   integrity sha512-4x8O7uerSGLnYC10krHl9t8h7xXHn5FextqKYbTCXCnx2hC8D+9lz8wcbQAFo0d97wiUYqI8opmEgFVGx7c5hQ==
-
-"@sentry/types@7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@sentry/types/-/types-7.9.0.tgz#8fa952865fda76f7c7c7fc6c84043979a22043ae"
-  integrity sha512-VGnUgELVMpGJCYW1triO+5XSyaPjB2Zu6esUgbb8iJ5bi+OWtxklixXgwhdaTb0FDzmRL/T/pckmrIuBTLySHQ==
 
 "@sentry/utils@7.7.0":
   version "7.7.0"
@@ -2200,14 +2119,6 @@
   integrity sha512-fD+ROSFpeJlK7bEvUT2LOW7QqgjBpXJwVISKZ0P2fuzclRC3KoB2pbZgBM4PXMMTiSzRGWhvfRRjBiBvQJBBJQ==
   dependencies:
     "@sentry/types" "7.7.0"
-    tslib "^1.9.3"
-
-"@sentry/utils@7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-7.9.0.tgz#497c41efe1b32974208ca68570e42c853b874f77"
-  integrity sha512-4f9TZvAVopgG7Lp1TcPSekSX1Ashk68Et4T8Y+60EVX5se19i0hpytbHWWwrXSrb3w0KpGANk0byoZkdaTgkYA==
-  dependencies:
-    "@sentry/types" "7.9.0"
     tslib "^1.9.3"
 
 "@sentry/wizard@1.2.17":
@@ -5420,7 +5331,7 @@ expo-cli@^6.0.0:
     wrap-ansi "^7.0.0"
     xdl "59.2.50"
 
-expo-constants@~13.2.2, expo-constants@~13.2.3:
+expo-constants@~13.2.2:
   version "13.2.3"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-13.2.3.tgz#526711851d8ebec1f0b1f06d9b91271b119e4f33"
   integrity sha512-2Rrp7GtSTeW7gNz3BsZ+AWMBbBaBnymELuo1ecTQ6fga8F5IRXgj1TW5yFpTmqOTtVfCiQfS0M1QO+JZEatPCQ==
@@ -5526,10 +5437,18 @@ expo-pwa@0.0.122:
     commander "2.20.0"
     update-check "1.5.3"
 
-expo-splash-screen@~0.16.0, expo-splash-screen@~0.16.1:
+expo-splash-screen@~0.16.0:
   version "0.16.1"
   resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.16.1.tgz#d1e34a37d1e050831eea4988fbf7e75c166b4dc3"
   integrity sha512-R3EUV5OM4RO+tb5XHgx9TNjaKCpHULo2CrIPbfZGnIdef3MeQucg4dNGw+Kiub9oKGPeExQfwtWqW+VXZqa0vg==
+  dependencies:
+    "@expo/configure-splash-screen" "^0.6.0"
+    "@expo/prebuild-config" "~5.0.0"
+
+expo-splash-screen@~0.16.2:
+  version "0.16.2"
+  resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.16.2.tgz#38ecba9fc9fc2234ee38bcb818d8c88cd83cff9e"
+  integrity sha512-AHSRyGwu58WNt8shW5g/4cQ9e9IzUwNTC/WGWxshHCwgbWIJmHLvK3+D45MTmzGWteOoTI8oV7KSQKBNJSTiyw==
   dependencies:
     "@expo/configure-splash-screen" "^0.6.0"
     "@expo/prebuild-config" "~5.0.0"
@@ -10155,7 +10074,7 @@ react-native-calendar-picker@^7.1.2:
     prop-types "^15.6.0"
     recyclerlistview "^3.0.0"
 
-react-native-codegen@^0.69.1:
+react-native-codegen@^0.69.2:
   version "0.69.2"
   resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.69.2.tgz#e33ac3b1486de59ddae687b731ddbfcef8af0e4e"
   integrity sha512-yPcgMHD4mqLbckqnWjFBaxomDnBREfRjDi2G/WxNyPBQLD+PXUEmZTkDx6QoOXN+Bl2SkpnNOSsLE2+/RUHoPw==
@@ -10278,10 +10197,10 @@ react-native-web@~0.18.7:
     postcss-value-parser "^4.2.0"
     styleq "^0.1.2"
 
-react-native@0.69.4:
-  version "0.69.4"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.69.4.tgz#d66f2a117442a9398b065876afdc568b209dc4da"
-  integrity sha512-rqNMialM/T4pHRKWqTIpOxA65B/9kUjtnepxwJqvsdCeMP9Q2YdSx4VASFR9RoEFYcPRU41yGf6EKrChNfns3g==
+react-native@0.69.5:
+  version "0.69.5"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.69.5.tgz#959142bfef21beed837160b54aa17313f5e1898f"
+  integrity sha512-4Psrj1nDMLQjBXVH8n3UikzOHQc8+sa6NbxZQR0XKtpx8uC3HiJBgX+/FIum/RWxfi5J/Dt/+A2gLGmq2Hps8g==
   dependencies:
     "@jest/create-cache-key-function" "^27.0.1"
     "@react-native-community/cli" "^8.0.4"
@@ -10306,7 +10225,7 @@ react-native@0.69.4:
     pretty-format "^26.5.2"
     promise "^8.0.3"
     react-devtools-core "4.24.0"
-    react-native-codegen "^0.69.1"
+    react-native-codegen "^0.69.2"
     react-native-gradle-plugin "^0.0.7"
     react-refresh "^0.4.0"
     react-shallow-renderer "16.15.0"
