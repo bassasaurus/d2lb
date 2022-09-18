@@ -3,10 +3,8 @@ import React, { useEffect, useState } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
 import * as Sentry from "sentry-expo";
-import api from "./app/api/axiosConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import storeAsyncObject from "./app/asyncStorage/storeAsyncObject";
+import fetchTailnumbers from "./app/api/fetchTailnumbers";
 import NetInfo from "@react-native-community/netinfo";
 
 Sentry.init({
@@ -26,18 +24,13 @@ export default function App() {
     setActivityVisible,
   };
 
-  const fetchData = async () => {
-    const response = await api.get("/api/tailnumbers/");
-    storeAsyncObject("tailnumbers_data", response.data.results);
-  };
-
   NetInfo.fetch().then((state) => {
     console.log("Connection type", state.type);
     console.log("Is connected?", state.isConnected);
   });
 
   useEffect(() => {
-    fetchData();
+    fetchTailnumbers();
     const isSignedInHandler = async () => {
       const value = await AsyncStorage.getItem("token");
       if (value !== null) {
