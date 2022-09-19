@@ -15,7 +15,6 @@ import * as Device from "expo-device";
 function FlightDetailScreen({ route, navigation }) {
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
-  const [lineDashPattern, setLineDashPattern] = useState([0]);
 
   const markers = route.params.item.app_markers;
   const polylines = route.params.item.app_polylines.coordinates;
@@ -174,10 +173,9 @@ function FlightDetailScreen({ route, navigation }) {
           {/* add logic for circle here */}
           <Polyline
             strokeColor={STYLES.blue}
-            strokeWidth={Device.osName === "android" ? 3 : 1}
+            strokeWidth={2}
             geodesic={true}
             coordinates={polylines}
-            lineDashPattern={lineDashPattern}
           />
         </MapView>
       </View>
