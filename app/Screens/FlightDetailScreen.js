@@ -1,13 +1,6 @@
-import React, { useRef, useEffect, useContext, useState } from "react";
+import React, { useRef, useContext, useState } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import {
-  StyleSheet,
-  View,
-  Alert,
-  TouchableOpacity,
-  Platform,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, View, Alert, TouchableOpacity } from "react-native";
 
 import { STYLES } from "../styles/styles";
 import ActivityModal from "../components/ActivityModal";
@@ -17,6 +10,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
 import Separator from "../components/Separator";
 import DetailsPanel from "../components/DetailsPanel";
+import * as Device from "expo-device";
 
 function FlightDetailScreen({ route, navigation }) {
   const mapRef = useRef(null);
@@ -63,7 +57,7 @@ function FlightDetailScreen({ route, navigation }) {
           Context.setActivityVisible(true);
         },
       },
-      { text: Platform.OS === "android" ? "Cancel" : "Cancel" },
+      { text: Device.osName === "android" ? "Cancel" : "Cancel" },
     ]);
 
   const fitMap = () => {
@@ -159,11 +153,11 @@ function FlightDetailScreen({ route, navigation }) {
       <View style={styles.mapView}>
         <MapView
           style={
-            Platform.OS === "ios"
+            Device.osName === "ios"
               ? { width: "100%", height: "100%" }
               : { width: "100%", height: "90%" }
           }
-          mapPadding={Platform.OS === "ios" ? iosPadding : androidPadding}
+          mapPadding={Device.osName === "ios" ? iosPadding : androidPadding}
           ref={mapRef}
           onLayout={fitMap}
           maxZoomLevel={14}
@@ -180,7 +174,7 @@ function FlightDetailScreen({ route, navigation }) {
           {/* add logic for circle here */}
           <Polyline
             strokeColor={STYLES.blue}
-            strokeWidth={Platform.OS === "android" ? 3 : 1}
+            strokeWidth={Device.osName === "android" ? 3 : 1}
             geodesic={true}
             coordinates={polylines}
             lineDashPattern={lineDashPattern}
