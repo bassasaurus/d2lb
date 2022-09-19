@@ -21,9 +21,9 @@ function TailnumberCreateScreen(props) {
     api
       .post("/api/tailnumbers/", data)
       .then(() => {
+        fetchTailnumbers();
         navigation.navigate("FlightCreate");
         Context.setActivityVisible(false);
-        fetchTailnumbers();
       })
       .catch(function (error) {
         console.log(error.response.data);
