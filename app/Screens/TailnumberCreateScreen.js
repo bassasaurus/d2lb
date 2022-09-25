@@ -21,9 +21,10 @@ function TailnumberCreateScreen(props) {
     api
       .post("/api/tailnumbers/", data)
       .then(() => {
-        fetchTailnumbers();
         navigation.navigate("FlightCreate");
         Context.setActivityVisible(false);
+        console.log(create.data);
+        // use response.data to reassign AsyncStorage variable
       })
       .catch(function (error) {
         console.log(error.response.data);

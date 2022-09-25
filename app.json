@@ -43,6 +43,9 @@
           }
         }
       ]
-    }
+    },
+    "plugins": [
+      "sentry-expo"
+    ]
   }
 }
