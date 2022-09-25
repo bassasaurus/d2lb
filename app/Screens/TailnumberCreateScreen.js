@@ -25,6 +25,7 @@ function TailnumberCreateScreen(props) {
         Context.setActivityVisible(false);
         // console.log(create.data);
         // use response.data to reassign AsyncStorage variable
+        console.log(create.data);
       })
       .catch(function (error) {
         // console.log(error.response.data);
