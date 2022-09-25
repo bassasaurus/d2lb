@@ -5,7 +5,6 @@ import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
 
 import { useNavigation } from "@react-navigation/native";
-import createFlight from "../api/createFlight";
 
 function FlightCreateScreen() {
   const Context = useContext(AppContext);
@@ -39,7 +38,19 @@ function FlightCreateScreen() {
     remarks: "",
   };
 
-  const create = createFlight();
+  const create = (data) => {
+    api
+      .post("/api/flights/", data)
+      .then(() => {
+        navigation.navigate("FlightList");
+        Context.setActivityVisible(false);
+      })
+      .catch(function (error) {
+        console.log(error.response.data);
+        Context.setActivityVisible(false);
+        Alert.alert("An error occurred. \n Please try again.");
+      });
+  };
 
   return (
     <FlightForm method={create} initialValues={initialValues}></FlightForm>

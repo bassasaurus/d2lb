@@ -23,14 +23,13 @@ function TailnumberCreateScreen(props) {
       .then(() => {
         navigation.navigate("FlightCreate");
         Context.setActivityVisible(false);
-        console.log(create.data);
+        // console.log(create.data);
         // use response.data to reassign AsyncStorage variable
       })
       .catch(function (error) {
-        console.log(error.response.data);
+        // console.log(error.response.data);
         Context.setActivityVisible(false);
         Alert.alert("An error occurred. \n Please try again.");
-        console.log(data);
       });
   };
   return (
