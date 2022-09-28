@@ -20,12 +20,11 @@ function TailnumberCreateScreen(props) {
   const create = (data) => {
     api
       .post("/api/tailnumbers/", data)
-      .then(() => {
+      .then((response) => {
         navigation.navigate("FlightCreate");
         Context.setActivityVisible(false);
-        // console.log(create.data);
         // use response.data to reassign AsyncStorage variable
-        console.log(create.data);
+        console.log(response.data);
       })
       .catch(function (error) {
         // console.log(error.response.data);

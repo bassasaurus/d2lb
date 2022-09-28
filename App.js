@@ -24,10 +24,10 @@ export default function App() {
     setActivityVisible,
   };
 
-  NetInfo.fetch().then((state) => {
-    console.log("Connection type", state.type);
-    console.log("Is connected?", state.isConnected);
-  });
+  // NetInfo.fetch().then((state) => {
+  //   console.log("Connection type", state.type);
+  //   console.log("Is connected?", state.isConnected);
+  // });
 
   useEffect(() => {
     fetchTailnumbers();
