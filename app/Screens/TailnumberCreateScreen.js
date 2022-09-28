@@ -3,8 +3,8 @@ import { StyleSheet, Alert } from "react-native";
 import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
 import TailnumberForm from "../components/TailnumberForm";
-import { useNavigation } from "@react-navigation/native";
-import fetchTailnumbers from "../api/fetchTailnumbers";
+import storeAsyncObject from "../asyncStorage/storeAsyncObject";
+import removeAsyncObject from "../asyncStorage/removeAsyncObject";
 
 function TailnumberCreateScreen(props) {
   const Context = useContext(AppContext);
@@ -24,11 +24,13 @@ function TailnumberCreateScreen(props) {
         navigation.navigate("FlightCreate");
         Context.setActivityVisible(false);
         // use response.data to reassign AsyncStorage variable
-        console.log(response.data);
+        removeAsyncObject("tailnumbers_data");
+        storeAsyncObject("tailnumbers_data", response.data);
       })
       .catch(function (error) {
         // console.log(error.response.data);
         Context.setActivityVisible(false);
+        e;
         Alert.alert("An error occurred. \n Please try again.");
       });
   };
