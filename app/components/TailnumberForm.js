@@ -31,7 +31,6 @@ function TailnumberForm({ initialValues, method, aircraft_type }) {
   const required = "Required";
 
   let schema = yup.object().shape({
-    aircraft: yup.string().required(required),
     registration: yup.string().min(3).max(8).required(required),
     is_91: yup.boolean().test({
       name: "check91",
@@ -73,7 +72,7 @@ function TailnumberForm({ initialValues, method, aircraft_type }) {
         }) => (
           <>
             <SafeAreaView>
-              <AppTextInput>{aircraft_type}</AppTextInput>
+              <AppTextInput isValid={true}>{aircraft_type}</AppTextInput>
               <AppTextInput
                 placeholder={"New Tailnumber"}
                 initialValue={initialValues ? initialValues.registration : ""}
