@@ -24,6 +24,7 @@ function TailnumberPicker({
   aircraftId,
   setAcTailMatch,
   isValid,
+  aircraft_type,
 }) {
   const [data, setData] = useState();
   const [visible, setVisible] = useState(false);
@@ -85,7 +86,9 @@ function TailnumberPicker({
             <View style={{ paddingBottom: 30 }}>
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("TailnumberCreate");
+                  navigation.navigate("TailnumberCreate", {
+                    aircraft_type: aircraft_type,
+                  });
                   setVisible(false);
                 }}
               >

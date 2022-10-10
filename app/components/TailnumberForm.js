@@ -10,7 +10,7 @@ import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { STYLES } from "../styles/styles";
 
-function TailnumberForm({ initialValues, method, actype }) {
+function TailnumberForm({ initialValues, method, aircraft_type }) {
   const Context = useContext(AppContext);
 
   const [checkValid, setCheckValid] = useState(false);
@@ -73,7 +73,7 @@ function TailnumberForm({ initialValues, method, actype }) {
         }) => (
           <>
             <SafeAreaView>
-              <AppTextInput>{actype}</AppTextInput>
+              <AppTextInput>{aircraft_type}</AppTextInput>
               <AppTextInput
                 placeholder={"New Tailnumber"}
                 initialValue={initialValues ? initialValues.registration : ""}

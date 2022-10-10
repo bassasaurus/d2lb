@@ -190,6 +190,7 @@ function FlightForm({ initialValues, method }) {
                           setAcTailMatch={setAcTailMatch}
                           aircraftId={values.aircraft_type}
                           onBlur={handleBlur("registration")}
+                          aircraft_type={values.aircraft_type}
                         ></TailnumberPicker>
                         <View>
                           {errors.registration ? (
