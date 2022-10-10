@@ -8,11 +8,11 @@ import removeAsyncData from "../asyncStorage/removeAsyncData";
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import fetchTailnumbers from "../api/fetchTailnumbers";
 
-function TailnumberCreateScreen(props) {
+function TailnumberCreateScreen({ actype }) {
   const Context = useContext(AppContext);
   const navigation = useNavigation();
   const initialValues = {
-    aircraft: "",
+    aircraft: actype,
     registration: "",
     is_91: false,
     is_135: false,
@@ -39,6 +39,7 @@ function TailnumberCreateScreen(props) {
     <TailnumberForm
       method={create}
       initialValues={initialValues}
+      actype={actype}
     ></TailnumberForm>
   );
 }

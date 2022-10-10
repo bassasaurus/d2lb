@@ -10,7 +10,7 @@ import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { STYLES } from "../styles/styles";
 
-function TailnumberForm({ initialValues, method }) {
+function TailnumberForm({ initialValues, method, actype }) {
   const Context = useContext(AppContext);
 
   const [checkValid, setCheckValid] = useState(false);
@@ -73,23 +73,7 @@ function TailnumberForm({ initialValues, method }) {
         }) => (
           <>
             <SafeAreaView>
-              <AircraftPicker
-                initialValue={initialValues.aircraft}
-                isValid={errors.aircraft ? false : true}
-                fieldName={"aircraft"}
-                setFieldValue={setFieldValue}
-                //dummy prop used in registration match on flight form
-                handleAircraftId={() => {
-                  return true;
-                }}
-              ></AircraftPicker>
-              <View>
-                {errors.aircraft ? (
-                  <Text style={styles.errors}>{errors.aircraft}</Text>
-                ) : (
-                  <View></View>
-                )}
-              </View>
+              <AppTextInput>{actype}</AppTextInput>
               <AppTextInput
                 placeholder={"New Tailnumber"}
                 initialValue={initialValues ? initialValues.registration : ""}
