@@ -72,7 +72,12 @@ function TailnumberForm({ initialValues, method, aircraft_type }) {
         }) => (
           <>
             <SafeAreaView>
-              <AppTextInput isValid={true}>{aircraft_type}</AppTextInput>
+              <View style={{ marginTop: 5 }}>
+                <AppText size={20} weight={"bold"}>
+                  {aircraft_type}
+                </AppText>
+              </View>
+
               <AppTextInput
                 placeholder={"New Tailnumber"}
                 initialValue={initialValues ? initialValues.registration : ""}
