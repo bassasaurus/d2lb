@@ -17,6 +17,8 @@ import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
 
+import offlineDummyData from "../offlineDummyData";
+
 const FlightListScreen = () => {
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -25,9 +27,9 @@ const FlightListScreen = () => {
 
   const fetchData = async () => {
     const response = await api.get("/api/flights/");
-    storeAsyncObject("flight_data", response.data);
-    const flight_data = await getAsyncObject("flight_data");
-    setData(flight_data);
+    storeAsyncObject("syncedData", response.data);
+    const syncedData = await getAsyncObject("syncedData");
+    setData(syncedData);
   };
 
   useEffect(() => {
