@@ -27,9 +27,9 @@ const FlightListScreen = () => {
 
   const fetchData = async () => {
     const response = await api.get("/api/flights/");
-    storeAsyncObject("syncedData", response.data);
-    const syncedData = await getAsyncObject("syncedData");
-    setData(syncedData);
+    storeAsyncObject("syncedFlightData", response.data);
+    const syncedFlightData = await getAsyncObject("syncedFlightData");
+    setData(syncedFlightData);
   };
 
   useEffect(() => {
