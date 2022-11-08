@@ -1,9 +1,9 @@
 import axios from "axios";
-import { Platform } from "react-native";
+import * as Device from "expo-device";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-if (process.env.NODE_ENV == "development") {
-  if (Platform.OS === "ios") {
+if (Device.isDevice != true) {
+  if (Device.osName === "iOS") {
     axios.defaults.baseURL = "http://127.0.0.1:8000";
     // axios.defaults.baseURL = "https://www.direct2logbook.com";
   } else {

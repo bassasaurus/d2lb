@@ -10,7 +10,7 @@ import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
 import { STYLES } from "../styles/styles";
 
-function TailnumberForm({ initialValues, method }) {
+function TailnumberForm({ initialValues, method, aircraft_type }) {
   const Context = useContext(AppContext);
 
   const [checkValid, setCheckValid] = useState(false);
@@ -31,7 +31,6 @@ function TailnumberForm({ initialValues, method }) {
   const required = "Required";
 
   let schema = yup.object().shape({
-    aircraft: yup.string().required(required),
     registration: yup.string().min(3).max(8).required(required),
     is_91: yup.boolean().test({
       name: "check91",
@@ -73,23 +72,12 @@ function TailnumberForm({ initialValues, method }) {
         }) => (
           <>
             <SafeAreaView>
-              <AircraftPicker
-                initialValue={initialValues.aircraft}
-                isValid={errors.aircraft ? false : true}
-                fieldName={"aircraft"}
-                setFieldValue={setFieldValue}
-                //dummy prop used in registration match on flight form
-                handleAircraftId={() => {
-                  return true;
-                }}
-              ></AircraftPicker>
-              <View>
-                {errors.aircraft ? (
-                  <Text style={styles.errors}>{errors.aircraft}</Text>
-                ) : (
-                  <View></View>
-                )}
+              <View style={{ marginTop: 5 }}>
+                <AppText size={20} weight={"bold"}>
+                  {aircraft_type}
+                </AppText>
               </View>
+
               <AppTextInput
                 placeholder={"New Tailnumber"}
                 initialValue={initialValues ? initialValues.registration : ""}

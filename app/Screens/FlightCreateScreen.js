@@ -41,7 +41,7 @@ function FlightCreateScreen() {
   const create = (data) => {
     api
       .post("/api/flights/", data)
-      .then(() => {
+      .then((response) => {
         navigation.navigate("FlightList");
         Context.setActivityVisible(false);
       })

@@ -7,37 +7,46 @@ import {
   RefreshControl,
 } from "react-native";
 
+import { useNavigation } from "@react-navigation/native";
+
+import storeAsyncObject from "../asyncStorage/storeAsyncObject";
+import getAsyncObject from "../asyncStorage/getAsyncObject";
+
 import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
 
-const FlightListScreen = ({ navigation }) => {
+import offlineDummyData from "../offlineDummyData";
+
+const FlightListScreen = () => {
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
+  const navigation = useNavigation();
+
   const fetchData = async () => {
-    setData([]);
     const response = await api.get("/api/flights/");
-    setData(response.data);
-    onRefresh();
+    storeAsyncObject("syncedFlightData", response.data);
+    const syncedFlightData = await getAsyncObject("syncedFlightData");
+    setData(syncedFlightData);
   };
 
   useEffect(() => {
-    fetchData();
-    const refreshOnBack = navigation.addListener("focus", () => {
+    const onFocus = navigation.addListener("focus", () => {
       fetchData();
     });
 
-    return refreshOnBack;
+    return onFocus;
   }, [navigation]);
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
   };
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    fetchData();
     wait(250).then(() => setRefreshing(false));
   }, []);
 

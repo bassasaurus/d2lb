@@ -29,7 +29,6 @@ import { STYLES } from "../styles/styles";
 
 function FlightForm({ initialValues, method }) {
   const [calVisible, setCalVisible] = useState(false);
-  const [aircraftId, setAircraftId] = useState("");
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [acTailMatch, setAcTailMatch] = useState(false);
@@ -38,17 +37,6 @@ function FlightForm({ initialValues, method }) {
   const [undoAdd, setUndoAdd] = useState(false);
 
   const Context = useContext(AppContext);
-
-  function handleAircraftId(id) {
-    if (aircraftId === id) {
-      setAcTailMatch(true);
-      return true;
-    } else {
-      setAcTailMatch(false);
-      setAircraftId(id);
-      return false;
-    }
-  }
 
   const dashNotSpace = (str) => {
     str = str.replace(/\s/g, "-");
@@ -101,7 +89,7 @@ function FlightForm({ initialValues, method }) {
       <ScrollView>
         <View style={styles.container}>
           <Formik
-            validateOnMount={false}
+            validateOnMount={true}
             initialValues={initialValues}
             validationSchema={flightSchema}
             onSubmit={(values, { setSubmitting }) => {
@@ -178,7 +166,6 @@ function FlightForm({ initialValues, method }) {
                       style={{ flex: 0.5 }}
                       fieldName={"aircraft_type"}
                       setFieldValue={setFieldValue}
-                      handleAircraftId={handleAircraftId}
                       onBlur={handleBlur("aircraft_type")}
                     ></AircraftPicker>
                     <View>
@@ -203,6 +190,7 @@ function FlightForm({ initialValues, method }) {
                           setAcTailMatch={setAcTailMatch}
                           aircraftId={values.aircraft_type}
                           onBlur={handleBlur("registration")}
+                          aircraft_type={values.aircraft_type}
                         ></TailnumberPicker>
                         <View>
                           {errors.registration ? (
@@ -214,7 +202,7 @@ function FlightForm({ initialValues, method }) {
                           )}
                         </View>
                         <View>
-                          {acTailMatch === false && method.name === "create" ? (
+                          {acTailMatch === false ? (
                             <Text style={styles.errors}>
                               Registration mismatch
                             </Text>

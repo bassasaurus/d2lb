@@ -4,12 +4,15 @@ import api from "../api/axiosConfig";
 import AppContext from "../components/AppContext";
 import TailnumberForm from "../components/TailnumberForm";
 import { useNavigation } from "@react-navigation/native";
+import removeAsyncData from "../asyncStorage/removeAsyncData";
+import storeAsyncObject from "../asyncStorage/storeAsyncObject";
+import fetchTailnumbers from "../api/fetchTailnumbers";
 
-function TailnumberCreateScreen(props) {
+function TailnumberCreateScreen({ route }) {
   const Context = useContext(AppContext);
   const navigation = useNavigation();
   const initialValues = {
-    aircraft: "",
+    aircraft: route.params.aircraft_type,
     registration: "",
     is_91: false,
     is_135: false,
@@ -19,12 +22,15 @@ function TailnumberCreateScreen(props) {
   const create = (data) => {
     api
       .post("/api/tailnumbers/", data)
-      .then(() => {
+      .then((response) => {
         navigation.navigate("FlightCreate");
         Context.setActivityVisible(false);
       })
+      .then(() => {
+        fetchTailnumbers();
+      })
       .catch(function (error) {
-        console.log(error.response.data);
+        console.log(error);
         Context.setActivityVisible(false);
         Alert.alert("An error occurred. \n Please try again.");
       });
@@ -33,6 +39,7 @@ function TailnumberCreateScreen(props) {
     <TailnumberForm
       method={create}
       initialValues={initialValues}
+      aircraft_type={route.params.aircraft_type}
     ></TailnumberForm>
   );
 }
