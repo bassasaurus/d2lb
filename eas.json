@@ -5,6 +5,7 @@
     },
     "dev": {
       "releaseChannel": "dev"
-    }
+    },
+    "production": {}
   }
 }
