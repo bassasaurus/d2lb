@@ -1,14 +1,14 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import FlightListScreen from "../screens/FlightListScreen";
-import FlightDetailScreen from "../screens/FlightDetailScreen";
-import FlightCreateScreen from "../screens/FlightCreateScreen";
-import FlightUpdateScreen from "../screens/FlightUpdateScreen";
+import FlightListScreen from "../Screens/FlightListScreen";
+import FlightDetailScreen from "../Screens/FlightDetailScreen";
+import FlightCreateScreen from "../Screens/FlightCreateScreen";
+import FlightUpdateScreen from "../Screens/FlightUpdateScreen";
 import { Button, Pressable, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import TailnumberCreateScreen from "../screens/TailnumberCreateScreen";
+import TailnumberCreateScreen from "../Screens/TailnumberCreateScreen";
 
 function FlightStackNavigator(props) {
   const Stack = createStackNavigator();

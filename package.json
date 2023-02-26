@@ -20,7 +20,7 @@
     "expo": "^46.0.10",
     "expo-app-loading": "~2.1.0",
     "expo-application": "~4.2.2",
-    "expo-cli": "^6.0.0",
+    "expo-cli": "^6.3.1",
     "expo-constants": "~13.2.4",
     "expo-device": "~4.3.0",
     "expo-font": "~10.2.0",

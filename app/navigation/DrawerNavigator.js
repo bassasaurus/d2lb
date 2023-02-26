@@ -7,7 +7,7 @@ import {
   DrawerItem,
 } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
-import LoginScreen from "../screens/LoginScreen";
+import LoginScreen from "../Screens/LoginScreen";
 import FlightStackNavigator from "./FlightStackNavigator";
 import AppContext from "../components/AppContext";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
