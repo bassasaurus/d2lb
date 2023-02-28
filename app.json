@@ -24,7 +24,7 @@
         "foregroundImage": "./app/assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.bassasaurus.direct2lobook"
+      "package": "com.direct2logbook"
     },
     "web": {
       "favicon": "./app/assets/favicon.png",
