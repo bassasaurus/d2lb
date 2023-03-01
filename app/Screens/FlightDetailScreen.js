@@ -12,6 +12,8 @@ import Separator from "../components/Separator";
 import DetailsPanel from "../components/DetailsPanel";
 import * as Device from "expo-device";
 
+import { PROVIDER_GOOGLE } from "@env";
+
 function FlightDetailScreen({ route, navigation }) {
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
@@ -151,6 +153,7 @@ function FlightDetailScreen({ route, navigation }) {
 
       <View style={styles.mapView}>
         <MapView
+          provider={PROVIDER_GOOGLE}
           style={
             Device.osName === "ios"
               ? { width: "100%", height: "100%" }
