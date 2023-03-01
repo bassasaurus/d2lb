@@ -3,8 +3,8 @@
     "beta": {
       "releaseChannel": "beta"
     },
-    "dev": {
-      "releaseChannel": "dev"
+    "preview": {
+      "releaseChannel": "preview"
     },
     "production": {}
   }
