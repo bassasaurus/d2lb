@@ -4,7 +4,7 @@
     "name": "d2lb",
     "slug": "direct2lobook",
     "orientation": "portrait",
-    "icon": "./app/assets/app_icon.png",
+    "icon": "./app/assets/playstore.png",
     "splash": {
       "image": "./app/assets/D2LB_LOGO_Dark_top.png",
       "resizeMode": "contain",
@@ -20,9 +20,9 @@
       "supportsTablet": false
     },
     "android": {
-      "icon": "./app/assets/playstore.png.png",
+      "icon": "./app/assets/playstore.png",
       "adaptiveIcon": {
-        "foregroundImage": "./app/assets/playstore.png.png",
+        "foregroundImage": "./app/assets/playstore.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.direct2lobook.mobile",
@@ -32,12 +32,7 @@
         }
       }
     },
-    "web": {
-      "favicon": "./app/assets/favicon.png",
-      "plugins": [
-        "sentry-expo"
-      ]
-    },
+    "web": {},
     "hooks": {
       "postPublish": [
         {
