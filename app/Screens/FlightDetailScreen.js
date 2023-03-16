@@ -12,7 +12,7 @@ import Separator from "../components/Separator";
 import DetailsPanel from "../components/DetailsPanel";
 import * as Device from "expo-device";
 
-import { PROVIDER_GOOGLE } from "@env";
+import { PROVIDER_GOOGLE } from "react-native-maps";
 
 function FlightDetailScreen({ route, navigation }) {
   const mapRef = useRef(null);

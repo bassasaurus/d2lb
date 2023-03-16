@@ -17,15 +17,20 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.direct2logbook"
+      "supportsTablet": false
     },
     "android": {
+      "icon": "./app/assets/playstore.png.png",
       "adaptiveIcon": {
-        "foregroundImage": "./app/assets/adaptive-icon.png",
+        "foregroundImage": "./app/assets/playstore.png.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.direct2logbook"
+      "package": "com.direct2lobook.mobile",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCa78tBaxQ3ZcmIf4J15JY7GNSa51LLw58"
+        }
+      }
     },
     "web": {
       "favicon": "./app/assets/favicon.png",
