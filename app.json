@@ -1,7 +1,7 @@
 {
   "expo": {
     "owner": "bassasaurus",
-    "name": "d2lb",
+    "name": "D2LB",
     "slug": "direct2lobook",
     "orientation": "portrait",
     "icon": "./app/assets/playstore.png",
@@ -20,10 +20,9 @@
       "supportsTablet": false
     },
     "android": {
-      "icon": "./app/assets/playstore.png",
       "adaptiveIcon": {
-        "foregroundImage": "./app/assets/playstore.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./app/assets/ic_launcher_foreground.png",
+        "backgroundColor": "#587ADF"
       },
       "package": "com.direct2lobook.mobile",
       "config": {
