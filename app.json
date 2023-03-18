@@ -22,12 +22,12 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/ic_launcher_foreground.png",
-        "backgroundColor": "#587ADF"
+        "backgroundColor": "#ffffff"
       },
       "package": "com.direct2lobook.mobile",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCa78tBaxQ3ZcmIf4J15JY7GNSa51LLw58"
+          "apiKey": "AIzaSyA9NtOrSlaBAfk1EGDTVSSwXYs1GrhYs_M"
         }
       }
     },
