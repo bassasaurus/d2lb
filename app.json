@@ -1,10 +1,10 @@
 {
   "expo": {
     "owner": "bassasaurus",
-    "name": "d2lb",
+    "name": "D2LB",
     "slug": "direct2lobook",
     "orientation": "portrait",
-    "icon": "./app/assets/app_icon.png",
+    "icon": "./app/assets/playstore.png",
     "splash": {
       "image": "./app/assets/D2LB_LOGO_Dark_top.png",
       "resizeMode": "contain",
@@ -21,17 +21,17 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./app/assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./app/assets/ic_launcher_foreground.png",
+        "backgroundColor": "#ffffff"
       },
-      "package": "com.bassasaurus.direct2lobook"
+      "package": "com.direct2lobook.mobile",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA9NtOrSlaBAfk1EGDTVSSwXYs1GrhYs_M"
+        }
+      }
     },
-    "web": {
-      "favicon": "./app/assets/favicon.png",
-      "plugins": [
-        "sentry-expo"
-      ]
-    },
+    "web": {},
     "hooks": {
       "postPublish": [
         {
@@ -49,7 +49,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "ce3c3db1-1f7f-442b-973d-9a74163e6073"
+        "projectId": "4d0be082-f961-4809-8d1d-ac2dd328010d"
       }
     }
   }

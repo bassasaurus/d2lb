@@ -17,7 +17,6 @@ import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
 
-import offlineDummyData from "../offlineDummyData";
 
 const FlightListScreen = () => {
   const [data, setData] = useState([]);
