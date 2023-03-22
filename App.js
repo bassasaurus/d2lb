@@ -7,10 +7,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import fetchTailnumbers from "./app/api/fetchTailnumbers";
 import NetInfo from "@react-native-community/netinfo";
 
-import {FAKE_TOKEN} from "@env"
-
-console.log(process.env.FAKE_TOKEN)
-
 Sentry.init({
   dsn: "https://45a431f2fa3541a09ba6320ae658b609@o369988.ingest.sentry.io/6397150",
   enableInExpoDevelopment: true,
