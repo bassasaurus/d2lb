@@ -733,7 +733,7 @@ function FlightForm({ initialValues, method }) {
                         onSubmit;
                         method(values);
                         setSubmitting(true);
-                        Context.setActivityVisible(true);
+                        // Context.setActivityVisible(true);
                       }}
                     ></Button>
                   ) : (
