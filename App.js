@@ -2,7 +2,6 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
-import FlightContext from "./app/components/FlightContext";
 import * as Sentry from "sentry-expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import fetchTailnumbers from "./app/api/fetchTailnumbers";
