@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useContext} from "react";
 import {
   SafeAreaView,
   FlatList,
@@ -6,29 +6,27 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
-
 import { useNavigation } from "@react-navigation/native";
-
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import getAsyncObject from "../asyncStorage/getAsyncObject";
-
 import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
+import AppContext from "../components/AppContext";
 
 
 const FlightListScreen = () => {
-  const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-
   const navigation = useNavigation();
+
+  const Context = useContext(AppContext);
 
   const fetchData = async () => {
     const response = await api.get("/api/flights/");
-    storeAsyncObject("syncedFlightData", response.data);
+    storeAsyncObject("syncedFlightData", response.data.results);
     const syncedFlightData = await getAsyncObject("syncedFlightData");
-    setData(syncedFlightData);
+    Context.setFlightData(syncedFlightData);
   };
 
   useEffect(() => {
@@ -75,7 +73,7 @@ const FlightListScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={data.results}
+        data={Context.flightDataValue}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         refreshControl={
