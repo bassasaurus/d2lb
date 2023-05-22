@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
+import FlightContext from "./app/components/FlightContext";
 import * as Sentry from "sentry-expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import fetchTailnumbers from "./app/api/fetchTailnumbers";
@@ -16,12 +17,14 @@ Sentry.init({
 export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(true);
   const [activityVisible, setActivityVisible] = useState(false);
+  const [flightData, setFlightData] = useState([])
 
   const appSettings = {
     isSignedInValue: isSignedIn,
     setIsSignedIn,
     activityVisibleValue: activityVisible,
     setActivityVisible,
+    flightDataValue: flightData, setFlightData
   };
 
   // NetInfo.fetch().then((state) => {
