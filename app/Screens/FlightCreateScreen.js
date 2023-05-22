@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
-import { Alert } from "react-native";
+
 import FlightForm from "../components/FlightForm";
-import api from "../api/axiosConfig";
+
 import AppContext from "../components/AppContext";
 
 import { useNavigation } from "@react-navigation/native";
@@ -11,6 +11,7 @@ function FlightCreateScreen() {
   const navigation = useNavigation();
 
   const initialValues = {
+    id: "5000",
     date: "",
     route: "",
     aircraft_type: "",
@@ -39,17 +40,12 @@ function FlightCreateScreen() {
   };
 
   const create = (data) => {
-    api
-      .post("/api/flights/", data)
-      .then((response) => {
-        navigation.navigate("FlightList");
-        Context.setActivityVisible(false);
-      })
-      .catch(function (error) {
-        console.log(error.response.data);
-        Context.setActivityVisible(false);
-        Alert.alert("An error occurred. \n Please try again.");
-      });
+    console.log(Context.flightDataValue.length)
+    Context.setFlightData(Context.flightDataValue.unshift(data))
+    console.log(Context.flightDataValue.length)
+    navigation.navigate("FlightList");
+    Context.setActivityVisible(false);
+     
   };
 
   return (
