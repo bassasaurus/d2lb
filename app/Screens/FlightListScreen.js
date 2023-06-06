@@ -7,8 +7,6 @@ import {
   RefreshControl,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import storeAsyncObject from "../asyncStorage/storeAsyncObject";
-import getAsyncObject from "../asyncStorage/getAsyncObject";
 import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
@@ -22,14 +20,14 @@ const FlightListScreen = () => {
 
   const Context = useContext(AppContext);
 
-  const fetchData = async () => {
+  const syncData = async () => {
     const response = await api.get("/api/flights/");
     Context.setFlightData(response.data.results);
   };
 
   useEffect(() => {
     const onFocus = navigation.addListener("focus", () => {
-      fetchData();
+      syncData();
     });
 
     return onFocus;
