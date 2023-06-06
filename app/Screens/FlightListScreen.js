@@ -24,9 +24,7 @@ const FlightListScreen = () => {
 
   const fetchData = async () => {
     const response = await api.get("/api/flights/");
-    storeAsyncObject("syncedFlightData", response.data.results);
-    const syncedFlightData = await getAsyncObject("syncedFlightData");
-    Context.setFlightData(syncedFlightData);
+    Context.setFlightData(response.data.results);
   };
 
   useEffect(() => {
@@ -75,7 +73,7 @@ const FlightListScreen = () => {
       <FlatList
         data={Context.flightDataValue}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => index}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
