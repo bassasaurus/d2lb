@@ -11,7 +11,6 @@ function FlightCreateScreen() {
   const navigation = useNavigation();
 
   const initialValues = {
-    id: "5000",
     date: "",
     route: "",
     aircraft_type: "",
