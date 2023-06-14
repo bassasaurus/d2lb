@@ -43,14 +43,6 @@
           }
         }
       ]
-    },
-    "plugins": [
-      "sentry-expo"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "4d0be082-f961-4809-8d1d-ac2dd328010d"
-      }
     }
   }
 }
