@@ -155,7 +155,7 @@ function FlightDetailScreen({ route, navigation }) {
 
       <View style={styles.mapView}>
         <MapView
-          provider= {Device.osName === "android" ? PROVIDER_GOOGLE : null}
+          // provider= {Device.osName === "android" ? PROVIDER_GOOGLE : null}
           style={
             Device.osName === "ios"
               ? { width: "100%", height: "100%" }
