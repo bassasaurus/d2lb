@@ -39,12 +39,8 @@ function FlightCreateScreen() {
   };
 
   const create = (data) => {
-    console.log(Context.flightDataValue.length)
-    Context.setFlightData(Context.flightDataValue.unshift(data))
-    console.log(Context.flightDataValue.length)
+    Context.setUnsyncedFlightData(data)
     navigation.navigate("FlightList");
-    Context.setActivityVisible(false);
-     
   };
 
   return (

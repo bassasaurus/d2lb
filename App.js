@@ -23,9 +23,13 @@ export default function App() {
   const appSettings = {
     isSignedInValue: isSignedIn,
     setIsSignedIn,
+
     activityVisibleValue: activityVisible,
     setActivityVisible,
-    flightListDataValue: flightListData, setFlightListData
+
+    flightListDataValue: flightListData, setFlightListData,
+
+    unsyncedFlightDataValue: unsyncedFlightData, setUnsyncedFlightData
   };
 
   useEffect(() => {
