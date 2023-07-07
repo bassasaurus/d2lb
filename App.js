@@ -29,7 +29,9 @@ export default function App() {
 
     flightListDataValue: flightListData, setFlightListData,
 
-    unsyncedFlightDataValue: unsyncedFlightData, setUnsyncedFlightData
+    unsyncedFlightDataValue: unsyncedFlightData, setUnsyncedFlightData,
+
+    syncedFlightDataValue: syncedFlightData, setSyncedFlightData
   };
 
   useEffect(() => {

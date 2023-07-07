@@ -22,7 +22,7 @@ const FlightListScreen = () => {
 
   const syncData = async () => {
     const response = await api.get("/api/flights/");
-    Context.setFlightListData(response.data.results);
+    Context.setSyncedFlightData(response.data.results);
   };
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const FlightListScreen = () => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    fetchData();
+    syncData();
     wait(250).then(() => setRefreshing(false));
   }, []);
 
@@ -69,7 +69,7 @@ const FlightListScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={Context.flightListDataValue}
+        data={Context.syncedFlightDataValue}
         renderItem={renderItem}
         keyExtractor={(item, index) => index}
         refreshControl={
