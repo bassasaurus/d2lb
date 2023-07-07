@@ -16,14 +16,16 @@ Sentry.init({
 export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(true);
   const [activityVisible, setActivityVisible] = useState(false);
-  const [flightData, setFlightData] = useState([])
+  const [flightListData, setFlightListData] = useState([])
+  const [syncedFlightData, setSyncedFlightData] = useState([])
+  const [unsyncedFlightData, setUnsyncedFlightData] = useState([])
 
   const appSettings = {
     isSignedInValue: isSignedIn,
     setIsSignedIn,
     activityVisibleValue: activityVisible,
     setActivityVisible,
-    flightDataValue: flightData, setFlightData
+    flightListDataValue: flightListData, setFlightListData
   };
 
   useEffect(() => {
