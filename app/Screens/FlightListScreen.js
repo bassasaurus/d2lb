@@ -13,6 +13,8 @@ import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
 import AppContext from "../components/AppContext";
 
+import syncData from "../api/axiosConfig.js"
+
 
 const FlightListScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -20,10 +22,7 @@ const FlightListScreen = () => {
 
   const Context = useContext(AppContext);
 
-  const syncData = async () => {
-    const response = await api.get("/api/flights/");
-    Context.setSyncedFlightData(response.data.results);
-  };
+  
 
   useEffect(() => {
     const onFocus = navigation.addListener("focus", () => {
