@@ -13,7 +13,7 @@ import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
 import AppContext from "../components/AppContext";
 
-import syncData from "../api/axiosConfig.js"
+import handleFlightData from "../api/handleFlightData.js"
 
 
 const FlightListScreen = () => {
@@ -22,11 +22,9 @@ const FlightListScreen = () => {
 
   const Context = useContext(AppContext);
 
-  
-
   useEffect(() => {
     const onFocus = navigation.addListener("focus", () => {
-      syncData();
+      handleFlightData();
     });
 
     return onFocus;
@@ -38,7 +36,7 @@ const FlightListScreen = () => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    syncData();
+    handleFlightData();
     wait(250).then(() => setRefreshing(false));
   }, []);
 
