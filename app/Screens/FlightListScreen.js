@@ -12,6 +12,8 @@ import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
 import AppContext from "../components/AppContext";
+import storeAsyncObject from "../asyncStorage/storeAsyncObject";
+import getAsyncObject from "../asyncStorage/getAsyncObject";
 
 
 const FlightListScreen = () => {
@@ -21,8 +23,13 @@ const FlightListScreen = () => {
   const Context = useContext(AppContext);
 
   const syncData = async () => {
+
+    const unsynced = await getAsyncObject('unsynced');
+    console.log(unsynced)
+
     const response = await api.get("/api/flights/");
-    Context.setSyncedFlightData(response.data.results);
+    Context.setFlightListData(response.data.results);
+    
   };
 
   useEffect(() => {
@@ -69,7 +76,7 @@ const FlightListScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={Context.syncedFlightDataValue}
+        data={Context.flightListDataValue}
         renderItem={renderItem}
         keyExtractor={(item, index) => index}
         refreshControl={

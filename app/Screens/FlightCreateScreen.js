@@ -5,6 +5,7 @@ import FlightForm from "../components/FlightForm";
 import AppContext from "../components/AppContext";
 
 import { useNavigation } from "@react-navigation/native";
+import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 
 function FlightCreateScreen() {
   const Context = useContext(AppContext);
@@ -39,7 +40,7 @@ function FlightCreateScreen() {
   };
 
   const create = (data) => {
-    Context.setUnsyncedFlightData(data)
+    storeAsyncObject('unsynced', data)
     navigation.navigate("FlightList");
   };
 
