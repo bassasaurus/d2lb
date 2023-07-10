@@ -30,9 +30,9 @@ const FlightListScreen = () => {
 
     const response = await api.get("/api/flights/");
 
-    
-    newArray = [unsynced, ...response.data.results]
-    Context.setFlightListData(newArray);
+    combinedArray = [unsynced, ...response.data.results]
+
+    Context.setFlightListData(combinedArray);
   
     
   };
@@ -66,6 +66,7 @@ const FlightListScreen = () => {
       }
     >
       <FlightItem
+        id={item.id}
         date={item.date}
         route={item.route}
         type={item.aircraft_type}

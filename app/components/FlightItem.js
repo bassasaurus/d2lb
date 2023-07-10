@@ -2,11 +2,14 @@ import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { STYLES } from "../styles/styles";
 import AppText from "../components/AppText";
+import { backgroundColor } from "styled-system";
 
-function FlightItem({ date, route, type, reg, dur, crew, dayL, nitL }) {
+function FlightItem({ id, date, route, type, reg, dur, crew, dayL, nitL }) {
   return (
     <>
-      <View style={styles.itemContainer}>
+      <View style={{...styles.itemContainer,
+                    backgroundColor: id ? "white" : "gray"
+                    }}>
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <AppText size={16} color={STYLES.blue} weight='bold'>
@@ -55,7 +58,6 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingLeft: 5,
     paddingRight: 5,
-    backgroundColor: STYLES.white,
   },
   rowContainer: {
     flex: 1,
