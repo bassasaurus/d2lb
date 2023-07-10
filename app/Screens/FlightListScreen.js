@@ -22,13 +22,16 @@ const FlightListScreen = () => {
 
   const Context = useContext(AppContext);
 
+  
+
   const syncData = async () => {
 
     const unsynced = await getAsyncObject('unsynced');
-    console.log(unsynced)
 
     const response = await api.get("/api/flights/");
-    Context.setFlightListData(response.data.results);
+
+    Context.setFlightListData(response.data.results.concat(unsynced));
+  
     
   };
 
