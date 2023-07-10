@@ -30,7 +30,9 @@ const FlightListScreen = () => {
 
     const response = await api.get("/api/flights/");
 
-    Context.setFlightListData(response.data.results.concat(unsynced));
+    
+    newArray = [unsynced, ...response.data.results]
+    Context.setFlightListData(newArray);
   
     
   };
