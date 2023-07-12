@@ -7,9 +7,7 @@ import { backgroundColor } from "styled-system";
 function FlightItem({ id, date, route, type, reg, dur, crew, dayL, nitL }) {
   return (
     <>
-      <View style={{...styles.itemContainer,
-                    backgroundColor: id ? "white" : "gray"
-                    }}>
+      <View style={styles.itemContainer}>
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <AppText size={16} color={STYLES.blue} weight='bold'>
@@ -45,7 +43,9 @@ function FlightItem({ id, date, route, type, reg, dur, crew, dayL, nitL }) {
           <View style={styles.thirdColumn}>
             <AppText color={STYLES.black}>{crew}</AppText>
           </View>
+          
         </View>
+        <View style={{backgroundColor: id ? "green" : "red", height: 1}}></View>
       </View>
     </>
   );
@@ -54,6 +54,7 @@ function FlightItem({ id, date, route, type, reg, dur, crew, dayL, nitL }) {
 const styles = StyleSheet.create({
   itemContainer: {
     width: "100%",
+    backgroundColor: "white",
     marginTop: 5,
     paddingTop: 5,
     paddingLeft: 5,
