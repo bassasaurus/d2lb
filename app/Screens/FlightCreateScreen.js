@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import getAsyncObject from "../asyncStorage/getAsyncObject";
 import addAsyncObject from "../asyncStorage/addAsyncObject"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 function FlightCreateScreen() {
@@ -42,8 +43,14 @@ function FlightCreateScreen() {
     remarks: "",
   };
 
-  const create = (data) => {
-    addAsyncObject('unsynced', data);
+  const create = async (data) => {
+    const unsyncedFlights = await getAsyncObject('unsyncedFlights')
+    if (unsyncedFlights === null) {
+      storeAsyncObject('unsyncedFlights', data)
+    } else {
+      const combinedArray = [data, ...unsyncedFlights]
+      storeAsyncObject('unsyncedFlights', combinedArray)
+    }
     navigation.navigate("FlightList");
   };
 

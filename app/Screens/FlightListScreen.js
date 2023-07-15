@@ -13,7 +13,9 @@ import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
 import AppContext from "../components/AppContext";
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
+import removeAsyncData from  "../asyncStorage/removeAsyncData"
 import getAsyncObject from "../asyncStorage/getAsyncObject";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const FlightListScreen = () => {
@@ -22,20 +24,21 @@ const FlightListScreen = () => {
 
   const Context = useContext(AppContext);
 
-  
-
   const syncData = async () => {
-
-    const unsynced = await getAsyncObject('unsynced');
-
+    // removeAsyncData('unsyncedFlights')
     const response = await api.get("/api/flights/");
 
-    combinedArray = [unsynced, ...response.data.results]
+    const unsyncedFlights = await getAsyncObject('unsyncedFlights')
 
-    Context.setFlightListData(combinedArray);
-  
-    
+    if (unsyncedFlights != null ) {
+      const combinedList = [unsyncedFlights, ...response.data.results]
+      Context.setFlightListData(combinedList);
+    } else {
+      Context.setFlightListData(response.data.results);
+    }
   };
+
+  
 
   useEffect(() => {
     const onFocus = navigation.addListener("focus", () => {
