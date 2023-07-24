@@ -25,13 +25,16 @@ const FlightListScreen = () => {
   const Context = useContext(AppContext);
 
   const syncData = async () => {
+
     // removeAsyncData('unsyncedFlights')
+
     const response = await api.get("/api/flights/");
 
     const unsyncedFlights = await getAsyncObject('unsyncedFlights')
 
     if (unsyncedFlights != null ) {
       const combinedList = [unsyncedFlights, ...response.data.results]
+      
       Context.setFlightListData(combinedList);
     } else {
       Context.setFlightListData(response.data.results);
