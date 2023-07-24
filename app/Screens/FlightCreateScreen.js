@@ -46,7 +46,7 @@ function FlightCreateScreen() {
 
     addItemToArray("unsyncedFlights", data)
 
-    // navigation.navigate("FlightList");
+    navigation.navigate("FlightList");
   };
 
   return (
