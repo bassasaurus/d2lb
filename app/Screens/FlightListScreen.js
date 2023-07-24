@@ -33,7 +33,9 @@ const FlightListScreen = () => {
     const unsyncedFlights = await getAsyncObject('unsyncedFlights')
 
     if (unsyncedFlights != null ) {
-      const combinedList = [unsyncedFlights, ...response.data.results]
+
+      const combinedList = unsyncedFlights.concat(response.data.results)
+      // const combinedList = [unsyncedFlights[2], ...response.data.results]
       
       Context.setFlightListData(combinedList);
     } else {
