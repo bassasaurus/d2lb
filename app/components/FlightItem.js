@@ -8,6 +8,7 @@ function FlightItem({ id, date, route, type, reg, dur, crew, dayL, nitL }) {
   return (
     <>
       <View style={styles.itemContainer}>
+
         <View style={styles.rowContainer}>
           <View style={styles.firstColumn}>
             <AppText size={16} color={STYLES.blue} weight='bold'>
@@ -25,13 +26,12 @@ function FlightItem({ id, date, route, type, reg, dur, crew, dayL, nitL }) {
               </AppText>
             </View>
           </View>
-          <View style={styles.rowContainer}>
+          
             <View style={styles.thirdColumn}>
               <AppText size={16} color={STYLES.blue} weight='bold'>
                 {dur}
               </AppText>
             </View>
-          </View>
         </View>
 
         <View style={styles.rowContainer}>
@@ -43,9 +43,9 @@ function FlightItem({ id, date, route, type, reg, dur, crew, dayL, nitL }) {
           <View style={styles.thirdColumn}>
             <AppText color={STYLES.black}>{crew}</AppText>
           </View>
-          
         </View>
-        <View style={{backgroundColor: id ? "green" : "red", height: 1}}></View>
+        
+        <View style={{backgroundColor: id ? "green" : "red", height: 2, width: '5%'}}></View>
       </View>
     </>
   );
@@ -79,6 +79,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     alignItems: "flex-end",
+  },
+  syncInfo: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-end",
+    backgroundColor: "blue",
   },
 });
 
