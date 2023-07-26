@@ -43,8 +43,10 @@ function FlightCreateScreen() {
   };
 
   const create = async (data) => {
+
     addItemToArray("unsyncedFlights", data)
     navigation.navigate("FlightList");
+    
   };
 
   return (
