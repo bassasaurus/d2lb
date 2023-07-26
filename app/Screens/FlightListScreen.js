@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { STYLES } from "../styles/styles";
@@ -29,19 +30,29 @@ const FlightListScreen = () => {
     
     const networkState = await Network.getNetworkStateAsync()
 
-    console.log(networkState.isInternetReachable)
-
-
     // removeAsyncData('unsyncedFlights')
 
     const response = await api.get("/api/flights/");
 
-
-
     const unsyncedFlights = await getAsyncObject('unsyncedFlights')
 
     if (networkState.isInternetReachable === true) {
-      
+      for (i in unsyncedFlights) {
+        console.log(unsyncedFlights[i])
+        Context.setActivityVisible(true);
+        api
+          .post("/api/flights/", unsyncedFlights[i])
+          .then((response) => {
+            unsyncedFlights.splice(index, i)
+            console.log(unsyncedFlights.length)
+            Context.setActivityVisible(false);
+          })
+          .catch(function (error) {
+            console.log(error.response.data);
+            Context.setActivityVisible(false);
+            Alert.alert("An error occurred. \n Please try again.");
+          });
+      }
     }
 
     if (unsyncedFlights != null ) {
