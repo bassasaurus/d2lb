@@ -15,7 +15,8 @@ import AppContext from "../components/AppContext";
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import removeAsyncData from  "../asyncStorage/removeAsyncData"
 import getAsyncObject from "../asyncStorage/getAsyncObject";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Network from 'expo-network';
+import * as Device from 'expo-device';
 
 
 const FlightListScreen = () => {
@@ -25,18 +26,26 @@ const FlightListScreen = () => {
   const Context = useContext(AppContext);
 
   const syncData = async () => {
+    
+    const networkState = await Network.getNetworkStateAsync()
+
+    console.log(networkState.isInternetReachable)
+
 
     // removeAsyncData('unsyncedFlights')
 
     const response = await api.get("/api/flights/");
 
+
+
     const unsyncedFlights = await getAsyncObject('unsyncedFlights')
 
-    if (unsyncedFlights != null ) {
-
-      const combinedList = unsyncedFlights.concat(response.data.results)
-      // const combinedList = [unsyncedFlights[2], ...response.data.results]
+    if (networkState.isInternetReachable === true) {
       
+    }
+
+    if (unsyncedFlights != null ) {
+      const combinedList = unsyncedFlights.concat(response.data.results)
       Context.setFlightListData(combinedList);
     } else {
       Context.setFlightListData(response.data.results);
