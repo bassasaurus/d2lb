@@ -30,7 +30,8 @@ const syncFlightData = async (props) => {
         //     });
         }
       }
-      else{
+      
+    else{
         console.log(networkState)
       }
     
