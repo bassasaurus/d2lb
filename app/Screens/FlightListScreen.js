@@ -16,8 +16,9 @@ import AppContext from "../components/AppContext";
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import removeAsyncData from  "../asyncStorage/removeAsyncData"
 import getAsyncObject from "../asyncStorage/getAsyncObject";
-import * as Network from 'expo-network';
+
 import * as Device from 'expo-device';
+import syncFlightData from "../api/syncFlightData";
 
 
 const FlightListScreen = () => {
@@ -26,18 +27,15 @@ const FlightListScreen = () => {
 
   const Context = useContext(AppContext);
   
-
-  const syncData = async () => {
-
-    // removeAsyncData('offlineFlights')
-
-    console.log('render')
-    const networkState = await Network.getNetworkStateAsync()
-
-    const offlineFlights = await getAsyncObject('offlineFlights')
-
+  console.log('render')
+  
+  const buildList = async () => {
+    
+    const offlineFlights = await getAsyncObject('offlineFlights') 
     const response = await api.get("/api/flights/");
+
     storeAsyncObject('asyncFlights', response.data.results)
+
     const asyncFlights = await getAsyncObject('asyncFlights')
 
     if (offlineFlights === null){
@@ -51,7 +49,8 @@ const FlightListScreen = () => {
 
   useEffect(() => {
     const onFocus = navigation.addListener("focus", () => {
-      syncData();
+      buildList();
+      syncFlightData();
     });
 
     return onFocus;
