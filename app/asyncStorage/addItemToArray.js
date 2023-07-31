@@ -4,8 +4,6 @@ import storeAsyncObject from './storeAsyncObject';
 
 const addItemToArray = async (key, item) => {
 
-    
-
     if (await AsyncStorage.getItem(key) === null){
         let array = []
         let unsyncedFlights = array.concat(item)

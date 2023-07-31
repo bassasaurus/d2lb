@@ -7,6 +7,7 @@ import AppContext from "../components/AppContext";
 import { useNavigation } from "@react-navigation/native";
 
 import addItemToArray from "../asyncStorage/addItemToArray";
+import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 
 
 
@@ -44,7 +45,7 @@ function FlightCreateScreen() {
 
   const create = async (data) => {
 
-    addItemToArray("unsyncedFlights", data)
+    storeAsyncObject('offlineFlights', data)
     navigation.navigate("FlightList");
     
   };

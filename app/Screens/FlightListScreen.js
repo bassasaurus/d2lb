@@ -25,15 +25,17 @@ const FlightListScreen = () => {
   const navigation = useNavigation();
 
   const Context = useContext(AppContext);
-  // removeAsyncData('unsyncedFlights')
+  
 
   const syncData = async () => {
 
+    // removeAsyncData('offlineFlights')
+
     const networkState = await Network.getNetworkStateAsync()
 
-    const offlineFlights = Context.offlineFlightsValue
+    const offlineFlights = await getAsyncObject('offlineFlights')
 
-    console.log(networkState.isInternetReachable)
+    console.log(offlineFlights)
 
     const response = await api.get("/api/flights/");
 
