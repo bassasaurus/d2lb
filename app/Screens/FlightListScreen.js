@@ -31,17 +31,14 @@ const FlightListScreen = () => {
 
     const networkState = await Network.getNetworkStateAsync()
 
-    const offlineFlights = Context.offlineFlightsDataValue
+    const offlineFlights = Context.offlineFlightsValue
 
     console.log(networkState.isInternetReachable)
 
-
     const response = await api.get("/api/flights/");
-    
-    Context.setFlightListData(response.data.results)
-  };
 
-  
+    Context.setFlightList(response.data.results);
+  };
 
   useEffect(() => {
     const onFocus = navigation.addListener("focus", () => {
@@ -88,7 +85,7 @@ const FlightListScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={Context.flightListDataValue}
+        data={Context.flightListValue}
         renderItem={renderItem}
         keyExtractor={(item, index) => index}
         refreshControl={
