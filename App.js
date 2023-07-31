@@ -17,8 +17,8 @@ export default function App() {
   const [isSignedIn, setIsSignedIn] = useState(true);
   const [activityVisible, setActivityVisible] = useState(false);
   const [flightListData, setFlightListData] = useState([])
-  const [syncedFlightData, setSyncedFlightData] = useState([])
-  const [unsyncedFlightData, setUnsyncedFlightData] = useState([])
+  
+  const [offlineFlightData, setOfflineFlightData] = useState([])
 
   const appSettings = {
     isSignedInValue: isSignedIn,
@@ -27,11 +27,11 @@ export default function App() {
     activityVisibleValue: activityVisible,
     setActivityVisible,
 
-    flightListDataValue: flightListData, setFlightListData,
+    flightListDataValue: flightListData, 
+    setFlightListData,
 
-    unsyncedFlightDataValue: unsyncedFlightData, setUnsyncedFlightData,
-
-    syncedFlightDataValue: syncedFlightData, setSyncedFlightData
+    offlineFlightDataValue: offlineFlightData, 
+    setOfflineFlightData,
   };
 
   useEffect(() => {

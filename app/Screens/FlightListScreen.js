@@ -25,42 +25,20 @@ const FlightListScreen = () => {
   const navigation = useNavigation();
 
   const Context = useContext(AppContext);
+  // removeAsyncData('unsyncedFlights')
 
   const syncData = async () => {
-    
+
     const networkState = await Network.getNetworkStateAsync()
 
-    // removeAsyncData('unsyncedFlights')
+    const offlineFlights = Context.offlineFlightsDataValue
+
+    console.log(networkState.isInternetReachable)
+
 
     const response = await api.get("/api/flights/");
-
-    const unsyncedFlights = await getAsyncObject('unsyncedFlights')
-
-    if (networkState.isInternetReachable === true) {
-      for (i in unsyncedFlights) {
-        console.log(unsyncedFlights[i])
-        Context.setActivityVisible(true);
-        api
-          .post("/api/flights/", unsyncedFlights[i])
-          .then((response) => {
-            unsyncedFlights.splice(index, i)
-            console.log(unsyncedFlights.length)
-            Context.setActivityVisible(false);
-          })
-          .catch(function (error) {
-            console.log(error.response.data);
-            Context.setActivityVisible(false);
-            Alert.alert("An error occurred. \n Please try again.");
-          });
-      }
-    }
-
-    if (unsyncedFlights != null ) {
-      const combinedList = unsyncedFlights.concat(response.data.results)
-      Context.setFlightListData(combinedList);
-    } else {
-      Context.setFlightListData(response.data.results);
-    }
+    
+    Context.setFlightListData(response.data.results)
   };
 
   
