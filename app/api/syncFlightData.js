@@ -13,14 +13,14 @@ const syncFlightData = async (props) => {
 
     if (networkState.isInternetReachable === true) {
       
-        for (i in unsyncedFlights) {
-          console.log(unsyncedFlights[i])
-          Context.setActivityVisible(true);
+        for (i in offlineFlights) {
+          console.log(offlineFlights[i])
+          
         //   api
-        //     .post("/api/flights/", unsyncedFlights[i])
+        //     .post("/api/flights/", offlineFlights[i])
         //     .then((response) => {
-        //       unsyncedFlights.splice(index, i)
-        //       console.log(unsyncedFlights.length)
+        //       offlineFlights.splice(index, i)
+        //       console.log(offlineFlights.length)
         //       Context.setActivityVisible(false);
         //     })
         //     .catch(function (error) {

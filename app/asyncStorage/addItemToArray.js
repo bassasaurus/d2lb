@@ -6,9 +6,9 @@ const addItemToArray = async (key, item) => {
 
     if (await AsyncStorage.getItem(key) === null){
         let array = []
-        let unsyncedFlights = array.concat(item)
+        let offlineFlights = array.concat(item)
         
-        storeAsyncObject(key, unsyncedFlights)
+        storeAsyncObject(key, offlineFlights)
     }
     else {
         const array = await getAsyncObject(key)
