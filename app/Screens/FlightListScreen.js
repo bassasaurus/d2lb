@@ -36,17 +36,13 @@ const FlightListScreen = () => {
     const offlineFlights = await getAsyncObject('offlineFlights') 
     const response = await api.get("/api/flights/");
 
-    storeAsyncObject('asyncFlights', response.data.results)
-
-    const asyncFlights = await getAsyncObject('asyncFlights')
 
     if (offlineFlights === null){
-      Context.setFlightList(asyncFlights)
+      setDatat(response.data.results)
     }
     else{
-      Context.setFlightList(offlineFlights.concat(asyncFlights));
+      setData(offlineFlights.concat(response.data.results));
     }
-    
   };
 
   useEffect(() => {
@@ -95,7 +91,7 @@ const FlightListScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={Context.flightListValue}
+        data={data}
         renderItem={renderItem}
         keyExtractor={(item, index) => index}
         refreshControl={
