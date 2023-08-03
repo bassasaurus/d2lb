@@ -22,11 +22,11 @@ import syncFlightData from "../api/syncFlightData";
 
 
 const FlightListScreen = () => {
+
+  const Context = useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
-  const Context = useContext(AppContext);
-  
   console.log('render')
   
   const buildList = async () => {

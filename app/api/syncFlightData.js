@@ -2,11 +2,15 @@ import * as Network from 'expo-network';
 import api from "./axiosConfig";
 import getAsyncObject from "../asyncStorage/getAsyncObject";
 import removeAsyncData from '../asyncStorage/removeAsyncData';
+import { useContext } from 'react';
+import AppContext from '../components/AppContext';
 
 
 const syncFlightData = async (props) => {
 
     // removeAsyncData('offlineFlights')
+
+    const Context = useContext(AppContext)
 
     const networkState = await Network.getNetworkStateAsync()
     const offlineFlights = await getAsyncObject('offlineFlights')
