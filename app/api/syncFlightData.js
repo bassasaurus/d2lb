@@ -4,13 +4,14 @@ import getAsyncObject from "../asyncStorage/getAsyncObject";
 import removeAsyncData from '../asyncStorage/removeAsyncData';
 import { useContext } from 'react';
 import AppContext from '../components/AppContext';
+import { Alert } from 'react-native';
+import storeAsyncData from '../asyncStorage/storeAsyncData';
+import storeAsyncObject from '../asyncStorage/storeAsyncObject';
 
 
 const syncFlightData = async (props) => {
 
     // removeAsyncData('offlineFlights')
-
-    const Context = useContext(AppContext)
 
     const networkState = await Network.getNetworkStateAsync()
     const offlineFlights = await getAsyncObject('offlineFlights')
@@ -18,20 +19,22 @@ const syncFlightData = async (props) => {
     if (networkState.isInternetReachable === true) {
       
         for (i in offlineFlights) {
-          console.log(offlineFlights[i])
           
-        //   api
-        //     .post("/api/flights/", offlineFlights[i])
-        //     .then((response) => {
-        //       offlineFlights.splice(index, i)
-        //       console.log(offlineFlights.length)
-        //       Context.setActivityVisible(false);
-        //     })
-        //     .catch(function (error) {
-        //       console.log(error.response.data);
-        //       Context.setActivityVisible(false);
-        //       Alert.alert("An error occurred. \n Please try again.");
-        //     });
+          api
+            .post("/api/flights/", offlineFlights[i])
+            .then((response) => {
+              
+            })
+            .catch(function (error) {
+              console.log(error);
+              
+              Alert.alert("An error occurred. \n Please try again.");
+            });
+
+            offlineFlights.splice(i, 1)
+            console.log(offlineFlights.length)
+
+            storeAsyncObject('offlineFlights', offlineFlights)
         }
       }
       
