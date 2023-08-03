@@ -27,6 +27,8 @@ const FlightListScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
+  const [data, setData] = useState([])
+
   console.log('render')
   
   const buildList = async () => {
