@@ -48,7 +48,7 @@ function FlightCreateScreen() {
     
     addItemToArray('offlineFlights', data)
     
-    // navigation.navigate("FlightList");
+    navigation.navigate("FlightList");
     
   };
 

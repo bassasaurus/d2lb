@@ -60,7 +60,7 @@ const FlightListScreen = () => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    syncData();
+    syncFlightData();
     wait(250).then(() => setRefreshing(false));
   }, []);
 
