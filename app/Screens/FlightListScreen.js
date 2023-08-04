@@ -36,9 +36,8 @@ const FlightListScreen = () => {
     const offlineFlights = await getAsyncObject('offlineFlights') 
     const response = await api.get("/api/flights/");
 
-
     if (offlineFlights === null){
-      setDatat(response.data.results)
+      setData(response.data.results)
     }
     else{
       setData(offlineFlights.concat(response.data.results));
