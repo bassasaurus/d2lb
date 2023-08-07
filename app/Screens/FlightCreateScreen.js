@@ -1,7 +1,12 @@
 import React, { useContext } from "react";
+
 import FlightForm from "../components/FlightForm";
+
 import AppContext from "../components/AppContext";
+
 import { useNavigation } from "@react-navigation/native";
+
+import addItemToArray from "../asyncStorage/addItemToArray";
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import getAsyncObject from "../asyncStorage/getAsyncObject";
 
@@ -10,25 +15,6 @@ import getAsyncObject from "../asyncStorage/getAsyncObject";
 function FlightCreateScreen() {
   const Context = useContext(AppContext);
   const navigation = useNavigation();
-
-  const addItemToArray = async (key, item) => {
-
-    if (await AsyncStorage.getItem(key) === null){
-        let array = []
-        let offlineFlights = array.concat(item)
-        
-        storeAsyncObject(key, offlineFlights)
-    }
-    else {
-        const array = await getAsyncObject(key)
-        let newArray = array.concat(item)
-
-        console.log(JSON.stringify(newArray, null, 2))
-        
-        storeAsyncObject(key, newArray)
-    }
-    
-  };
 
   const initialValues = {
     date: "",
