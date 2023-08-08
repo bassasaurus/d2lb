@@ -16,9 +16,9 @@ import AppContext from "../components/AppContext";
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import removeAsyncData from  "../asyncStorage/removeAsyncData"
 import getAsyncObject from "../asyncStorage/getAsyncObject";
-import * as Network from 'expo-network';
 
 import * as Device from 'expo-device';
+import syncFlightData from "../api/syncFlightData";
 
 
 const FlightListScreen = () => {
@@ -30,42 +30,6 @@ const FlightListScreen = () => {
   const [data, setData] = useState([])
 
   console.log('render')
-
-  const syncFlightData = async () => {
-
-    // removeAsyncData('offlineFlights')
-
-    const networkState = await Network.getNetworkStateAsync()
-    const offlineFlights = await getAsyncObject('offlineFlights')
-
-    if (networkState.isInternetReachable === true) {
-      
-        for (i in offlineFlights) {
-          
-          api
-            .post("/api/flights/", offlineFlights[i])
-            .then((response) => {
-              offlineFlights.splice(i, 1)
-              storeAsyncObject('offlineFlights', offlineFlights)
-            })
-            .catch(function (error) {
-              console.log(error);
-              
-              Alert.alert("An error occurred. \n Please try again.");
-            });
-
-            offlineFlights.splice(i, 1)
-            console.log(offlineFlights.length)
-
-            storeAsyncObject('offlineFlights', offlineFlights)
-        }
-      }
-      
-    else{
-        console.log(networkState)
-      }
-
-}
   
   const buildList = async () => {
     
