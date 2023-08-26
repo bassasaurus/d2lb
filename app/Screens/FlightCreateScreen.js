@@ -11,7 +11,6 @@ import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import getAsyncObject from "../asyncStorage/getAsyncObject";
 
 
-
 function FlightCreateScreen() {
   const Context = useContext(AppContext);
   const navigation = useNavigation();

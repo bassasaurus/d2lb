@@ -20,20 +20,20 @@ import getAsyncObject from "../asyncStorage/getAsyncObject";
 import * as Device from 'expo-device';
 import syncFlightData from "../api/syncFlightData";
 
-
 const FlightListScreen = () => {
+
+  // removeAsyncData('offlineFlights')
 
   const Context = useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
-
   const [data, setData] = useState([])
 
   console.log('render')
   
   const buildList = async () => {
-    
     const offlineFlights = await getAsyncObject('offlineFlights') 
+    console.log(offlineFlights)
     const response = await api.get("/api/flights/");
 
     if (offlineFlights === null){
@@ -47,7 +47,7 @@ const FlightListScreen = () => {
   useEffect(() => {
     const onFocus = navigation.addListener("focus", () => {
       buildList();
-      syncFlightData();
+      // syncFlightData();
     });
 
     return onFocus;
@@ -59,7 +59,7 @@ const FlightListScreen = () => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    syncFlightData();
+    // syncFlightData();
     wait(250).then(() => setRefreshing(false));
   }, []);
 

@@ -11,8 +11,6 @@ import storeAsyncObject from '../asyncStorage/storeAsyncObject';
 
 const syncFlightData = async (props) => {
 
-    // removeAsyncData('offlineFlights')
-
     const networkState = await Network.getNetworkStateAsync()
     const offlineFlights = await getAsyncObject('offlineFlights')
 
@@ -31,10 +29,8 @@ const syncFlightData = async (props) => {
               Alert.alert("An error occurred. \n Please try again.");
             });
 
-            offlineFlights.splice(i, 1)
-            console.log(offlineFlights.length)
 
-            storeAsyncObject('offlineFlights', offlineFlights)
+            storeAsyncObject('offlineFlights', offlineFlights.splice(i, 1))
         }
       }
       
