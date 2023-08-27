@@ -1,20 +1,10 @@
-import React, { useContext } from "react";
-
+import React from "react";
 import FlightForm from "../components/FlightForm";
-
-import AppContext from "../components/AppContext";
-
 import { useNavigation } from "@react-navigation/native";
-
 import { useBearStore } from '../zustand/bearStore'
 
-import addItemToArray from "../asyncStorage/addItemToArray";
-import storeAsyncObject from "../asyncStorage/storeAsyncObject";
-import getAsyncObject from "../asyncStorage/getAsyncObject";
-
-
 function FlightCreateScreen() {
-  const Context = useContext(AppContext);
+  
   const navigation = useNavigation();
 
   const initialValues = {

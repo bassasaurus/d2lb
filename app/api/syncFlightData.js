@@ -1,11 +1,7 @@
 import * as Network from 'expo-network';
 import api from "./axiosConfig";
 import getAsyncObject from "../asyncStorage/getAsyncObject";
-import removeAsyncData from '../asyncStorage/removeAsyncData';
-import { useContext } from 'react';
-import AppContext from '../components/AppContext';
 import { Alert } from 'react-native';
-import storeAsyncData from '../asyncStorage/storeAsyncData';
 import storeAsyncObject from '../asyncStorage/storeAsyncObject';
 
 
