@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
+
 import FlightForm from "../components/FlightForm";
+
+import AppContext from "../components/AppContext";
+
 import { useNavigation } from "@react-navigation/native";
-import { useBearStore } from '../zustand/bearStore'
+
+import addItemToArray from "../asyncStorage/addItemToArray";
+import storeAsyncObject from "../asyncStorage/storeAsyncObject";
+import getAsyncObject from "../asyncStorage/getAsyncObject";
+
+
 
 function FlightCreateScreen() {
-  
+  const Context = useContext(AppContext);
   const navigation = useNavigation();
 
   const initialValues = {
@@ -37,7 +46,7 @@ function FlightCreateScreen() {
 
   const create = async (data) => {
     
-    useBearStore((data) => state.offlineFlights)
+    addItemToArray('offlineFlights', data)
     
     navigation.navigate("FlightList");
     
