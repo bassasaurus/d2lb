@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getAsyncObject from './getAsyncObject';
 import storeAsyncObject from './storeAsyncObject';
-
+  
 const addItemToArray = async (key, item) => {
 
     if (await AsyncStorage.getItem(key) === null){

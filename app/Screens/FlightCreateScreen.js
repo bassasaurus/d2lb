@@ -6,6 +6,8 @@ import AppContext from "../components/AppContext";
 
 import { useNavigation } from "@react-navigation/native";
 
+import { useBearStore } from '../zustand/bearStore'
+
 import addItemToArray from "../asyncStorage/addItemToArray";
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import getAsyncObject from "../asyncStorage/getAsyncObject";
@@ -45,7 +47,7 @@ function FlightCreateScreen() {
 
   const create = async (data) => {
     
-    addItemToArray('offlineFlights', data)
+    useBearStore((data) => state.offlineFlights)
     
     navigation.navigate("FlightList");
     
