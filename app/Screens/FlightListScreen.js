@@ -30,28 +30,29 @@ const FlightListScreen = () => {
   const [data, setData] = useState([])
 
   console.log('render')
-  
-  const buildList = async () => {
-    const offlineFlights = await getAsyncObject('offlineFlights') 
-    console.log(offlineFlights)
-    const response = await api.get("/api/flights/");
-
-    if (offlineFlights === null){
-      setData(response.data.results)
-    }
-    else{
-      setData(offlineFlights.concat(response.data.results));
-    }
-  };
 
   useEffect(() => {
-    const onFocus = navigation.addListener("focus", () => {
+
+      const buildList = async () => {
+        const offlineFlights = await getAsyncObject('offlineFlights') 
+
+        Context.setOfflineFlights(offlineFlights)
+        
+        const response = await api.get("/api/flights/");
+    
+        if (Context.offLineFlightsValue == null){
+          console.log("null")
+          setData(response.data.results)
+        }
+        else{
+          console.log(Context.offlineFlightsValue)
+          setData(Context.offlineFlightsValue.concat(response.data.results));
+        }
+      };
       buildList();
       // syncFlightData();
-    });
 
-    return onFocus;
-  }, [navigation]);
+  }, []);
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
