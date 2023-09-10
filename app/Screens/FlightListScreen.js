@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext} from "react";
+import React, { useState, useEffect} from "react";
 import {
   SafeAreaView,
   FlatList,
@@ -23,34 +23,33 @@ import syncFlightData from "../api/syncFlightData";
 const FlightListScreen = () => {
 
   // removeAsyncData('offlineFlights')
-
-  const Context = useContext(AppContext);
+  
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const [data, setData] = useState([])
 
   console.log('render')
 
+  const buildList = async () => {
+    const offlineFlights = await getAsyncObject('offlineFlights') 
+    
+    const response = await api.get("/api/flights/");
+
+    if (offlineFlights == null){
+      console.log("null")
+      setData(response.data.results)
+    }
+    else{
+      console.log(offlineFlights)
+      setData(offlineFlights.concat(response.data.results));
+    }
+  };
+
   useEffect(() => {
 
-      const buildList = async () => {
-        const offlineFlights = await getAsyncObject('offlineFlights') 
-
-        Context.setOfflineFlights(offlineFlights)
-        
-        const response = await api.get("/api/flights/");
-    
-        if (Context.offLineFlightsValue == null){
-          console.log("null")
-          setData(response.data.results)
-        }
-        else{
-          console.log(Context.offlineFlightsValue)
-          setData(Context.offlineFlightsValue.concat(response.data.results));
-        }
-      };
-      buildList();
-      // syncFlightData();
+      
+    buildList();
+   // syncFlightData();
 
   }, []);
 
