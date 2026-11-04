@@ -10,8 +10,9 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import TailnumberCreateScreen from "../Screens/TailnumberCreateScreen";
 
+const Stack = createStackNavigator();
+
 function FlightStackNavigator(props) {
-  const Stack = createStackNavigator();
 
   const navigation = useNavigation();
 
@@ -51,7 +52,6 @@ function FlightStackNavigator(props) {
           cardStyle: { backgroundColor: "white" },
         }}
       />
-      {(props) => <DetailScreen {...props} id={id} />}
 
       <Stack.Screen
         name='FlightCreate'

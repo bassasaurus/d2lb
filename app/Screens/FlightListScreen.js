@@ -1,53 +1,49 @@
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  RefreshControl,
-} from "react-native";
-
-import { useNavigation } from "@react-navigation/native";
-
-import storeAsyncObject from "../asyncStorage/storeAsyncObject";
-import getAsyncObject from "../asyncStorage/getAsyncObject";
-
+import React, { useState, useEffect} from "react";
+import { FlatList, StyleSheet, TouchableOpacity, RefreshControl, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
+import AppContext from "../components/AppContext";
+import storeAsyncObject from "../asyncStorage/storeAsyncObject";
+import removeAsyncData from  "../asyncStorage/removeAsyncData"
+import getAsyncObject from "../asyncStorage/getAsyncObject";
 
+import * as Device from 'expo-device';
+import syncFlightData from "../api/syncFlightData";
 
 const FlightListScreen = () => {
-  const [data, setData] = useState([]);
+
+  // removeAsyncData('offlineFlights')
+
   const [refreshing, setRefreshing] = useState(false);
-
   const navigation = useNavigation();
+  const [data, setData] = useState([])
 
-  const fetchData = async () => {
-    const response = await api.get("/api/flights/");
-    storeAsyncObject("syncedFlightData", response.data);
-    const syncedFlightData = await getAsyncObject("syncedFlightData");
-    setData(syncedFlightData);
-  };
+  const buildList = React.useCallback(async () => {
+    try {
+      const offlineFlights = await getAsyncObject('offlineFlights');
+      const response = await api.get("/api/flights/");
+      setData((offlineFlights || []).concat(response.data.results || []));
+    } catch (error) {
+      const offlineFlights = await getAsyncObject('offlineFlights');
+      setData(previous => previous.length ? previous : (offlineFlights || []));
+      Alert.alert("Unable to load flights", "Check that your Django development server is running, then pull down to retry.");
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
-  useEffect(() => {
-    const onFocus = navigation.addListener("focus", () => {
-      fetchData();
-    });
-
-    return onFocus;
-  }, [navigation]);
-
-  const wait = (timeout) => {
-    return new Promise((resolve) => setTimeout(resolve, timeout));
-  };
+  useFocusEffect(React.useCallback(() => {
+    buildList();
+  }, [buildList]));
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    fetchData();
-    wait(250).then(() => setRefreshing(false));
-  }, []);
+    buildList();
+  }, [buildList]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -60,6 +56,7 @@ const FlightListScreen = () => {
       }
     >
       <FlightItem
+        id={item.id}
         date={item.date}
         route={item.route}
         type={item.aircraft_type}
@@ -75,9 +72,9 @@ const FlightListScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={data.results}
+        data={data}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => index}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

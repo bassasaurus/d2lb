@@ -4,13 +4,23 @@
   },
   "build": {
     "beta": {
-      "releaseChannel": "beta"
+      "channel": "beta"
     },
     "preview": {
-      "releaseChannel": "preview"
+      "channel": "preview"
     },
     "production": {
       "autoIncrement": true
+    },
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      },
+      "android": {
+        "buildType": "apk"
+      }
     }
   }
 }

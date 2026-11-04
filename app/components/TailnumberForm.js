@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView, Button } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AircraftPicker from "./AircraftPicker";
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";

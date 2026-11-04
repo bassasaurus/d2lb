@@ -1,20 +1,10 @@
 import React, { useState, useContext } from "react";
-import {
-  View,
-  StyleSheet,
-  SafeAreaView,
-  Button,
-  Text,
-  Image,
-  KeyboardAvoidingView,
-  ScrollView,
-  Pressable,
-  TouchableNativeFeedbackBase,
-} from "react-native";
+import { Alert, Platform, View, StyleSheet, Button, Text, Image, KeyboardAvoidingView, ScrollView, Pressable, TouchableNativeFeedbackBase } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { STYLES } from "../styles/styles";
 import AppTextInput from "../components/AppTextInput";
 import api from "../api/axiosConfig";
-import storeData from "../asyncStorage/storeAsyncData";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
 import AppContext from "../components/AppContext";
 import ActivityModal from "../components/ActivityModal";
@@ -46,18 +36,20 @@ function LoginScreen() {
       url: "/api/token-auth/",
       data: values,
     })
-      .then(function (response) {
-        storeData("token", response.data["token"]);
+      .then(async function (response) {
+        await AsyncStorage.setItem("token", response.data["token"]);
         Context.setIsSignedIn(true);
         Context.setActivityVisible(false);
       })
       .catch(function (error) {
         Context.setActivityVisible(false);
         Context.setIsSignedIn(false);
-        if (error.response) {
-        } else if (error.request) {
-        } else {
-        }
+        Alert.alert(
+          "Unable to sign in",
+          error.response
+            ? "Check your login details and try again."
+            : "Cannot reach the server. Check that your local Django server is running."
+        );
       });
   };
 

@@ -69,7 +69,6 @@ node_modules
 *.log
 .nvm
 /bots/node_modules/
-package-lock.json
 
 # OS X
 .DS_Store
@@ -186,3 +185,7 @@ web-build/
 dist/
 
 # @end expo-cli
+# Generated native projects (Expo prebuild)
+/ios/
+
+.local-node-path
