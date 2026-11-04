@@ -1,0 +1,27 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+# An optional ignored file lets this checkout use Node without changing global aliases.
+if [[ -f .local-node-path ]]; then
+  export PATH="$(cat .local-node-path):$PATH"
+fi
+if ! node -e 'process.exit(Number(process.versions.node.split(".")[0]) === 24 ? 0 : 1)' >/dev/null 2>&1; then
+  echo 'Node 24 is required. Run nvm install && nvm use, or put its bin directory in .local-node-path.' >&2
+  exit 1
+fi
+export ANDROID_HOME="${ANDROID_HOME:-$HOME/Library/Android/sdk}"
+export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+if [[ -z "${JAVA_HOME:-}" && -d '/Applications/Android Studio.app/Contents/jbr/Contents/Home' ]]; then
+  export JAVA_HOME='/Applications/Android Studio.app/Contents/jbr/Contents/Home'
+fi
+if [[ $# -eq 0 ]]; then set -- start; fi
+case "$1" in
+  start) shift; exec npx expo start --dev-client "$@" ;;
+  go) shift; exec npx expo start --go "$@" ;;
+  ios|android) platform="$1"; shift; exec npx expo "run:$platform" "$@" ;;
+  emulator) shift; exec "$ANDROID_HOME/emulator/emulator" -avd Pixel_10_API_36 -gpu swiftshader -no-snapshot-load "$@" ;;
+  doctor) shift; exec npx expo-doctor "$@" ;;
+  install) shift; exec npm ci "$@" ;;
+  test) shift; exec npm test "$@" ;;
+  *) exec npm "$@" ;;
+esac

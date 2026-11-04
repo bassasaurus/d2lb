@@ -12,7 +12,7 @@ const syncFlightData = async (props) => {
 
     if (networkState.isInternetReachable === true) {
       
-        for (i in offlineFlights) {
+        for (const i in offlineFlights) {
           
           api
             .post("/api/flights/", offlineFlights[i])

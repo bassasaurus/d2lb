@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { useState, useContext, useEffect } from "react";
 import {
   View,
@@ -14,7 +15,7 @@ import {
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
-import CalendarPicker from "react-native-calendar-picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import AircraftPicker from "./AircraftPicker";
 import AppTextInput from "./AppTextInput";
 import TailnumberPicker from "./TailnumberPicker";
@@ -750,10 +751,14 @@ function FlightForm({ initialValues, method }) {
                 >
                   <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                      <CalendarPicker
-                        selectedDayColor='lightblue'
-                        onDateChange={(date) => {
-                          setFieldValue("date", date.format("M/D/YYYY"));
+                      <DateTimePicker
+                        value={moment(values.date, "M/D/YYYY", true).isValid() ? moment(values.date, "M/D/YYYY").toDate() : new Date()}
+                        mode="date"
+                        display={Platform.OS === "ios" ? "inline" : "default"}
+                        onChange={(event, date) => {
+                          if (date && event.type !== "dismissed") {
+                            setFieldValue("date", moment(date).format("M/D/YYYY"));
+                          }
                           setCalVisible(false);
                         }}
                       />

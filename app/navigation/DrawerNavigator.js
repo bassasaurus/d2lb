@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet, SafeAreaView } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -12,10 +13,11 @@ import FlightStackNavigator from "./FlightStackNavigator";
 import AppContext from "../components/AppContext";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
 
+const Drawer = createDrawerNavigator();
+
 function DrawerNavigator({ navigation }) {
   const Context = useContext(AppContext);
 
-  const Drawer = createDrawerNavigator();
 
   function LogoutContent(props) {
     return (

@@ -5,11 +5,6 @@
     "slug": "direct2lobook",
     "orientation": "portrait",
     "icon": "./app/assets/playstore.png",
-    "splash": {
-      "image": "./app/assets/D2LB_LOGO_Dark_top.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -17,7 +12,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.direct2lobook.mobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -32,20 +28,22 @@
       }
     },
     "web": {},
-    "hooks": {
-      "postPublish": [
+    "plugins": [
+      [
+        "@sentry/react-native/expo",
         {
-          "file": "sentry-expo/upload-sourcemaps",
-          "config": {
-            "organization": "direct2logbook",
-            "project": "d2lb_mobile",
-            "authToken": "d2f68a21e3724a6bafc8a04320573586aa7b56a9139d4106ace02180a5771ee7"
-          }
+          "organization": "direct2logbook",
+          "project": "d2lb_mobile"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./app/assets/D2LB_LOGO_Dark_top.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
         }
       ]
-    },
-    "plugins": [
-      "sentry-expo"
     ]
   }
 }

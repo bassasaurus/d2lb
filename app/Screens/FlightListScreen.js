@@ -1,13 +1,7 @@
 import React, { useState, useEffect} from "react";
-import {
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  RefreshControl,
-  Alert,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { FlatList, StyleSheet, TouchableOpacity, RefreshControl, Alert } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { STYLES } from "../styles/styles";
 import api from "../api/axiosConfig";
 import FlightItem from "../components/FlightItem";
@@ -23,45 +17,33 @@ import syncFlightData from "../api/syncFlightData";
 const FlightListScreen = () => {
 
   // removeAsyncData('offlineFlights')
-  
+
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const [data, setData] = useState([])
 
-  console.log('render')
-
-  const buildList = async () => {
-    const offlineFlights = await getAsyncObject('offlineFlights') 
-    
-    const response = await api.get("/api/flights/");
-
-    if (offlineFlights == null){
-      console.log("null")
-      setData(response.data.results)
+  const buildList = React.useCallback(async () => {
+    try {
+      const offlineFlights = await getAsyncObject('offlineFlights');
+      const response = await api.get("/api/flights/");
+      setData((offlineFlights || []).concat(response.data.results || []));
+    } catch (error) {
+      const offlineFlights = await getAsyncObject('offlineFlights');
+      setData(previous => previous.length ? previous : (offlineFlights || []));
+      Alert.alert("Unable to load flights", "Check that your Django development server is running, then pull down to retry.");
+    } finally {
+      setRefreshing(false);
     }
-    else{
-      console.log(offlineFlights)
-      setData(offlineFlights.concat(response.data.results));
-    }
-  };
-
-  useEffect(() => {
-
-      
-    buildList();
-   // syncFlightData();
-
   }, []);
 
-  const wait = (timeout) => {
-    return new Promise((resolve) => setTimeout(resolve, timeout));
-  };
+  useFocusEffect(React.useCallback(() => {
+    buildList();
+  }, [buildList]));
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    // syncFlightData();
-    wait(250).then(() => setRefreshing(false));
-  }, []);
+    buildList();
+  }, [buildList]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity

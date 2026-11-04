@@ -2,21 +2,18 @@ import axios from "axios";
 import * as Device from "expo-device";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-if (Device.isDevice != true) {
-  if (Device.osName === "iOS") {
-    axios.defaults.baseURL = "http://127.0.0.1:8000";
-    // axios.defaults.baseURL = "https://www.direct2logbook.com";
-  } else {
-    axios.defaults.baseURL = "http://10.0.2.2:8000";
-  }
-} else {
-  axios.defaults.baseURL = "https://www.direct2logbook.com";
-}
+import { Platform } from "react-native";
+import { getApiBaseURL } from "./baseURL.mjs";
 
-axios.defaults.headers.get["Accept"] = "application/json";
-axios.defaults.headers.post["Accept"] = "application/json";
-
-const api = axios.create();
+const api = axios.create({
+  baseURL: getApiBaseURL({
+    platform: Platform.OS,
+    isDevice: Device.isDevice,
+    override: process.env.EXPO_PUBLIC_API_URL,
+  }),
+  timeout: 15000,
+  headers: { Accept: "application/json" },
+});
 
 api.interceptors.request.use(
   async (config) => {

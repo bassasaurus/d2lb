@@ -14,7 +14,7 @@ import * as Device from "expo-device";
 
 // import { PROVIDER_GOOGLE } from "react-native-maps";
 
-import { PROVIDER_GOOGLE } from "@env"
+
 
 
 function FlightDetailScreen({ route, navigation }) {
