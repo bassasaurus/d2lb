@@ -1,13 +1,12 @@
+import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import React, { useContext, useRef } from 'react';
 import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Text from './AppText';
-import { Formik } from 'formik';
 import * as yup from 'yup';
 import AircraftPicker from './AircraftPicker';
 import AppTextInput from './AppTextInput';
 import AppContext from './AppContext';
-import UnsavedFormGuard from './UnsavedFormGuard';
 import { useAppTheme } from '../theme/ThemeProvider';
 
 const rules = [['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
@@ -20,14 +19,16 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
   const { styles: STYLES } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const savedNavigation = useRef(false);
+  const draftHandle = useRef(null);
   const context = useContext(AppContext);
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Formik initialValues={initialValues} validationSchema={schema} onSubmit={async (values, helpers) => {
+      <DraftForm kind="tailnumber" recordKey={initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} onSubmit={async (values, helpers) => {
         savedNavigation.current = false;
         context.setActivityVisible(true);
         try {
           const result = await method(values);
+          await draftHandle.current.complete();
           savedNavigation.current = true;
           helpers.resetForm({ values });
           onSaved?.(result);
@@ -44,7 +45,6 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
         }
       }}>
         {({ values, errors, submitCount, isSubmitting, setFieldValue, handleSubmit }) => <>
-          <UnsavedFormGuard savedNavigation={savedNavigation} />
           <Text style={styles.heading}>{allowAircraftChange ? 'Aircraft' : aircraft_type}</Text>
           {allowAircraftChange && <AircraftPicker initialValue={values.aircraft} fieldName="aircraft" setFieldValue={setFieldValue} isValid={!errors.aircraft} />}
           <Text style={styles.label}>Registration</Text>
@@ -63,7 +63,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           <View style={{ marginTop: 20 }}><Button title={isSubmitting ? 'Saving…' : 'Save tailnumber'} onPress={handleSubmit} disabled={isSubmitting} /></View>
           <Text style={{ color: STYLES.muted, marginTop: 12 }}>A connection is required to save tailnumbers.</Text>
         </>}
-      </Formik>
+      </DraftForm>
     </ScrollView>
   </KeyboardAvoidingView>;
 }
