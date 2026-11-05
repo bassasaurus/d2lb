@@ -25,6 +25,8 @@ const FlightListScreen = () => {
   const navigation = useNavigation();
   const [data, setData] = useState([]);
   const [issueCount, setIssueCount] = useState(0);
+  const [windowNotice, setWindowNotice] = useState(false);
+  const noticeTimer = React.useRef(null);
   const [status, setStatus] = useState("Loading saved flights…");
 
   useFocusEffect(React.useCallback(() => {
@@ -65,7 +67,10 @@ const FlightListScreen = () => {
         if (active) {
           setData(rows);
           setIssueCount(issues.length);
-          setStatus(`${downloaded ? 'Up to 100 most recent flights' : 'Showing saved flights; sync could not finish'}. ${pending ? `${pending} pending change(s) saved on device.` : ""}${serverUpgradeNeeded ? ' Uploads waiting for the server sync update.' : ''}${issues.length ? ` Needs attention: ${issues.slice(0, 3).map(issue => `${issue.route}: ${issue.message}`).join(' ')}` : ''} ${legacyCount ? ' Older unsynced flights are preserved separately for review.' : ''}`);
+          clearTimeout(noticeTimer.current);
+          setWindowNotice(downloaded);
+          if (downloaded) noticeTimer.current = setTimeout(() => setWindowNotice(false), 3000);
+          setStatus(`${downloaded ? '' : 'Showing saved flights; sync could not finish.'} ${pending ? `${pending} pending change(s) saved on device.` : ""}${serverUpgradeNeeded ? ' Uploads waiting for the server sync update.' : ''}${issues.length ? ` Needs attention: ${issues.slice(0, 3).map(issue => `${issue.route}: ${issue.message}`).join(' ')}` : ''} ${legacyCount ? ' Older unsynced flights are preserved separately for review.' : ''}`);
         }
       } catch (error) {
         if (active) setStatus('Unable to open local logbook. Pull down to retry.');
@@ -93,6 +98,8 @@ const FlightListScreen = () => {
     });
     return () => {
       active = false;
+      clearTimeout(noticeTimer.current);
+      setWindowNotice(false);
       refreshRef.current = null;
       foreground.remove();
       clearInterval(retryTimer);
@@ -131,8 +138,9 @@ const FlightListScreen = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={{ padding: 10, color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={styles.container}>
+      {windowNotice && <Text style={{ paddingHorizontal: 10, paddingVertical: 4, color: STYLES.muted }}>Synced last 100 entries</Text>}
+      {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
       {issueCount > 0 && <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SyncReview', { screen: 'SyncReviewList' })}>
         <Text style={{ padding: 10, color: STYLES.danger }}>Resolve sync problems ({issueCount})</Text>
       </TouchableOpacity>}

@@ -10,21 +10,24 @@ import { aircraftScope } from '../storage/aircraft';
 const running = new Map();
 async function synchronize() {
   const partition = await tokenPartition();
-  const session = (await api.get('/api/mobile/session/')).data;
-  if (session.sync_protocol !== 1 || !Number.isInteger(session.account_id)) throw new Error('Server sync upgrade is required.');
+  const capabilities = (await api.get('/api/mobile/session/')).data;
+  if (capabilities.sync_protocol !== 1 || !Number.isInteger(capabilities.account_id)) throw new Error('Server sync upgrade is required.');
   if (await tokenPartition() !== partition) throw new Error('Account changed during sync.');
-  const scope = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${api.defaults.baseURL}|account:${session.account_id}`);
+  const scope = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${api.defaults.baseURL}|account:${capabilities.account_id}`);
   const store = await flightStore();
   const previousScope = await flightScope();
   await store.moveScope(previousScope, scope);
   await store.moveScope(aircraftScope(previousScope), aircraftScope(scope));
   await AsyncStorage.setItem(`flight-scope:${partition}`, scope);
-  await syncAircraft(scope, partition, session.aircraft_sync === true);
+  await syncAircraft(scope, partition, capabilities.aircraft_sync === true);
   await drainFlightQueue({
     store, scope,
     uuid: () => Crypto.randomUUID(),
     isCurrent: async () => await tokenPartition() === partition,
     send: async data => {
+      if (data.data?.validate_airports && capabilities.route_airport_validation !== true) {
+        throw new Error('Airport validation requires the server update. Saved locally until then.');
+      }
       // Bind the request to the account that owns the queued operation.
       const token = await session.getToken();
       if (await tokenPartition() !== partition) throw new Error('Account changed during sync.');
