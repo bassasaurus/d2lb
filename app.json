@@ -46,7 +46,8 @@
             "backgroundColor": "#0f131a"
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "userInterfaceStyle": "automatic"
   }

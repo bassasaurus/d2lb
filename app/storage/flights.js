@@ -1,3 +1,4 @@
+import { session } from '../auth/session';
 import * as SQLite from 'expo-sqlite';
 import * as Crypto from 'expo-crypto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,7 +18,7 @@ export function flightStore() {
 }
 
 export async function tokenPartition() {
-  const token = await AsyncStorage.getItem('token');
+  const token = await session.getToken();
   if (!token) throw new Error('Sign in before accessing local flights.');
   // Never store the credential itself in the database. A rotated token uses a
   // separate partition until a stable server account identifier is introduced.

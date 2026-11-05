@@ -1,7 +1,6 @@
 import { useAppTheme } from '../theme/ThemeProvider';
 import React, { useContext, useEffect } from "react";
 import { StyleSheet, Alert } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { flightScope, flightStore } from "../storage/flights";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -19,7 +18,6 @@ import AircraftStackNavigator from "./AircraftStackNavigator";
 import { aircraftScope } from "../storage/aircraft";
 import FlightStackNavigator from "./FlightStackNavigator";
 import AppContext from "../components/AppContext";
-import removeAsyncData from "../asyncStorage/removeAsyncData";
 
 const Drawer = createDrawerNavigator();
 const Root = createStackNavigator();
@@ -37,8 +35,7 @@ function DrawerNavigator({ navigation }) {
           label='Logout'
           onPress={async () => {
             const logout = async () => {
-              await AsyncStorage.removeItem("token");
-              Context.setIsSignedIn(false);
+              await Context.signOut();
             };
             try {
               const forms = [...Context.formGuards.current.values()].map(read => read());

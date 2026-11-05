@@ -1,3 +1,4 @@
+import { session } from '../auth/session';
 import * as Crypto from 'expo-crypto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from './axiosConfig';
@@ -25,7 +26,7 @@ async function synchronize() {
     isCurrent: async () => await tokenPartition() === partition,
     send: async data => {
       // Bind the request to the account that owns the queued operation.
-      const token = await AsyncStorage.getItem('token');
+      const token = await session.getToken();
       if (await tokenPartition() !== partition) throw new Error('Account changed during sync.');
       const pendingAircraft = await store.list(aircraftScope(scope));
       if (pendingAircraft.some(row => row.aircraft_type === data.data?.aircraft_type && row.sync_state !== 'synced')) {
