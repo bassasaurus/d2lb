@@ -10,6 +10,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
 import Separator from "../components/Separator";
 import DetailsPanel from "../components/DetailsPanel";
+import RecordActions from "../components/RecordActions";
 import * as Device from "expo-device";
 
 // import { PROVIDER_GOOGLE } from "react-native-maps";
@@ -103,56 +104,10 @@ function FlightDetailScreen({ route, navigation }) {
         <DetailsPanel route={route}></DetailsPanel>
         {/* sixth row */}
         <Separator />
-        <View style={{ flexDirection: "row", marginBottom: 5 }}>
-          <TouchableOpacity
-            style={{
-              flex: 2,
-              backgroundColor: STYLES.danger,
-              alignItems: "center",
-              justifyContent: "center",
-              marginRight: 2.5,
-            }}
-            onPress={() => {
-              showAlert(
-                route.params.item.id,
-                route.params.item.date,
-                route.params.item.route
-              );
-            }}
-          >
-            <View>
-              <MaterialCommunityIcons
-                name={"delete"}
-                size={30}
-                color={STYLES.white}
-              />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("FlightUpdate", {
-                item: route.params.item,
-              });
-            }}
-            style={{
-              flex: 2,
-              backgroundColor: STYLES.blue,
-              alignItems: "center",
-              justifyContent: "center",
-              marginLeft: 2.5,
-            }}
-          >
-            <View>
-              <MaterialCommunityIcons
-                name={"update"}
-                size={30}
-                color={STYLES.white}
-                style={{ padding: 5 }}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
+        <RecordActions recordName="flight"
+          onDelete={() => showAlert(route.params.item.id, route.params.item.date, route.params.item.route)}
+          onUpdate={() => navigation.navigate("FlightUpdate", { item: route.params.item })}
+        />
       </View>
 
       {polylines.length > 0 && <View style={styles.mapView}>

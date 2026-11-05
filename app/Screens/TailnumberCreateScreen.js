@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
 import storeAsyncObject from "../asyncStorage/storeAsyncObject";
 import fetchTailnumbers from "../api/fetchTailnumbers";
+import syncFlightData from "../api/syncFlightData";
 
 function TailnumberCreateScreen({ route }) {
   const Context = useContext(AppContext);
@@ -20,6 +21,7 @@ function TailnumberCreateScreen({ route }) {
   };
 
   const create = async data => {
+    if (route.params.fromAircraft) await syncFlightData();
     const response = await api.post("/api/tailnumbers/", data);
     // A cache refresh failure does not mean the successfully saved record failed.
     await fetchTailnumbers().catch(() => {});
@@ -29,7 +31,7 @@ function TailnumberCreateScreen({ route }) {
   return (
     <TailnumberForm
       method={create}
-      onSaved={() => navigation.navigate("FlightCreate")}
+      onSaved={() => route.params.fromAircraft ? navigation.goBack() : navigation.navigate("FlightCreate")}
       initialValues={initialValues}
       aircraft_type={route.params.aircraft_type}
     ></TailnumberForm>

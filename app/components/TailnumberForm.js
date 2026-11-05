@@ -1,212 +1,71 @@
-import React, { useContext, useState, useRef } from "react";
-import { View, Text, StyleSheet, Button, Alert } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import AircraftPicker from "./AircraftPicker";
-import { Formik, validateYupSchema } from "formik";
-import * as yup from "yup";
-import AppTextInput from "./AppTextInput";
-import Checkbox from "./Checkbox";
-import AppText from "./AppText";
-import ActivityModal from "./ActivityModal";
-import AppContext from "./AppContext";
-import UnsavedFormGuard from "./UnsavedFormGuard";
-import { STYLES } from "../styles/styles";
+import React, { useContext, useRef } from 'react';
+import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Formik } from 'formik';
+import * as yup from 'yup';
+import AircraftPicker from './AircraftPicker';
+import AppTextInput from './AppTextInput';
+import AppContext from './AppContext';
+import UnsavedFormGuard from './UnsavedFormGuard';
+import { STYLES } from '../styles/styles';
 
-function TailnumberForm({ initialValues, method, onSaved, aircraft_type }) {
+const rules = [['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
+const schema = yup.object({
+  aircraft: yup.string().required('Select an aircraft.'),
+  registration: yup.string().min(3).max(8).required('Registration is required.'),
+}).test('operating-rule', 'Select one operating rule.', values => rules.filter(([key]) => values[key]).length === 1);
+
+export default function TailnumberForm({ initialValues, method, onSaved, aircraft_type, allowAircraftChange = false }) {
   const savedNavigation = useRef(false);
-  const Context = useContext(AppContext);
-
-  const [checkValid, setCheckValid] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-
-  const checkboxValidation = (is91, is135, is121) => {
-    if (is91 || is135 || is121) {
-      setCheckValid(true);
-
-      return true;
-    } else {
-      setCheckValid(false);
-
-      return false;
-    }
-  };
-
-  const required = "Required";
-
-  let schema = yup.object().shape({
-    registration: yup.string().min(3).max(8).required(required),
-    is_91: yup.boolean().test({
-      name: "check91",
-      message: "Must select one.",
-      test: (checkValid) => true,
-    }),
-    is_135: yup.boolean().test({
-      name: "check135",
-      message: "Must select one.",
-      test: (checkValid) => true,
-    }),
-    is_121: yup.boolean().test({
-      name: "check121",
-      message: "Must select one.",
-      test: (checkValid) => true,
-    }),
-  });
-
-  return (
-    <View style={styles.container}>
-      <Formik
-        validateOnMount={true}
-        initialValues={initialValues}
-        validationSchema={schema}
-        onSubmit={async (values, helpers) => {
-          savedNavigation.current = false;
-          Context.setActivityVisible(true);
-          try {
-            const result = await method(values);
-            savedNavigation.current = true;
-            helpers.resetForm({ values });
-            onSaved?.(result);
-          } catch (error) {
-            Alert.alert("Tailnumber not saved", "Your changes are still in this form. Check your connection and try again.");
-          } finally {
-            helpers.setSubmitting(false);
-            Context.setActivityVisible(false);
-          }
-        }}
-      >
-        {({
-          values,
-          errors,
-          isValid,
-          handleSubmit,
-          isSubmitting,
-          handleChange,
-          setFieldValue,
-        }) => (
-          <>
-            <UnsavedFormGuard savedNavigation={savedNavigation} />
-            <SafeAreaView>
-              <View style={{ marginTop: 5 }}>
-                <AppText size={20} weight={"bold"}>
-                  {aircraft_type}
-                </AppText>
-              </View>
-
-              <AppTextInput
-                placeholder={"New Tailnumber"}
-                value={values.registration}
-                onChangeText={handleChange("registration")}
-                isValid={errors.registration ? false : true}
-                autoCorrect={false}
-                autoCapitalize={"characters"}
-                keyboardType={"default"}
-                clearButtonMode={"while-editing"}
-              ></AppTextInput>
-              <View>
-                {errors.registration ? (
-                  <Text style={styles.errors}>{errors.registration}</Text>
-                ) : (
-                  <View></View>
-                )}
-              </View>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  marginTop: 10,
-                }}
-              >
-                <View style={{ flex: 0.3 }}>
-                  <View style={{ flexDirection: "row" }}>
-                    <Checkbox
-                      initialValue={initialValues.is_91}
-                      onPress={() => {
-                        setFieldValue("is_91", !values.is_91);
-                        setFieldValue("is_135", false);
-                        setFieldValue("is_121", false);
-                        checkboxValidation(!values.is_91, false, false);
-                      }}
-                      isChecked={values.is_91}
-                    ></Checkbox>
-                    <AppText>91</AppText>
-                  </View>
-                </View>
-                <View style={{ flex: 0.3 }}>
-                  <View style={{ flexDirection: "row" }}>
-                    <Checkbox
-                      initialValue={initialValues.is_135}
-                      onPress={() => {
-                        setFieldValue("is_135", !values.is_135);
-                        setFieldValue("is_91", false);
-                        setFieldValue("is_121", false);
-                        checkboxValidation(false, !values.is_135, false);
-                      }}
-                      isChecked={values.is_135}
-                    ></Checkbox>
-                    <AppText>135</AppText>
-                  </View>
-                </View>
-                <View style={{ flex: 0.3 }}>
-                  <View style={{ flexDirection: "row" }}>
-                    <Checkbox
-                      initialValue={initialValues.is_121}
-                      onPress={() => {
-                        setFieldValue("is_121", !values.is_121);
-                        setFieldValue("is_91", false);
-                        setFieldValue("is_135", false);
-                        checkboxValidation(false, false, !values.is_121);
-                      }}
-                      isChecked={values.is_121}
-                    ></Checkbox>
-                    <AppText>121</AppText>
-                  </View>
-                </View>
-
-                <View>
-                  {!checkValid ? (
-                    <View>
-                      <Text style={styles.errors}>Must select one</Text>
-                    </View>
-                  ) : (
-                    <View></View>
-                  )}
-                </View>
-              </View>
-              <View style={{ paddingTop: 10 }}>
-                {isValid && checkValid ? (
-                  <Button
-                    title={!Context.setActivityVisible ? "" : "Submit"}
-                    disabled={isSubmitting}
-                    onPress={handleSubmit}
-                  ></Button>
-                ) : (
-                  <Button title='Complete required fields.'></Button>
-                )}
-              </View>
-
-              {/* <View style={{ marginTop: 30 }}>
-                <Text>{JSON.stringify(values, null, "  ")}</Text>
-              </View> */}
-            </SafeAreaView>
-          </>
-        )}
+  const context = useContext(AppContext);
+  return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <Formik initialValues={initialValues} validationSchema={schema} onSubmit={async (values, helpers) => {
+        savedNavigation.current = false;
+        context.setActivityVisible(true);
+        try {
+          const result = await method(values);
+          savedNavigation.current = true;
+          helpers.resetForm({ values });
+          onSaved?.(result);
+        } catch (error) {
+          const details = error.response?.data;
+          const message = details ? Object.entries(details).map(([field, text]) => `${field}: ${Array.isArray(text) ? text.join(' ') : String(text)}`).join('\n')
+            : error.response ? 'The server could not save your changes. Please try again.'
+            : error.message?.startsWith('Sync the pending') ? error.message
+            : 'Check your connection and try again. Your changes remain in this form.';
+          Alert.alert('Tailnumber not saved', message);
+        } finally {
+          helpers.setSubmitting(false);
+          context.setActivityVisible(false);
+        }
+      }}>
+        {({ values, errors, submitCount, isSubmitting, setFieldValue, handleSubmit }) => <>
+          <UnsavedFormGuard savedNavigation={savedNavigation} />
+          <Text style={styles.heading}>{allowAircraftChange ? 'Aircraft' : aircraft_type}</Text>
+          {allowAircraftChange && <AircraftPicker initialValue={values.aircraft} fieldName="aircraft" setFieldValue={setFieldValue} isValid={!errors.aircraft} />}
+          <Text style={styles.label}>Registration</Text>
+          <AppTextInput value={values.registration} placeholder="Registration" maxLength={8}
+            onChangeText={value => setFieldValue('registration', value.toUpperCase().replace(/\s/g, ''))}
+            isValid={!submitCount || !errors.registration} autoCorrect={false} autoCapitalize="characters" />
+          <Text style={styles.label}>Operating rules</Text>
+          <View style={styles.rules}>
+            {rules.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" accessibilityState={{ checked: values[key] === true }}
+              onPress={() => rules.forEach(([field]) => setFieldValue(field, field === key))}
+              style={[styles.rule, values[key] && styles.selected]}>
+              <Text style={{ color: values[key] ? STYLES.blue : STYLES.black }}>{label}</Text>
+            </Pressable>)}
+          </View>
+          {submitCount > 0 && Object.values(errors).map((error, index) => <Text key={index} style={styles.error}>{String(error)}</Text>)}
+          <View style={{ marginTop: 20 }}><Button title={isSubmitting ? 'Saving…' : 'Save tailnumber'} onPress={handleSubmit} disabled={isSubmitting} /></View>
+          <Text style={{ color: '#555', marginTop: 12 }}>A connection is required to save tailnumbers.</Text>
+        </>}
       </Formik>
-      <ActivityModal></ActivityModal>
-    </View>
-  );
+    </ScrollView>
+  </KeyboardAvoidingView>;
 }
-
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-    justifyContent: "space-between",
-    paddingLeft: 10,
-    paddingRight: 10,
-    marginBottom: 20,
-  },
-  errors: {
-    color: STYLES.danger,
-  },
+  container: { padding: 16 }, heading: { fontSize: 20, fontWeight: '600' },
+  label: { fontWeight: '600', marginTop: 16 }, rules: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+  rule: { padding: 12, borderWidth: 1, borderColor: STYLES.grey, borderRadius: 5 },
+  selected: { borderColor: STYLES.blue, backgroundColor: '#eef3ff' }, error: { color: STYLES.danger, marginTop: 8 },
 });
-
-export default TailnumberForm;

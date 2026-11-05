@@ -142,10 +142,24 @@ export async function createFlightStore(db) {
       return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_state: row.state, sync_error: row.sync_error }))
         .sort((a, b) => dateKey(b.date) - dateKey(a.date));
     },
+    async deletedRecords(scope) {
+      requireScope(scope);
+      const rows = await db.getAllAsync("SELECT * FROM mobile_flights WHERE scope=? AND state='pending_delete'", scope);
+      return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_error: row.sync_error }));
+    },
+    async cancelDeletion(scope, localId) {
+      requireScope(scope);
+      await db.withExclusiveTransactionAsync(async tx => {
+        const operation = await tx.getFirstAsync('SELECT blocked FROM mobile_operations WHERE scope=? AND local_id=?', scope, localId);
+        if (operation && !operation.blocked) throw new Error('Deletion has been attempted. Reconnect to confirm the result before changing it.');
+        await tx.runAsync('DELETE FROM mobile_operations WHERE scope=? AND local_id=?', scope, localId);
+        await tx.runAsync("UPDATE mobile_flights SET state='pending_update',sync_error=NULL,generation=generation+1 WHERE scope=? AND local_id=? AND state='pending_delete'", scope, localId);
+      });
+    },
     async errors(scope) {
       requireScope(scope);
       const rows = await db.getAllAsync('SELECT payload,sync_error FROM mobile_flights WHERE scope=? AND sync_error IS NOT NULL', scope);
-      return rows.map(row => ({ route: JSON.parse(row.payload).route, message: row.sync_error }));
+      return rows.map(row => ({ route: JSON.parse(row.payload).route || JSON.parse(row.payload).aircraft_type, message: row.sync_error }));
     },
     async pendingCount(scope) {
       requireScope(scope);
