@@ -1,3 +1,5 @@
+import RouteInput from '../airports/RouteInput';
+import { normalizeRoute, routeErrors } from '../airports/routeCheck.mjs';
 import PickerOverlayHost from './PickerOverlayHost';
 import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
@@ -27,6 +29,7 @@ function FlightForm({ initialValues, method, onSaved }) {
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const savedNavigation = useRef(false);
   const draftHandle = useRef(null);
+  const airportCheck = useRef(null);
   const [calVisible, setCalVisible] = useState(false);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [formCount, setFormCount] = useState(() => Math.max(0, ...initialValues.approaches.map((item, index) => item.approach_type || item.number ? index : 0)));
@@ -56,7 +59,11 @@ function FlightForm({ initialValues, method, onSaved }) {
 
   let flightSchema = yup.object().shape({
     date: yup.string().required(required),
-    route: yup.string().min(3).required(required),
+    route: yup.string().min(3).max(50).required(required).test('known-airports', 'Check the route airports.', function(value) {
+      const current = airportCheck.current;
+      const messages = current?.route === normalizeRoute(value) ? routeErrors(current.entries) : [];
+      return messages.length ? this.createError({ message: messages.join(' ') }) : true;
+    }),
     aircraft_type: yup.string().required(required),
     registration: yup.string().required(required),
     duration: yup
@@ -106,7 +113,7 @@ function FlightForm({ initialValues, method, onSaved }) {
             onSubmit={async (values, helpers) => {
               try {
                 savedNavigation.current = false;
-                const result = await method(values);
+                const result = await method({ ...values, route: normalizeRoute(values.route), validate_airports: true });
                 await draftHandle.current.complete();
                 savedNavigation.current = true;
                 helpers.resetForm({ values });
@@ -154,32 +161,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                     <View></View>
                   )}
                 </View>
-                <AppTextInput
-                  isValid={errors.route ? false : true}
-                  value={dashNotSpace(values.route)}
-                  onChangeText={handleChange("route")}
-                  placeholder='Route'
-                  autoCorrect={false}
-                  autoCapitalize={"characters"}
-                  keyboardType={"default"}
-                  clearButtonMode={"while-editing"}
-                  onFocus={() => setScrollEnabled(false)}
-                  onBlur={() => {
-                    setScrollEnabled(true);
-                    handleBlur("route");
-                  }}
-                />
-                <View>
-                  {errors.route ? (
-                    <Text style={styles.errors}>{errors.route}</Text>
-                  ) : (
-                    <View>
-                      <AppText color={STYLES.muted}>
-                        ATA or ICAO Airport codes only
-                      </AppText>
-                    </View>
-                  )}
-                </View>
+                <RouteInput onCheck={result => { airportCheck.current = result; }} />
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker

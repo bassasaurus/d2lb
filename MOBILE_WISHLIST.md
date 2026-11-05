@@ -243,3 +243,30 @@ Aircraft Detail now places its actions above a responsive, independently
 scrollable tailnumber grid. Registration links open Tailnumber Detail with an
 Update action only. Tailnumber editing remains in the aircraft flow; there is
 no tailnumber deletion action or related Django change.
+
+## Mobile route airport checks
+
+Branch: `mobile/09-route-airport-checks`, with companion Django branch
+`mobile/route-airport-checks-api`. The route field colors unknown/ambiguous
+airport codes red and explains each issue directly below. Checks debounce by
+450ms, discard stale responses, and reuse Django's ICAO/IATA/FAA/US-resolution
+rules. Ambiguous entries offer airport labels; choices persist on the flight
+and clear when its route changes. Known errors block form submission.
+
+A per-account, 24-hour code cache supports offline checks; uncached/expired codes
+remain neutral and pending so flights can be saved on the device. New mobile
+snapshots request server validation at upload. Django retains legacy API behavior
+for older clients, validates all supplied choices, and advertises support. New
+validated uploads wait until that API upgrade is deployed. No migration needed.
+The sync worker's server-capability response no longer shadows its imported
+secure-session object when obtaining an upload credential.
+
+Logbook removes duplicate top safe-area padding and hides only the successful
+100-flight notice after three seconds. Pending changes, failures and attention
+messages remain visible. Empty status text no longer reserves space.
+
+Validation: 61 mobile tests and 63 Django API tests pass; lint passes. iOS
+simulator verified per-code red styling, the explanatory message, clearing the
+error after restoring the original route, and compact list spacing. No flight
+was submitted during that UI check. iOS/Android exports are checked before
+handoff. Work is not committed, merged or deployed yet.
