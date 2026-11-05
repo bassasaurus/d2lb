@@ -14,6 +14,7 @@ const aircraftFields = [
   ['simple', 'Simple'], ['superr', 'Super'], ['heavy', 'Heavy'], ['large', 'Large'],
   ['medium', 'Medium'], ['small', 'Small'], ['light_sport', 'Light sport'],
 ];
+const tailnumberFields = [['registration', 'Registration'], ['aircraft', 'Aircraft'], ['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
 function format(value, key) {
   if (key === 'approaches') return (Array.isArray(value) ? value : [])
     .filter(row => row.approach_type && row.number !== '' && row.number != null)
@@ -23,12 +24,12 @@ function format(value, key) {
   return String(value);
 }
 export function compareVersions(kind, local, server) {
-  return (kind === 'aircraft' ? aircraftFields : flightFields).map(([key, label]) => {
+  return (kind === 'aircraft' ? aircraftFields : kind === 'tailnumber' ? tailnumberFields : flightFields).map(([key, label]) => {
     const localValue = format(local?.[key], key);
     const serverValue = server ? format(server[key], key) : 'Not on server';
     return { key, label, localValue, serverValue, changed: localValue !== serverValue };
   });
 }
 export function recordTitle(kind, record) {
-  return kind === 'aircraft' ? record.aircraft_type : `${record.date || ''} ${record.route || 'Flight'}`.trim();
+  return kind === 'aircraft' ? record.aircraft_type : kind === 'tailnumber' ? record.registration : `${record.date || ''} ${record.route || 'Flight'}`.trim();
 }

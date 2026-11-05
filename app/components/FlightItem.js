@@ -35,9 +35,9 @@ function FlightItem({ id, date, route, type, reg, dur, crew }) {
 const createStyles = STYLES => StyleSheet.create({
   itemContainer: { width: '100%', backgroundColor: STYLES.white, marginTop: 5, paddingTop: 5, paddingHorizontal: 5 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 5 },
-  date: { flexShrink: 0, maxWidth: '34%' },
+  date: { width: '30%', flexShrink: 0 },
   aircraft: { flex: 1, minWidth: 0, textAlign: 'center' },
-  duration: { flexShrink: 0, textAlign: 'right', fontVariant: ['tabular-nums'] },
+  duration: { width: '30%', flexShrink: 0, textAlign: 'right', fontVariant: ['tabular-nums'] },
   route: { flex: 1, minWidth: 0 },
   crew: { flexShrink: 0, textAlign: 'right' },
   syncIndicator: { height: 2, width: '5%' },

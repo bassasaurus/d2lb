@@ -1,3 +1,4 @@
+import { saveLocalTailnumber } from '../storage/tailnumbers';
 import React from 'react';
 import api from '../api/axiosConfig';
 import TailnumberForm from '../components/TailnumberForm';
@@ -7,6 +8,7 @@ import fetchTailnumbers from '../api/fetchTailnumbers';
 export default function TailnumberUpdateScreen({ route, navigation }) {
   const item = route.params.item;
   const update = async values => {
+    if (!item.id) return saveLocalTailnumber(values);
     const scope = await flightScope();
     const store = await flightStore();
     if (values.registration !== item.registration || values.aircraft !== item.aircraft) {

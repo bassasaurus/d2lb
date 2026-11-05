@@ -1,3 +1,4 @@
+import { listTailnumbers } from '../storage/tailnumbers';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, ScrollView, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Text from '../components/AppText';
@@ -21,7 +22,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
       try {
         const records = await (await flightStore()).list(aircraftScope(await flightScope()));
         const current = records.find(row => row.local_id === route.params.item.local_id || row.aircraft_type === route.params.item.aircraft_type);
-        const tails = await (await flightStore()).reference(await flightScope(), 'tailnumbers');
+        const tails = await listTailnumbers();
         if (active) {
           if (current) setItem(current);
           setTailnumbers(tails.filter(tail => tail.aircraft === route.params.item.aircraft_type));
@@ -37,7 +38,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
       const scope = await flightScope();
       const store = await flightStore();
       const flights = await store.list(scope);
-      const tails = await store.reference(scope, 'tailnumbers');
+      const tails = await listTailnumbers(scope);
       if (flights.some(flight => flight.aircraft_type === item.aircraft_type) || tails.some(tail => tail.aircraft === item.aircraft_type)) {
         Alert.alert('Aircraft is in use', 'Aircraft referenced by flights or tailnumbers cannot be deleted.');
         return;
@@ -69,7 +70,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
       <ScrollView nestedScrollEnabled persistentScrollbar style={{ maxHeight: 264 }}
         contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {[...tailnumbers].sort((a, b) => a.registration.localeCompare(b.registration, 'en', { numeric: true, sensitivity: 'base' })).map(tail =>
-          <TouchableOpacity key={tail.id} accessibilityRole="button" accessibilityLabel={`View ${tail.registration}`}
+          <TouchableOpacity key={tail.local_id || tail.id} accessibilityRole="button" accessibilityLabel={`View ${tail.registration}`}
             onPress={() => navigation.navigate('TailnumberDetail', { item: tail })}
             style={{ width: `${100 / columns}%`, minHeight: 48, justifyContent: 'center', paddingHorizontal: 8, borderBottomWidth: 1, borderColor: STYLES.grey }}>
             <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: STYLES.blue }}>{tail.registration}</Text>
