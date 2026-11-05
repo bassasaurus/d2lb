@@ -105,8 +105,8 @@ See [MOBILE_WISHLIST.md](MOBILE_WISHLIST.md) for the separate mobile roadmap and
 current offline-first implementation status. On `mobile/01-offline-first`, flight
 changes are saved to SQLite and queued locally, then uploaded through the new
 acknowledged sync API. The matching Django branch must be deployed and migrated
-before production uploads are enabled. Test with disposable local records first;
-the emulator end-to-end acceptance test is still pending. The old AsyncStorage
+before production uploads are enabled. The user confirmed the local emulator offline
+create/restart/sync/edit/delete acceptance test. The old AsyncStorage
 queue is retained separately for review.
 
 `npm audit` currently reports seven moderate findings inherited through Expo /

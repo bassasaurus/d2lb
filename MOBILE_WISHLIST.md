@@ -57,16 +57,18 @@ API behavior:
 
 Deployment/testing status:
 - API migration `api.0001_initial` has been applied to the local database only.
-- No commit, push, merge or production deployment performed for this item yet.
+- Mobile implementation: PR #23 in bassasaurus/d2lb. Companion API: PR #293
+  in bassasaurus/direct2logbook. Production deployment remains separate.
 - 597 Django tests pass, including concurrent duplicate uploads, acknowledgement
   replay, conflict prevention, ownership and transaction rollback.
-- 16 mobile tests pass, including real SQLite close/reopen, rollback, persistent
+- 20 mobile tests pass, including real SQLite close/reopen, rollback, persistent
   operation IDs, lost responses and edits/deletes during an upload.
 - Platform Hermes exports, lint and Expo compatibility checks pass. A running
   iOS logbook was observed without a startup error.
-- Real emulator offline create/restart/reconnect/website verification remains to
-  be done with disposable local test data before release. Do not use real flight
-  entry as the first acceptance test.
+- User confirmed the local emulator acceptance test: offline creation, app
+  restart, synchronization without duplicates, offline edits and deletion.
+- Create/update and tailnumber forms warn before discarding unfinished changes;
+  logout also checks open forms. The iOS date picker has Done/Cancel controls.
 
 Remaining follow-ups:
 - Explicit review/account assignment of the old AsyncStorage queue, if present.
