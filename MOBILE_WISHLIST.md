@@ -111,3 +111,39 @@ Companion Django branch: `mobile/02-aircraft-api`.
 
 Deploy the companion Django API before relying on production aircraft uploads.
 Neither PR creation nor a Git merge distributes a mobile app or deploys Django.
+
+## Item 3: sync conflict review
+
+Branch: `mobile/03-sync-conflicts`, based on merged item 2.
+No Django API change is needed; existing owned detail endpoints and content
+revisions support the review flow.
+
+- Sync review is an on-demand modal, not a drawer destination. Logbook and
+  aircraft lists show Resolve sync problems only when errors exist, including
+  pending deletions. The modal closes when no issues remain.
+- A comparison displays local and server values, with differences first and an
+  option to show all editable fields. The current server copy is fetched before
+  resolution; unavailable/uncertain uploads cannot be resolved by guessing.
+- Use server version replaces the local copy. Use local changes queues a new
+  operation against the displayed server revision; a later server edit still
+  produces another conflict. Deletion conflicts require an explicit deletion
+  choice rather than converting an update automatically.
+- If the server record was deleted, the user may accept that deletion or
+  explicitly save the local version as a new record. Re-creation removes old IDs
+  and revisions. Rejected new drafts may be edited or archived and removed.
+- Both displayed versions are archived in SQLite in the same transaction as the
+  resolution, and can be read under Saved copies. They are isolated by account
+  and resource namespace. This history is local, not a server backup or an
+  automatic undo/sync operation.
+- Resolution checks the local generation and displayed server revision. Open
+  create/update forms must be closed before resolving, preventing stale forms
+  from later submitting an older view of the chosen record.
+- SQLite upgrades from schema 2 to 3 add review/history tables while preserving
+  cached records and pending operations. No server migration is introduced.
+- Existing operation IDs and immutable retry payloads continue to prevent
+  duplicate writes after lost responses.
+
+Validation: 30 mobile tests, lint, Expo Doctor 20/20 and iOS/Android exports pass.
+The review screen was observed opening in iOS. Manual end-to-end conflict-choice
+verification with disposable local records remains before merge. No commit,
+production deployment or app distribution performed for this item yet.

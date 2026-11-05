@@ -11,6 +11,7 @@ import { Text, AppState } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import fetchTailnumbers from "../api/fetchTailnumbers";
 import { flightStore, flightScope, tokenPartition, refreshFlightCache } from "../storage/flights";
+import { aircraftScope } from "../storage/aircraft";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FlightListScreen = () => {
@@ -20,6 +21,7 @@ const FlightListScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const [data, setData] = useState([]);
+  const [issueCount, setIssueCount] = useState(0);
   const [status, setStatus] = useState("Loading saved flights…");
 
   useFocusEffect(React.useCallback(() => {
@@ -54,12 +56,13 @@ const FlightListScreen = () => {
         scope = await flightScope();
         const rows = await store.list(scope);
         const pending = await store.pendingCount(scope);
-        const issues = await store.errors(scope);
+        const issues = [...await store.errors(scope), ...await store.errors(aircraftScope(scope))];
         const legacy = await AsyncStorage.getItem('offlineFlights');
         const legacyCount = legacy ? JSON.parse(legacy).length : 0;
         if (active) {
           setData(rows);
-          setStatus(`${downloaded ? 'Up to 100 most recent flights' : 'Showing saved flights; sync could not finish'}. ${pending} pending change(s) saved on device.${serverUpgradeNeeded ? ' Uploads waiting for the server sync update.' : ''}${issues.length ? ` Needs attention: ${issues.slice(0, 3).map(issue => `${issue.route}: ${issue.message}`).join(' ')}` : ''} ${legacyCount ? ' Older unsynced flights are preserved separately for review.' : ''}`);
+          setIssueCount(issues.length);
+          setStatus(`${downloaded ? 'Up to 100 most recent flights' : 'Showing saved flights; sync could not finish'}. ${pending ? `${pending} pending change(s) saved on device.` : ""}${serverUpgradeNeeded ? ' Uploads waiting for the server sync update.' : ''}${issues.length ? ` Needs attention: ${issues.slice(0, 3).map(issue => `${issue.route}: ${issue.message}`).join(' ')}` : ''} ${legacyCount ? ' Older unsynced flights are preserved separately for review.' : ''}`);
         }
       } catch (error) {
         if (active) setStatus('Unable to open local logbook. Pull down to retry.');
@@ -127,6 +130,9 @@ const FlightListScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={{ padding: 10, color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text>
+      {issueCount > 0 && <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SyncReview', { screen: 'SyncReviewList' })}>
+        <Text style={{ padding: 10, color: STYLES.danger }}>Resolve sync problems ({issueCount})</Text>
+      </TouchableOpacity>}
       <FlatList
         data={data}
         renderItem={renderItem}

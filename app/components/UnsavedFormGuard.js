@@ -17,6 +17,7 @@ export default function UnsavedFormGuard({ savedNavigation }) {
 
   useEffect(() => {
     formGuards.current.set(route.key, () => ({
+      open: !state.current.savedNavigation.current,
       dirty: state.current.dirty && !state.current.savedNavigation.current,
       saving: state.current.isSubmitting && !state.current.savedNavigation.current,
     }));

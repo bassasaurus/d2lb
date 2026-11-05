@@ -14,11 +14,11 @@ export async function drainFlightQueue({ store, scope, send, uuid, isCurrent, no
     } catch (error) {
       const status = error.response?.status;
       const blocked = [400, 409, 422].includes(status);
-      const message = status === 409 ? 'Changed on the website. Review before syncing.'
+      const message = status === 409 ? (error.response?.data?.detail || 'Changed on the website. Review before syncing.')
         : status === 400 || status === 422 ? `Server rejected this ${label}: ${JSON.stringify(error.response?.data || {}).slice(0, 600)}`
         : status === 401 || status === 403 ? 'Sign in again to resume syncing.'
         : 'Upload not confirmed. Saved on device; will retry.';
-      await store.failOperation(scope, operation, message, blocked, now());
+      await store.failOperation(scope, operation, message, blocked, now(), error.response?.data || null);
       if (!blocked) throw error;
     }
   }

@@ -1,0 +1,31 @@
+import api from '../api/axiosConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { flightStore, flightScope, tokenPartition } from '../storage/flights';
+import { aircraftScope } from '../storage/aircraft';
+
+export async function reviewAccess(kind) {
+  if (!['flight', 'aircraft'].includes(kind)) throw new Error('Unknown record type.');
+  const partition = await tokenPartition();
+  const base = await flightScope();
+  const scope = kind === 'aircraft' ? aircraftScope(base) : base;
+  const store = await flightStore();
+  const assertCurrent = async () => {
+    if (await tokenPartition() !== partition) throw new Error('Account changed. Reopen sync review.');
+  };
+  return { store, scope, assertCurrent,
+    async refresh(localId, generation, id) {
+      if (!id) throw new Error('This local record has no server copy yet.');
+      const token = await AsyncStorage.getItem('token');
+      await assertCurrent();
+      let server;
+      try { server = (await api.get(`/api/${kind === 'aircraft' ? 'aircraft' : 'flights'}/${id}/`, { pinnedToken: token })).data; }
+      catch (error) {
+        if (error.response?.status !== 404) throw error;
+        server = null;
+      }
+      await assertCurrent();
+      await store.captureServer(scope, localId, generation, server);
+      return store.reviewRecord(scope, localId);
+    },
+  };
+}

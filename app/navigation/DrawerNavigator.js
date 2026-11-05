@@ -10,7 +10,9 @@ import {
   DrawerItem,
 } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "../Screens/LoginScreen";
+import SyncReviewStackNavigator from "./SyncReviewStackNavigator";
 import AircraftStackNavigator from "./AircraftStackNavigator";
 import { aircraftScope } from "../storage/aircraft";
 import FlightStackNavigator from "./FlightStackNavigator";
@@ -18,6 +20,7 @@ import AppContext from "../components/AppContext";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
 
 const Drawer = createDrawerNavigator();
+const Root = createStackNavigator();
 
 function DrawerNavigator({ navigation }) {
   const Context = useContext(AppContext);
@@ -69,16 +72,15 @@ function DrawerNavigator({ navigation }) {
   if (Context.isSignedInValue) {
     return (
       <NavigationContainer>
-        <Drawer.Navigator
-          drawerContent={(props) => <LogoutContent {...props} />}
-        >
-          <Drawer.Screen
-            name='Logbook'
-            component={FlightStackNavigator}
-            options={{ headerShown: false }}
-          />
-          <Drawer.Screen name="Aircraft" component={AircraftStackNavigator} options={{ headerShown: false }} />
-        </Drawer.Navigator>
+        <Root.Navigator screenOptions={{ headerShown: false }}>
+          <Root.Screen name="MainDrawer">
+            {() => <Drawer.Navigator drawerContent={(props) => <LogoutContent {...props} />}>
+              <Drawer.Screen name="Logbook" component={FlightStackNavigator} options={{ headerShown: false }} />
+              <Drawer.Screen name="Aircraft" component={AircraftStackNavigator} options={{ headerShown: false }} />
+            </Drawer.Navigator>}
+          </Root.Screen>
+          <Root.Screen name="SyncReview" component={SyncReviewStackNavigator} options={{ presentation: 'modal' }} />
+        </Root.Navigator>
       </NavigationContainer>
     );
   } else {
