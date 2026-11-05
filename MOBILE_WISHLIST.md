@@ -270,3 +270,49 @@ simulator verified per-code red styling, the explanatory message, clearing the
 error after restoring the original route, and compact list spacing. No flight
 was submitted during that UI check. iOS/Android exports are checked before
 handoff. Work is not committed, merged or deployed yet.
+
+## Last-used aircraft default
+
+Branch: `mobile/10-last-aircraft-default`. New flights prefill only the aircraft
+type, using the last successfully saved flight on this device/account. Before
+a preference exists, use the latest available flight type; absent/deleted types
+fall back safely or leave the field blank. Tailnumber and route remain blank.
+Remembered preferences are stored with account-scoped offline references and
+move with the existing token-to-account cache transition. Preference-write
+failure does not turn a successful flight save into a retry.
+
+Draft recovery runs after defaults load and preserves the draft's values even
+if defaults have changed; existing-record drafts still check their baseline.
+Aircraft/registration text is centered across each logbook row using equal-width
+side columns, with existing text fitting preserved. User declined recent routes,
+last-tailnumber defaults and duplicate-flight shortcuts.
+
+Validation: 64 mobile tests and lint pass; Android export passes. iOS simulator
+visually checked centered metadata. No Django changes. Not committed or merged.
+
+## Offline tailnumber creation
+
+Branches: `mobile/11-offline-tailnumbers` and Django
+`mobile/offline-tailnumbers-api`. New tailnumbers save into an account-scoped
+SQLite queue and appear immediately in cached pickers and Aircraft Detail.
+Sync uploads aircraft, then tailnumbers, then dependent flights; missing server
+capabilities preserve the queue instead of posting dependent flights early.
+Django creates tailnumbers and durable operation receipts atomically under the
+account lock, so lost acknowledgements replay without duplicate creation.
+No database migration or native dependency is introduced.
+
+Existing synced tailnumber edits remain online. Pending creates may be corrected
+until an upload becomes uncertain; they cannot be changed until that result is
+confirmed. Registration/aircraft changes are blocked while unsynced flights use
+the old values. Pending tailnumbers participate in retry timers, logout warnings
+and sync review. Conflict resolution retains its saved-copy behavior, and cannot
+remove a local tailnumber while flights still depend on it.
+
+Validation: 71 mobile tests and 65 Django API tests pass; lint passes. Tests cover
+queue persistence/cache refresh, account migration, immutable retries after lost
+responses, rejected-create correction, duplicate checks and owned server writes.
+The iOS form opened with cached aircraft and showed local-save messaging. No real
+registration was submitted during UI checks. iOS/Android exports are checked
+before handoff. Companion API must deploy before queued uploads can complete.
+The prior uncommitted last-aircraft-default changes remain preserved in this
+working tree. No changes committed, merged or deployed for this item yet.

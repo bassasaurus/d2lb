@@ -1,3 +1,4 @@
+import { listTailnumbers } from '../storage/tailnumbers';
 import RouteInput from '../airports/RouteInput';
 import { normalizeRoute, routeErrors } from '../airports/routeCheck.mjs';
 import PickerOverlayHost from './PickerOverlayHost';
@@ -38,7 +39,7 @@ function FlightForm({ initialValues, method, onSaved }) {
   useFocusEffect(React.useCallback(() => {
     let active = true;
     (async () => {
-      const rows = await (await flightStore()).reference(await flightScope(), "tailnumbers");
+      const rows = await listTailnumbers();
       if (active) setTailnumbers(rows);
     })().catch(() => { if (active) setTailnumbers([]); });
     return () => { active = false; };

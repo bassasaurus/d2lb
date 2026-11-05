@@ -20,7 +20,7 @@ export default function SyncReviewListScreen({ navigation }) {
       try {
         const pending = [];
         const archives = [];
-        for (const kind of ['flight', 'aircraft']) {
+        for (const kind of ['flight', 'aircraft', 'tailnumber']) {
           const { store, scope, assertCurrent } = await reviewAccess(kind);
           pending.push(...(await store.reviewList(scope)).map(item => ({ ...item, kind })));
           archives.push(...(await store.reviewHistory(scope)).map(item => ({ ...item, kind })));

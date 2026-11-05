@@ -1,3 +1,4 @@
+import { listTailnumbers } from '../storage/tailnumbers';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, Pressable, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -38,7 +39,7 @@ export default function TailnumberPicker({ initialValue, setFieldValue, aircraft
     setLoading(true);
     setError(false);
     (async () => {
-      const rows = await (await flightStore()).reference(await flightScope(), 'tailnumbers');
+      const rows = await listTailnumbers();
       if (active) { setData(rows); setLoading(false); }
     })().catch(() => { if (active) { setError(true); setLoading(false); } });
     return () => { active = false; };
@@ -54,7 +55,7 @@ export default function TailnumberPicker({ initialValue, setFieldValue, aircraft
       {loading || error ? <AppText style={{ padding: 10, color: error ? colors.danger : colors.muted }}>
         {error ? 'Could not load saved tailnumbers. Reopen this screen to retry.' : 'Loading tailnumbers…'}
       </AppText> : <>
-        {suggestions.rows.map(item => <Pressable key={String(item.id)} accessibilityRole="button"
+        {suggestions.rows.map(item => <Pressable key={item.local_id || String(item.id)} accessibilityRole="button"
           accessibilityLabel={`Select ${item.registration}`} onPress={() => {
             setFieldValue('registration', item.registration);
             setQuery(null);

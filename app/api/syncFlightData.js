@@ -1,3 +1,5 @@
+import { syncTailnumbers } from './syncTailnumbers';
+import { tailnumberScope } from '../storage/tailnumbers';
 import { session } from '../auth/session';
 import * as Crypto from 'expo-crypto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,8 +20,10 @@ async function synchronize() {
   const previousScope = await flightScope();
   await store.moveScope(previousScope, scope);
   await store.moveScope(aircraftScope(previousScope), aircraftScope(scope));
+  await store.moveScope(tailnumberScope(previousScope), tailnumberScope(scope));
   await AsyncStorage.setItem(`flight-scope:${partition}`, scope);
   await syncAircraft(scope, partition, capabilities.aircraft_sync === true);
+  await syncTailnumbers(scope, partition, capabilities.tailnumber_sync === true);
   await drainFlightQueue({
     store, scope,
     uuid: () => Crypto.randomUUID(),
@@ -34,6 +38,10 @@ async function synchronize() {
       const pendingAircraft = await store.list(aircraftScope(scope));
       if (pendingAircraft.some(row => row.aircraft_type === data.data?.aircraft_type && row.sync_state !== 'synced')) {
         throw new Error('Aircraft changes must sync before this flight.');
+      }
+      const tails = await store.list(tailnumberScope(scope));
+      if (tails.some(row => row.registration === data.data?.registration && row.sync_state !== 'synced')) {
+        throw new Error('Tailnumber must upload before this flight.');
       }
       return (await api.post('/api/mobile/flight-sync/', data, { pinnedToken: token })).data;
     },

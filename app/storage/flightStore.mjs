@@ -181,18 +181,28 @@ export async function createFlightStore(db) {
     async errors(scope) {
       requireScope(scope);
       const rows = await db.getAllAsync('SELECT payload,sync_error FROM mobile_flights WHERE scope=? AND sync_error IS NOT NULL', scope);
-      return rows.map(row => ({ route: JSON.parse(row.payload).route || JSON.parse(row.payload).aircraft_type, message: row.sync_error }));
+      return rows.map(row => ({ route: JSON.parse(row.payload).route || JSON.parse(row.payload).registration || JSON.parse(row.payload).aircraft_type, message: row.sync_error }));
     },
     async pendingCount(scope) {
       requireScope(scope);
       return (await db.getFirstAsync("SELECT COUNT(*) AS count FROM mobile_flights WHERE scope=? AND state!='synced'", scope)).count;
     },
-    async save(scope, localId, flight) {
+    async save(scope, localId, flight, options = {}) {
       requireScope(scope);
       // One durable row is both the local record and its outbox entry.
       const { local_id, sync_state, sync_error, ...payload } = flight;
       await db.withExclusiveTransactionAsync(async tx => {
         const existing = await tx.getFirstAsync('SELECT payload,state FROM mobile_flights WHERE scope=? AND local_id=?', scope, localId);
+        if (options.unattemptedCreateOnly) {
+          const tails = await tx.getAllAsync('SELECT local_id,payload FROM mobile_flights WHERE scope=?', scope);
+          if (tails.some(row => row.local_id !== localId && JSON.parse(row.payload).registration?.toUpperCase() === payload.registration?.toUpperCase())) {
+            throw new Error('This registration already exists in your account.');
+          }
+          const operation = await tx.getFirstAsync('SELECT blocked FROM mobile_operations WHERE scope=? AND local_id=?', scope, localId);
+          if (JSON.parse(existing?.payload || '{}').id || payload.id || (operation && !operation.blocked)) {
+            throw new Error('This tailnumber may already be uploaded. Reconnect and confirm its result before editing it.');
+          }
+        }
         if (existing?.state === 'pending_delete') throw new Error('This flight is pending deletion.');
         if (existing) {
           const saved = JSON.parse(existing.payload);

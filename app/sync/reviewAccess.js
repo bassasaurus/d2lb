@@ -1,13 +1,14 @@
+import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { session } from '../auth/session';
 import api from '../api/axiosConfig';
 import { flightStore, flightScope, tokenPartition } from '../storage/flights';
 import { aircraftScope } from '../storage/aircraft';
 
 export async function reviewAccess(kind) {
-  if (!['flight', 'aircraft'].includes(kind)) throw new Error('Unknown record type.');
+  if (!['flight', 'aircraft', 'tailnumber'].includes(kind)) throw new Error('Unknown record type.');
   const partition = await tokenPartition();
   const base = await flightScope();
-  const scope = kind === 'aircraft' ? aircraftScope(base) : base;
+  const scope = kind === 'aircraft' ? aircraftScope(base) : kind === 'tailnumber' ? tailnumberScope(base) : base;
   const store = await flightStore();
   const assertCurrent = async () => {
     if (await tokenPartition() !== partition) throw new Error('Account changed. Reopen sync review.');
@@ -18,7 +19,7 @@ export async function reviewAccess(kind) {
       const token = await session.getToken();
       await assertCurrent();
       let server;
-      try { server = (await api.get(`/api/${kind === 'aircraft' ? 'aircraft' : 'flights'}/${id}/`, { pinnedToken: token })).data; }
+      try { server = (await api.get(`/api/${kind === 'aircraft' ? 'aircraft' : kind === 'tailnumber' ? 'tailnumbers' : 'flights'}/${id}/`, { pinnedToken: token })).data; }
       catch (error) {
         if (error.response?.status !== 404) throw error;
         server = null;
