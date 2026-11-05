@@ -41,9 +41,13 @@
         {
           "image": "./app/assets/D2LB_LOGO_Dark_top.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "backgroundColor": "#0f131a"
+          }
         }
       ]
-    ]
+    ],
+    "userInterfaceStyle": "automatic"
   }
 }

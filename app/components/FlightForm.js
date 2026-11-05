@@ -1,18 +1,8 @@
+import { useMemo } from 'react';
 import moment from "moment";
 import React, { useState, useContext, useEffect, useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Modal,
-  Pressable,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  Button,
-  Alert,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, Modal, Pressable, TouchableOpacity, KeyboardAvoidingView, Platform, Button, Alert, ScrollView } from 'react-native';
+import Text from './AppText';
 import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
@@ -30,9 +20,11 @@ import { flightScope, flightStore } from "../storage/flights";
 import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 
 function FlightForm({ initialValues, method, onSaved }) {
+  const { styles: STYLES, isDark } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const savedNavigation = useRef(false);
   const [calVisible, setCalVisible] = useState(false);
   const [calendarDate, setCalendarDate] = useState(new Date());
@@ -178,7 +170,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                     <Text style={styles.errors}>{errors.route}</Text>
                   ) : (
                     <View>
-                      <AppText color='gray'>
+                      <AppText color={STYLES.muted}>
                         ATA or ICAO Airport codes only
                       </AppText>
                     </View>
@@ -280,7 +272,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                     style={{ paddingTop: 15 }}
                     name='plus'
                     size={30}
-                    color='black'
+                    color={STYLES.black}
                   />
 
                   <View style={{ flexDirection: "column", flex: 0.3 }}>
@@ -315,7 +307,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                         style={{ paddingTop: 15, paddingLeft: 5 }}
                         name='keyboard-return'
                         size={30}
-                        color='green'
+                        color={STYLES.success}
                       />
                     </TouchableOpacity>
                   ) : (
@@ -337,7 +329,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                         style={{ paddingTop: 15, paddingLeft: 5 }}
                         name='undo'
                         size={30}
-                        color='red'
+                        color={STYLES.danger}
                       />
                     </TouchableOpacity>
                   )}
@@ -608,7 +600,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                           setFormCount(0);
                         }}
                       >
-                        <AppText color='red'>Remove</AppText>
+                        <AppText color={STYLES.danger}>Remove</AppText>
                       </TouchableOpacity>
                     ) : (
                       <View></View>
@@ -634,7 +626,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                             setFormCount(0);
                           }}
                         >
-                          <AppText color='red'>Remove</AppText>
+                          <AppText color={STYLES.danger}>Remove</AppText>
                         </TouchableOpacity>
                       ) : (
                         <View></View>
@@ -663,7 +655,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                             setFormCount(formCount - 1);
                           }}
                         >
-                          <AppText color='red'>Remove</AppText>
+                          <AppText color={STYLES.danger}>Remove</AppText>
                         </TouchableOpacity>
                       ) : (
                         <View></View>
@@ -692,7 +684,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                             setFormCount(formCount - 1);
                           }}
                         >
-                          <AppText color='red'>Remove</AppText>
+                          <AppText color={STYLES.danger}>Remove</AppText>
                         </TouchableOpacity>
                       ) : (
                         <View></View>
@@ -707,7 +699,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                     <TouchableOpacity
                       onPress={() => setFormCount(formCount + 1)}
                     >
-                      <Text style={{ marginTop: 10, color: "green" }}>
+                      <Text style={{ marginTop: 10, color: STYLES.success }}>
                         Add approach
                       </Text>
                     </TouchableOpacity>
@@ -799,6 +791,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                           value={calendarDate}
                           mode="date"
                           display="inline"
+                          themeVariant={isDark ? "dark" : "light"}
                           style={{ width: "100%" }}
                           onChange={(event, date) => {
                             if (date && event.type !== "dismissed") setCalendarDate(date);
@@ -818,7 +811,7 @@ function FlightForm({ initialValues, method, onSaved }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   calendarBackdrop: {
     flex: 1,
     justifyContent: "center",
@@ -829,7 +822,7 @@ const styles = StyleSheet.create({
     width: "94%",
     maxWidth: 420,
     padding: 12,
-    backgroundColor: "white",
+    backgroundColor: STYLES.surface,
     borderRadius: 16,
   },
   calendarActions: {
@@ -846,7 +839,7 @@ const styles = StyleSheet.create({
 
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: STYLES.surface,
     borderRadius: 20,
     padding: 35,
 

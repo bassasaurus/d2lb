@@ -1,8 +1,9 @@
+import { useMemo } from 'react';
 import React, { useState, useEffect} from "react";
 import { FlatList, StyleSheet, TouchableOpacity, RefreshControl, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useFocusEffect, useIsFocused } from "@react-navigation/native";
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 import syncFlightData from "../api/syncFlightData";
 import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
@@ -15,6 +16,8 @@ import { aircraftScope } from "../storage/aircraft";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FlightListScreen = () => {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
 
   // removeAsyncData('offlineFlights')
 
@@ -151,7 +154,7 @@ const FlightListScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: {
     width: "100%",
     flex: 1,

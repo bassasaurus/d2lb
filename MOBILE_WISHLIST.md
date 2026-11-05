@@ -163,3 +163,16 @@ actually reach the native text component. System font scaling remains enabled.
 Validation: lint and Android bundle export pass. Personal-device confirmation
 remains with the user; no claim is made that an emulator exactly matches their
 Pixel's font/display settings. No commit or merge yet for this item.
+
+## Item 5: night mode
+
+Branch: `mobile/05-night-mode`, based on merged item 4 (verified on Pixel 10).
+Appearance in the drawer offers System, Light and Dark, with a saved device
+preference. Shared colors cover navigation, forms, pickers, lists, details,
+sync review, status bars and maps. No Django or database changes are needed.
+The iOS simulator logbook, appearance screen and flight update form were visually
+checked in dark mode. Native launch-screen appearance requires a new native build.
+
+Validation: 35 tests pass, including preference persistence, write recovery and
+text/button contrast. Lint, dependency checks, Expo Doctor and bundle exports
+are checked before handoff. No commit or merge yet.

@@ -1,12 +1,14 @@
+import { useMemo } from 'react';
 import React, { useContext, useRef } from 'react';
-import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import Text from './AppText';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import AircraftPicker from './AircraftPicker';
 import AppTextInput from './AppTextInput';
 import AppContext from './AppContext';
 import UnsavedFormGuard from './UnsavedFormGuard';
-import { STYLES } from '../styles/styles';
+import { useAppTheme } from '../theme/ThemeProvider';
 
 const rules = [['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
 const schema = yup.object({
@@ -15,6 +17,8 @@ const schema = yup.object({
 }).test('operating-rule', 'Select one operating rule.', values => rules.filter(([key]) => values[key]).length === 1);
 
 export default function TailnumberForm({ initialValues, method, onSaved, aircraft_type, allowAircraftChange = false }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const savedNavigation = useRef(false);
   const context = useContext(AppContext);
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -57,15 +61,15 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           </View>
           {submitCount > 0 && Object.values(errors).map((error, index) => <Text key={index} style={styles.error}>{String(error)}</Text>)}
           <View style={{ marginTop: 20 }}><Button title={isSubmitting ? 'Saving…' : 'Save tailnumber'} onPress={handleSubmit} disabled={isSubmitting} /></View>
-          <Text style={{ color: '#555', marginTop: 12 }}>A connection is required to save tailnumbers.</Text>
+          <Text style={{ color: STYLES.muted, marginTop: 12 }}>A connection is required to save tailnumbers.</Text>
         </>}
       </Formik>
     </ScrollView>
   </KeyboardAvoidingView>;
 }
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: { padding: 16 }, heading: { fontSize: 20, fontWeight: '600' },
   label: { fontWeight: '600', marginTop: 16 }, rules: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   rule: { padding: 12, borderWidth: 1, borderColor: STYLES.grey, borderRadius: 5 },
-  selected: { borderColor: STYLES.blue, backgroundColor: '#eef3ff' }, error: { color: STYLES.danger, marginTop: 8 },
+  selected: { borderColor: STYLES.blue, backgroundColor: STYLES.selected }, error: { color: STYLES.danger, marginTop: 8 },
 });

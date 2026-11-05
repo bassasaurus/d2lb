@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import React, { useState, useContext } from "react";
-import { Alert, Platform, View, StyleSheet, Button, Text, Image, KeyboardAvoidingView, ScrollView, Pressable, TouchableNativeFeedbackBase } from "react-native";
+import { Alert, Platform, View, StyleSheet, Button, Image, KeyboardAvoidingView, ScrollView, Pressable, TouchableNativeFeedbackBase } from 'react-native';
+import Text from '../components/AppText';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 import AppTextInput from "../components/AppTextInput";
 import api from "../api/axiosConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,6 +15,8 @@ import * as yup from "yup";
 import AppText from "../components/AppText";
 
 function LoginScreen() {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const [passwordSecure, setPasswordSecure] = useState(true);
   const Context = useContext(AppContext);
 
@@ -63,9 +67,11 @@ function LoginScreen() {
         <ScrollView>
           <View style={styles.container}>
             <View style={{ paddingTop: 100, alignItems: "center" }}>
+              <View style={{ backgroundColor: "#fff", padding: 10, borderRadius: 8 }}>
               <Image
                 source={require("../assets/D2LB_LOGO_Dark_top.png")}
               ></Image>
+              </View>
               <View style={{ marginTop: 10 }}>
                 <AppText size={18}>No memory items. No limitations.</AppText>
               </View>
@@ -140,9 +146,9 @@ function LoginScreen() {
                         onPress={() => setPasswordSecure(!passwordSecure)}
                       >
                         {passwordSecure ? (
-                          <AppText color='gray'>show</AppText>
+                          <AppText color={STYLES.muted}>show</AppText>
                         ) : (
-                          <AppText color='gray'>hide</AppText>
+                          <AppText color={STYLES.muted}>hide</AppText>
                         )}
                       </Pressable>
                     </View>
@@ -175,7 +181,7 @@ function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: { flexDirection: "column", marginRight: 10, marginLeft: 10 },
   errors: {
     color: STYLES.danger,

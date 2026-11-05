@@ -1,14 +1,18 @@
+import { useMemo } from 'react';
 import React, { useRef } from 'react';
-import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import Text from '../components/AppText';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import AppTextInput from '../components/AppTextInput';
 import UnsavedFormGuard from '../components/UnsavedFormGuard';
 import { saveAircraft } from '../storage/aircraft';
 import { aircraftValues, CATEGORY_CHOICES, CLASS_CHOICES, ENGINE_CHOICES, FLAGS, WEIGHT_CHOICES } from './fields.mjs';
-import { STYLES } from '../styles/styles';
+import { useAppTheme } from '../theme/ThemeProvider';
 
 function Choices({ title, choices, selected, onSelect }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   return <View style={styles.group}><Text style={styles.label}>{title}</Text><View style={styles.options}>
     {choices.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" accessibilityState={{ checked: selected === key }}
       onPress={() => onSelect(key)} style={[styles.option, selected === key && styles.selected]}>
@@ -24,6 +28,8 @@ const schema = yup.object({
   || (values.aircraft_category === 'R') === ['HELO', 'GYRO'].includes(values.aircraft_class));
 
 export default function AircraftFormScreen({ route, navigation }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const record = route.params?.item;
   const savedNavigation = useRef(false);
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
@@ -67,11 +73,11 @@ export default function AircraftFormScreen({ route, navigation }) {
     </ScrollView>
   </KeyboardAvoidingView>;
 }
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: { padding: 16, paddingBottom: 36 }, label: { fontWeight: '600', marginBottom: 4 },
   group: { marginTop: 16 }, options: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   option: { padding: 10, borderWidth: 1, borderColor: STYLES.grey, borderRadius: 5 },
-  selected: { borderColor: STYLES.blue, backgroundColor: '#eef3ff' },
+  selected: { borderColor: STYLES.blue, backgroundColor: STYLES.selected },
   flag: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 8 },
-  error: { color: STYLES.danger, marginVertical: 8 }, help: { color: '#555', marginVertical: 8 },
+  error: { color: STYLES.danger, marginVertical: 8 }, help: { color: STYLES.muted, marginVertical: 8 },
 });

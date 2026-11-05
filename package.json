@@ -34,6 +34,7 @@
     "expo-splash-screen": "~58.0.13",
     "expo-sqlite": "~58.0.15",
     "expo-status-bar": "~58.0.4",
+    "expo-system-ui": "~58.0.7",
     "expo-updates": "~58.0.21",
     "formik": "^2.4.6",
     "moment": "^2.30.1",

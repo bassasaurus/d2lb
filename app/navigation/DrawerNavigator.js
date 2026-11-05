@@ -1,3 +1,4 @@
+import { useAppTheme } from '../theme/ThemeProvider';
 import React, { useContext, useEffect } from "react";
 import { StyleSheet, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,6 +12,7 @@ import {
 } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import AppearanceScreen from "../theme/AppearanceScreen";
 import LoginScreen from "../Screens/LoginScreen";
 import SyncReviewStackNavigator from "./SyncReviewStackNavigator";
 import AircraftStackNavigator from "./AircraftStackNavigator";
@@ -23,6 +25,7 @@ const Drawer = createDrawerNavigator();
 const Root = createStackNavigator();
 
 function DrawerNavigator({ navigation }) {
+  const { colors, navigationTheme } = useAppTheme();
   const Context = useContext(AppContext);
 
 
@@ -71,12 +74,13 @@ function DrawerNavigator({ navigation }) {
 
   if (Context.isSignedInValue) {
     return (
-      <NavigationContainer>
+      <NavigationContainer theme={navigationTheme}>
         <Root.Navigator screenOptions={{ headerShown: false }}>
           <Root.Screen name="MainDrawer">
             {() => <Drawer.Navigator drawerContent={(props) => <LogoutContent {...props} />}>
               <Drawer.Screen name="Logbook" component={FlightStackNavigator} options={{ headerShown: false }} />
               <Drawer.Screen name="Aircraft" component={AircraftStackNavigator} options={{ headerShown: false }} />
+              <Drawer.Screen name="Appearance" component={AppearanceScreen} options={{ title: "Appearance" }} />
             </Drawer.Navigator>}
           </Root.Screen>
           <Root.Screen name="SyncReview" component={SyncReviewStackNavigator} options={{ presentation: 'modal' }} />
@@ -85,7 +89,7 @@ function DrawerNavigator({ navigation }) {
     );
   } else {
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
         <LoginScreen />
       </SafeAreaView>
     );

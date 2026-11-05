@@ -1,17 +1,11 @@
+import { useMemo } from 'react';
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Modal,
-  Text,
-  FlatList,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Modal, FlatList, Pressable, TouchableOpacity } from 'react-native';
+import Text from './AppText';
 
 import AppTextInput from "./AppTextInput";
 
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
 function ApproachPicker({
@@ -21,6 +15,8 @@ function ApproachPicker({
   numberKey,
   numberValue,
 }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
 
@@ -152,12 +148,12 @@ function ApproachPicker({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: {},
 
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: STYLES.surface,
     borderRadius: 20,
     padding: 35,
     alignItems: "center",

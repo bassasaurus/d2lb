@@ -1,8 +1,9 @@
+import { useMemo } from 'react';
 import React, { useRef, useContext, useState } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { StyleSheet, View, Alert, TouchableOpacity } from "react-native";
 
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 import ActivityModal from "../components/ActivityModal";
 import { flightStore, flightScope } from "../storage/flights";
 import AppContext from "../components/AppContext";
@@ -10,6 +11,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
 import Separator from "../components/Separator";
 import DetailsPanel from "../components/DetailsPanel";
+import { DARK_MAP_STYLE } from "../theme/mapStyle";
 import RecordActions from "../components/RecordActions";
 import * as Device from "expo-device";
 
@@ -19,6 +21,8 @@ import * as Device from "expo-device";
 
 
 function FlightDetailScreen({ route, navigation }) {
+  const { styles: STYLES, isDark } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
 
@@ -118,6 +122,8 @@ function FlightDetailScreen({ route, navigation }) {
               ? { width: "100%", height: "100%" }
               : { width: "100%", height: "90%" }
           }
+          customMapStyle={isDark ? DARK_MAP_STYLE : []}
+          userInterfaceStyle={isDark ? "dark" : "light"}
           mapPadding={Device.osName === "ios" ? iosPadding : androidPadding}
           ref={mapRef}
           onLayout={fitMap}
@@ -148,7 +154,7 @@ function FlightDetailScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: {
     flexDirection: "column",
     justifyContent: "flex-start",

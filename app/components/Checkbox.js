@@ -1,8 +1,11 @@
+import { useMemo } from 'react';
 import React, { useState } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 
 function Checkbox({ onPress, isChecked }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const [checked, setChecked] = useState(false);
 
   const toggle = () => {
@@ -36,7 +39,7 @@ function Checkbox({ onPress, isChecked }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: {},
 });
 

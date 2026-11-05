@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
 import React, { useContext } from "react";
 import { View, StyleSheet, Modal, ActivityIndicator } from "react-native";
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 import AppContext from "./AppContext";
 
 function ActivityModal(props) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const Context = useContext(AppContext);
   return (
     <Modal visible={Context.activityVisibleValue} transparent={true}>
@@ -19,10 +22,10 @@ function ActivityModal(props) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: STYLES.surface,
     borderRadius: 20,
     padding: 35,
 

@@ -1,11 +1,13 @@
 import React, { useCallback, useState } from 'react';
-import { Button, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
+import { Button, FlatList, RefreshControl, TouchableOpacity, View } from 'react-native';
+import Text from '../components/AppText';
 import { useFocusEffect } from '@react-navigation/native';
 import { reviewAccess } from './reviewAccess';
 import { recordTitle } from './comparison.mjs';
-import { STYLES } from '../styles/styles';
+import { useAppTheme } from '../theme/ThemeProvider';
 
 export default function SyncReviewListScreen({ navigation }) {
+  const { styles: STYLES } = useAppTheme();
   const [rows, setRows] = useState([]);
   const [history, setHistory] = useState([]);
   const [savedCopies, setSavedCopies] = useState(false);
@@ -46,7 +48,7 @@ export default function SyncReviewListScreen({ navigation }) {
     <FlatList data={savedCopies ? history : rows} keyExtractor={item => `${item.kind}:${savedCopies ? item.id : item.local_id}`}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); refresh.current?.(); }} />}
       ListEmptyComponent={<Text style={{ marginTop: 20 }}>{savedCopies ? 'Copies are saved here when you resolve an issue.' : 'Your pending uploads will retry when the app is connected.'}</Text>}
-      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" style={{ paddingVertical: 16, borderBottomWidth: 1, borderColor: '#ddd' }}
+      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" style={{ paddingVertical: 16, borderBottomWidth: 1, borderColor: STYLES.grey }}
         onPress={() => navigation.navigate('SyncConflict', { kind: item.kind, localId: item.local_id, historyId: savedCopies ? item.id : undefined })}>
         <Text style={{ color: STYLES.blue, fontSize: 16, fontWeight: '600' }}>{recordTitle(item.kind, savedCopies ? item.local_record : item)}</Text>
         <Text>{savedCopies ? `Saved ${new Date(item.created_at).toLocaleString()}` : item.sync_error}</Text>

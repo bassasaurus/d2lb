@@ -1,23 +1,19 @@
+import { useMemo } from 'react';
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Modal,
-  Text,
-  FlatList,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Modal, FlatList, Pressable, TouchableOpacity } from 'react-native';
+import Text from './AppText';
 import AppTextInput from "./AppTextInput";
 import { flightStore, flightScope } from "../storage/flights";
 
 import { listAircraft } from "../storage/aircraft";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Alert } from "react-native";
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
 function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const navigation = useNavigation();
   const [data, setData] = useState();
   const [visible, setVisible] = useState(false);
@@ -83,7 +79,7 @@ function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -93,7 +89,7 @@ const styles = StyleSheet.create({
   modalView: {
     margin: 50,
     paddingBottom: 40,
-    backgroundColor: "white",
+    backgroundColor: STYLES.surface,
     borderRadius: 20,
     padding: 35,
     alignItems: "center",

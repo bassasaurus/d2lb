@@ -1,5 +1,3 @@
-import Platform from "react-native";
-
 export const STYLES = {
   blue: "mediumblue",
   lightblue: "lightblue",
