@@ -1,7 +1,8 @@
+import { FlatList } from './OverflowLists';
 import { listTailnumbers } from '../storage/tailnumbers';
 import { useMemo } from 'react';
 import React, { useState } from "react";
-import { View, StyleSheet, Modal, FlatList, Pressable, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Modal, Pressable, TouchableOpacity } from 'react-native';
 import Text from './AppText';
 import AppTextInput from "./AppTextInput";
 import { flightStore, flightScope } from "../storage/flights";

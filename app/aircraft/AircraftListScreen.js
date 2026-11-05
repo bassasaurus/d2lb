@@ -1,6 +1,7 @@
+import { FlatList } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import React, { useCallback, useState } from 'react';
-import { Alert, Button, FlatList, RefreshControl, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, RefreshControl, TouchableOpacity, View } from 'react-native';
 import Text from '../components/AppText';
 import { useFocusEffect } from '@react-navigation/native';
 import { listAircraft, aircraftScope } from '../storage/aircraft';
