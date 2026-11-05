@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as Device from "expo-device";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { session } from "../auth/session";
+import { installSessionAuth } from "../auth/sessionAuth.mjs";
 
 import { Platform } from "react-native";
 import { getApiBaseURL } from "./baseURL.mjs";
@@ -15,17 +16,6 @@ const api = axios.create({
   headers: { Accept: "application/json" },
 });
 
-api.interceptors.request.use(
-  async (config) => {
-    const token = config.pinnedToken || await AsyncStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = "Token " + token;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+installSessionAuth(api, session);
 
 export default api;

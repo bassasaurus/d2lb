@@ -176,3 +176,25 @@ checked in dark mode. Native launch-screen appearance requires a new native buil
 Validation: 35 tests pass, including preference persistence, write recovery and
 text/button contrast. Lint, dependency checks, Expo Doctor and bundle exports
 are checked before handoff. No commit or merge yet.
+
+## Item 6: secure sessions and login/logout
+
+Branch: `mobile/06-secure-sessions`, based on merged night mode (#27).
+Tokens use Expo SecureStore (device-only, unlocked access); existing AsyncStorage
+tokens migrate before plaintext is removed. Offline partitions retain the same
+identity and queued changes remain on the device when signed out. Startup waits
+for credential restoration and offers retry if storage cannot be accessed.
+
+Login uses Formik validation/submission, prevents repeated requests and supports
+password autofill. Authenticated requests centrally handle 401 responses; network
+errors and 403 permission errors preserve offline access. A late response from
+an earlier session cannot sign out a new login or populate its UI. Existing
+unsaved-form and unsynced-change logout warnings remain. Logout removes the local
+credential; it does not revoke Django's shared API token on other devices.
+
+Validation: 46 mobile tests pass, including migration failures, logout failures,
+request authentication and session races. Lint and Expo Doctor (20/20) pass.
+iOS simulator restored the signed-in logbook after reload, then signed out to
+the disabled-until-complete login form. User should verify signing in again on
+both devices. Native development/release builds need rebuilding for SecureStore;
+Expo Go already supplies the module. No Django changes or production deployment.

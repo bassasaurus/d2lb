@@ -1,5 +1,5 @@
+import { session } from '../auth/session';
 import api from '../api/axiosConfig';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { flightStore, flightScope, tokenPartition } from '../storage/flights';
 import { aircraftScope } from '../storage/aircraft';
 
@@ -15,7 +15,7 @@ export async function reviewAccess(kind) {
   return { store, scope, assertCurrent,
     async refresh(localId, generation, id) {
       if (!id) throw new Error('This local record has no server copy yet.');
-      const token = await AsyncStorage.getItem('token');
+      const token = await session.getToken();
       await assertCurrent();
       let server;
       try { server = (await api.get(`/api/${kind === 'aircraft' ? 'aircraft' : 'flights'}/${id}/`, { pinnedToken: token })).data; }

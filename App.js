@@ -5,7 +5,9 @@ import AppContext from "./app/components/AppContext";
 import * as Sentry from "@sentry/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { session } from "./app/auth/session";
+import { ActivityIndicator, Button, View } from "react-native";
+import AppText from "./app/components/AppText";
 import { ThemeProvider, useAppTheme } from "./app/theme/ThemeProvider";
 import fetchTailnumbers from "./app/api/fetchTailnumbers";
 
@@ -19,7 +21,13 @@ Sentry.init({
 
 export default function App() {
   const formGuards = useRef(new Map());
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [auth, setAuth] = useState(session.snapshot());
+  const [sessionError, setSessionError] = useState(false);
+  const isSignedIn = Boolean(auth.token);
+  const restoreSession = () => {
+    setSessionError(false);
+    session.restore().catch(() => setSessionError(true));
+  };
   const [activityVisible, setActivityVisible] = useState(false);
   
   const [flightList, setFlightList] = useState([])
@@ -28,7 +36,8 @@ export default function App() {
   const appSettings = {
     formGuards,
     isSignedInValue: isSignedIn,
-    setIsSignedIn,
+    signOut: () => session.signOut(),
+    sessionReason: auth.reason,
 
     activityVisibleValue: activityVisible,
     setActivityVisible,
@@ -41,35 +50,29 @@ export default function App() {
   };
 
   useEffect(() => {
-    const isSignedInHandler = async () => {
-      const value = await AsyncStorage.getItem("token");
-      if (value !== null) {
-        setIsSignedIn(true);
-      } else {
-        setIsSignedIn(false);
-      }
-    };
-    isSignedInHandler().catch(() => setIsSignedIn(false));
+    const unsubscribe = session.subscribe(value => {
+      setAuth(value);
+      setFlightList([]);
+      setOfflineFlights([]);
+      setActivityVisible(false);
+    });
+    restoreSession();
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
-    if (isSignedIn) {
-      fetchTailnumbers().catch(async (error) => {
-        if (error.response?.status === 401) {
-          await AsyncStorage.removeItem("token");
-          setIsSignedIn(false);
-        }
-        // Network failures keep the cached session available for offline use.
-      });
-    }
-  }, [isSignedIn]);
+    if (isSignedIn) fetchTailnumbers().catch(() => {});
+    // Authentication rejection is handled centrally; offline errors keep the session.
+  }, [isSignedIn, auth.version]);
 
   return (
     <ThemeProvider>
     <AppAppearance>
     <SafeAreaProvider>
       <AppContext.Provider value={appSettings}>
-        <DrawerNavigator></DrawerNavigator>
+        {!auth.ready ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          {sessionError ? <><AppText>Could not unlock your saved session.</AppText><Button title="Try again" onPress={restoreSession} /></> : <ActivityIndicator />}
+        </View> : <DrawerNavigator />}
       </AppContext.Provider>
     </SafeAreaProvider>
     </AppAppearance>
