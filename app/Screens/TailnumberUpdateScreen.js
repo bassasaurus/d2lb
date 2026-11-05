@@ -30,5 +30,5 @@ export default function TailnumberUpdateScreen({ route, navigation }) {
     return response.data;
   };
   return <TailnumberForm initialValues={{ ...item, is_91: Boolean(item.is_91), is_135: Boolean(item.is_135), is_121: Boolean(item.is_121) }}
-    method={update} onSaved={() => navigation.goBack()} aircraft_type={item.aircraft} allowAircraftChange={true} />;
+    method={update} onSaved={item => navigation.popTo('TailnumberDetail', { item })} aircraft_type={item.aircraft} allowAircraftChange={true} />;
 }

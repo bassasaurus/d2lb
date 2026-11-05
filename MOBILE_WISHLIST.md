@@ -223,3 +223,23 @@ banner and restored aircraft values. A test draft named DRAFT remains in New
 aircraft for review; no aircraft was submitted. iOS/Android bundle exports are
 checked before handoff. No dependencies, native builds or Django changes.
 Not committed or merged yet.
+
+## Inline tailnumber picker
+
+Branch: `mobile/08-inline-tailnumber-picker`, based on merged draft recovery (#29).
+Flight create/update uses an inline filtered list instead of a modal. Suggestions
+come from the offline tailnumber cache, are restricted to the selected aircraft,
+ignore case/hyphens when searching and sort naturally. Up to six results float over the form without changing field positions. Typing is search only; selecting a result
+sets the registration. Changing aircraft clears the previous selection.
+The add-tailnumber action remains; tailnumber editing is available only from
+Aircraft Detail. Results close on selection, loss of focus or tapping outside. The Close suggestions button and narrowing hint are removed.
+
+Validation: 56 tests pass, lint passes. iOS simulator verified filtering 950 to
+N950NK, selecting it and dismissing the list by moving to Route. iOS/Android
+exports are checked before handoff. No record was submitted in this UI check.
+Not committed or merged yet.
+
+Aircraft Detail now places its actions above a responsive, independently
+scrollable tailnumber grid. Registration links open Tailnumber Detail with an
+Update action only. Tailnumber editing remains in the aircraft flow; there is
+no tailnumber deletion action or related Django change.

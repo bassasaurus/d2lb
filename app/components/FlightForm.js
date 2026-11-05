@@ -1,3 +1,4 @@
+import PickerOverlayHost from './PickerOverlayHost';
 import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import moment from "moment";
@@ -89,11 +90,14 @@ function FlightForm({ initialValues, method, onSaved }) {
 
   return (
     <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      contentContainerStyle={{ flex: 1 }}
       behavior={Platform.select({ android: undefined, ios: "position" })}
       keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
       enabled={scrollEnabled}
     >
-      <ScrollView>
+      <PickerOverlayHost>
+      <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <View style={styles.container}>
           <DraftForm kind="flight" recordKey={initialValues.local_id || initialValues.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={values => setFormCount(Math.max(0, ...values.approaches.map((item, index) => item.approach_type || item.number ? index : 0)))}
             validateOnMount={true}
@@ -807,6 +811,7 @@ function FlightForm({ initialValues, method, onSaved }) {
           <ActivityModal></ActivityModal>
         </View>
       </ScrollView>
+      </PickerOverlayHost>
     </KeyboardAvoidingView>
   );
 }
