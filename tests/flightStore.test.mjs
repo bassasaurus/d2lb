@@ -151,3 +151,31 @@ test('queued operation survives closing the database after an uncertain upload',
     db.close();
   } finally { rmSync(directory, { recursive: true }); }
 });
+
+test('aircraft cache and pending changes remain separate from flight snapshots', async () => {
+  const db = new DatabaseSync(':memory:');
+  const store = await createFlightStore(adapter(db));
+  await store.save('account:aircraft', 'aircraft-one', { aircraft_type: 'C172' });
+  await store.cacheSnapshot('account', [{ ...flight, id: 1 }]);
+  await store.cacheSnapshot('account:aircraft', [{ id: 2, aircraft_type: 'C182', revision: 'revision' }]);
+  assert.equal((await store.list('account')).length, 1);
+  assert.equal((await store.list('account:aircraft')).length, 2);
+  assert.equal(await store.pendingCount('account:aircraft'), 1);
+  assert.deepEqual(await store.list('another-account:aircraft'), []);
+  db.close();
+});
+
+test('uncertain deletions cannot be cancelled, but rejected deletions can be restored', async () => {
+  const db = new DatabaseSync(':memory:');
+  const store = await createFlightStore(adapter(db));
+  await store.cacheSnapshot('account:aircraft', [{ id: 2, aircraft_type: 'C172', revision: 'revision' }]);
+  await store.remove('account:aircraft', 'server:2');
+  const operation = await store.nextOperation('account:aircraft', 'delete-operation', 0);
+  await assert.rejects(store.cancelDeletion('account:aircraft', 'server:2'), /Reconnect/);
+  assert.equal((await store.deletedRecords('account:aircraft')).length, 1);
+  await store.failOperation('account:aircraft', operation, 'Aircraft is in use', true, 0);
+  await store.cancelDeletion('account:aircraft', 'server:2');
+  assert.equal((await store.deletedRecords('account:aircraft')).length, 0);
+  assert.equal((await store.list('account:aircraft'))[0].aircraft_type, 'C172');
+  db.close();
+});

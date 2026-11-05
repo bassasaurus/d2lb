@@ -36,20 +36,25 @@ function TailnumberPicker({
     const filteredArray = dataArray.filter((obj) => {
       return obj.aircraft == aircraftId;
     });
-    let arrayFromObject = filteredArray.map((obj) => obj.registration);
-    setData(arrayFromObject);
+    setData(filteredArray);
   };
 
   const renderItem = ({ item }) => (
-    <View style={styles.container}>
+    <View style={[styles.container, { flexDirection: "row", alignItems: "center" }]}>
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue("registration", item);
-          setValue(item);
+          setFieldValue("registration", item.registration);
+          setValue(item.registration);
         }}
       >
-        <Text style={styles.listItem}>{item}</Text>
+        <Text style={styles.listItem}>{item.registration}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Edit ${item.registration}`} style={{ padding: 12 }} onPress={() => {
+        setVisible(false);
+        navigation.navigate('TailnumberUpdate', { item });
+      }}>
+        <MaterialCommunityIcons name="pencil" size={24} color={STYLES.blue} />
       </TouchableOpacity>
     </View>
   );
@@ -65,19 +70,19 @@ function TailnumberPicker({
         <View pointerEvents={"none"}>
           <AppTextInput
             isValid={isValid}
-            value={!value ? initialValue : value}
+            value={initialValue || ""}
             placeholder={"Tailnumber"}
           ></AppTextInput>
         </View>
       </Pressable>
 
       <View style={styles.centeredView}>
-        <Modal animationType='slide' transparent={true} visible={visible}>
+        <Modal animationType='slide' transparent={true} visible={visible} onRequestClose={() => setVisible(false)}>
           <View style={styles.modalView}>
             <FlatList
               data={data}
               renderItem={renderItem}
-              keyExtractor={(item) => item}
+              keyExtractor={(item) => String(item.id)}
               ItemSeparatorComponent={FlatListItemSeparator}
             />
             <Separator></Separator>

@@ -1,0 +1,66 @@
+import React, { useCallback, useState } from 'react';
+import { Alert, Button, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { listAircraft, aircraftScope } from '../storage/aircraft';
+import { flightScope, flightStore } from '../storage/flights';
+import syncFlightData from '../api/syncFlightData';
+import { STYLES } from '../styles/styles';
+import RoundButton from '../components/RoundButton';
+
+export default function AircraftListScreen({ navigation }) {
+  const [rows, setRows] = useState([]);
+  const [deletions, setDeletions] = useState([]);
+  const [status, setStatus] = useState('Loading saved aircraft…');
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = React.useRef();
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    let running = false;
+    const load = async () => {
+      if (running) return;
+      running = true;
+      try {
+        const local = await listAircraft();
+        if (active) setRows(local);
+        let offline = false;
+        try { await syncFlightData(); } catch (error) { offline = true; }
+        const records = await listAircraft();
+        const store = await flightStore();
+        const scope = aircraftScope(await flightScope());
+        const pending = await store.pendingCount(scope);
+        const deleted = await store.deletedRecords(scope);
+        const issues = await store.errors(scope);
+        if (active) {
+          setRows(records);
+          setDeletions(deleted);
+          setStatus(`${offline ? 'Showing saved aircraft. ' : ''}${pending} pending change(s).${issues.length ? ' ' + issues.map(issue => issue.message).join(' ') : ''}`);
+        }
+      } catch (error) { if (active) setStatus('Unable to load aircraft. Pull down to retry.'); }
+      finally { running = false; if (active) setRefreshing(false); }
+    };
+    refresh.current = load;
+    load();
+    return () => { active = false; refresh.current = null; };
+  }, []));
+  return <View style={{ flex: 1, padding: 12 }}>
+    <Text style={{ paddingVertical: 12 }} accessibilityLiveRegion="polite">{status}</Text>
+    {deletions.map(item => <View key={item.local_id} style={{ marginBottom: 12 }}>
+      <Text>{item.aircraft_type}: {item.sync_error || 'Deletion pending upload'}</Text>
+      <Button title="Cancel deletion" onPress={async () => {
+        try {
+          await (await flightStore()).cancelDeletion(aircraftScope(await flightScope()), item.local_id);
+          refresh.current?.();
+        } catch (error) { Alert.alert('Unable to cancel deletion', error.message); }
+      }} />
+    </View>)}
+    <FlatList data={rows} keyExtractor={item => item.local_id} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); refresh.current?.(); }} />}
+      ListEmptyComponent={<Text>No aircraft saved yet. Add an aircraft or pull down while connected.</Text>}
+      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" style={{ paddingVertical: 16, borderBottomWidth: 1, borderColor: '#ddd' }}
+        onPress={() => navigation.navigate('AircraftDetail', { item })}>
+        <Text style={{ color: STYLES.blue, fontSize: 18, fontWeight: '600' }}>{item.aircraft_type}</Text>
+        <Text>{item.aircraft_class || 'Class not set'}{item.sync_state !== 'synced' ? ' · Pending upload' : ''}</Text>
+        {item.sync_error && <Text style={{ color: STYLES.danger }}>{item.sync_error}</Text>}
+      </TouchableOpacity>} />
+    <RoundButton buttonSize={60} buttonColor={STYLES.green} onPress={() => navigation.navigate('AircraftForm')} />
+  </View>;
+}

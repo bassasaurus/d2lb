@@ -10,6 +10,8 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import TailnumberCreateScreen from "../Screens/TailnumberCreateScreen";
 
+import TailnumberUpdateScreen from '../Screens/TailnumberUpdateScreen';
+
 const Stack = createStackNavigator();
 
 function FlightStackNavigator(props) {
@@ -82,6 +84,7 @@ function FlightStackNavigator(props) {
           cardStyle: { backgroundColor: "white" },
         }}
       />
+      <Stack.Screen name="TailnumberUpdate" component={TailnumberUpdateScreen} options={{ title: "Update tailnumber" }} />
     </Stack.Navigator>
   );
 }

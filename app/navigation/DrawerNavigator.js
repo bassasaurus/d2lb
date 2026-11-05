@@ -11,6 +11,8 @@ import {
 } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "../Screens/LoginScreen";
+import AircraftStackNavigator from "./AircraftStackNavigator";
+import { aircraftScope } from "../storage/aircraft";
 import FlightStackNavigator from "./FlightStackNavigator";
 import AppContext from "../components/AppContext";
 import removeAsyncData from "../asyncStorage/removeAsyncData";
@@ -39,7 +41,9 @@ function DrawerNavigator({ navigation }) {
                 return;
               }
               const dirty = forms.some(form => form.dirty);
-              const pending = await (await flightStore()).pendingCount(await flightScope());
+              const store = await flightStore();
+              const scope = await flightScope();
+              const pending = await store.pendingCount(scope) + await store.pendingCount(aircraftScope(scope));
               if (dirty || pending) {
                 const message = [
                   dirty ? "Your unfinished form changes will be discarded." : "",
@@ -73,6 +77,7 @@ function DrawerNavigator({ navigation }) {
             component={FlightStackNavigator}
             options={{ headerShown: false }}
           />
+          <Drawer.Screen name="Aircraft" component={AircraftStackNavigator} options={{ headerShown: false }} />
         </Drawer.Navigator>
       </NavigationContainer>
     );

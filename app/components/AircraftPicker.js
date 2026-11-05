@@ -11,18 +11,22 @@ import {
 import AppTextInput from "./AppTextInput";
 import { flightStore, flightScope } from "../storage/flights";
 
-import api from "../api/axiosConfig";
+import { listAircraft } from "../storage/aircraft";
+import { useNavigation } from "@react-navigation/native";
+import { Button, Alert } from "react-native";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
 function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
+  const navigation = useNavigation();
   const [data, setData] = useState();
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
 
   const fetchData = async () => {
     const dataObject = await (await flightStore()).reference(await flightScope(), "tailnumbers");
-    let arrayFromObject = dataObject.map((a) => a.aircraft);
+    const aircraft = await listAircraft();
+    let arrayFromObject = aircraft.length ? aircraft.map(row => row.aircraft_type) : dataObject.map((a) => a.aircraft);
     let uniqueArray = [...new Set(arrayFromObject)];
     setData(uniqueArray);
   };
@@ -45,22 +49,27 @@ function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
     <>
       <Pressable
         onPress={() => {
-          fetchData();
+          fetchData().catch(() => Alert.alert("Unable to load saved aircraft"));
           setVisible(true);
         }}
       >
         <View pointerEvents={"none"}>
           <AppTextInput
             isValid={isValid}
-            value={!value ? initialValue : value}
+            value={initialValue || ""}
             placeholder={"Aircraft"}
           ></AppTextInput>
         </View>
       </Pressable>
 
       <View style={styles.centeredView}>
-        <Modal animationType='slide' transparent={true} visible={visible}>
+        <Modal animationType='slide' transparent={true} visible={visible} onRequestClose={() => setVisible(false)}>
           <View style={styles.modalView}>
+            <Button title="Cancel" onPress={() => setVisible(false)} />
+            <Button title="New Aircraft" onPress={() => {
+              setVisible(false);
+              navigation.navigate("Aircraft", { screen: "AircraftForm", initial: false });
+            }} />
             <FlatList
               data={data}
               renderItem={renderItem}

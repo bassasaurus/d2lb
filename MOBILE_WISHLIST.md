@@ -77,3 +77,37 @@ Remaining follow-ups:
 - Native background execution, offline map tiles, and offline creation of new
   aircraft/tailnumbers are separate follow-ups. Sync runs while the app is active
   and when it returns to the foreground.
+
+## Item 2: aircraft management and tailnumber editing
+
+Mobile branch: `mobile/02-aircraft-tailnumbers`.
+Companion Django branch: `mobile/02-aircraft-api`.
+
+- Aircraft list, detail, create, update and delete screens are available from the
+  drawer. The logbook's floating green add button and shared pencil/delete action
+  row are reused for continuity.
+- Aircraft records use an isolated namespace in the existing SQLite/outbox
+  repository. Saves persist locally and sync through acknowledged operations;
+  pending aircraft changes synchronize before dependent flight uploads.
+- The aircraft picker uses the aircraft cache, so a type no longer needs an
+  existing tailnumber to appear. New Aircraft remains accessible from the picker.
+- The API advertises aircraft sync support and adds aircraft revisions plus an
+  acknowledged aircraft-sync endpoint. It reuses the receipt table from item 1;
+  there is no additional database migration.
+- Deletion is blocked when tailnumbers, flights or imported totals reference the
+  aircraft. Rejected deletions can be cancelled locally; uncertain attempted
+  deletions must first be reconciled. Existing type designators are read-only in
+  mobile updates; rename them through the website.
+- A full-width green New Tailnumber button on aircraft details opens the existing
+  creation form with the aircraft preselected and returns after saving.
+- Aircraft details list their tailnumbers with pencil edit controls. The flight
+  form's registration picker also has a pencil beside each tailnumber.
+- Tailnumber editing supports registration, aircraft and operating rules, with
+  preselected existing values, validation and unfinished-form protection. It uses
+  the existing owned API and requires a connection; it is not an offline queue.
+  Renaming/reassigning is blocked while local pending flights use the old value.
+- User confirmed Aircraft CRUD, deletion safeguards and tailnumber editing locally.
+- Mobile checks: 22 tests, lint, Expo Doctor and both platform exports pass.
+
+Deploy the companion Django API before relying on production aircraft uploads.
+Neither PR creation nor a Git merge distributes a mobile app or deploys Django.
