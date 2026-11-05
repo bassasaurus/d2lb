@@ -3,16 +3,15 @@ import { FlatList, StyleSheet, TouchableOpacity, RefreshControl, Alert } from "r
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { STYLES } from "../styles/styles";
-import api from "../api/axiosConfig";
+import syncFlightData from "../api/syncFlightData";
 import FlightItem from "../components/FlightItem";
 import RoundButton from "../components/RoundButton";
 import AppContext from "../components/AppContext";
-import storeAsyncObject from "../asyncStorage/storeAsyncObject";
-import removeAsyncData from  "../asyncStorage/removeAsyncData"
-import getAsyncObject from "../asyncStorage/getAsyncObject";
-
-import * as Device from 'expo-device';
-import syncFlightData from "../api/syncFlightData";
+import { Text, AppState } from "react-native";
+import NetInfo from "@react-native-community/netinfo";
+import fetchTailnumbers from "../api/fetchTailnumbers";
+import { flightStore, flightScope, tokenPartition, refreshFlightCache } from "../storage/flights";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FlightListScreen = () => {
 
@@ -20,30 +19,86 @@ const FlightListScreen = () => {
 
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
-  const [data, setData] = useState([])
-
-  const buildList = React.useCallback(async () => {
-    try {
-      const offlineFlights = await getAsyncObject('offlineFlights');
-      const response = await api.get("/api/flights/");
-      setData((offlineFlights || []).concat(response.data.results || []));
-    } catch (error) {
-      const offlineFlights = await getAsyncObject('offlineFlights');
-      setData(previous => previous.length ? previous : (offlineFlights || []));
-      Alert.alert("Unable to load flights", "Check that your Django development server is running, then pull down to retry.");
-    } finally {
-      setRefreshing(false);
-    }
-  }, []);
+  const [data, setData] = useState([]);
+  const [status, setStatus] = useState("Loading saved flights…");
 
   useFocusEffect(React.useCallback(() => {
-    buildList();
-  }, [buildList]));
+    let active = true;
+    let running = false;
+    const load = async () => {
+      if (running) return;
+      running = true;
+      try {
+        const partition = await tokenPartition();
+        let scope = await flightScope();
+        const store = await flightStore();
+        const local = await store.list(scope);
+        if (active) setData(local);
+        let downloaded = true;
+        let serverUpgradeNeeded = false;
+        try {
+          const network = await NetInfo.fetch();
+          if (!network.isConnected) throw new Error('Offline');
+          try {
+            scope = await syncFlightData();
+          } catch (error) {
+            if (error.response?.status !== 404) throw error;
+            serverUpgradeNeeded = true;
+          }
+          await refreshFlightCache(scope);
+          await fetchTailnumbers();
+        } catch (error) {
+          downloaded = false;
+        }
+        if (await tokenPartition() !== partition) return;
+        scope = await flightScope();
+        const rows = await store.list(scope);
+        const pending = await store.pendingCount(scope);
+        const issues = await store.errors(scope);
+        const legacy = await AsyncStorage.getItem('offlineFlights');
+        const legacyCount = legacy ? JSON.parse(legacy).length : 0;
+        if (active) {
+          setData(rows);
+          setStatus(`${downloaded ? 'Up to 100 most recent flights' : 'Showing saved flights; sync could not finish'}. ${pending} pending change(s) saved on device.${serverUpgradeNeeded ? ' Uploads waiting for the server sync update.' : ''}${issues.length ? ` Needs attention: ${issues.slice(0, 3).map(issue => `${issue.route}: ${issue.message}`).join(' ')}` : ''} ${legacyCount ? ' Older unsynced flights are preserved separately for review.' : ''}`);
+        }
+      } catch (error) {
+        if (active) setStatus('Unable to open local logbook. Pull down to retry.');
+      } finally {
+        running = false;
+        if (active) setRefreshing(false);
+      }
+    };
+    load();
+    refreshRef.current = load;
+    const retryTimer = setInterval(async () => {
+      if (AppState.currentState !== 'active') return;
+      try {
+        const store = await flightStore();
+        if (await store.pendingCount(await flightScope())) load();
+      } catch (error) { /* A foreground refresh will display storage errors. */ }
+    }, 30000);
+    const foreground = AppState.addEventListener('change', state => {
+      if (state === 'active') load();
+    });
+    let wasConnected;
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (wasConnected === false && state.isConnected) load();
+      wasConnected = state.isConnected;
+    });
+    return () => {
+      active = false;
+      refreshRef.current = null;
+      foreground.remove();
+      clearInterval(retryTimer);
+      unsubscribe();
+    };
+  }, []));
+  const refreshRef = React.useRef(null);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    buildList();
-  }, [buildList]);
+    refreshRef.current?.();
+  }, []);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -56,7 +111,7 @@ const FlightListScreen = () => {
       }
     >
       <FlightItem
-        id={item.id}
+        id={item.sync_state === "synced" ? item.id : null}
         date={item.date}
         route={item.route}
         type={item.aircraft_type}
@@ -71,10 +126,11 @@ const FlightListScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Text style={{ padding: 10, color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text>
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={(item, index) => index}
+        keyExtractor={item => item.local_id}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

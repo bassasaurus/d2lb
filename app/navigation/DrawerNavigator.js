@@ -1,5 +1,7 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { flightScope, flightStore } from "../storage/flights";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   createDrawerNavigator,
@@ -25,9 +27,35 @@ function DrawerNavigator({ navigation }) {
         <DrawerItemList {...props} />
         <DrawerItem
           label='Logout'
-          onPress={() => {
-            removeAsyncData("token");
-            Context.setIsSignedIn(false);
+          onPress={async () => {
+            const logout = async () => {
+              await AsyncStorage.removeItem("token");
+              Context.setIsSignedIn(false);
+            };
+            try {
+              const forms = [...Context.formGuards.current.values()].map(read => read());
+              if (forms.some(form => form.saving)) {
+                Alert.alert("Saving changes", "Please wait until this save finishes.");
+                return;
+              }
+              const dirty = forms.some(form => form.dirty);
+              const pending = await (await flightStore()).pendingCount(await flightScope());
+              if (dirty || pending) {
+                const message = [
+                  dirty ? "Your unfinished form changes will be discarded." : "",
+                  pending ? `${pending} change(s) are saved only on this device. They will remain stored, but will be hidden while signed out.` : "",
+                ].filter(Boolean).join("\n\n");
+                Alert.alert(dirty ? "Discard changes and sign out?" : "Unsynced flights", message, [
+                  { text: dirty ? "Keep editing" : "Stay signed in", style: "cancel" },
+                  { text: dirty ? "Discard and sign out" : "Sign out", style: dirty ? "destructive" : "default",
+                    onPress: () => logout().catch(() => Alert.alert("Unable to sign out")) },
+                ]);
+              } else {
+                await logout();
+              }
+            } catch (error) {
+              Alert.alert("Unable to sign out", "Could not check your pending changes. Please try again.");
+            }
           }}
         />
       </DrawerContentScrollView>

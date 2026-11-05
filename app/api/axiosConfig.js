@@ -17,7 +17,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const token = await AsyncStorage.getItem("token");
+    const token = config.pinnedToken || await AsyncStorage.getItem("token");
     if (token) {
       config.headers.Authorization = "Token " + token;
     }

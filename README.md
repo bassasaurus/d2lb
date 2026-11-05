@@ -99,12 +99,15 @@ Git history. Development error reporting is disabled to keep test errors out of
 production Sentry. Source-map upload and native Sentry are not verified by a
 JavaScript export or an Expo Go launch.
 
-## Follow-up before real flight-data use
+## Mobile Wishlist work
 
-The old offline sync routine needs a separate review: it edits the queue before
-waiting for upload success. Do not use real offline-flight syncing as part of
-this emulator smoke test. No real account login, flight upload, or production
-write was performed during the upgrade.
+See [MOBILE_WISHLIST.md](MOBILE_WISHLIST.md) for the separate mobile roadmap and
+current offline-first implementation status. On `mobile/01-offline-first`, flight
+changes are saved to SQLite and queued locally, then uploaded through the new
+acknowledged sync API. The matching Django branch must be deployed and migrated
+before production uploads are enabled. Test with disposable local records first;
+the emulator end-to-end acceptance test is still pending. The old AsyncStorage
+queue is retained separately for review.
 
 `npm audit` currently reports seven moderate findings inherited through Expo /
 Sentry build tooling (glob and minimatch), and no high/critical findings. Its

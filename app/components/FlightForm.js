@@ -1,5 +1,5 @@
 import moment from "moment";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Button,
+  Alert,
   ScrollView,
 } from "react-native";
 import { Formik, validateYupSchema } from "formik";
@@ -24,15 +25,28 @@ import AppText from "./AppText";
 import Checkbox from "./Checkbox";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
+import UnsavedFormGuard from "./UnsavedFormGuard";
+import { flightScope, flightStore } from "../storage/flights";
+import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { STYLES } from "../styles/styles";
 
-function FlightForm({ initialValues, method }) {
+function FlightForm({ initialValues, method, onSaved }) {
+  const savedNavigation = useRef(false);
   const [calVisible, setCalVisible] = useState(false);
+  const [calendarDate, setCalendarDate] = useState(new Date());
   const [formCount, setFormCount] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
-  const [acTailMatch, setAcTailMatch] = useState(false);
+  const [tailnumbers, setTailnumbers] = useState([]);
+  useFocusEffect(React.useCallback(() => {
+    let active = true;
+    (async () => {
+      const rows = await (await flightStore()).reference(await flightScope(), "tailnumbers");
+      if (active) setTailnumbers(rows);
+    })().catch(() => { if (active) setTailnumbers([]); });
+    return () => { active = false; };
+  }, []));
   const [submitting, setSubmitting] = useState(false);
   const [addedDuration, setAddedDuration] = useState("");
   const [undoAdd, setUndoAdd] = useState(false);
@@ -93,26 +107,37 @@ function FlightForm({ initialValues, method }) {
             validateOnMount={true}
             initialValues={initialValues}
             validationSchema={flightSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                setSubmitting(false);
-                Context.setActivityVisible(true);
-              }, 400);
+            onSubmit={async (values, helpers) => {
+              try {
+                savedNavigation.current = false;
+                const result = await method(values);
+                savedNavigation.current = true;
+                helpers.resetForm({ values });
+                onSaved?.(result);
+              } catch (error) {
+                Alert.alert("Flight not saved", "Your changes are still in this form. Please try again.");
+              } finally {
+                helpers.setSubmitting(false);
+              }
             }}
           >
             {({
               values,
               errors,
               isValid,
-              onSubmit,
+              handleSubmit,
+              isSubmitting,
               touched,
               handleChange,
               setFieldValue,
               handleBlur,
             }) => (
               <>
+                <UnsavedFormGuard savedNavigation={savedNavigation} />
                 <Pressable
                   onPress={() => {
+                    const parsed = moment(values.date, "M/D/YYYY", true);
+                    setCalendarDate(parsed.isValid() ? parsed.toDate() : new Date());
                     setCalVisible(true);
                   }}
                 >
@@ -162,7 +187,7 @@ function FlightForm({ initialValues, method }) {
                 <View style={{ flexDirection: "row" }}>
                   <View style={{ flex: 0.5, marginRight: 10 }}>
                     <AircraftPicker
-                      initialValue={initialValues.aircraft_type}
+                      initialValue={values.aircraft_type}
                       isValid={errors.aircraft_type ? false : true}
                       style={{ flex: 0.5 }}
                       fieldName={"aircraft_type"}
@@ -184,11 +209,10 @@ function FlightForm({ initialValues, method }) {
                     {values.aircraft_type ? (
                       <>
                         <TailnumberPicker
-                          initialValue={initialValues.registration}
+                          initialValue={values.registration}
                           isValid={errors.registration ? false : true}
                           setFieldValue={setFieldValue}
                           filterBy={values.aircraft_type}
-                          setAcTailMatch={setAcTailMatch}
                           aircraftId={values.aircraft_type}
                           onBlur={handleBlur("registration")}
                           aircraft_type={values.aircraft_type}
@@ -203,7 +227,9 @@ function FlightForm({ initialValues, method }) {
                           )}
                         </View>
                         <View>
-                          {acTailMatch === false ? (
+                          {values.registration && tailnumbers.some(tail =>
+                            tail.registration === values.registration && tail.aircraft !== values.aircraft_type
+                          ) ? (
                             <Text style={styles.errors}>
                               Registration mismatch
                             </Text>
@@ -730,12 +756,8 @@ function FlightForm({ initialValues, method }) {
                   {isValid ? (
                     <Button
                       title={!Context.setActivityVisible ? "" : "Submit"}
-                      onPress={() => {
-                        onSubmit;
-                        method(values);
-                        setSubmitting(true);
-                        // Context.setActivityVisible(true);
-                      }}
+                      disabled={isSubmitting}
+                      onPress={handleSubmit}
                     ></Button>
                   ) : (
                     <Button title='Complete required fields.'></Button>
@@ -744,27 +766,48 @@ function FlightForm({ initialValues, method }) {
                 {/* <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
                 </View> */}
-                <Modal
-                  animationType='slide'
-                  transparent={true}
-                  visible={calVisible}
-                >
-                  <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <DateTimePicker
-                        value={moment(values.date, "M/D/YYYY", true).isValid() ? moment(values.date, "M/D/YYYY").toDate() : new Date()}
-                        mode="date"
-                        display={Platform.OS === "ios" ? "inline" : "default"}
-                        onChange={(event, date) => {
-                          if (date && event.type !== "dismissed") {
-                            setFieldValue("date", moment(date).format("M/D/YYYY"));
-                          }
-                          setCalVisible(false);
-                        }}
-                      />
+                {calVisible && Platform.OS === "android" && (
+                  <DateTimePicker
+                    value={calendarDate}
+                    mode="date"
+                    display="default"
+                    onChange={(event, date) => {
+                      setCalVisible(false);
+                      if (date && event.type === "set") {
+                        setFieldValue("date", moment(date).format("M/D/YYYY"));
+                      }
+                    }}
+                  />
+                )}
+                {calVisible && Platform.OS === "ios" && (
+                  <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={true}
+                    onRequestClose={() => setCalVisible(false)}
+                  >
+                    <View style={styles.calendarBackdrop}>
+                      <View style={styles.calendarSheet}>
+                        <View style={styles.calendarActions}>
+                          <Button title="Cancel" onPress={() => setCalVisible(false)} />
+                          <Button title="Done" onPress={() => {
+                            setFieldValue("date", moment(calendarDate).format("M/D/YYYY"));
+                            setCalVisible(false);
+                          }} />
+                        </View>
+                        <DateTimePicker
+                          value={calendarDate}
+                          mode="date"
+                          display="inline"
+                          style={{ width: "100%" }}
+                          onChange={(event, date) => {
+                            if (date && event.type !== "dismissed") setCalendarDate(date);
+                          }}
+                        />
+                      </View>
                     </View>
-                  </View>
-                </Modal>
+                  </Modal>
+                )}
               </>
             )}
           </Formik>
@@ -776,6 +819,23 @@ function FlightForm({ initialValues, method }) {
 }
 
 const styles = StyleSheet.create({
+  calendarBackdrop: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.35)",
+  },
+  calendarSheet: {
+    width: "94%",
+    maxWidth: 420,
+    padding: 12,
+    backgroundColor: "white",
+    borderRadius: 16,
+  },
+  calendarActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   container: {
     flexDirection: "column",
     justifyContent: "space-between",
