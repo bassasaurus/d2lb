@@ -270,3 +270,16 @@ simulator verified per-code red styling, the explanatory message, clearing the
 error after restoring the original route, and compact list spacing. No flight
 was submitted during that UI check. iOS/Android exports are checked before
 handoff. Work is not committed, merged or deployed yet.
+
+## Shared scroll overflow indicators
+
+Scrollable screens, record lists, picker lists and the drawer use a shared
+wrapper with small leading/trailing chevrons only when content exists beyond
+that edge. They hide during dragging/momentum and return after scrolling stops. Native scrollbars remain enabled. Indicators are non-interactive,
+excluded from accessibility focus, and adapt to theme and measured content size.
+Aircraft actions now appear above a separated Tailnumbers area with New
+Tailnumber and the grid. The successful sync notice collapses over 250ms.
+
+Validation: 64 mobile tests and lint pass; the lower tailnumber-grid indicator
+was observed in the iOS simulator. iOS/Android exports checked before handoff.
+Not committed or merged.

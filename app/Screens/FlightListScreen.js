@@ -1,6 +1,7 @@
+import { FlatList } from '../components/OverflowLists';
 import { useMemo } from 'react';
 import React, { useState, useEffect} from "react";
-import { FlatList, StyleSheet, TouchableOpacity, RefreshControl, Alert } from "react-native";
+import { Animated, StyleSheet, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { useAppTheme } from '../theme/ThemeProvider';
@@ -26,6 +27,15 @@ const FlightListScreen = () => {
   const [data, setData] = useState([]);
   const [issueCount, setIssueCount] = useState(0);
   const [windowNotice, setWindowNotice] = useState(false);
+  const [noticeHeight, setNoticeHeight] = useState(26);
+  const noticeProgress = React.useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const animation = Animated.timing(noticeProgress, {
+      toValue: windowNotice ? 1 : 0, duration: 250, useNativeDriver: false,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [windowNotice, noticeProgress]);
   const noticeTimer = React.useRef(null);
   const [status, setStatus] = useState("Loading saved flights…");
 
@@ -139,7 +149,15 @@ const FlightListScreen = () => {
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={styles.container}>
-      {windowNotice && <Text style={{ paddingHorizontal: 10, paddingVertical: 4, color: STYLES.muted }}>Synced last 100 entries</Text>}
+      <Animated.View pointerEvents="none" accessibilityElementsHidden={!windowNotice}
+        importantForAccessibility={windowNotice ? 'auto' : 'no-hide-descendants'}
+        style={{ overflow: 'hidden', opacity: noticeProgress,
+          height: noticeProgress.interpolate({ inputRange: [0, 1], outputRange: [0, noticeHeight] }) }}>
+        <Text onLayout={event => setNoticeHeight(event.nativeEvent.layout.height)}
+          style={{ position: 'absolute', left: 0, right: 0, paddingHorizontal: 10, paddingVertical: 4, color: STYLES.muted }}>
+          Synced last 100 entries
+        </Text>
+      </Animated.View>
       {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
       {issueCount > 0 && <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SyncReview', { screen: 'SyncReviewList' })}>
         <Text style={{ padding: 10, color: STYLES.danger }}>Resolve sync problems ({issueCount})</Text>

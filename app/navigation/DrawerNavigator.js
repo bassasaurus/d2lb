@@ -1,3 +1,4 @@
+import { withScrollOverflow } from '../components/OverflowLists';
 import { useAppTheme } from '../theme/ThemeProvider';
 import React, { useContext, useEffect } from "react";
 import { StyleSheet, Alert } from "react-native";
@@ -19,6 +20,8 @@ import { aircraftScope } from "../storage/aircraft";
 import FlightStackNavigator from "./FlightStackNavigator";
 import AppContext from "../components/AppContext";
 
+const OverflowDrawerContentScrollView = withScrollOverflow(DrawerContentScrollView);
+
 const Drawer = createDrawerNavigator();
 const Root = createStackNavigator();
 
@@ -29,7 +32,7 @@ function DrawerNavigator({ navigation }) {
 
   function LogoutContent(props) {
     return (
-      <DrawerContentScrollView {...props}>
+      <OverflowDrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
         <DrawerItem
           label='Logout'
@@ -67,7 +70,7 @@ function DrawerNavigator({ navigation }) {
             }
           }}
         />
-      </DrawerContentScrollView>
+      </OverflowDrawerContentScrollView>
     );
   }
 

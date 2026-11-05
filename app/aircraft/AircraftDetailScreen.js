@@ -1,5 +1,6 @@
+import { ScrollView } from '../components/OverflowLists';
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, ScrollView, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Alert, Button, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Text from '../components/AppText';
 import { aircraftScope } from '../storage/aircraft';
 import { flightScope, flightStore } from '../storage/flights';
@@ -52,20 +53,22 @@ export default function AircraftDetailScreen({ route, navigation }) {
     <Text style={{ marginVertical: 8 }}>Class: {CLASS_CHOICES.find(([key]) => key === item.aircraft_class)?.[1] || 'Not set'}</Text>
     {[...ENGINE_CHOICES, ...WEIGHT_CHOICES, ...FLAGS].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
     {item.sync_state !== 'synced' && <Text style={{ color: STYLES.danger, marginVertical: 16 }}>{item.sync_error || 'Saved on this device — pending upload'}</Text>}
-    <TouchableOpacity accessibilityRole="button" style={{ alignSelf: 'stretch', backgroundColor: STYLES.green, alignItems: 'center', paddingVertical: 12, marginVertical: 12 }}
-      onPress={() => navigation.navigate('AircraftTailnumberCreate', { aircraft_type: item.aircraft_type, fromAircraft: true })}>
-      <Text style={{ color: STYLES.onAction }}>New Tailnumber</Text>
-    </TouchableOpacity>
-    <Separator />
+    <View style={{ marginTop: 16 }}>
     <RecordActions recordName="aircraft"
       onUpdate={() => navigation.navigate('AircraftForm', { item })}
       onDelete={() => Alert.alert('Delete aircraft?', 'Aircraft in use cannot be deleted. Otherwise this deletion will sync when connected.', [
         { text: 'Cancel', style: 'cancel' }, { text: 'Delete', style: 'destructive', onPress: remove },
       ])}
     />
-    <Separator />
-    {tailnumbers.length > 0 && <View style={{ marginTop: 16 }}>
-      <Text style={{ fontWeight: '600', marginBottom: 8 }}>Tailnumbers ({tailnumbers.length})</Text>
+    </View>
+    <View style={{ marginTop: 24 }}>
+      <Separator />
+      <Text style={{ fontWeight: '600', fontSize: 18, marginTop: 12 }}>Tailnumbers ({tailnumbers.length})</Text>
+    <TouchableOpacity accessibilityRole="button" style={{ alignSelf: 'stretch', backgroundColor: STYLES.green, alignItems: 'center', paddingVertical: 12, marginVertical: 12 }}
+      onPress={() => navigation.navigate('AircraftTailnumberCreate', { aircraft_type: item.aircraft_type, fromAircraft: true })}>
+      <Text style={{ color: STYLES.onAction }}>New Tailnumber</Text>
+    </TouchableOpacity>
+    {tailnumbers.length > 0 && <View>
       <ScrollView nestedScrollEnabled persistentScrollbar style={{ maxHeight: 264 }}
         contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {[...tailnumbers].sort((a, b) => a.registration.localeCompare(b.registration, 'en', { numeric: true, sensitivity: 'base' })).map(tail =>
@@ -76,5 +79,6 @@ export default function AircraftDetailScreen({ route, navigation }) {
           </TouchableOpacity>)}
       </ScrollView>
     </View>}
+    </View>
   </ScrollView>;
 }

@@ -1,5 +1,6 @@
+import { ScrollView } from '../components/OverflowLists';
 import React, { useCallback, useState } from 'react';
-import { ScrollView } from 'react-native';
+
 import { useFocusEffect } from '@react-navigation/native';
 import Text from '../components/AppText';
 import RecordActions from '../components/RecordActions';
