@@ -24,7 +24,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
   const context = useContext(AppContext);
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <DraftForm kind="tailnumber" recordKey={initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} onSubmit={async (values, helpers) => {
+      <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} onSubmit={async (values, helpers) => {
         savedNavigation.current = false;
         context.setActivityVisible(true);
         try {
@@ -37,7 +37,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           const details = error.response?.data;
           const message = details ? Object.entries(details).map(([field, text]) => `${field}: ${Array.isArray(text) ? text.join(' ') : String(text)}`).join('\n')
             : error.response ? 'The server could not save your changes. Please try again.'
-            : error.message?.startsWith('Sync the pending') ? error.message
+            : !error.request ? error.message
             : 'Check your connection and try again. Your changes remain in this form.';
           Alert.alert('Tailnumber not saved', message);
         } finally {
@@ -62,7 +62,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           </View>
           {submitCount > 0 && Object.values(errors).map((error, index) => <Text key={index} style={styles.error}>{String(error)}</Text>)}
           <View style={{ marginTop: 20 }}><Button title={isSubmitting ? 'Saving…' : 'Save tailnumber'} onPress={handleSubmit} disabled={isSubmitting} /></View>
-          <Text style={{ color: STYLES.muted, marginTop: 12 }}>A connection is required to save tailnumbers.</Text>
+          <Text style={{ color: STYLES.muted, marginTop: 12 }}>{initialValues.id ? 'A connection is required to update this tailnumber.' : 'Saved on this device first; uploads when connected.'}</Text>
         </>}
       </DraftForm>
     </ScrollView>

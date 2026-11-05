@@ -1,4 +1,5 @@
 import { FlatList } from '../components/OverflowLists';
+import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { useMemo } from 'react';
 import React, { useState, useEffect} from "react";
 import { Animated, StyleSheet, TouchableOpacity, RefreshControl, Alert } from 'react-native';
@@ -70,8 +71,8 @@ const FlightListScreen = () => {
         if (await tokenPartition() !== partition) return;
         scope = await flightScope();
         const rows = await store.list(scope);
-        const pending = await store.pendingCount(scope);
-        const issues = [...await store.errors(scope), ...await store.errors(aircraftScope(scope))];
+        const pending = await store.pendingCount(scope) + await store.pendingCount(tailnumberScope(scope));
+        const issues = [...await store.errors(scope), ...await store.errors(aircraftScope(scope)), ...await store.errors(tailnumberScope(scope))];
         const legacy = await AsyncStorage.getItem('offlineFlights');
         const legacyCount = legacy ? JSON.parse(legacy).length : 0;
         if (active) {
@@ -95,7 +96,8 @@ const FlightListScreen = () => {
       if (AppState.currentState !== 'active') return;
       try {
         const store = await flightStore();
-        if (await store.pendingCount(await flightScope())) load();
+        const scope = await flightScope();
+        if (await store.pendingCount(scope) + await store.pendingCount(tailnumberScope(scope))) load();
       } catch (error) { /* A foreground refresh will display storage errors. */ }
     }, 30000);
     const foreground = AppState.addEventListener('change', state => {

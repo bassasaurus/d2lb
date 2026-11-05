@@ -114,7 +114,7 @@ function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume
   }, [serialized, state.loading, Boolean(state.pending)]);
 
   const pending = state.pending;
-  const stale = pending && pending.baseline !== fingerprint(initial.current);
+  const stale = pending && !String(recordKey).startsWith('new') && pending.baseline !== fingerprint(initial.current);
   const action = (title, onPress, danger = false) => <Pressable accessibilityRole="button" onPress={onPress}
     style={{ paddingVertical: 10, paddingRight: 20 }}><Text style={{ color: danger ? colors.danger : colors.primary, fontWeight: '600' }}>{title}</Text></Pressable>;
   const confirmDiscard = () => Alert.alert('Discard saved draft?', 'This removes only the unfinished draft on this device.', [

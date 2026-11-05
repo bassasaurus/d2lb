@@ -1,4 +1,5 @@
 import { FlatList } from './OverflowLists';
+import { listTailnumbers } from '../storage/tailnumbers';
 import { useMemo } from 'react';
 import React, { useState } from "react";
 import { View, StyleSheet, Modal, Pressable, TouchableOpacity } from 'react-native';
@@ -21,7 +22,7 @@ function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
   const [value, setValue] = useState("");
 
   const fetchData = async () => {
-    const dataObject = await (await flightStore()).reference(await flightScope(), "tailnumbers");
+    const dataObject = await listTailnumbers();
     const aircraft = await listAircraft();
     let arrayFromObject = aircraft.length ? aircraft.map(row => row.aircraft_type) : dataObject.map((a) => a.aircraft);
     let uniqueArray = [...new Set(arrayFromObject)];

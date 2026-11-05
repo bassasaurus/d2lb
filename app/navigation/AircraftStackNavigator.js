@@ -1,3 +1,4 @@
+import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 import React, { useEffect } from 'react';
 import { AppState } from 'react-native';
@@ -28,7 +29,9 @@ export default function AircraftStackNavigator({ navigation }) {
     const timer = setInterval(async () => {
       if (AppState.currentState !== 'active') return;
       try {
-        if (await (await flightStore()).pendingCount(aircraftScope(await flightScope()))) sync();
+        const scope = await flightScope();
+        const store = await flightStore();
+        if (await store.pendingCount(aircraftScope(scope)) + await store.pendingCount(tailnumberScope(scope))) sync();
       } catch (error) { /* Lists retain local data and display sync errors. */ }
     }, 30000);
     return () => { foreground.remove(); unsubscribe(); clearInterval(timer); };

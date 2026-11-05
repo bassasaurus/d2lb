@@ -1,4 +1,5 @@
 import { ScrollView } from '../components/OverflowLists';
+import { flightScope, flightStore } from '../storage/flights';
 import React, { useCallback, useState, useContext } from 'react';
 import { Alert, Button, View } from 'react-native';
 import Text from '../components/AppText';
@@ -62,6 +63,10 @@ export default function SyncConflictScreen({ route, navigation }) {
       })) throw new Error('Close any open create or update forms before resolving sync issues.');
       const access = await reviewAccess(kind);
       await access.assertCurrent();
+      if (kind === 'tailnumber' && choice === 'discard_local') {
+        const flights = await (await flightStore()).list(await flightScope());
+        if (flights.some(flight => flight.registration === item.registration)) throw new Error('Update flights using this tailnumber before removing its local record.');
+      }
       await access.store.resolveReview(access.scope, localId, item.generation, choice, item.server_record?.revision || null);
       navigation.goBack();
       syncFlightData().catch(() => {});
@@ -73,8 +78,8 @@ export default function SyncConflictScreen({ route, navigation }) {
     { text: 'Confirm', style: 'destructive', onPress: () => choose(choice) },
   ]);
   const edit = () => navigation.getParent()?.popTo('MainDrawer', {
-    screen: kind === 'aircraft' ? 'Aircraft' : 'Logbook',
-    params: { screen: kind === 'aircraft' ? 'AircraftForm' : 'FlightUpdate', params: { item }, initial: false },
+    screen: kind === 'flight' ? 'Logbook' : 'Aircraft',
+    params: { screen: kind === 'aircraft' ? 'AircraftForm' : kind === 'tailnumber' ? 'TailnumberUpdate' : 'FlightUpdate', params: { item }, initial: false },
   });
   const validation = item?.response && !item.response.code && !item.response.detail;
   const inUse = kind === 'aircraft' && item?.sync_state === 'pending_delete' && /in use/i.test(item.sync_error || '');

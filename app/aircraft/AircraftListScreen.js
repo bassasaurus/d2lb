@@ -1,4 +1,5 @@
 import { FlatList } from '../components/OverflowLists';
+import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import React, { useCallback, useState } from 'react';
 import { Alert, Button, RefreshControl, TouchableOpacity, View } from 'react-native';
 import Text from '../components/AppText';
@@ -31,14 +32,14 @@ export default function AircraftListScreen({ navigation }) {
         const records = await listAircraft();
         const store = await flightStore();
         const scope = aircraftScope(await flightScope());
-        const pending = await store.pendingCount(scope);
+        const pending = await store.pendingCount(scope) + await store.pendingCount(tailnumberScope(await flightScope()));
         const deleted = await store.deletedRecords(scope);
         const issues = await store.errors(scope);
         const flightIssues = await store.errors(await flightScope());
         if (active) {
           setRows(records);
           setDeletions(deleted);
-          setIssueCount(issues.length + flightIssues.length);
+          setIssueCount(issues.length + flightIssues.length + (await store.errors(tailnumberScope(await flightScope()))).length);
           setStatus(`${offline ? 'Showing saved aircraft. ' : ''}${pending ? `${pending} pending change(s).` : ""}${issues.length ? ' ' + issues.map(issue => issue.message).join(' ') : ''}`);
         }
       } catch (error) { if (active) setStatus('Unable to load aircraft. Pull down to retry.'); }

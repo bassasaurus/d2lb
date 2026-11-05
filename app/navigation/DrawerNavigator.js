@@ -1,4 +1,5 @@
 import { withScrollOverflow } from '../components/OverflowLists';
+import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 import React, { useContext, useEffect } from "react";
 import { StyleSheet, Alert } from "react-native";
@@ -51,7 +52,7 @@ function DrawerNavigator({ navigation }) {
               const dirty = forms.some(form => form.dirty);
               const store = await flightStore();
               const scope = await flightScope();
-              const pending = await store.pendingCount(scope) + await store.pendingCount(aircraftScope(scope));
+              const pending = await store.pendingCount(scope) + await store.pendingCount(aircraftScope(scope)) + await store.pendingCount(tailnumberScope(scope));
               if (dirty || pending) {
                 const message = [
                   dirty ? "Your unfinished forms will close. Saved drafts remain on this device." : "",
