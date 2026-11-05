@@ -147,3 +147,19 @@ Validation: 30 mobile tests, lint, Expo Doctor 20/20 and iOS/Android exports pas
 The review screen was observed opening in iOS. Manual end-to-end conflict-choice
 verification with disposable local records remains before merge. No commit,
 production deployment or app distribution performed for this item yet.
+
+## Item 4: portrait phone layouts
+
+Branch: `mobile/04-portrait-layouts`. Landscape and tablets are deferred at the
+user's request. Initial focus is logbook rows on the user's Pixel 10.
+
+The date/duration and crew use content-sized columns instead of fixed flex
+proportions. Aircraft/registration share a single flexible text line, and route
+text receives the remaining row width. Bounded text fitting prevents accidental
+wrapping; very long routes may abbreviate in the list and remain available in
+details. AppText now forwards native Text props and styles, so fitting controls
+actually reach the native text component. System font scaling remains enabled.
+
+Validation: lint and Android bundle export pass. Personal-device confirmation
+remains with the user; no claim is made that an emulator exactly matches their
+Pixel's font/display settings. No commit or merge yet for this item.
