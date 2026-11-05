@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import React, { useContext, useState, useRef } from "react";
+import { View, Text, StyleSheet, Button, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AircraftPicker from "./AircraftPicker";
 import { Formik, validateYupSchema } from "formik";
@@ -9,9 +9,11 @@ import Checkbox from "./Checkbox";
 import AppText from "./AppText";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
+import UnsavedFormGuard from "./UnsavedFormGuard";
 import { STYLES } from "../styles/styles";
 
-function TailnumberForm({ initialValues, method, aircraft_type }) {
+function TailnumberForm({ initialValues, method, onSaved, aircraft_type }) {
+  const savedNavigation = useRef(false);
   const Context = useContext(AppContext);
 
   const [checkValid, setCheckValid] = useState(false);
@@ -56,22 +58,33 @@ function TailnumberForm({ initialValues, method, aircraft_type }) {
         validateOnMount={true}
         initialValues={initialValues}
         validationSchema={schema}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            setSubmitting(false);
-            Context.setActivityVisible(true);
-          }, 400);
+        onSubmit={async (values, helpers) => {
+          savedNavigation.current = false;
+          Context.setActivityVisible(true);
+          try {
+            const result = await method(values);
+            savedNavigation.current = true;
+            helpers.resetForm({ values });
+            onSaved?.(result);
+          } catch (error) {
+            Alert.alert("Tailnumber not saved", "Your changes are still in this form. Check your connection and try again.");
+          } finally {
+            helpers.setSubmitting(false);
+            Context.setActivityVisible(false);
+          }
         }}
       >
         {({
           values,
           errors,
           isValid,
-          onSubmit,
+          handleSubmit,
+          isSubmitting,
           handleChange,
           setFieldValue,
         }) => (
           <>
+            <UnsavedFormGuard savedNavigation={savedNavigation} />
             <SafeAreaView>
               <View style={{ marginTop: 5 }}>
                 <AppText size={20} weight={"bold"}>
@@ -81,7 +94,7 @@ function TailnumberForm({ initialValues, method, aircraft_type }) {
 
               <AppTextInput
                 placeholder={"New Tailnumber"}
-                initialValue={initialValues ? initialValues.registration : ""}
+                value={values.registration}
                 onChangeText={handleChange("registration")}
                 isValid={errors.registration ? false : true}
                 autoCorrect={false}
@@ -163,12 +176,8 @@ function TailnumberForm({ initialValues, method, aircraft_type }) {
                 {isValid && checkValid ? (
                   <Button
                     title={!Context.setActivityVisible ? "" : "Submit"}
-                    onPress={() => {
-                      onSubmit;
-                      method(values);
-                      setSubmitting(true);
-                      Context.setActivityVisible(true);
-                    }}
+                    disabled={isSubmitting}
+                    onPress={handleSubmit}
                   ></Button>
                 ) : (
                   <Button title='Complete required fields.'></Button>

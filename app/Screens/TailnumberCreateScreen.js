@@ -19,25 +19,17 @@ function TailnumberCreateScreen({ route }) {
     is_121: false,
   };
 
-  const create = (data) => {
-    api
-      .post("/api/tailnumbers/", data)
-      .then((response) => {
-        navigation.navigate("FlightCreate");
-        Context.setActivityVisible(false);
-      })
-      .then(() => {
-        fetchTailnumbers();
-      })
-      .catch(function (error) {
-        console.log(error);
-        Context.setActivityVisible(false);
-        Alert.alert("An error occurred. \n Please try again.");
-      });
+  const create = async data => {
+    const response = await api.post("/api/tailnumbers/", data);
+    // A cache refresh failure does not mean the successfully saved record failed.
+    await fetchTailnumbers().catch(() => {});
+    return response.data;
   };
+
   return (
     <TailnumberForm
       method={create}
+      onSaved={() => navigation.navigate("FlightCreate")}
       initialValues={initialValues}
       aircraft_type={route.params.aircraft_type}
     ></TailnumberForm>

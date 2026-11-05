@@ -1,7 +1,7 @@
 import React from "react";
 import FlightForm from "../components/FlightForm";
 import { useNavigation } from "@react-navigation/native";
-import addItemToArray from "../asyncStorage/addItemToArray";
+import { saveLocalFlight } from "../storage/flights";
 
 
 function FlightCreateScreen() {
@@ -35,16 +35,10 @@ function FlightCreateScreen() {
     remarks: "",
   };
 
-  const create = async (data) => {
-    
-    addItemToArray('offlineFlights', data)
-    
-    navigation.navigate("FlightList");
-    
-  };
+  const create = data => saveLocalFlight(data);
 
   return (
-    <FlightForm method={create} initialValues={initialValues}></FlightForm>
+    <FlightForm method={create} initialValues={initialValues} onSaved={() => navigation.navigate("FlightList")}></FlightForm>
   );
 }
 

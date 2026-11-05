@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
 import * as Sentry from "@sentry/react-native";
@@ -17,6 +17,7 @@ Sentry.init({
 
 
 export default function App() {
+  const formGuards = useRef(new Map());
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [activityVisible, setActivityVisible] = useState(false);
   
@@ -24,6 +25,7 @@ export default function App() {
   const [offlineFlights, setOfflineFlights] = useState([])
 
   const appSettings = {
+    formGuards,
     isSignedInValue: isSignedIn,
     setIsSignedIn,
 

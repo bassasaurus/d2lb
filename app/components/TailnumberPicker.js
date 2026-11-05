@@ -11,7 +11,7 @@ import {
 import AppTextInput from "./AppTextInput";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import getAsyncObject from "../asyncStorage/getAsyncObject";
+import { flightStore, flightScope } from "../storage/flights";
 import { STYLES } from "../styles/styles";
 import FlatListItemSeparator from "./FlatListItemSeparator";
 import AppText from "./AppText";
@@ -22,7 +22,6 @@ function TailnumberPicker({
   initialValue,
   setFieldValue,
   aircraftId,
-  setAcTailMatch,
   isValid,
   aircraft_type,
 }) {
@@ -33,7 +32,7 @@ function TailnumberPicker({
   const navigation = useNavigation();
 
   const filterData = async () => {
-    const dataArray = await getAsyncObject("tailnumbers_data");
+    const dataArray = await (await flightStore()).reference(await flightScope(), "tailnumbers");
     const filteredArray = dataArray.filter((obj) => {
       return obj.aircraft == aircraftId;
     });
@@ -48,7 +47,6 @@ function TailnumberPicker({
           setVisible(false);
           setFieldValue("registration", item);
           setValue(item);
-          setAcTailMatch(true);
         }}
       >
         <Text style={styles.listItem}>{item}</Text>

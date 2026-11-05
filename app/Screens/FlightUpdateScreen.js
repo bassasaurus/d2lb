@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 import { Alert } from "react-native";
 import FlightForm from "../components/FlightForm";
-import api from "../api/axiosConfig";
+import { saveLocalFlight } from "../storage/flights";
 import AppContext from "../components/AppContext";
 
 import { useNavigation } from "@react-navigation/native";
 
 function FlightUpdateScreen({ route }) {
-  const apiData = route.params.item;
+  const apiData = JSON.parse(JSON.stringify(route.params.item));
 
   const Context = useContext(AppContext);
   const navigation = useNavigation();
@@ -21,21 +21,9 @@ function FlightUpdateScreen({ route }) {
     }
   });
 
-  const update = (data) => {
-    const primary_key = data.id;
-    api
-      .put("/api/flights/" + primary_key + "/", data)
-      .then(() => {
-        navigation.navigate("FlightDetail", { item: data });
-        Context.setActivityVisible(false);
-      })
-      .catch((error) => {
-        Context.setActivityVisible(false);
-        Alert.alert("An error occurred. \n Please try again.");
-      });
-  };
+  const update = data => saveLocalFlight(data);
 
-  return <FlightForm method={update} initialValues={apiData}></FlightForm>;
+  return <FlightForm method={update} initialValues={apiData} onSaved={item => navigation.navigate("FlightDetail", { item })}></FlightForm>;
 }
 
 export default FlightUpdateScreen;

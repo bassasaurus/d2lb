@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import AppTextInput from "./AppTextInput";
-import getAsyncObject from "../asyncStorage/getAsyncObject";
+import { flightStore, flightScope } from "../storage/flights";
 
 import api from "../api/axiosConfig";
 import { STYLES } from "../styles/styles";
@@ -21,7 +21,7 @@ function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
   const [value, setValue] = useState("");
 
   const fetchData = async () => {
-    const dataObject = await getAsyncObject("tailnumbers_data");
+    const dataObject = await (await flightStore()).reference(await flightScope(), "tailnumbers");
     let arrayFromObject = dataObject.map((a) => a.aircraft);
     let uniqueArray = [...new Set(arrayFromObject)];
     setData(uniqueArray);

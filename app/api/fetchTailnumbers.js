@@ -1,11 +1,9 @@
-import api from "./axiosConfig";
-import storeAsyncObject from "../asyncStorage/storeAsyncObject";
-import removeAsyncData from "../asyncStorage/removeAsyncData";
+import api from './axiosConfig';
+import { flightStore, flightScope } from '../storage/flights';
 
-const fetchTailnumbers = async () => {
-  const response = await api.get("/api/tailnumbers/");
-  removeAsyncData("tailnumbers_data");
-  storeAsyncObject("tailnumbers_data", response.data.results);
-};
-
-export default fetchTailnumbers;
+export default async function fetchTailnumbers() {
+  const scope = await flightScope();
+  const response = await api.get('/api/tailnumbers/');
+  if (await flightScope() !== scope) return;
+  await (await flightStore()).cacheReference(scope, 'tailnumbers', response.data.results);
+}
