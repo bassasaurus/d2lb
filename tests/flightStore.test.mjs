@@ -76,9 +76,9 @@ test('editing a new local flight reuses its queue entry; deleting it cancels the
 
 test('newer database schemas are rejected without changing their version', async () => {
   const db = new DatabaseSync(':memory:');
-  db.exec('PRAGMA user_version=3');
+  db.exec('PRAGMA user_version=4');
   await assert.rejects(createFlightStore(adapter(db)), /newer app/);
-  assert.equal(db.prepare('PRAGMA user_version').get().user_version, 3);
+  assert.equal(db.prepare('PRAGMA user_version').get().user_version, 4);
   db.close();
 });
 

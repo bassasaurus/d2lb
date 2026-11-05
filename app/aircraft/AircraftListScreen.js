@@ -10,6 +10,7 @@ import RoundButton from '../components/RoundButton';
 export default function AircraftListScreen({ navigation }) {
   const [rows, setRows] = useState([]);
   const [deletions, setDeletions] = useState([]);
+  const [issueCount, setIssueCount] = useState(0);
   const [status, setStatus] = useState('Loading saved aircraft…');
   const [refreshing, setRefreshing] = useState(false);
   const refresh = React.useRef();
@@ -30,10 +31,12 @@ export default function AircraftListScreen({ navigation }) {
         const pending = await store.pendingCount(scope);
         const deleted = await store.deletedRecords(scope);
         const issues = await store.errors(scope);
+        const flightIssues = await store.errors(await flightScope());
         if (active) {
           setRows(records);
           setDeletions(deleted);
-          setStatus(`${offline ? 'Showing saved aircraft. ' : ''}${pending} pending change(s).${issues.length ? ' ' + issues.map(issue => issue.message).join(' ') : ''}`);
+          setIssueCount(issues.length + flightIssues.length);
+          setStatus(`${offline ? 'Showing saved aircraft. ' : ''}${pending ? `${pending} pending change(s).` : ""}${issues.length ? ' ' + issues.map(issue => issue.message).join(' ') : ''}`);
         }
       } catch (error) { if (active) setStatus('Unable to load aircraft. Pull down to retry.'); }
       finally { running = false; if (active) setRefreshing(false); }
@@ -43,11 +46,18 @@ export default function AircraftListScreen({ navigation }) {
     return () => { active = false; refresh.current = null; };
   }, []));
   return <View style={{ flex: 1, padding: 12 }}>
-    <Text style={{ paddingVertical: 12 }} accessibilityLiveRegion="polite">{status}</Text>
+    {status.trim() ? <Text style={{ paddingVertical: 12 }} accessibilityLiveRegion="polite">{status}</Text> : null}
+    {issueCount > 0 && <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SyncReview', { screen: 'SyncReviewList' })}>
+      <Text style={{ paddingVertical: 12, color: STYLES.danger }}>Resolve sync problems ({issueCount})</Text>
+    </TouchableOpacity>}
     {deletions.map(item => <View key={item.local_id} style={{ marginBottom: 12 }}>
       <Text>{item.aircraft_type}: {item.sync_error || 'Deletion pending upload'}</Text>
       <Button title="Cancel deletion" onPress={async () => {
         try {
+          if (item.sync_error) {
+            navigation.navigate('SyncReview', { screen: 'SyncConflict', params: { kind: 'aircraft', localId: item.local_id }, initial: false });
+            return;
+          }
           await (await flightStore()).cancelDeletion(aircraftScope(await flightScope()), item.local_id);
           refresh.current?.();
         } catch (error) { Alert.alert('Unable to cancel deletion', error.message); }

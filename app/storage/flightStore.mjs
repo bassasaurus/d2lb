@@ -1,7 +1,9 @@
+import { createReviewStore } from './reviewStore.mjs';
+
 // Database-only repository: also exercised against real SQLite in Node tests.
 export async function createFlightStore(db) {
   const version = await db.getFirstAsync('PRAGMA user_version');
-  if (version.user_version > 2) throw new Error('This local database requires a newer app.');
+  if (version.user_version > 3) throw new Error('This local database requires a newer app.');
   await db.execAsync(`
     PRAGMA journal_mode = WAL;
     CREATE TABLE IF NOT EXISTS mobile_flights (
@@ -12,6 +14,16 @@ export async function createFlightStore(db) {
     CREATE TABLE IF NOT EXISTS mobile_reference (
       scope TEXT NOT NULL, name TEXT NOT NULL, payload TEXT NOT NULL,
       PRIMARY KEY(scope,name)
+    );
+    CREATE TABLE IF NOT EXISTS mobile_review_data (
+      scope TEXT NOT NULL, local_id TEXT NOT NULL, server_payload TEXT,
+      server_known INTEGER NOT NULL DEFAULT 0, response TEXT,
+      PRIMARY KEY(scope,local_id)
+    );
+    CREATE TABLE IF NOT EXISTS mobile_review_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, scope TEXT NOT NULL,
+      local_id TEXT NOT NULL, local_payload TEXT NOT NULL, server_payload TEXT,
+      previous_state TEXT NOT NULL, resolution TEXT NOT NULL, created_at TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS mobile_operations (
       scope TEXT NOT NULL, local_id TEXT NOT NULL, operation_id TEXT NOT NULL,
@@ -28,10 +40,12 @@ export async function createFlightStore(db) {
         PRAGMA user_version = 2;`);
     });
   }
+  if (version.user_version < 3) await db.execAsync('PRAGMA user_version = 3;');
   const requireScope = scope => {
     if (!scope) throw new Error('Sign in before accessing local flights.');
   };
   return {
+    ...createReviewStore(db, requireScope),
     async moveScope(from, to) {
       requireScope(from); requireScope(to);
       if (from === to) return;
@@ -40,12 +54,13 @@ export async function createFlightStore(db) {
         const target = await tx.getFirstAsync('SELECT COUNT(*) AS count FROM mobile_flights WHERE scope=?', to);
         if (source.count && target.count) throw new Error('Two local account caches need review before they can be combined.');
         if (!target.count) {
-          for (const table of ['mobile_flights', 'mobile_operations']) {
+          for (const table of ['mobile_flights', 'mobile_operations', 'mobile_review_data']) {
             await tx.runAsync(`UPDATE ${table} SET scope=? WHERE scope=?`, to, from);
           }
           await tx.runAsync('DELETE FROM mobile_reference WHERE scope=?', to);
           await tx.runAsync('UPDATE mobile_reference SET scope=? WHERE scope=?', to, from);
         }
+        await tx.runAsync('UPDATE mobile_review_history SET scope=? WHERE scope=?', to, from);
       });
     },
     async nextOperation(scope, operationId, now = Date.now()) {
@@ -112,13 +127,20 @@ export async function createFlightStore(db) {
         await tx.runAsync('DELETE FROM mobile_operations WHERE scope=? AND operation_id=?', scope, operation.operation_id);
       });
     },
-    async failOperation(scope, operation, message, blocked, now = Date.now()) {
+    async failOperation(scope, operation, message, blocked, now = Date.now(), response = null) {
       const attempts = operation.attempts + 1;
       const delay = Math.min(300000, 5000 * 2 ** Math.min(attempts - 1, 6));
       await db.withExclusiveTransactionAsync(async tx => {
         await tx.runAsync('UPDATE mobile_operations SET attempts=?,retry_at=?,blocked=? WHERE scope=? AND operation_id=?',
           attempts, now + delay, blocked ? 1 : 0, scope, operation.operation_id);
         await tx.runAsync('UPDATE mobile_flights SET sync_error=? WHERE scope=? AND local_id=?', message, scope, operation.local_id);
+        if (blocked) {
+          const server = response?.server_flight || response?.server_record;
+          await tx.runAsync(`INSERT INTO mobile_review_data(scope,local_id,server_payload,server_known,response)
+            VALUES(?,?,?,?,?) ON CONFLICT(scope,local_id) DO UPDATE SET
+            server_payload=excluded.server_payload,server_known=excluded.server_known,response=excluded.response`,
+          scope, operation.local_id, server ? JSON.stringify(server) : null, server ? 1 : 0, JSON.stringify(response));
+        }
       });
     },
     async reference(scope, name) {
@@ -189,9 +211,13 @@ export async function createFlightStore(db) {
       await db.withExclusiveTransactionAsync(async tx => {
         const row = await tx.getFirstAsync('SELECT state FROM mobile_flights WHERE scope=? AND local_id=?', scope, localId);
         if (!row) throw new Error('Flight not found on this device.');
-        const operation = await tx.getFirstAsync('SELECT operation_id FROM mobile_operations WHERE scope=? AND local_id=?', scope, localId);
-        if (row.state === 'pending_create' && !operation) {
+        const operation = await tx.getFirstAsync('SELECT operation_id,blocked FROM mobile_operations WHERE scope=? AND local_id=?', scope, localId);
+        if (operation?.blocked) {
+          await tx.runAsync('DELETE FROM mobile_operations WHERE scope=? AND local_id=?', scope, localId);
+        }
+        if (row.state === 'pending_create' && (!operation || operation.blocked)) {
           await tx.runAsync('DELETE FROM mobile_flights WHERE scope=? AND local_id=?', scope, localId);
+          await tx.runAsync('DELETE FROM mobile_review_data WHERE scope=? AND local_id=?', scope, localId);
         } else {
           await tx.runAsync("UPDATE mobile_flights SET state='pending_delete',generation=generation+1,sync_error=NULL WHERE scope=? AND local_id=?", scope, localId);
         }
