@@ -1,147 +1,97 @@
-import { useMemo } from 'react';
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Modal, FlatList, Pressable, TouchableOpacity } from 'react-native';
-import Text from './AppText';
-import AppTextInput from "./AppTextInput";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-import { flightStore, flightScope } from "../storage/flights";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Keyboard, Pressable, View } from 'react-native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import AppText from './AppText';
+import AppTextInput from './AppTextInput';
+import { flightStore, flightScope } from '../storage/flights';
+import { usePickerOverlay } from './PickerOverlayHost';
 import { useAppTheme } from '../theme/ThemeProvider';
-import FlatListItemSeparator from "./FlatListItemSeparator";
-import AppText from "./AppText";
-import Separator from "./Separator";
-import { useNavigation } from "@react-navigation/native";
+import { tailnumberSuggestions } from './tailnumberSuggestions.mjs';
 
-function TailnumberPicker({
-  initialValue,
-  setFieldValue,
-  aircraftId,
-  isValid,
-  aircraft_type,
-}) {
-  const { styles: STYLES } = useAppTheme();
-  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
-  const [data, setData] = useState();
-  const [visible, setVisible] = useState(false);
-  const [value, setValue] = useState("");
-
+export default function TailnumberPicker({ initialValue, setFieldValue, aircraftId, isValid, aircraft_type, onBlur }) {
+  const { colors } = useAppTheme();
   const navigation = useNavigation();
-
-  const filterData = async () => {
-    const dataArray = await (await flightStore()).reference(await flightScope(), "tailnumbers");
-    const filteredArray = dataArray.filter((obj) => {
-      return obj.aircraft == aircraftId;
+  const overlay = usePickerOverlay();
+  const anchor = useRef(null);
+  const [data, setData] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [query, setQuery] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const blurTimer = useRef(null);
+  const previousAircraft = useRef(aircraftId);
+  useEffect(() => {
+    if (previousAircraft.current !== aircraftId) {
+      previousAircraft.current = aircraftId;
+      setQuery(null);
+      setVisible(false);
+      setFieldValue('registration', '');
+    }
+  }, [aircraftId, setFieldValue]);
+  useEffect(() => { if (initialValue) setQuery(null); }, [initialValue]);
+  useEffect(() => {
+    const subscription = Keyboard.addListener('keyboardDidHide', () => setVisible(false));
+    return () => { clearTimeout(blurTimer.current); subscription.remove(); overlay.hide(); };
+  }, [overlay]);
+  useFocusEffect(React.useCallback(() => {
+    let active = true;
+    setLoading(true);
+    setError(false);
+    (async () => {
+      const rows = await (await flightStore()).reference(await flightScope(), 'tailnumbers');
+      if (active) { setData(rows); setLoading(false); }
+    })().catch(() => { if (active) { setError(true); setLoading(false); } });
+    return () => { active = false; };
+  }, []));
+  const text = query ?? initialValue ?? '';
+  const suggestions = useMemo(() => tailnumberSuggestions(data, aircraftId, text), [data, aircraftId, text]);
+  function close() {
+    clearTimeout(blurTimer.current);
+    setVisible(false);
+    Keyboard.dismiss();
+  }
+  const results = <View style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 5, backgroundColor: colors.surface }}>
+      {loading || error ? <AppText style={{ padding: 10, color: error ? colors.danger : colors.muted }}>
+        {error ? 'Could not load saved tailnumbers. Reopen this screen to retry.' : 'Loading tailnumbers…'}
+      </AppText> : <>
+        {suggestions.rows.map(item => <Pressable key={String(item.id)} accessibilityRole="button"
+          accessibilityLabel={`Select ${item.registration}`} onPress={() => {
+            setFieldValue('registration', item.registration);
+            setQuery(null);
+            close();
+          }} style={{ paddingHorizontal: 10, minHeight: 44, justifyContent: 'center', borderBottomWidth: 1, borderBottomColor: colors.border }}>
+          <AppText style={{ color: colors.primary }}>{item.registration}</AppText>
+        </Pressable>)}
+        {!suggestions.total && <AppText style={{ padding: 10, color: colors.muted }}>No matching tailnumbers for this aircraft.</AppText>}
+        <Pressable accessibilityRole="button" onPress={() => {
+          close();
+          navigation.navigate('TailnumberCreate', { aircraft_type });
+        }} style={{ padding: 10, minHeight: 44, justifyContent: 'center' }}>
+          <AppText style={{ color: colors.success }}>+ Add tailnumber</AppText>
+        </Pressable>
+      </>}
+    </View>;
+  useEffect(() => {
+    let active = true;
+    if (visible) anchor.current?.measureInWindow((x, y, width, height) => {
+      if (active) overlay.show({ x, y, width, height }, results, close);
     });
-    setData(filteredArray);
-  };
-
-  const renderItem = ({ item }) => (
-    <View style={[styles.container, { flexDirection: "row", alignItems: "center" }]}>
-      <TouchableOpacity
-        onPress={() => {
-          setVisible(false);
-          setFieldValue("registration", item.registration);
-          setValue(item.registration);
-        }}
-      >
-        <Text style={styles.listItem}>{item.registration}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity accessibilityRole="button" accessibilityLabel={`Edit ${item.registration}`} style={{ padding: 12 }} onPress={() => {
-        setVisible(false);
-        navigation.navigate('TailnumberUpdate', { item });
-      }}>
-        <MaterialCommunityIcons name="pencil" size={24} color={STYLES.blue} />
-      </TouchableOpacity>
-    </View>
-  );
-
-  return (
-    <>
-      <Pressable
-        onPress={() => {
-          filterData();
-          setVisible(true);
-        }}
-      >
-        <View pointerEvents={"none"}>
-          <AppTextInput
-            isValid={isValid}
-            value={initialValue || ""}
-            placeholder={"Tailnumber"}
-          ></AppTextInput>
-        </View>
-      </Pressable>
-
-      <View style={styles.centeredView}>
-        <Modal animationType='slide' transparent={true} visible={visible} onRequestClose={() => setVisible(false)}>
-          <View style={styles.modalView}>
-            <FlatList
-              data={data}
-              renderItem={renderItem}
-              keyExtractor={(item) => String(item.id)}
-              ItemSeparatorComponent={FlatListItemSeparator}
-            />
-            <Separator></Separator>
-            <View style={{ paddingBottom: 30 }}>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("TailnumberCreate", {
-                    aircraft_type: aircraft_type,
-                  });
-                  setVisible(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name='plus'
-                  size={40}
-                  color={STYLES.green}
-                  backgroundColor={STYLES.white}
-                ></MaterialCommunityIcons>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
-      </View>
-    </>
-  );
+    else overlay.hide();
+    return () => { active = false; };
+  }, [visible, suggestions, loading, error, colors, overlay]);
+  return <View ref={anchor} collapsable={false}>
+    <AppTextInput isValid={isValid} value={text} placeholder="Tailnumber" autoCapitalize="characters" autoCorrect={false}
+      accessibilityLabel="Tailnumber" autoComplete="off" maxLength={10}
+      onFocus={() => { clearTimeout(blurTimer.current); setVisible(true); }}
+      onChangeText={value => {
+        setQuery(value.toUpperCase().replace(/\s/g, ''));
+        setFieldValue('registration', '');
+        setVisible(true);
+      }}
+      onBlur={event => {
+        onBlur?.(event);
+        // Allow a suggestion's press to complete before removing its row.
+        blurTimer.current = setTimeout(() => setVisible(false), 180);
+      }} />
+  </View>;
 }
-
-const createStyles = STYLES => StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  input: {
-    borderWidth: 1,
-  },
-  modalView: {
-    margin: 50,
-    paddingBottom: 30,
-    backgroundColor: STYLES.surface,
-    borderRadius: 20,
-    padding: 10,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  listItem: {
-    fontFamily: STYLES.font,
-    fontSize: 20,
-    color: STYLES.blue,
-    marginTop: 20,
-  },
-
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 0,
-  },
-});
-
-export default TailnumberPicker;
