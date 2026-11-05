@@ -1,18 +1,12 @@
+import { useMemo } from 'react';
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  Modal,
-  Text,
-  FlatList,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Modal, FlatList, Pressable, TouchableOpacity } from 'react-native';
+import Text from './AppText';
 import AppTextInput from "./AppTextInput";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { flightStore, flightScope } from "../storage/flights";
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 import FlatListItemSeparator from "./FlatListItemSeparator";
 import AppText from "./AppText";
 import Separator from "./Separator";
@@ -25,6 +19,8 @@ function TailnumberPicker({
   isValid,
   aircraft_type,
 }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const [data, setData] = useState();
   const [visible, setVisible] = useState(false);
   const [value, setValue] = useState("");
@@ -98,7 +94,7 @@ function TailnumberPicker({
                 <MaterialCommunityIcons
                   name='plus'
                   size={40}
-                  color='green'
+                  color={STYLES.green}
                   backgroundColor={STYLES.white}
                 ></MaterialCommunityIcons>
               </TouchableOpacity>
@@ -110,7 +106,7 @@ function TailnumberPicker({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -120,7 +116,7 @@ const styles = StyleSheet.create({
   modalView: {
     margin: 50,
     paddingBottom: 30,
-    backgroundColor: "white",
+    backgroundColor: STYLES.surface,
     borderRadius: 20,
     padding: 10,
     alignItems: "center",

@@ -1,3 +1,4 @@
+import { useAppTheme } from '../theme/ThemeProvider';
 import React, { useEffect } from 'react';
 import { AppState } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
@@ -14,6 +15,7 @@ import TailnumberUpdateScreen from '../Screens/TailnumberUpdateScreen';
 
 const Stack = createStackNavigator();
 export default function AircraftStackNavigator({ navigation }) {
+  const { colors, navigationTheme } = useAppTheme();
   useEffect(() => {
     const sync = () => syncFlightData().catch(() => {});
     const foreground = AppState.addEventListener('change', state => { if (state === 'active') sync(); });
@@ -30,8 +32,8 @@ export default function AircraftStackNavigator({ navigation }) {
     }, 30000);
     return () => { foreground.remove(); unsubscribe(); clearInterval(timer); };
   }, []);
-  return <Stack.Navigator screenOptions={{ cardStyle: { backgroundColor: 'white' } }}>
-    <Stack.Screen name="AircraftList" component={AircraftListScreen} options={{ title: 'Aircraft', headerLeft: () => <MaterialCommunityIcons name="menu-open" size={30} style={{ paddingLeft: 8 }} onPress={() => navigation.openDrawer()} /> }} />
+  return <Stack.Navigator screenOptions={{ cardStyle: { backgroundColor: colors.surface } }}>
+    <Stack.Screen name="AircraftList" component={AircraftListScreen} options={{ title: 'Aircraft', headerLeft: () => <MaterialCommunityIcons name="menu-open" size={30} color={colors.text} style={{ paddingLeft: 8 }} onPress={() => navigation.openDrawer()} /> }} />
     <Stack.Screen name="AircraftDetail" component={AircraftDetailScreen} options={{ title: 'Aircraft details' }} />
     <Stack.Screen name="AircraftForm" component={AircraftFormScreen} options={({ route }) => ({ title: route.params?.item ? 'Update aircraft' : 'New aircraft' })} />
     <Stack.Screen name="AircraftTailnumberCreate" component={TailnumberCreateScreen} options={{ title: "New tailnumber" }} />

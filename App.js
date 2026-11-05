@@ -6,6 +6,7 @@ import * as Sentry from "@sentry/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ThemeProvider, useAppTheme } from "./app/theme/ThemeProvider";
 import fetchTailnumbers from "./app/api/fetchTailnumbers";
 
 
@@ -64,13 +65,22 @@ export default function App() {
   }, [isSignedIn]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <ThemeProvider>
+    <AppAppearance>
     <SafeAreaProvider>
-      <StatusBar style='auto' />
       <AppContext.Provider value={appSettings}>
         <DrawerNavigator></DrawerNavigator>
       </AppContext.Provider>
     </SafeAreaProvider>
-    </GestureHandlerRootView>
+    </AppAppearance>
+    </ThemeProvider>
   );
+}
+
+function AppAppearance({ children }) {
+  const { colors, isDark } = useAppTheme();
+  return <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.background }}>
+    <StatusBar style={isDark ? 'light' : 'dark'} />
+    {children}
+  </GestureHandlerRootView>;
 }

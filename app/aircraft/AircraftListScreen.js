@@ -1,13 +1,15 @@
 import React, { useCallback, useState } from 'react';
-import { Alert, Button, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, FlatList, RefreshControl, TouchableOpacity, View } from 'react-native';
+import Text from '../components/AppText';
 import { useFocusEffect } from '@react-navigation/native';
 import { listAircraft, aircraftScope } from '../storage/aircraft';
 import { flightScope, flightStore } from '../storage/flights';
 import syncFlightData from '../api/syncFlightData';
-import { STYLES } from '../styles/styles';
+import { useAppTheme } from '../theme/ThemeProvider';
 import RoundButton from '../components/RoundButton';
 
 export default function AircraftListScreen({ navigation }) {
+  const { styles: STYLES } = useAppTheme();
   const [rows, setRows] = useState([]);
   const [deletions, setDeletions] = useState([]);
   const [issueCount, setIssueCount] = useState(0);
@@ -65,7 +67,7 @@ export default function AircraftListScreen({ navigation }) {
     </View>)}
     <FlatList data={rows} keyExtractor={item => item.local_id} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); refresh.current?.(); }} />}
       ListEmptyComponent={<Text>No aircraft saved yet. Add an aircraft or pull down while connected.</Text>}
-      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" style={{ paddingVertical: 16, borderBottomWidth: 1, borderColor: '#ddd' }}
+      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" style={{ paddingVertical: 16, borderBottomWidth: 1, borderColor: STYLES.grey }}
         onPress={() => navigation.navigate('AircraftDetail', { item })}>
         <Text style={{ color: STYLES.blue, fontSize: 18, fontWeight: '600' }}>{item.aircraft_type}</Text>
         <Text>{item.aircraft_class || 'Class not set'}{item.sync_state !== 'synced' ? ' · Pending upload' : ''}</Text>

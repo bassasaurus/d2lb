@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { STYLES } from '../styles/styles';
+import { useAppTheme } from '../theme/ThemeProvider';
 import AppText from './AppText';
 
 function FlightItem({ id, date, route, type, reg, dur, crew }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   return <View style={styles.itemContainer}>
     <View style={styles.row}>
       <AppText size={16} color={STYLES.blue} weight="bold" numberOfLines={1}
@@ -26,10 +29,10 @@ function FlightItem({ id, date, route, type, reg, dur, crew }) {
       </AppText>
       <AppText color={STYLES.black} numberOfLines={1} style={styles.crew}>{crew}</AppText>
     </View>
-    <View style={[styles.syncIndicator, { backgroundColor: id ? STYLES.green : STYLES.red }]} />
+    <View style={[styles.syncIndicator, { backgroundColor: id ? STYLES.success : STYLES.red }]} />
   </View>;
 }
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   itemContainer: { width: '100%', backgroundColor: STYLES.white, marginTop: 5, paddingTop: 5, paddingHorizontal: 5 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 5 },
   date: { flexShrink: 0, maxWidth: '34%' },

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Text } from 'react-native';
+import { useAppTheme } from '../theme/ThemeProvider';
 
 function AppText({ children, size, color, weight, style, ...props }) {
-  return <Text {...props} style={[{ fontSize: size, color, fontWeight: weight }, style]}>
+  const { colors } = useAppTheme();
+  return <Text {...props} style={[{ fontSize: size, color: color ?? colors.text, fontWeight: weight }, style]}>
     {children}
   </Text>;
 }

@@ -1,14 +1,16 @@
 import React, { useCallback, useState, useContext } from 'react';
-import { Alert, Button, ScrollView, Text, View } from 'react-native';
+import { Alert, Button, ScrollView, View } from 'react-native';
+import Text from '../components/AppText';
 import { useFocusEffect } from '@react-navigation/native';
 import { reviewAccess } from './reviewAccess';
 import { recordTitle } from './comparison.mjs';
 import VersionComparison from './VersionComparison';
 import syncFlightData from '../api/syncFlightData';
-import { STYLES } from '../styles/styles';
+import { useAppTheme } from '../theme/ThemeProvider';
 import AppContext from '../components/AppContext';
 
 export default function SyncConflictScreen({ route, navigation }) {
+  const { styles: STYLES } = useAppTheme();
   const { kind, localId, historyId } = route.params;
   const { formGuards } = useContext(AppContext);
   const [item, setItem] = useState(null);

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, ScrollView, TouchableOpacity, View } from 'react-native';
+import Text from '../components/AppText';
 import { aircraftScope } from '../storage/aircraft';
 import { flightScope, flightStore } from '../storage/flights';
 import { CATEGORY_CHOICES, CLASS_CHOICES, ENGINE_CHOICES, FLAGS, WEIGHT_CHOICES } from './fields.mjs';
-import { STYLES } from '../styles/styles';
+import { useAppTheme } from '../theme/ThemeProvider';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import RecordActions from '../components/RecordActions';
 import Separator from '../components/Separator';
 
 export default function AircraftDetailScreen({ route, navigation }) {
+  const { styles: STYLES } = useAppTheme();
   const [item, setItem] = useState(route.params.item);
   const [tailnumbers, setTailnumbers] = useState([]);
   useEffect(() => {
@@ -53,14 +55,14 @@ export default function AircraftDetailScreen({ route, navigation }) {
       <Text style={{ fontWeight: '600', marginBottom: 8 }}>Tailnumbers</Text>
       {tailnumbers.map(tail => <TouchableOpacity key={tail.id} accessibilityRole="button" accessibilityLabel={`Edit ${tail.registration}`}
         onPress={() => navigation.navigate('TailnumberUpdate', { item: tail })}
-        style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderColor: '#ddd' }}>
+        style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderColor: STYLES.grey }}>
         <Text style={{ color: STYLES.blue }}>{tail.registration}</Text>
         <MaterialCommunityIcons name="pencil" size={24} color={STYLES.blue} />
       </TouchableOpacity>)}
     </View>}
     <TouchableOpacity accessibilityRole="button" style={{ alignSelf: 'stretch', backgroundColor: STYLES.green, alignItems: 'center', paddingVertical: 12, marginVertical: 12 }}
       onPress={() => navigation.navigate('AircraftTailnumberCreate', { aircraft_type: item.aircraft_type, fromAircraft: true })}>
-      <Text style={{ color: STYLES.white }}>New Tailnumber</Text>
+      <Text style={{ color: STYLES.onAction }}>New Tailnumber</Text>
     </TouchableOpacity>
     <Separator />
     <RecordActions recordName="aircraft"

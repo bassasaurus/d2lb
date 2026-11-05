@@ -1,10 +1,12 @@
+import { useAppTheme } from '../theme/ThemeProvider';
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
 function Separator(props) {
+  const { colors } = useAppTheme();
   return (
     <View style={styles.container}>
-      <View backgroundColor='gray' height={1} width='100%'></View>
+      <View backgroundColor={colors.border} height={1} width='100%'></View>
     </View>
   );
 }

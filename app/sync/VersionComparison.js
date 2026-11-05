@@ -1,8 +1,12 @@
+import { useMemo } from 'react';
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
+import Text from '../components/AppText';
 import { compareVersions } from './comparison.mjs';
-import { STYLES } from '../styles/styles';
+import { useAppTheme } from '../theme/ThemeProvider';
 export default function VersionComparison({ kind, local, server }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const [showAll, setShowAll] = useState(false);
   const rows = compareVersions(kind, local, server);
   const changes = rows.filter(row => row.changed);
@@ -16,7 +20,7 @@ export default function VersionComparison({ kind, local, server }) {
     <Button title={showAll ? 'Show differences only' : 'Show all fields'} onPress={() => setShowAll(value => !value)} />
   </View>;
 }
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   columns: { flexDirection: 'row', gap: 12, marginTop: 6 }, column: { flex: 1, flexShrink: 1 },
-  row: { paddingVertical: 12, borderBottomWidth: 1, borderColor: '#ddd' },
+  row: { paddingVertical: 12, borderBottomWidth: 1, borderColor: STYLES.grey },
 });

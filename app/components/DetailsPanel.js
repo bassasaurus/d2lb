@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import AppText from "./AppText";
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 
 function DetailsPanel({ route }) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const approaches = route.params.item.approaches;
   return (
     <View>
@@ -110,7 +113,7 @@ function DetailsPanel({ route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   rowContainer: {
     flexDirection: "row",
     paddingBottom: 5,

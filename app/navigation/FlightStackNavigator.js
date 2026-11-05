@@ -1,10 +1,12 @@
+import { useAppTheme } from '../theme/ThemeProvider';
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import FlightListScreen from "../Screens/FlightListScreen";
 import FlightDetailScreen from "../Screens/FlightDetailScreen";
 import FlightCreateScreen from "../Screens/FlightCreateScreen";
 import FlightUpdateScreen from "../Screens/FlightUpdateScreen";
-import { Button, Pressable, Text } from "react-native";
+import { Button, Pressable } from 'react-native';
+import Text from '../components/AppText';
 import { useNavigation } from "@react-navigation/native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -15,6 +17,7 @@ import TailnumberUpdateScreen from '../Screens/TailnumberUpdateScreen';
 const Stack = createStackNavigator();
 
 function FlightStackNavigator(props) {
+  const { colors, navigationTheme } = useAppTheme();
 
   const navigation = useNavigation();
 
@@ -32,13 +35,13 @@ function FlightStackNavigator(props) {
         options={{
           title: "Logbook",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: "white" },
+          cardStyle: { backgroundColor: colors.surface },
           headerShown: true,
           headerLeft: () => (
             <MaterialCommunityIcons
               style={{ paddingLeft: 5 }}
               name='menu-open'
-              size={30}
+              size={30} color={colors.text}
               onPress={() => navigation.openDrawer()}
             />
           ),
@@ -51,7 +54,7 @@ function FlightStackNavigator(props) {
         options={{
           title: "Detail",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: "white" },
+          cardStyle: { backgroundColor: colors.surface },
         }}
       />
 
@@ -61,7 +64,7 @@ function FlightStackNavigator(props) {
         options={{
           title: "New Flight",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: "white" },
+          cardStyle: { backgroundColor: colors.surface },
         }}
       />
 
@@ -71,7 +74,7 @@ function FlightStackNavigator(props) {
         options={{
           title: "Update",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: "white" },
+          cardStyle: { backgroundColor: colors.surface },
         }}
       />
 
@@ -81,7 +84,7 @@ function FlightStackNavigator(props) {
         options={{
           title: "New Tailnumber",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: "white" },
+          cardStyle: { backgroundColor: colors.surface },
         }}
       />
       <Stack.Screen name="TailnumberUpdate" component={TailnumberUpdateScreen} options={{ title: "Update tailnumber" }} />

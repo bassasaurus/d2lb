@@ -1,8 +1,11 @@
+import { useMemo } from 'react';
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { STYLES } from "../styles/styles";
+import { useAppTheme } from '../theme/ThemeProvider';
 
 function FlatListItemSeparator(props) {
+  const { styles: STYLES } = useAppTheme();
+  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   return (
     <View
       style={{
@@ -14,7 +17,7 @@ function FlatListItemSeparator(props) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = STYLES => StyleSheet.create({
   container: {},
 });
 
