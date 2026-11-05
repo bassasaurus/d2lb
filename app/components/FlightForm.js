@@ -1,9 +1,9 @@
+import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import moment from "moment";
 import React, { useState, useContext, useEffect, useRef } from "react";
 import { View, StyleSheet, Modal, Pressable, TouchableOpacity, KeyboardAvoidingView, Platform, Button, Alert, ScrollView } from 'react-native';
 import Text from './AppText';
-import { Formik, validateYupSchema } from "formik";
 import * as yup from "yup";
 
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -15,7 +15,6 @@ import AppText from "./AppText";
 import Checkbox from "./Checkbox";
 import ActivityModal from "./ActivityModal";
 import AppContext from "./AppContext";
-import UnsavedFormGuard from "./UnsavedFormGuard";
 import { flightScope, flightStore } from "../storage/flights";
 import { useFocusEffect } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -26,9 +25,10 @@ function FlightForm({ initialValues, method, onSaved }) {
   const { styles: STYLES, isDark } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const savedNavigation = useRef(false);
+  const draftHandle = useRef(null);
   const [calVisible, setCalVisible] = useState(false);
   const [calendarDate, setCalendarDate] = useState(new Date());
-  const [formCount, setFormCount] = useState(0);
+  const [formCount, setFormCount] = useState(() => Math.max(0, ...initialValues.approaches.map((item, index) => item.approach_type || item.number ? index : 0)));
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [tailnumbers, setTailnumbers] = useState([]);
   useFocusEffect(React.useCallback(() => {
@@ -95,7 +95,7 @@ function FlightForm({ initialValues, method, onSaved }) {
     >
       <ScrollView>
         <View style={styles.container}>
-          <Formik
+          <DraftForm kind="flight" recordKey={initialValues.local_id || initialValues.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={values => setFormCount(Math.max(0, ...values.approaches.map((item, index) => item.approach_type || item.number ? index : 0)))}
             validateOnMount={true}
             initialValues={initialValues}
             validationSchema={flightSchema}
@@ -103,6 +103,7 @@ function FlightForm({ initialValues, method, onSaved }) {
               try {
                 savedNavigation.current = false;
                 const result = await method(values);
+                await draftHandle.current.complete();
                 savedNavigation.current = true;
                 helpers.resetForm({ values });
                 onSaved?.(result);
@@ -125,7 +126,6 @@ function FlightForm({ initialValues, method, onSaved }) {
               handleBlur,
             }) => (
               <>
-                <UnsavedFormGuard savedNavigation={savedNavigation} />
                 <Pressable
                   onPress={() => {
                     const parsed = moment(values.date, "M/D/YYYY", true);
@@ -803,7 +803,7 @@ function FlightForm({ initialValues, method, onSaved }) {
                 )}
               </>
             )}
-          </Formik>
+          </DraftForm>
           <ActivityModal></ActivityModal>
         </View>
       </ScrollView>

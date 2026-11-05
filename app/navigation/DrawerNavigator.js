@@ -35,6 +35,8 @@ function DrawerNavigator({ navigation }) {
           label='Logout'
           onPress={async () => {
             const logout = async () => {
+              const forms = [...Context.formGuards.current.values()].map(read => read());
+              await Promise.all(forms.map(form => form.flushDraft?.()));
               await Context.signOut();
             };
             try {
@@ -49,12 +51,12 @@ function DrawerNavigator({ navigation }) {
               const pending = await store.pendingCount(scope) + await store.pendingCount(aircraftScope(scope));
               if (dirty || pending) {
                 const message = [
-                  dirty ? "Your unfinished form changes will be discarded." : "",
+                  dirty ? "Your unfinished forms will close. Saved drafts remain on this device." : "",
                   pending ? `${pending} change(s) are saved only on this device. They will remain stored, but will be hidden while signed out.` : "",
                 ].filter(Boolean).join("\n\n");
-                Alert.alert(dirty ? "Discard changes and sign out?" : "Unsynced flights", message, [
+                Alert.alert(dirty ? "Save drafts and sign out?" : "Unsynced changes", message, [
                   { text: dirty ? "Keep editing" : "Stay signed in", style: "cancel" },
-                  { text: dirty ? "Discard and sign out" : "Sign out", style: dirty ? "destructive" : "default",
+                  { text: "Sign out", style: "default",
                     onPress: () => logout().catch(() => Alert.alert("Unable to sign out")) },
                 ]);
               } else {

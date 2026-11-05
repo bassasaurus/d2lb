@@ -5,7 +5,8 @@ import { flightStore, flightScope } from './flights';
 // Aircraft and flights never share records, UUIDs or cache replacement operations.
 export const aircraftScope = scope => `${scope}:aircraft`;
 export async function listAircraft() {
-  return (await flightStore()).list(aircraftScope(await flightScope()));
+  const rows = await (await flightStore()).list(aircraftScope(await flightScope()));
+  return rows.sort((a, b) => a.aircraft_type.localeCompare(b.aircraft_type, 'en', { sensitivity: 'base' }));
 }
 export async function saveAircraft(record) {
   const store = await flightStore();

@@ -1,11 +1,10 @@
+import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import React, { useRef } from 'react';
 import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import Text from '../components/AppText';
-import { Formik } from 'formik';
 import * as yup from 'yup';
 import AppTextInput from '../components/AppTextInput';
-import UnsavedFormGuard from '../components/UnsavedFormGuard';
 import { saveAircraft } from '../storage/aircraft';
 import { aircraftValues, CATEGORY_CHOICES, CLASS_CHOICES, ENGINE_CHOICES, FLAGS, WEIGHT_CHOICES } from './fields.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
@@ -32,12 +31,14 @@ export default function AircraftFormScreen({ route, navigation }) {
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const record = route.params?.item;
   const savedNavigation = useRef(false);
+  const draftHandle = useRef(null);
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Formik initialValues={aircraftValues(record)} validationSchema={schema} onSubmit={async (values, helpers) => {
+      <DraftForm kind="aircraft" recordKey={record?.local_id || record?.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={aircraftValues(record)} validationSchema={schema} onSubmit={async (values, helpers) => {
         savedNavigation.current = false;
         try {
           const item = await saveAircraft(values);
+          await draftHandle.current.complete();
           savedNavigation.current = true;
           helpers.resetForm({ values });
           navigation.popTo('AircraftDetail', { item });
@@ -48,7 +49,6 @@ export default function AircraftFormScreen({ route, navigation }) {
         {({ values, errors, submitCount, status, isSubmitting, setFieldValue, handleSubmit }) => {
           const chooseFlag = (choices, key) => choices.forEach(([field]) => setFieldValue(field, field === key));
           return <>
-            <UnsavedFormGuard savedNavigation={savedNavigation} />
             <Text style={styles.label}>Aircraft type</Text>
             <AppTextInput value={values.aircraft_type} placeholder="e.g. C172" maxLength={10} editable={!record?.id}
               autoCapitalize="characters" autoCorrect={false} isValid={!submitCount || !errors.aircraft_type}
@@ -69,7 +69,7 @@ export default function AircraftFormScreen({ route, navigation }) {
             <Text style={styles.help}>Saved on this device first; uploads when connected.</Text>
           </>;
         }}
-      </Formik>
+      </DraftForm>
     </ScrollView>
   </KeyboardAvoidingView>;
 }

@@ -198,3 +198,28 @@ iOS simulator restored the signed-in logbook after reload, then signed out to
 the disabled-until-complete login form. User should verify signing in again on
 both devices. Native development/release builds need rebuilding for SecureStore;
 Expo Go already supplies the module. No Django changes or production deployment.
+
+## Item 7: draft recovery
+
+Branch: `mobile/07-draft-recovery`, based on merged secure sessions (#28).
+Flight, aircraft and tailnumber create/update forms save unfinished values on
+this device after a 400ms pause and flush when backgrounded or leaving. Drafts
+are separated by account, resource and record; they are not uploaded or synced.
+Reopening offers Resume draft / Discard above disabled form fields. Updates
+whose baseline changed cannot restore a stale draft over the current record.
+Corrupt/unreadable drafts require retry or explicit discard before editing.
+
+The form shows Saving draft… / Draft saved on this device and reports storage
+failures with a retry. Leaving a dirty form offers keep editing, save draft and
+leave, or discard draft. Logout flushes drafts before removing the credential.
+Successful record saves remove their draft; pending autosaves are cancelled so
+they cannot recreate it. Drafts have no automatic expiration. A sudden process
+kill before the debounce/background flush can lose the latest keystrokes.
+
+Validation: 53 tests pass, including persistence across store recreation, account
+isolation, ordered writes/removal, write failures and corrupt payloads. Lint
+passes. iOS simulator verified autosave, Save draft and leave, the recovery
+banner and restored aircraft values. A test draft named DRAFT remains in New
+aircraft for review; no aircraft was submitted. iOS/Android bundle exports are
+checked before handoff. No dependencies, native builds or Django changes.
+Not committed or merged yet.

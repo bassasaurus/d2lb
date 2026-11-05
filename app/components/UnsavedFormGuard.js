@@ -6,17 +6,18 @@ import AppContext from './AppContext';
 
 // Navigation keeps forms mounted when opening a related create screen. Only
 // removing the form (Back, swipe, reset) requires a discard decision.
-export default function UnsavedFormGuard({ savedNavigation }) {
+export default function UnsavedFormGuard({ savedNavigation, draftHandle }) {
   const { dirty, isSubmitting } = useFormikContext();
   const navigation = useNavigation();
   const route = useRoute();
   const { formGuards } = useContext(AppContext);
   const prompting = useRef(false);
   const state = useRef();
-  state.current = { dirty, isSubmitting, savedNavigation };
+  state.current = { dirty, isSubmitting, savedNavigation, draftHandle };
 
   useEffect(() => {
     formGuards.current.set(route.key, () => ({
+      flushDraft: () => state.current.draftHandle?.current?.flush(),
       open: !state.current.savedNavigation.current,
       dirty: state.current.dirty && !state.current.savedNavigation.current,
       saving: state.current.isSubmitting && !state.current.savedNavigation.current,
@@ -42,12 +43,21 @@ export default function UnsavedFormGuard({ savedNavigation }) {
       ], { cancelable: true, onDismiss: close });
       return;
     }
-    Alert.alert('Discard unfinished changes?', 'Your changes have not been saved.', [
-      { text: 'Keep editing', style: 'cancel', onPress: close },
-      { text: 'Discard changes', style: 'destructive', onPress: () => {
+    const leave = async discard => {
+      try {
+        if (discard) await draftHandle.current.discardAndClose();
+        else await draftHandle.current.flush();
         close();
         navigation.dispatch(data.action);
-      } },
+      } catch {
+        close();
+        Alert.alert('Could not save your draft', 'Keep this form open and try again.');
+      }
+    };
+    Alert.alert('Leave unfinished form?', 'Keep a draft to resume later, or discard these unfinished changes.', [
+      { text: 'Keep editing', style: 'cancel', onPress: close },
+      { text: 'Save draft and leave', onPress: () => leave(false) },
+      { text: 'Discard draft', style: 'destructive', onPress: () => leave(true) },
     ], { cancelable: true, onDismiss: close });
   });
   return null;
