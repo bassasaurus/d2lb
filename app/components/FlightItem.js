@@ -1,91 +1,42 @@
-import React from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { STYLES } from "../styles/styles";
-import AppText from "../components/AppText";
-import { backgroundColor } from "styled-system";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { STYLES } from '../styles/styles';
+import AppText from './AppText';
 
-function FlightItem({ id, date, route, type, reg, dur, crew, dayL, nitL }) {
-  return (
-    <>
-      <View style={styles.itemContainer}>
-
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <AppText size={16} color={STYLES.blue} weight='bold'>
-              {date}
-            </AppText>
-          </View>
-          <View style={styles.secondColumn}>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <AppText size={16} color={STYLES.blue} weight='bold'>
-                {type}
-              </AppText>
-              <AppText>{"  "}</AppText>
-              <AppText size={16} color={STYLES.blue} weight='bold'>
-                {reg}
-              </AppText>
-            </View>
-          </View>
-          
-            <View style={styles.thirdColumn}>
-              <AppText size={16} color={STYLES.blue} weight='bold'>
-                {dur}
-              </AppText>
-            </View>
-        </View>
-
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <AppText size={16} color={STYLES.black}>
-              {route}
-            </AppText>
-          </View>
-          <View style={styles.thirdColumn}>
-            <AppText color={STYLES.black}>{crew}</AppText>
-          </View>
-        </View>
-        
-        <View style={{backgroundColor: id ? "green" : "red", height: 2, width: '5%'}}></View>
-      </View>
-    </>
-  );
+function FlightItem({ id, date, route, type, reg, dur, crew }) {
+  return <View style={styles.itemContainer}>
+    <View style={styles.row}>
+      <AppText size={16} color={STYLES.blue} weight="bold" numberOfLines={1}
+        adjustsFontSizeToFit minimumFontScale={0.8} style={styles.date}>
+        {date}
+      </AppText>
+      <AppText size={16} color={STYLES.blue} weight="bold" numberOfLines={1}
+        adjustsFontSizeToFit minimumFontScale={0.75} style={styles.aircraft}>
+        {type}{'  '}{reg}
+      </AppText>
+      <AppText size={16} color={STYLES.blue} weight="bold" numberOfLines={1}
+        style={styles.duration}>
+        {dur}
+      </AppText>
+    </View>
+    <View style={styles.row}>
+      <AppText size={16} color={STYLES.black} numberOfLines={1} ellipsizeMode="middle"
+        adjustsFontSizeToFit minimumFontScale={0.8} style={styles.route}>
+        {route}
+      </AppText>
+      <AppText color={STYLES.black} numberOfLines={1} style={styles.crew}>{crew}</AppText>
+    </View>
+    <View style={[styles.syncIndicator, { backgroundColor: id ? STYLES.green : STYLES.red }]} />
+  </View>;
 }
-
 const styles = StyleSheet.create({
-  itemContainer: {
-    width: "100%",
-    backgroundColor: "white",
-    marginTop: 5,
-    paddingTop: 5,
-    paddingLeft: 5,
-    paddingRight: 5,
-  },
-  rowContainer: {
-    flex: 1,
-    flexDirection: "row",
-    marginBottom: 5,
-  },
-  firstColumn: {
-    flex: 1.1,
-    flexDirection: "column",
-  },
-  secondColumn: {
-    flex: 2,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  thirdColumn: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "flex-end",
-  },
-  syncInfo: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "flex-end",
-    backgroundColor: "blue",
-  },
+  itemContainer: { width: '100%', backgroundColor: STYLES.white, marginTop: 5, paddingTop: 5, paddingHorizontal: 5 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 5 },
+  date: { flexShrink: 0, maxWidth: '34%' },
+  aircraft: { flex: 1, minWidth: 0, textAlign: 'center' },
+  duration: { flexShrink: 0, textAlign: 'right', fontVariant: ['tabular-nums'] },
+  route: { flex: 1, minWidth: 0 },
+  crew: { flexShrink: 0, textAlign: 'right' },
+  syncIndicator: { height: 2, width: '5%' },
 });
-
 export default FlightItem;

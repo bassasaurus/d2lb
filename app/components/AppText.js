@@ -1,21 +1,9 @@
-import React from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { STYLES } from "../styles/styles";
+import React from 'react';
+import { Text } from 'react-native';
 
-function AppText({ children, size, color, weight, ...props }) {
-  return (
-    <Text
-      style={{
-        fontSize: size,
-        color: color,
-        fontWeight: weight,
-      }}
-    >
-      {children}
-    </Text>
-  );
+function AppText({ children, size, color, weight, style, ...props }) {
+  return <Text {...props} style={[{ fontSize: size, color, fontWeight: weight }, style]}>
+    {children}
+  </Text>;
 }
-
-const styles = StyleSheet.create({});
-
 export default AppText;
