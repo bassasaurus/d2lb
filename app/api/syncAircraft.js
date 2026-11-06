@@ -1,3 +1,4 @@
+import { completeReferenceRows } from './referenceRows.mjs';
 import { session } from '../auth/session';
 import * as Crypto from 'expo-crypto';
 import api from './axiosConfig';
@@ -24,6 +25,5 @@ export async function syncAircraft(scope, partition, enabled) {
   }
   const response = await api.get('/api/aircraft/');
   if (await flightScope() !== scope) throw new Error('Account changed during sync.');
-  if (response.data.next) throw new Error('Aircraft response was incomplete.');
-  await store.cacheSnapshot(localScope, response.data.results);
+  await store.cacheSnapshot(localScope, completeReferenceRows(response.data));
 }

@@ -1,3 +1,4 @@
+import FlightHeader from './FlightHeader';
 import { useMemo } from 'react';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -8,20 +9,7 @@ function FlightItem({ id, date, route, type, reg, dur, crew }) {
   const { styles: STYLES } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   return <View style={styles.itemContainer}>
-    <View style={styles.row}>
-      <AppText size={16} color={STYLES.blue} weight="bold" numberOfLines={1}
-        adjustsFontSizeToFit minimumFontScale={0.8} style={styles.date}>
-        {date}
-      </AppText>
-      <AppText size={16} color={STYLES.blue} weight="bold" numberOfLines={1}
-        adjustsFontSizeToFit minimumFontScale={0.75} style={styles.aircraft}>
-        {type}{'  '}{reg}
-      </AppText>
-      <AppText size={16} color={STYLES.blue} weight="bold" numberOfLines={1}
-        style={styles.duration}>
-        {dur}
-      </AppText>
-    </View>
+    <FlightHeader date={date} type={type} reg={reg} dur={dur} />
     <View style={styles.row}>
       <AppText size={16} color={STYLES.black} numberOfLines={1} ellipsizeMode="middle"
         adjustsFontSizeToFit minimumFontScale={0.8} style={styles.route}>
@@ -35,9 +23,6 @@ function FlightItem({ id, date, route, type, reg, dur, crew }) {
 const createStyles = STYLES => StyleSheet.create({
   itemContainer: { width: '100%', backgroundColor: STYLES.white, marginTop: 5, paddingTop: 5, paddingHorizontal: 5 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 5 },
-  date: { width: '30%', flexShrink: 0 },
-  aircraft: { flex: 1, minWidth: 0, textAlign: 'center' },
-  duration: { width: '30%', flexShrink: 0, textAlign: 'right', fontVariant: ['tabular-nums'] },
   route: { flex: 1, minWidth: 0 },
   crew: { flexShrink: 0, textAlign: 'right' },
   syncIndicator: { height: 2, width: '5%' },

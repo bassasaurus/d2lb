@@ -27,9 +27,11 @@ const FlightListScreen = () => {
   const navigation = useNavigation();
   const [data, setData] = useState([]);
   const [issueCount, setIssueCount] = useState(0);
-  const [windowNotice, setWindowNotice] = useState(false);
+  const [windowNotice, setWindowNotice] = useState(true);
+  const [loadingFlights, setLoadingFlights] = useState(true);
+  const [noticeError, setNoticeError] = useState("");
   const [noticeHeight, setNoticeHeight] = useState(26);
-  const noticeProgress = React.useRef(new Animated.Value(0)).current;
+  const noticeProgress = React.useRef(new Animated.Value(1)).current;
   useEffect(() => {
     const animation = Animated.timing(noticeProgress, {
       toValue: windowNotice ? 1 : 0, duration: 250, useNativeDriver: false,
@@ -38,7 +40,7 @@ const FlightListScreen = () => {
     return () => animation.stop();
   }, [windowNotice, noticeProgress]);
   const noticeTimer = React.useRef(null);
-  const [status, setStatus] = useState("Loading saved flights…");
+  const [status, setStatus] = useState("");
 
   useFocusEffect(React.useCallback(() => {
     let active = true;
@@ -46,6 +48,11 @@ const FlightListScreen = () => {
     const load = async () => {
       if (running) return;
       running = true;
+      if (active) {
+        clearTimeout(noticeTimer.current);
+        setLoadingFlights(true);
+        setWindowNotice(true);
+      }
       try {
         const partition = await tokenPartition();
         let scope = await flightScope();
@@ -79,15 +86,29 @@ const FlightListScreen = () => {
           setData(rows);
           setIssueCount(issues.length);
           clearTimeout(noticeTimer.current);
-          setWindowNotice(downloaded);
-          if (downloaded) noticeTimer.current = setTimeout(() => setWindowNotice(false), 3000);
-          setStatus(`${downloaded ? '' : 'Showing saved flights; sync could not finish.'} ${pending ? `${pending} pending change(s) saved on device.` : ""}${serverUpgradeNeeded ? ' Uploads waiting for the server sync update.' : ''}${issues.length ? ` Needs attention: ${issues.slice(0, 3).map(issue => `${issue.route}: ${issue.message}`).join(' ')}` : ''} ${legacyCount ? ' Older unsynced flights are preserved separately for review.' : ''}`);
+          const syncError = [
+            !downloaded ? 'Showing saved flights; sync could not finish.' : '',
+            serverUpgradeNeeded ? 'Uploads waiting for the server sync update.' : '',
+            issues.length ? `Needs attention: ${issues.slice(0, 3).map(issue => `${issue.route}: ${issue.message}`).join(' ')}` : '',
+          ].filter(Boolean).join(' ');
+          const retryMessage = syncError ? `${syncError}\nPull down to retry.` : '';
+          setNoticeError(retryMessage);
+          setWindowNotice(true);
+          if (!syncError) noticeTimer.current = setTimeout(() => setWindowNotice(false), 3000);
+          setStatus(`${pending ? `${pending} pending change(s) saved on device.` : ''} ${legacyCount ? 'Older unsynced flights are preserved separately for review.' : ''}`);
         }
       } catch (error) {
-        if (active) setStatus('Unable to open local logbook. Pull down to retry.');
+        if (active) {
+          setWindowNotice(true);
+          setNoticeError('Unable to open local logbook.\nPull down to retry.');
+          setStatus('');
+        }
       } finally {
         running = false;
-        if (active) setRefreshing(false);
+        if (active) {
+          setLoadingFlights(false);
+          setRefreshing(false);
+        }
       }
     };
     load();
@@ -156,13 +177,13 @@ const FlightListScreen = () => {
         style={{ overflow: 'hidden', opacity: noticeProgress,
           height: noticeProgress.interpolate({ inputRange: [0, 1], outputRange: [0, noticeHeight] }) }}>
         <Text onLayout={event => setNoticeHeight(event.nativeEvent.layout.height)}
-          style={{ position: 'absolute', left: 0, right: 0, paddingHorizontal: 10, paddingVertical: 4, color: STYLES.muted }}>
-          Synced last 100 entries
+          style={{ position: 'absolute', left: 0, right: 0, paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: noticeError ? STYLES.danger : STYLES.muted }} accessibilityLiveRegion="polite">
+          {noticeError || (loadingFlights ? "Loading synced flights…" : "Synced last 100 entries")}
         </Text>
       </Animated.View>
-      {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
+      {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
       {issueCount > 0 && <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SyncReview', { screen: 'SyncReviewList' })}>
-        <Text style={{ padding: 10, color: STYLES.danger }}>Resolve sync problems ({issueCount})</Text>
+        <Text style={{ padding: 10, textAlign: 'center', color: STYLES.danger }}>Resolve sync problems ({issueCount})</Text>
       </TouchableOpacity>}
       <FlatList
         data={data}

@@ -1,5 +1,6 @@
+import LogoArtwork from '../components/LogoArtwork';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Appearance, useColorScheme, View } from 'react-native';
+import { Appearance, useColorScheme, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SystemUI from 'expo-system-ui';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
@@ -47,7 +48,7 @@ export function ThemeProvider({ children }) {
     };
   }, [scheme, preference, writes]);
   if (!ready) return <View style={{ flex: 1, backgroundColor: PALETTES[scheme].background, alignItems: 'center', justifyContent: 'center' }}>
-    <ActivityIndicator color={PALETTES[scheme].primary} />
+    <LogoArtwork color={PALETTES[scheme].text} mutedColor={PALETTES[scheme].muted} label="Opening your logbook…" />
   </View>;
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
