@@ -398,3 +398,21 @@ changes are shown. No on-device flight-total calculations; no hours suffix.
 Django adds authenticated DRF GET /api/mobile/stats/ without schema migrations.
 Validation: 83 mobile tests, 75 Django API tests, lint and Android export pass;
 API summary data observed in the iOS simulator.
+
+
+## Recency
+
+Branch: `mobile/recency` in both repositories. A read-only DRF endpoint exposes
+website VFR landing counts, instrument approach/holding counts, and landing
+counts by type; device displays server flags without calculating currency.
+Instrument queries are shared with the website to preserve its existing window
+and date behavior. Snapshots are cached per account with calculation/download
+dates, refresh and pending-change messaging. Matching Totals dropdown alignment
+fixes are included. VFR, IFR and Type sections collapse independently and can
+be reordered with drag handles; their order is saved per account on this device.
+Totals previews show nonzero PIC/SIC/XC without repeating expanded rows. Totals
+sync changed records through the existing queues before fetching the API snapshot;
+success feedback expires and failures remain visible. The explanatory note lasts
+five seconds and manual refresh explains automatic server calculation.
+Validation: 93 mobile tests, lint and iOS/Android exports pass. Django API and home
+regression tests cover ownership, date windows and shared instrument queries.
