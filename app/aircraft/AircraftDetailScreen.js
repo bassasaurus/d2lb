@@ -1,3 +1,4 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from '../components/OverflowLists';
 import { listTailnumbers } from '../storage/tailnumbers';
 import React, { useEffect, useState } from 'react';
@@ -9,6 +10,7 @@ import { CATEGORY_CHOICES, CLASS_CHOICES, ENGINE_CHOICES, FLAGS, WEIGHT_CHOICES 
 import { useAppTheme } from '../theme/ThemeProvider';
 import RecordActions from '../components/RecordActions';
 import Separator from '../components/Separator';
+import PlatformActionButton from '../components/PlatformActionButton';
 
 export default function AircraftDetailScreen({ route, navigation }) {
   const { styles: STYLES } = useAppTheme();
@@ -48,13 +50,17 @@ export default function AircraftDetailScreen({ route, navigation }) {
       navigation.navigate('AircraftList');
     } catch (error) { Alert.alert('Aircraft not deleted', 'Your record is still saved. Please try again.'); }
   };
-  return <ScrollView contentContainerStyle={{ padding: 16 }}>
-    <Text style={{ fontSize: 24, fontWeight: '600', marginBottom: 16 }}>{item.aircraft_type}</Text>
+  return <SafeAreaView edges={['bottom']} style={{ flex: 1, paddingHorizontal: 16 }}>
+    <ScrollView style={{ flexGrow: 0, maxHeight: '65%' }} contentContainerStyle={{ paddingTop: 16 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
+      <Text style={{ fontSize: 24, fontWeight: '600', flexShrink: 1 }}>{item.aircraft_type}</Text>
+      <Text style={{ color: STYLES.muted }}>{tailnumbers.length} tailnumbers</Text>
+    </View>
     <Text>Category: {CATEGORY_CHOICES.find(([key]) => key === item.aircraft_category)?.[1] || 'Not set'}</Text>
     <Text style={{ marginVertical: 8 }}>Class: {CLASS_CHOICES.find(([key]) => key === item.aircraft_class)?.[1] || 'Not set'}</Text>
     {[...ENGINE_CHOICES, ...WEIGHT_CHOICES, ...FLAGS].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
     {item.sync_state !== 'synced' && <Text style={{ color: STYLES.danger, marginVertical: 16 }}>{item.sync_error || 'Saved on this device — pending upload'}</Text>}
-    <View style={{ marginTop: 16 }}>
+    <View style={{ marginTop: 4 }}>
     <RecordActions recordName="aircraft"
       onUpdate={() => navigation.navigate('AircraftForm', { item })}
       onDelete={() => Alert.alert('Delete aircraft?', 'Aircraft in use cannot be deleted. Otherwise this deletion will sync when connected.', [
@@ -62,24 +68,25 @@ export default function AircraftDetailScreen({ route, navigation }) {
       ])}
     />
     </View>
-    <View style={{ marginTop: 24 }}>
+    </ScrollView>
+    <View style={{ flex: 1, marginTop: 8 }}>
       <Separator />
-      <Text style={{ fontWeight: '600', fontSize: 18, marginTop: 12 }}>Tailnumbers ({tailnumbers.length})</Text>
-    <TouchableOpacity accessibilityRole="button" style={{ alignSelf: 'stretch', backgroundColor: STYLES.green, alignItems: 'center', paddingVertical: 12, marginVertical: 12 }}
-      onPress={() => navigation.navigate('AircraftTailnumberCreate', { aircraft_type: item.aircraft_type, fromAircraft: true })}>
-      <Text style={{ color: STYLES.onAction }}>New Tailnumber</Text>
-    </TouchableOpacity>
-    {tailnumbers.length > 0 && <View>
-      <ScrollView nestedScrollEnabled persistentScrollbar style={{ maxHeight: 264 }}
+    <View style={{ justifyContent: 'center', paddingBottom: 10 }}>
+      <PlatformActionButton title="New Tailnumber"
+        onPress={() => navigation.navigate('AircraftTailnumberCreate', { aircraft_type: item.aircraft_type, fromAircraft: true })} />
+    </View>
+    {tailnumbers.length > 0 && <View style={{ flex: 1 }}>
+      <Separator />
+      <ScrollView nestedScrollEnabled persistentScrollbar style={{ flex: 1 }}
         contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        {[...tailnumbers].sort((a, b) => a.registration.localeCompare(b.registration, 'en', { numeric: true, sensitivity: 'base' })).map(tail =>
+        {[...tailnumbers].sort((a, b) => a.registration.localeCompare(b.registration, 'en', { numeric: true, sensitivity: 'base' })).map((tail, index) =>
           <TouchableOpacity key={tail.local_id || tail.id} accessibilityRole="button" accessibilityLabel={`View ${tail.registration}`}
             onPress={() => navigation.navigate('TailnumberDetail', { item: tail })}
-            style={{ width: `${100 / columns}%`, minHeight: 48, justifyContent: 'center', paddingHorizontal: 8, borderBottomWidth: 1, borderColor: STYLES.grey }}>
-            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: STYLES.blue }}>{tail.registration}</Text>
+            style={{ width: `${100 / columns}%`, minHeight: 48, justifyContent: 'center', paddingHorizontal: 8 }}>
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: STYLES.blue, textAlign: index % columns === columns - 1 ? 'right' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'left' }}>{tail.registration}</Text>
           </TouchableOpacity>)}
       </ScrollView>
     </View>}
     </View>
-  </ScrollView>;
+  </SafeAreaView>;
 }

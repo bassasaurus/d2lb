@@ -1,3 +1,4 @@
+import LogoLoading from './app/components/LogoLoading';
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState, useRef } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
@@ -6,7 +7,7 @@ import * as Sentry from "@sentry/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { session } from "./app/auth/session";
-import { ActivityIndicator, Button, View } from "react-native";
+import { Button, View } from "react-native";
 import AppText from "./app/components/AppText";
 import { ThemeProvider, useAppTheme } from "./app/theme/ThemeProvider";
 import fetchTailnumbers from "./app/api/fetchTailnumbers";
@@ -23,6 +24,11 @@ export default function App() {
   const formGuards = useRef(new Map());
   const [auth, setAuth] = useState(session.snapshot());
   const [sessionError, setSessionError] = useState(false);
+  const [startupVisible, setStartupVisible] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setStartupVisible(false), 900);
+    return () => clearTimeout(timer);
+  }, []);
   const isSignedIn = Boolean(auth.token);
   const restoreSession = () => {
     setSessionError(false);
@@ -70,8 +76,8 @@ export default function App() {
     <AppAppearance>
     <SafeAreaProvider>
       <AppContext.Provider value={appSettings}>
-        {!auth.ready ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          {sessionError ? <><AppText>Could not unlock your saved session.</AppText><Button title="Try again" onPress={restoreSession} /></> : <ActivityIndicator />}
+        {!auth.ready || startupVisible ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          {sessionError ? <><AppText>Could not unlock your saved session.</AppText><Button title="Try again" onPress={restoreSession} /></> : <LogoLoading label="Opening your logbook…" />}
         </View> : <DrawerNavigator />}
       </AppContext.Provider>
     </SafeAreaProvider>

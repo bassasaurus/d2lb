@@ -1,5 +1,8 @@
+import { ScrollView } from '../components/OverflowLists';
+import { routeFitCoordinates, routeMapPadding, validCoordinate } from '../maps/routeBounds.mjs';
+import FlightHeader from '../components/FlightHeader';
 import { useMemo } from 'react';
-import React, { useRef, useContext, useState } from "react";
+import React, { useRef, useContext, useState, useEffect } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { StyleSheet, View, Alert, TouchableOpacity } from "react-native";
 
@@ -21,27 +24,33 @@ import * as Device from "expo-device";
 
 
 function FlightDetailScreen({ route, navigation }) {
-  const { styles: STYLES, isDark } = useAppTheme();
+  const { styles: STYLES, colors, isDark } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
 
-  const markers = route.params.item.app_markers || [];
-  const polylines = route.params.item.app_polylines?.coordinates || [];
-  const approaches = route.params.item.approaches;
-
-  const iosPadding = {
-    top: 60,
-    right: 30,
-    left: 30,
-    bottom: 500,
-  };
-  const androidPadding = {
-    top: 30,
-    right: 20,
-    left: 0,
-    bottom: 300,
-  };
+  const [mapReady, setMapReady] = useState(false);
+  const [mapSize, setMapSize] = useState({ width: 0, height: 0 });
+  const markers = (route.params.item.app_markers || []).filter(marker => validCoordinate(marker.coordinates));
+  const polylines = (route.params.item.app_polylines?.coordinates || []).filter(validCoordinate);
+  const fitCoordinates = routeFitCoordinates(polylines, markers);
+  const fitKey = JSON.stringify(fitCoordinates);
+  const hasMap = fitCoordinates.length > 0;
+  useEffect(() => {
+    if (!mapReady || !mapSize.width || !mapSize.height || !hasMap) return;
+    let active = true;
+    requestAnimationFrame(() => {
+      if (!active || !mapRef.current) return;
+      if (fitCoordinates.length === 1) {
+        mapRef.current.animateToRegion({ ...fitCoordinates[0], latitudeDelta: 0.05, longitudeDelta: 0.05 }, 0);
+      } else {
+        mapRef.current.fitToCoordinates(fitCoordinates, {
+          edgePadding: routeMapPadding(mapSize.width, mapSize.height), animated: false,
+        });
+      }
+    });
+    return () => { active = false; };
+  }, [mapReady, mapSize.width, mapSize.height, fitKey]);
 
   const deleteItem = async () => {
     try {
@@ -58,51 +67,25 @@ function FlightDetailScreen({ route, navigation }) {
     Alert.alert("Are you sure?", "This can't be undone", [
       {
         text: "Delete",
+        style: "destructive",
         onPress: () => {
           deleteItem(primary_key, date, route);
           Context.setActivityVisible(true);
         },
       },
-      { text: Device.osName === "android" ? "Cancel" : "Cancel" },
+      { text: "Cancel", style: "cancel" },
     ]);
-
-  const fitMap = () => {
-    if (!mapRef.current || !polylines.length) return;
-    mapRef.current.fitToElements({ edgePadding: 20, animated: true });
-    mapRef.current.fitToCoordinates(polylines);
-  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.detailsPanel}>
+      <ScrollView style={{ maxHeight: hasMap ? '55%' : undefined, flexGrow: hasMap ? 0 : 1 }} contentContainerStyle={styles.detailsPanel}>
         {route.params.item.sync_state !== 'synced' && (
           <AppText color={STYLES.danger}>{route.params.item.sync_error || "Saved on this device — pending upload"}</AppText>
         )}
         {/* first row */}
 
-        <View style={styles.rowContainer}>
-          <View style={styles.firstColumn}>
-            <AppText size={16} color={STYLES.blue} weight='bold'>
-              {route.params.item.date}
-            </AppText>
-          </View>
-          <View style={styles.secondColumn}>
-            <View style={{ flex: 1, flexDirection: "row" }}>
-              <AppText size={16} color={STYLES.blue} weight='bold'>
-                {route.params.item.aircraft_type}
-              </AppText>
-              <AppText>{"  "}</AppText>
-              <AppText size={16} color={STYLES.blue} weight='bold'>
-                {route.params.item.registration}
-              </AppText>
-            </View>
-          </View>
-          <View style={styles.thirdColumn}>
-            <AppText size={16} color={STYLES.blue} weight='bold'>
-              {route.params.item.duration}
-            </AppText>
-          </View>
-        </View>
+        <FlightHeader date={route.params.item.date} type={route.params.item.aircraft_type}
+          reg={route.params.item.registration} dur={route.params.item.duration} />
         {/* second row */}
         <Separator />
         <DetailsPanel route={route}></DetailsPanel>
@@ -112,21 +95,20 @@ function FlightDetailScreen({ route, navigation }) {
           onDelete={() => showAlert(route.params.item.id, route.params.item.date, route.params.item.route)}
           onUpdate={() => navigation.navigate("FlightUpdate", { item: route.params.item })}
         />
-      </View>
+      </ScrollView>
 
-      {polylines.length > 0 && <View style={styles.mapView}>
+      {hasMap && <View style={styles.mapView}>
         <MapView
           // provider= {Device.osName === "android" ? PROVIDER_GOOGLE : null}
-          style={
-            Device.osName === "ios"
-              ? { width: "100%", height: "100%" }
-              : { width: "100%", height: "90%" }
-          }
+          style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
           customMapStyle={isDark ? DARK_MAP_STYLE : []}
           userInterfaceStyle={isDark ? "dark" : "light"}
-          mapPadding={Device.osName === "ios" ? iosPadding : androidPadding}
           ref={mapRef}
-          onLayout={fitMap}
+          onMapReady={() => setMapReady(true)}
+          onLayout={event => {
+            const { width, height } = event.nativeEvent.layout;
+            setMapSize(previous => previous.width === width && previous.height === height ? previous : { width, height });
+          }}
           maxZoomLevel={14}
           toolbarEnabled={false}
         >
@@ -135,7 +117,14 @@ function FlightDetailScreen({ route, navigation }) {
               key={marker.key}
               coordinate={marker.coordinates}
               title={marker.title}
-            />
+              anchor={{ x: 0.5, y: 0.5 }}
+            >
+              <View style={[styles.airportLabel, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <AppText numberOfLines={1} size={12} weight="600" color={colors.primary}>
+                  {marker.iata || marker.icao || marker.title}
+                </AppText>
+              </View>
+            </Marker>
           ))}
 
           {/* add logic for circle here */}
@@ -156,6 +145,7 @@ function FlightDetailScreen({ route, navigation }) {
 
 const createStyles = STYLES => StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: "column",
     justifyContent: "flex-start",
   },
@@ -169,7 +159,11 @@ const createStyles = STYLES => StyleSheet.create({
     backgroundColor: STYLES.white,
     borderRadius: STYLES.borderRadius,
   },
-  mapView: {},
+  mapView: { flex: 1, minHeight: 120 },
+  airportLabel: {
+    minWidth: 42, maxWidth: 100, paddingHorizontal: 6, paddingVertical: 3,
+    borderWidth: 1, borderRadius: 4, alignItems: "center",
+  },
   rowContainer: {
     flexDirection: "row",
     paddingBottom: 5,

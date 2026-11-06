@@ -329,3 +329,60 @@ Tailnumber and the grid. The successful sync notice collapses over 250ms.
 Validation: 64 mobile tests and lint pass; the lower tailnumber-grid indicator
 was observed in the iOS simulator. iOS/Android exports checked before handoff.
 Not committed or merged.
+
+## Static logo loading screen
+
+Branch: `mobile/static-logo-loader`. App session restoration and the shared busy
+modal display the existing transparent logo centered with a short loading label.
+The logo adapts to light/dark theme and screen width without animation.
+The startup timing and native splash configuration are described below.
+Validation: lint and Android export pass. Not committed or merged.
+
+## Reference-pagination compatibility fix
+
+The unpaginated Django aircraft/tailnumber endpoints previously returned all
+records but inherited next/previous links based on PAGE_SIZE. This made the
+mobile completeness check reject an otherwise complete 437-tailnumber response.
+Django now returns null pagination links, and mobile verifies count/unique IDs
+before accepting complete older responses that retain a spurious next link.
+Genuinely incomplete or malformed responses still preserve the saved cache.
+Validation: 77 mobile tests, 72 Django API tests and lint pass. The iOS simulator
+was observed showing Synced last 100 entries after a fresh refresh. Not deployed.
+
+Flight Detail and the logbook list now share FlightHeader: the date and duration
+remain single-line with bounded text fitting, and aircraft/registration are
+centered between equal-width side columns. This replaces Detail's older wrapping
+header. Lint and Android export pass; physical-phone verification stays with
+the user.
+
+The theme-initialization screen now uses the same static logo, before the theme
+context is ready. LogoArtwork is theme-independent to avoid circular imports;
+LogoLoading supplies the current palette after initialization.
+
+Startup branding also configures the static logo in the native splash plugin
+at width 300 on a white background for both appearances.
+The JavaScript logo is kept for at least 900ms after a full app load so it can
+be seen even when cached session/theme initialization completes immediately.
+Expo Go may still render its own app-name screen before JavaScript; native
+splash changes require a rebuilt app.
+
+## First native build: deferred logo check
+
+- Verify the configured static Direct2Logbook logo on the native pre-load/splash
+  screen on both iOS and Android, using a cold launch. Check scale, centering,
+  background contrast, and transition to the in-app loading screen in light/dark
+  mode. Expo Go does not verify this screen.
+- Native build work is deferred at the user's request; continue in Expo Go.
+
+
+## Map and detail-screen polish
+
+Flight Detail fits the full geodesic route after the map has a measured layout,
+with compact IATA/ICAO labels. Explicit absolute positioning avoids the removed
+React Native absoluteFillObject shortcut that initially collapsed the map.
+Sync loading and success share one notice; errors remain red until a successful
+retry, with centered text and a separate retry line.
+Aircraft detail places its tailnumber count beside the title and fills remaining
+space with an aligned, scrollable registration grid. iOS retains native action
+buttons; Android uses a filled New button and larger text Update/Delete actions.
+Validation: 81 tests, lint, and iOS/Android exports checked before merge.

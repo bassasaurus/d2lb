@@ -43,8 +43,10 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
-            "backgroundColor": "#0f131a"
-          }
+            "image": "./app/assets/D2LB_LOGO_Dark_top.png",
+            "backgroundColor": "#ffffff"
+          },
+          "imageWidth": 300
         }
       ],
       "expo-secure-store"

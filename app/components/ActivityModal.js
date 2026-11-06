@@ -1,49 +1,15 @@
-import { useMemo } from 'react';
-import React, { useContext } from "react";
-import { View, StyleSheet, Modal, ActivityIndicator } from "react-native";
+import React, { useContext } from 'react';
+import { Modal, View } from 'react-native';
+import AppContext from './AppContext';
 import { useAppTheme } from '../theme/ThemeProvider';
-import AppContext from "./AppContext";
+import LogoLoading from './LogoLoading';
 
-function ActivityModal(props) {
-  const { styles: STYLES } = useAppTheme();
-  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
-  const Context = useContext(AppContext);
-  return (
-    <Modal visible={Context.activityVisibleValue} transparent={true}>
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <ActivityIndicator
-            size='large'
-            color={STYLES.blue}
-          ></ActivityIndicator>
-        </View>
-      </View>
-    </Modal>
-  );
+export default function ActivityModal({ label = 'Loading…' }) {
+  const { activityVisibleValue: visible } = useContext(AppContext);
+  const { colors } = useAppTheme();
+  return <Modal visible={visible} transparent statusBarTranslucent>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}>
+      <LogoLoading label={label} />
+    </View>
+  </Modal>;
 }
-
-const createStyles = STYLES => StyleSheet.create({
-  modalView: {
-    margin: 20,
-    backgroundColor: STYLES.surface,
-    borderRadius: 20,
-    padding: 35,
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-});
-
-export default ActivityModal;
