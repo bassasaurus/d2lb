@@ -23,27 +23,26 @@ function Values({ row, fields }) {
     <Text style={{ fontVariant: ['tabular-nums'] }}>{metricValue(key, row[key])}</Text>
   </View>);
 }
-function Breakdown({ row, title, fields = METRICS.slice(1), showTotal = true, arrowOnly = false, previewFields = [], bottomToggle = false }) {
+function Breakdown({ row, title, previewFields = [], primary = false }) {
   const [expanded, setExpanded] = useState(false);
   const { colors } = useAppTheme();
-  const Header = bottomToggle ? View : Pressable;
-  return <View style={{ backgroundColor: colors.surface, borderRadius: 10, marginBottom: arrowOnly ? 0 : 8, paddingHorizontal: arrowOnly ? 0 : 14 }}>
-    <Header accessibilityRole={bottomToggle ? undefined : "button"} accessibilityLabel={arrowOnly ? (expanded ? 'Collapse details and recency' : 'Expand details and recency') : title} accessibilityState={{ expanded }} onPress={bottomToggle ? undefined : () => setExpanded(value => !value)}
-      style={{ minHeight: arrowOnly ? 32 : 52, flexDirection: 'row', alignItems: 'center', justifyContent: arrowOnly ? 'flex-end' : 'flex-start', gap: 8 }}>
-      {!arrowOnly && <Text weight="600" style={{ flex: 1 }}>{title}</Text>}
-      {showTotal && <Text>{metricValue('total_time', row.total_time)}</Text>}
-      {!bottomToggle && <MaterialCommunityIcons name={expanded ? 'chevron-up' : 'chevron-down'} color={colors.muted} size={22} />}
-    </Header>
-    {previewFields.length > 0 && <View style={{ paddingBottom: bottomToggle || expanded ? 0 : 12 }}>
+  return <View style={{ backgroundColor: colors.surface, borderRadius: 10,
+    marginBottom: primary ? 20 : 8, paddingHorizontal: 14 }}>
+    <Pressable accessibilityRole="button" accessibilityLabel={`${title}, ${metricValue('total_time', row.total_time)}`}
+      accessibilityHint="Expand or collapse details" accessibilityState={{ expanded }} onPress={() => setExpanded(value => !value)}
+      style={{ minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+      <Text size={primary ? 18 : undefined} weight={primary ? '700' : '600'} style={{ flex: 1 }}>{title}</Text>
+      <View pointerEvents="none" style={{ position: 'absolute', left: '50%', marginLeft: -11, top: 2 }}>
+        <MaterialCommunityIcons name={expanded ? 'chevron-up' : 'chevron-down'} color={colors.muted} size={22} />
+      </View>
+      <Text size={primary ? 22 : undefined} weight={primary ? '700' : '600'} numberOfLines={1}
+        style={{ textAlign: 'right', fontVariant: ['tabular-nums'] }}>{metricValue('total_time', row.total_time)}</Text>
+    </Pressable>
+    {previewFields.length > 0 && <View style={{ paddingBottom: expanded ? 0 : 12 }}>
       <Values row={row} fields={previewFields} />
     </View>}
-    {bottomToggle && <Pressable accessibilityRole="button" accessibilityLabel={`${expanded ? 'Collapse' : 'Expand'} ${title} details`}
-      accessibilityState={{ expanded }} onPress={() => setExpanded(value => !value)}
-      style={{ minHeight: 32, alignItems: 'flex-end', justifyContent: 'center' }}>
-      <MaterialCommunityIcons name={expanded ? 'chevron-up' : 'chevron-down'} color={colors.muted} size={22} />
-    </Pressable>}
     {expanded && <View style={{ paddingBottom: 12 }}>
-      <Values row={row} fields={fields.filter(([key]) => !previewFields.some(([previewKey]) => previewKey === key))} />
+      <Values row={row} fields={METRICS.slice(1).filter(([key]) => !previewFields.some(([previewKey]) => previewKey === key))} />
       <Text weight="600" style={{ marginTop: 12, marginBottom: 4 }}>Recency</Text>
       <Values row={row} fields={RECENCY} />
     </View>}
@@ -108,17 +107,13 @@ export default function StatsScreen() {
       {refreshing && !snapshot && <ActivityIndicator color={colors.primary} />}
       <SyncStatusNotice visible={notice.visible} message={notice.message} error={notice.error} />
       {snapshot && <>
-        <Text style={{ color: colors.muted, marginBottom: 6, textAlign: 'center' }}>Downloaded {new Date(snapshot.downloaded_at).toLocaleString()}</Text>
-        {note ? <Text style={{ color: colors.muted, marginBottom: 16, textAlign: 'center' }}>{note}</Text> : null}
+        {note ? <Text style={{ color: colors.muted, marginBottom: 6, textAlign: 'center' }}>{note}</Text> : null}
+        <Text style={{ color: colors.muted, marginBottom: 16, textAlign: 'center' }}>Downloaded {new Date(snapshot.downloaded_at).toLocaleString()}</Text>
 
-        {all ? <View style={{ backgroundColor: colors.surface, borderRadius: 10, paddingHorizontal: 14, paddingTop: 14, marginBottom: 20 }}>
-          <Text style={{ color: colors.muted }}>Total flight time</Text>
-          <Text size={34} weight="600" style={{ marginVertical: 6 }}>{metricValue('total_time', all.total_time)}</Text>
-          <Values row={all} fields={METRICS.slice(1, 4)} />
-          <Breakdown row={all} title="More details & recency" fields={METRICS.slice(4)} showTotal={false} arrowOnly />
-        </View> : <Text style={{ marginBottom: 16 }}>No overall total available yet.</Text>}
+        {all ? <Breakdown row={all} title="Total Flight Time" primary previewFields={METRICS.slice(1, 4)} />
+          : <Text style={{ marginBottom: 16 }}>No overall total available yet.</Text>}
         {categories.length > 0 && <Text size={18} weight="600" style={{ marginBottom: 10 }}>By Category and Class</Text>}
-        {categories.map((row, index) => <Breakdown key={`${row.total}:${index}`} row={row} title={row.total} bottomToggle previewFields={METRICS.slice(1, 4).filter(([key]) => Number(row[key]) > 0)} />)}
+        {categories.map((row, index) => <Breakdown key={`${row.total}:${index}`} row={row} title={row.total} previewFields={METRICS.slice(1, 4).filter(([key]) => Number(row[key]) > 0)} />)}
         {snapshot.aircraft.length > 0 && <Text size={18} weight="600" style={{ marginTop: 16, marginBottom: 10 }}>By Type</Text>}
         {snapshot.aircraft.map((row, index) => <Breakdown key={`${row.aircraft_type}:${index}`} row={row} title={row.aircraft_type} />)}
       </>}
