@@ -386,3 +386,15 @@ Aircraft detail places its tailnumber count beside the title and fills remaining
 space with an aligned, scrollable registration grid. iOS retains native action
 buttons; Android uses a filled New button and larger text Update/Delete actions.
 Validation: 81 tests, lint, and iOS/Android exports checked before merge.
+
+
+## Totals & Stats
+
+Branch: `mobile/totals-stats`. The drawer opens a read-only API-sourced summary,
+with expandable class/type details and recency. All flight numbers come from
+Django's existing Total/Stat records; the device only formats and caches the
+response per account for offline viewing. Download time and pending local
+changes are shown. No on-device flight-total calculations; no hours suffix.
+Django adds authenticated DRF GET /api/mobile/stats/ without schema migrations.
+Validation: 83 mobile tests, 75 Django API tests, lint and Android export pass;
+API summary data observed in the iOS simulator.
