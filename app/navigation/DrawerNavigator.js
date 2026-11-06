@@ -13,6 +13,7 @@ import {
 } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import StatsScreen from '../stats/StatsScreen';
 import AppearanceScreen from "../theme/AppearanceScreen";
 import LoginScreen from "../Screens/LoginScreen";
 import SyncReviewStackNavigator from "./SyncReviewStackNavigator";
@@ -83,6 +84,7 @@ function DrawerNavigator({ navigation }) {
             {() => <Drawer.Navigator drawerContent={(props) => <LogoutContent {...props} />}>
               <Drawer.Screen name="Logbook" component={FlightStackNavigator} options={{ headerShown: false }} />
               <Drawer.Screen name="Aircraft" component={AircraftStackNavigator} options={{ headerShown: false }} />
+              <Drawer.Screen name="Totals & Stats" component={StatsScreen} />
               <Drawer.Screen name="Appearance" component={AppearanceScreen} options={{ title: "Appearance" }} />
             </Drawer.Navigator>}
           </Root.Screen>
