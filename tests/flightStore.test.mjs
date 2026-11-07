@@ -82,6 +82,21 @@ test('newer database schemas are rejected without changing their version', async
   db.close();
 });
 
+test('manual retry bypasses backoff for the current account and keeps review blocks', async () => {
+  const db = new DatabaseSync(':memory:');
+  const store = await createFlightStore(adapter(db));
+  for (const [scope, blocked] of [['a', false], ['a:aircraft', true], ['b', false]]) {
+    await store.save(scope, 'local-one', flight);
+    const operation = await store.nextOperation(scope, `op-${scope}`, 100);
+    await store.failOperation(scope, operation, 'Sync failed', blocked, 100);
+  }
+  await store.retryPendingOperations(['a', 'a:aircraft', 'a:tailnumbers']);
+  assert.equal((await store.nextOperation('a', 'replacement', 101)).operation_id, 'op-a');
+  assert.equal(await store.nextOperation('a:aircraft', 'replacement', 6000), undefined);
+  assert.equal(await store.nextOperation('b', 'replacement', 101), undefined);
+  db.close();
+});
+
 test('an unacknowledged operation is immutable across local edits and survives retries', async () => {
   const db = new DatabaseSync(':memory:');
   const store = await createFlightStore(adapter(db));

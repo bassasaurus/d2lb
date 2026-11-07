@@ -193,6 +193,11 @@ export async function createFlightStore(db) {
       requireScope(scope);
       return (await db.getFirstAsync("SELECT COUNT(*) AS count FROM mobile_flights WHERE scope=? AND state!='synced'", scope)).count;
     },
+    async retryPendingOperations(scopes) {
+      for (const scope of scopes) requireScope(scope);
+      const placeholders = scopes.map(() => '?').join(', ');
+      await db.runAsync(`UPDATE mobile_operations SET retry_at=0 WHERE scope IN (${placeholders}) AND blocked=0`, ...scopes);
+    },
     async save(scope, localId, flight, options = {}) {
       requireScope(scope);
       // One durable row is both the local record and its outbox entry.
