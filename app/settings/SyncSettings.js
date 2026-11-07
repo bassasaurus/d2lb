@@ -71,7 +71,7 @@ export default function SyncSettings() {
     <Text accessibilityRole="header" size={18} weight="600" style={{ marginBottom: 12 }}>Sync &amp; Offline</Text>
     <Card compact>
       {statusError ? <Text color={colors.danger}>Couldn’t read sync status.</Text> : status ? <>
-        <Text>Last successful sync</Text>
+        <Text>Last successful sync:</Text>
         <Text color={colors.muted} style={{ marginBottom: 8 }}>{lastSync}</Text>
         <Text accessibilityLiveRegion="polite">Pending changes: {status.pending}</Text>
         {status.pending > 0 && <PlatformActionButton title={retrying ? 'Syncing…' : 'Retry Sync'}

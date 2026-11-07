@@ -74,6 +74,55 @@ were preserved under `/tmp/d2lb-android-sdk49-20261104` on this Mac. Native
 compilation, signing, stores, and EAS publishing are separate from Expo Go.
 Existing app slug, owner and Android package ID are retained.
 
+## App versions and releases
+
+`package.json` is the source of the visible app version. `app.config.js` supplies
+it to Expo while preserving the other settings in `app.json`. About shows this
+version with **Development** in Expo Go. Installed apps show their native version
+and build number, so an updated JavaScript bundle cannot mislabel the installed
+binary. Expo Go's own version/build are never shown as the app's version.
+
+After this setup reaches `main`, GitHub's **Prepare mobile release** workflow
+checks the app and lets Release Please maintain a release PR. Use conventional
+PR titles and **Squash and merge** for feature branches:
+
+| PR title | Version change |
+|---|---|
+| `fix: correct flight dates` | Patch, for example `0.1.0` → `0.1.1` |
+| `feat: add aircraft defaults` | Minor, for example `0.1.1` → `0.2.0` |
+| `feat!: change the sync contract` | Major, for example `0.2.0` → `1.0.0` |
+| `docs: explain setup` or `chore: update tooling` | No release by itself |
+
+PR checks validate the title. GitHub's default squash commit title is set to the
+PR title; keep that title when merging so Release Please sees the same category.
+Use `!` only for a breaking change. Multiple merged changes accumulate in one
+release PR, with the highest applicable version bump.
+
+The release PR updates `package.json`, `package-lock.json`, the release manifest,
+and `CHANGELOG.md`. Review its checks and **merge it when ready to release**.
+That merge creates a Git tag and GitHub Release; it does not build or submit an
+app to Apple or Google, or publish an Expo update. The initial manifest is
+`0.0.1`; `last-release-sha` in `release-please-config.json` excludes development
+history before this setup, including history after the old `v0.0.1` tag.
+Once a new release exists, its newer tag becomes the starting point instead.
+Release Please handles subsequent version changes.
+
+The workflows use GitHub's built-in token; no new token or secret is needed.
+Repository Settings → Actions → General must allow GitHub Actions to create
+pull requests (already enabled for this repository). Because token-created PRs
+need approval for normal PR-triggered workflows, the release workflow explicitly
+dispatches **Mobile checks** on the release branch. That run checks the actual
+release changes without needing a personal token. To retry, use Actions →
+Mobile checks → Run workflow and select the release PR's branch. To retry
+preparing a release, run **Prepare mobile release** on `main`.
+
+Native build numbers are separate. `eas.json` already uses remote version
+management and `production.autoIncrement: true`: each production EAS build gets
+a new Android version code/iOS build number. A merge or Expo Go reload does not
+consume a build number. When preparing our first store build, initialize or
+check EAS's remote counter against any previously uploaded build numbers using
+`eas build:version:set`. Development/preview profiles keep their existing setup.
+
 ## Checks
 
 ```bash
@@ -81,6 +130,7 @@ Existing app slug, owner and Android package ID are retained.
 ./scripts/mobile test
 ./scripts/mobile run lint
 ./scripts/mobile run check:dependencies
+./scripts/mobile run check:version
 ./scripts/mobile run export:ios
 ./scripts/mobile run export:android
 ```
