@@ -190,4 +190,6 @@ dist/
 
 .local-node-path
 /.screen-tests/
+/.screen-test-backend/
 /e2e/__pycache__/
+/e2e/tests/__pycache__/

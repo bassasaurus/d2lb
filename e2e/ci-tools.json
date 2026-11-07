@@ -1,0 +1,13 @@
+{
+  "expo_sdk": 58,
+  "expo_go": {
+    "version": "58.0.5",
+    "url": "https://github.com/expo/expo-go-releases/releases/download/Expo-Go-58.0.5/Expo-Go-58.0.5.apk",
+    "sha256": "d979cf81c56c5432c5aa69adc9497521ee72d1f87e92eee33bc949167a40f1a6"
+  },
+  "maestro": {
+    "version": "2.12.1",
+    "url": "https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.12.1/maestro.zip",
+    "sha256": "54dbb0716425626604973cbb374c585ca30272375d9ce15177a1152765ddd9d7"
+  }
+}

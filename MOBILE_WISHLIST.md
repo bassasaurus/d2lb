@@ -26,8 +26,8 @@ that refreshing leaves exactly one server flight and one sync receipt.
 The local runner uses a dedicated emulator and a disposable PostgreSQL database
 with the real Django API. It preserves screenshots, JUnit results, and logs, then
 cleans up its database and servers. See [screen-test setup](e2e/README.md).
-This supplements the logic tests; iOS and CI emulator execution remain future
-coverage. No production data or Django application changes are required.
+This supplements the logic tests. No production data or Django application
+changes are required.
 
 Follow-up branch: `test/mobile-flight-crud-screens`. Adds canceled edits/deletions,
 offline update/delete persistence and reconnection checks, and form validation.
@@ -38,6 +38,14 @@ scenarios with separate disposable databases; `--scenario` selects a focused run
 The edit test also caught a navigation regression: saving pushed another detail
 screen and left the saved form in Back history. Flight create/update now return
 to the existing list/detail screen with `popTo`, like tailnumber updates.
+
+Manual CI branch: `ci/mobile-screen-tests`. Adds **Android screen tests (manual)**
+in GitHub Actions, with a scenario selector and Django ref selector. Runs use an
+ephemeral PostgreSQL service, the synthetic Django settings, and a dedicated
+Android emulator. Maestro/Expo Go downloads are versioned and checksum-verified;
+screenshots, JUnit reports, terminal/server logs and both commit SHAs are retained.
+The workflow must be merged before its first hosted run. Automatic PR emulator
+execution and iOS screen coverage remain follow-ups.
 
 ## Item 1: current implementation
 

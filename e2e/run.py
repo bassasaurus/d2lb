@@ -12,7 +12,6 @@ import subprocess
 import sys
 import time
 import threading
-from urllib.parse import quote
 from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
 import uuid
@@ -20,6 +19,7 @@ import uuid
 import psycopg2
 from psycopg2 import sql
 from scenarios import SCENARIOS
+from config import database_url
 
 ROOT = Path(__file__).resolve().parent.parent
 AVD = 'D2LB_Screen_Tests'
@@ -76,7 +76,7 @@ def run_scenario(args, scenario):
     env['PATH'] = f'{args.android_sdk / "platform-tools"}:{env["PATH"]}'
     database = 'd2lb_e2e_' + run_id
     env.update(DJANGO_SETTINGS_MODULE='backend_settings',
-               DATABASE_URL=f'postgresql://{quote(args.pg_user, safe="")}@127.0.0.1:{args.pg_port}/{database}',
+               DATABASE_URL=database_url(args.pg_user, args.pg_port, database, env.get('PGPASSWORD')),
                PYTHONPATH=os.pathsep.join([str(ROOT / 'e2e'), str(args.django)]),
                PYTHONUNBUFFERED='1')
     adb = [str(args.android_sdk / 'platform-tools/adb'), '-s', f'emulator-{args.emulator_port}']
