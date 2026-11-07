@@ -161,17 +161,19 @@ export async function createFlightStore(db) {
     async list(scope) {
       requireScope(scope);
       const rows = await db.getAllAsync("SELECT * FROM mobile_flights WHERE scope=? AND state!='pending_delete' ORDER BY rowid DESC", scope);
+      const blocked = new Set((await db.getAllAsync('SELECT local_id FROM mobile_operations WHERE scope=? AND blocked=1', scope)).map(row => row.local_id));
       const dateKey = value => {
         const [month, day, year] = String(value || '').split('/').map(Number);
         return (year || 0) * 10000 + (month || 0) * 100 + (day || 0);
       };
-      return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_state: row.state, sync_error: row.sync_error }))
+      return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_state: row.state, sync_error: row.sync_error, needs_attention: blocked.has(row.local_id) }))
         .sort((a, b) => dateKey(b.date) - dateKey(a.date));
     },
     async deletedRecords(scope) {
       requireScope(scope);
       const rows = await db.getAllAsync("SELECT * FROM mobile_flights WHERE scope=? AND state='pending_delete'", scope);
-      return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_error: row.sync_error }));
+      const blocked = new Set((await db.getAllAsync('SELECT local_id FROM mobile_operations WHERE scope=? AND blocked=1', scope)).map(row => row.local_id));
+      return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_state: row.state, sync_error: row.sync_error, needs_attention: blocked.has(row.local_id) }));
     },
     async cancelDeletion(scope, localId) {
       requireScope(scope);
@@ -194,7 +196,7 @@ export async function createFlightStore(db) {
     async save(scope, localId, flight, options = {}) {
       requireScope(scope);
       // One durable row is both the local record and its outbox entry.
-      const { local_id, sync_state, sync_error, ...payload } = flight;
+      const { local_id, sync_state, sync_error, needs_attention, ...payload } = flight;
       await db.withExclusiveTransactionAsync(async tx => {
         const existing = await tx.getFirstAsync('SELECT payload,state FROM mobile_flights WHERE scope=? AND local_id=?', scope, localId);
         if (options.unattemptedCreateOnly) {
@@ -243,13 +245,17 @@ export async function createFlightStore(db) {
         throw new Error('Invalid flight response; local records were preserved.');
       }
       await db.withExclusiveTransactionAsync(async tx => {
+        // Acknowledged creates keep their original local key so refreshes do not
+        // remount cards (or invalidate record/draft navigation) after uploading.
+        const before = await tx.getAllAsync('SELECT local_id,payload FROM mobile_flights WHERE scope=?', scope);
+        const localKeys = new Map(before.map(row => [JSON.parse(row.payload).id, row.local_id]));
         await tx.runAsync("DELETE FROM mobile_flights WHERE scope=? AND state='synced'", scope);
         const existing = await tx.getAllAsync('SELECT local_id,payload,state FROM mobile_flights WHERE scope=?', scope);
         const retainedIds = new Set(existing.map(row => JSON.parse(row.payload).id));
         for (const flight of flights) {
           if (retainedIds.has(flight.id)) continue;
           await tx.runAsync(`INSERT INTO mobile_flights(scope,local_id,payload,state) VALUES(?,?,?,'synced')
-            ON CONFLICT(scope,local_id) DO NOTHING`, scope, `server:${flight.id}`, JSON.stringify(flight));
+            ON CONFLICT(scope,local_id) DO NOTHING`, scope, localKeys.get(flight.id) || `server:${flight.id}`, JSON.stringify(flight));
         }
       });
     },

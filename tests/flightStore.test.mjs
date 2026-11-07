@@ -179,3 +179,24 @@ test('uncertain deletions cannot be cancelled, but rejected deletions can be res
   assert.equal((await store.list('account:aircraft'))[0].aircraft_type, 'C172');
   db.close();
 });
+
+test('snapshot keeps an uploaded flight local key so its pending-to-synced card can animate', async () => {
+  const db = new DatabaseSync(':memory:');
+  const store = await createFlightStore(adapter(db));
+  await store.save('a', 'new-flight-uuid', flight);
+  const pending = (await store.list('a'))[0];
+  const operation = await store.nextOperation('a', 'create-operation', 100);
+  const server = { ...flight, id: 99, revision: 'saved' };
+  await store.acknowledge('a', operation, { operation_id: 'create-operation', flight: server });
+  await store.cacheSnapshot('a', [server]);
+  const synced = (await store.list('a'))[0];
+  assert.equal(pending.sync_state, 'pending_create');
+  assert.equal(synced.sync_state, 'synced');
+  assert.equal(synced.local_id, pending.local_id);
+  await store.cacheSnapshot('a', [{ ...server, revision: 'updated', remarks: 'Website change' }]);
+  assert.equal((await store.list('a'))[0].local_id, 'new-flight-uuid');
+  assert.equal((await store.list('a'))[0].remarks, 'Website change');
+  await store.cacheSnapshot('b', [server]);
+  assert.equal((await store.list('b'))[0].local_id, 'server:99');
+  db.close();
+});

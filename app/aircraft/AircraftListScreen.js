@@ -1,7 +1,8 @@
+import RecordIssue, { reviewRecord } from '../components/RecordIssue';
 import { FlatList } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import React, { useCallback, useState } from 'react';
-import { Alert, Button, RefreshControl, Switch, TouchableOpacity, View } from 'react-native';
+import { Alert, RefreshControl, Switch, TouchableOpacity, View } from 'react-native';
 import Card from '../components/Card';
 import Text from '../components/AppText';
 import { useFocusEffect } from '@react-navigation/native';
@@ -17,7 +18,7 @@ export default function AircraftListScreen({ navigation }) {
   const { styles: STYLES } = useAppTheme();
   const [rows, setRows] = useState([]);
   const [deletions, setDeletions] = useState([]);
-  const [issueCount, setIssueCount] = useState(0);
+  const [defaultIssue, setDefaultIssue] = useState(null);
   const [status, setStatus] = useState('Loading saved aircraft…');
   const [refreshing, setRefreshing] = useState(false);
   const refresh = React.useRef();
@@ -53,6 +54,7 @@ export default function AircraftListScreen({ navigation }) {
       const records = await (await flightStore()).list(aircraftScope(scope));
       if (active && !defaultBusy.current && version === defaultVersion.current && await flightScope() === scope) {
         setDefaultType(selectedDefaultType(records));
+        setDefaultIssue(records.find(row => row._default_preference && row.needs_attention) || null);
         setDefaultScope(scope);
       }
     };
@@ -71,13 +73,10 @@ export default function AircraftListScreen({ navigation }) {
         const scope = aircraftScope(await flightScope());
         const pending = await store.pendingCount(scope) + await store.pendingCount(tailnumberScope(await flightScope()));
         const deleted = await store.deletedRecords(scope);
-        const issues = await store.errors(scope);
-        const flightIssues = await store.errors(await flightScope());
         if (active) {
           setRows(records);
-          setDeletions(deleted);
-          setIssueCount(issues.length + flightIssues.length + (await store.errors(tailnumberScope(await flightScope()))).length);
-          setStatus(`${offline ? 'Showing saved aircraft. ' : ''}${pending ? `${pending} pending change(s).` : ""}${issues.length ? ' ' + issues.map(issue => issue.message).join(' ') : ''}`);
+          setDeletions(deleted.filter(row => row.needs_attention));
+          setStatus(offline || pending ? 'Saved on this device.' : '');
         }
       } catch (error) { if (active) setStatus('Unable to load aircraft. Pull down to retry.'); }
       finally { running = false; if (active) setRefreshing(false); }
@@ -88,32 +87,24 @@ export default function AircraftListScreen({ navigation }) {
   }, []));
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, paddingHorizontal: 12, paddingTop: 12, backgroundColor: STYLES.itemBackground }}>
     {status.trim() ? <Text style={{ paddingVertical: 12 }} accessibilityLiveRegion="polite">{status}</Text> : null}
-    {issueCount > 0 && <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SyncReview', { screen: 'SyncReviewList' })}>
-      <Text style={{ paddingVertical: 12, color: STYLES.danger }}>Resolve sync problems ({issueCount})</Text>
-    </TouchableOpacity>}
-    {deletions.map(item => <View key={item.local_id} style={{ marginBottom: 12 }}>
-      <Text>{item.aircraft_type}: {item.sync_error || 'Deletion pending upload'}</Text>
-      <Button color={STYLES.blue} title="Cancel deletion" onPress={async () => {
-        try {
-          if (item.sync_error) {
-            navigation.navigate('SyncReview', { screen: 'SyncConflict', params: { kind: 'aircraft', localId: item.local_id }, initial: false });
-            return;
-          }
-          await (await flightStore()).cancelDeletion(aircraftScope(await flightScope()), item.local_id);
-          refresh.current?.();
-        } catch (error) { Alert.alert('Unable to cancel deletion', error.message); }
-      }} />
-    </View>)}
+    {defaultIssue && <Card compact style={{ marginBottom: 6 }}>
+      <Text weight="600">Default aircraft</Text>
+      <RecordIssue item={defaultIssue} kind="aircraft" navigation={navigation} />
+    </Card>}
+    {deletions.map(item => <Card compact key={item.local_id} style={{ marginBottom: 6 }}>
+      <Text>{item.aircraft_type} · Deletion requested</Text>
+      <RecordIssue item={item} kind="aircraft" navigation={navigation} />
+    </Card>)}
     <FlatList data={rows} keyExtractor={item => item.local_id} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); refresh.current?.(); }} />}
       ListEmptyComponent={<Text>No aircraft saved yet. Add an aircraft or pull down while connected.</Text>}
       extraData={[defaultType, defaultScope, savingDefault]}
-      renderItem={({ item }) => <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12,
-        padding: 12, marginBottom: 8 }}>
-        <TouchableOpacity accessibilityRole="button" style={{ flex: 1, paddingVertical: 8, minHeight: 56 }}
-          onPress={() => navigation.navigate('AircraftDetail', { item })}>
+      renderItem={({ item }) => <Card compact style={{ flexDirection: 'row', alignItems: 'center', gap: 12,
+        marginBottom: 6 }}>
+        <TouchableOpacity accessibilityRole="button" style={{ flex: 1, paddingVertical: 4, minHeight: 48 }}
+          onPress={() => item.needs_attention ? reviewRecord(navigation, 'aircraft', item) : navigation.navigate('AircraftDetail', { item })}>
           <Text style={{ color: STYLES.blue, fontSize: 18, fontWeight: '600' }}>{item.aircraft_type}</Text>
-          <Text>{item.aircraft_class || 'Class not set'}{item.sync_state !== 'synced' ? ' · Pending upload' : ''}</Text>
-          {item.sync_error && <Text style={{ color: STYLES.danger }}>{item.sync_error}</Text>}
+          <Text>{item.aircraft_class || 'Class not set'}{item.sync_state !== 'synced' && !item.needs_attention ? ' · Saved on device' : ''}</Text>
+          <RecordIssue item={item} kind="aircraft" navigation={navigation} />
         </TouchableOpacity>
         <View style={{ alignItems: 'center' }}>
           <Text size={12} style={{ color: STYLES.muted }}>Default</Text>

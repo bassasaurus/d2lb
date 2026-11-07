@@ -1,3 +1,4 @@
+import { flightSyncFeedback } from './flightSyncFeedback.mjs';
 import { syncTailnumbers } from './syncTailnumbers';
 import { tailnumberScope } from '../storage/tailnumbers';
 import { session } from '../auth/session';
@@ -26,6 +27,7 @@ async function synchronize() {
   await syncTailnumbers(scope, partition, capabilities.tailnumber_sync === true);
   await drainFlightQueue({
     store, scope,
+    onAcknowledged: ({ scope: account, operation, flight }) => flightSyncFeedback.record(account, operation, flight),
     uuid: () => Crypto.randomUUID(),
     isCurrent: async () => await tokenPartition() === partition,
     send: async data => {

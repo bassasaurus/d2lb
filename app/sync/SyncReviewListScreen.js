@@ -50,9 +50,9 @@ export default function SyncReviewListScreen({ navigation }) {
     <FlatList data={savedCopies ? history : rows} keyExtractor={item => `${item.kind}:${savedCopies ? item.id : item.local_id}`}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); refresh.current?.(); }} />}
       ListEmptyComponent={<Text style={{ marginTop: 20 }}>{savedCopies ? 'Copies are saved here when you resolve an issue.' : 'Your pending uploads will retry when the app is connected.'}</Text>}
-      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" style={{ marginTop: 8, borderRadius: 10 }}
+      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" style={{ marginTop: 6, borderRadius: 10 }}
         onPress={() => navigation.navigate('SyncConflict', { kind: item.kind, localId: item.local_id, historyId: savedCopies ? item.id : undefined })}>
-        <Card>
+        <Card compact style={{ minHeight: 48 }}>
         <Text style={{ color: STYLES.blue, fontSize: 16, fontWeight: '600' }}>{recordTitle(item.kind, savedCopies ? item.local_record : item)}</Text>
         <Text>{savedCopies ? `Saved ${new Date(item.created_at).toLocaleString()}` : item.sync_error}</Text>
         {!savedCopies && item.sync_state === 'pending_delete' && <Text>Pending deletion</Text>}

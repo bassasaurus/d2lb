@@ -1,3 +1,5 @@
+import RecordIssue from '../components/RecordIssue';
+import { useFocusEffect } from '@react-navigation/native';
 import Card from '../components/Card';
 import { ScrollView } from '../components/OverflowLists';
 import { routeFitCoordinates, routeMapPadding, validCoordinate } from '../maps/routeBounds.mjs';
@@ -29,6 +31,17 @@ function FlightDetailScreen({ route, navigation }) {
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
+  const localId = route.params.item.local_id;
+  useFocusEffect(React.useCallback(() => {
+    let active = true;
+    const reload = async () => {
+      const current = (await (await flightStore()).list(await flightScope())).find(row => row.local_id === localId);
+      if (active && current) navigation.setParams({ item: current });
+    };
+    reload().catch(() => {});
+    const timer = setInterval(() => reload().catch(() => {}), 3000);
+    return () => { active = false; clearInterval(timer); };
+  }, [localId]));
 
   const [mapReady, setMapReady] = useState(false);
   const [mapSize, setMapSize] = useState({ width: 0, height: 0 });
@@ -81,9 +94,7 @@ function FlightDetailScreen({ route, navigation }) {
     <View style={styles.container}>
       <ScrollView style={{ maxHeight: hasMap ? '55%' : undefined, flexGrow: hasMap ? 0 : 1, margin: 12 }}>
         <Card>
-        {route.params.item.sync_state !== 'synced' && (
-          <AppText color={STYLES.danger}>{route.params.item.sync_error || "Saved on this device — pending upload"}</AppText>
-        )}
+        <RecordIssue item={route.params.item} kind="flight" navigation={navigation} />
         {/* first row */}
 
         <FlightHeader date={route.params.item.date} type={route.params.item.aircraft_type}
