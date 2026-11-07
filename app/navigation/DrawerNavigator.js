@@ -17,6 +17,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import RecencyScreen from '../stats/RecencyScreen';
 import StatsScreen from '../stats/StatsScreen';
 import SettingsScreen from "../settings/SettingsScreen";
+import PrivacyPolicyScreen from "../settings/PrivacyPolicyScreen";
 import LoginScreen from "../Screens/LoginScreen";
 import SyncReviewStackNavigator from "./SyncReviewStackNavigator";
 import AircraftStackNavigator from "./AircraftStackNavigator";
@@ -97,6 +98,8 @@ function DrawerNavigator({ navigation }) {
             </Drawer.Navigator>}
           </Root.Screen>
           <Root.Screen name="SyncReview" component={SyncReviewStackNavigator} options={{ presentation: 'modal' }} />
+          <Root.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen}
+            options={{ headerShown: true, title: 'Privacy Policy', headerBackButtonDisplayMode: 'minimal' }} />
         </Root.Navigator>
       </NavigationContainer>
     );

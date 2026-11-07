@@ -1,14 +1,15 @@
 import { ScrollView } from '../components/OverflowLists';
 import React from 'react';
-import { Alert, Linking, Pressable, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 import Constants from 'expo-constants';
 import Text from '../components/AppText';
 import Card from '../components/Card';
 import PlatformActionButton from '../components/PlatformActionButton';
 import { useAppTheme } from '../theme/ThemeProvider';
 import SyncSettings from './SyncSettings';
+import { openContactEmail } from './contactEmail';
 
-export default function SettingsScreen() {
+export default function SettingsScreen({ navigation }) {
   const { preference, colors, saving, setPreference } = useAppTheme();
   const choices = [
     ['system', 'System', 'Follow your phone’s light or dark appearance.'],
@@ -37,12 +38,9 @@ export default function SettingsScreen() {
           <Text>App version</Text>
           <Text color={colors.muted}>{Constants.expoConfig?.version ?? 'Unavailable'}</Text>
         </View>
-        <PlatformActionButton title="Contact Support" variant="text" onPress={() =>
-          Linking.openURL('mailto:support@direct2logbook.com').catch(() =>
-            Alert.alert('Contact Support', 'Email support@direct2logbook.com for help.'))} />
+        <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />
         <PlatformActionButton title="Privacy Policy" variant="text" onPress={() =>
-          Linking.openURL('https://direct2logbook.com/privacy/').catch(() =>
-            Alert.alert('Privacy Policy', 'Open direct2logbook.com/privacy/ in your browser.'))} />
+          navigation.navigate('PrivacyPolicy')} />
       </Card>
     </View>
   </ScrollView>;
