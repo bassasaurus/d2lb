@@ -1,3 +1,6 @@
+import { hasRequiredSoloLandings } from '../forms/landingRequirements.mjs';
+import { nightPairWarnings } from '../forms/nightWarning.mjs';
+import { FLIGHT_ROLES, PRIMARY_FLIGHT_ROLES, hasRequiredFlightRole, toggleFlightRole } from '../forms/flightRoles.mjs';
 import Card from './Card';
 import { ScrollView } from './OverflowLists';
 import { listTailnumbers } from '../storage/tailnumbers';
@@ -8,7 +11,7 @@ import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import moment from "moment";
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { View, StyleSheet, Modal, Pressable, TouchableOpacity, KeyboardAvoidingView, Platform, Button, Alert } from 'react-native';
+import { View, StyleSheet, Modal, Pressable, TouchableOpacity, KeyboardAvoidingView, Platform, Button, Alert, useWindowDimensions } from 'react-native';
 import Text from './AppText';
 import * as yup from "yup";
 
@@ -27,9 +30,18 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { useAppTheme } from '../theme/ThemeProvider';
 
+function NightPairWarning({ values }) {
+  const { colors } = useAppTheme();
+  const message = nightPairWarnings(values).night;
+  return message ? <AppText color={colors.danger} accessibilityLiveRegion="polite" style={{ marginTop: 4 }}>{message}</AppText> : null;
+}
+
 function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false, onChooseDefault }) {
   const { styles: STYLES, isDark } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
+  const { width: windowWidth, fontScale } = useWindowDimensions();
+  const [roleWidth, setRoleWidth] = useState(0);
+  const roleColumns = Math.max(1, Math.min(7, Math.floor((roleWidth || windowWidth - 52) / (100 * fontScale))));
   const savedNavigation = useRef(false);
   const draftHandle = useRef(null);
   const airportCheck = useRef(null);
@@ -97,6 +109,10 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
       .moreThan(0, "Leave blank for 0"),
     remarks: yup.string().max(256, "256 Character Maximum"),
     number: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
+  }).test('flight-role', 'Required', function(values) {
+    return hasRequiredFlightRole(values) || this.createError({ path: 'flight_role', message: 'Required' });
+  }).test('solo-landings', 'Enter Day or Night landings for Solo.', function(values) {
+    return hasRequiredSoloLandings(values) || this.createError({ path: 'solo_landings', message: 'Enter Day or Night landings for Solo.' });
   });
 
   return (
@@ -108,7 +124,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
       enabled={scrollEnabled}
     >
       <PickerOverlayHost>
-      <ScrollView style={{ backgroundColor: STYLES.itemBackground }} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
+      <ScrollView style={{ backgroundColor: STYLES.itemBackground }} contentContainerStyle={{ padding: 12, paddingBottom: 24 }} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <Card style={styles.container}>
           {noDefaultAircraft && !defaultSuggestionDismissed && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
             <Pressable accessibilityRole="link" onPress={async () => {
@@ -155,6 +171,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
               touched,
               handleChange,
               setFieldValue,
+              setValues,
               handleBlur,
             }) => (
               <>
@@ -343,107 +360,28 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                 </View>
 
                 {/* end duration row */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    paddingTop: 10,
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      onPress={() => {
-                        setFieldValue(
-                          "pilot_in_command",
-                          !values.pilot_in_command
-                        );
-                        setFieldValue("second_in_command", false);
-                        setFieldValue("solo", false);
-                      }}
-                      isChecked={values.pilot_in_command}
-                    ></Checkbox>
-                    <AppText>PIC</AppText>
+                <View style={[styles.approachesSection, !hasRequiredFlightRole(values) && { borderColor: STYLES.danger }]}>
+                  <AppText weight="600">Flight role</AppText>
+                  <View style={[styles.roleGrid, { marginTop: 0 }]}
+                    onLayout={event => setRoleWidth(event.nativeEvent.layout.width)}>
+                    {FLIGHT_ROLES.filter(([field]) => PRIMARY_FLIGHT_ROLES.includes(field)).map(([field, label]) => <View key={field}
+                      style={[styles.checkboxContainer, { width: `${100 / (roleColumns >= 4 ? 4 : Math.min(2, roleColumns))}%` }]}>
+                      <Checkbox label={label} isChecked={values[field]}
+                        onPress={() => setValues(current => toggleFlightRole(current, field))} />
+                    </View>)}
                   </View>
-
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      onPress={() => {
-                        setFieldValue(
-                          "second_in_command",
-                          !values.second_in_command
-                        );
-                        setFieldValue("pilot_in_command", false);
-                        setFieldValue("solo", false);
-                        setFieldValue("dual", false);
-                        setFieldValue("instructor", false);
-                      }}
-                      isChecked={values.second_in_command}
-                    ></Checkbox>
-                    <AppText>SIC</AppText>
-                  </View>
-
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      onPress={() => {
-                        setFieldValue("solo", !values.solo);
-                        setFieldValue("dual", false);
-                        setFieldValue("pilot_in_command", false);
-                        setFieldValue("second_in_command", false);
-                        setFieldValue("instructor", false);
-                        setFieldValue("simulator", false);
-                      }}
-                      isChecked={values.solo}
-                    ></Checkbox>
-                    <AppText>Solo</AppText>
-                  </View>
-
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      onPress={() => {
-                        setFieldValue("dual", !values.dual);
-                        setFieldValue("solo", false);
-                        setFieldValue("instructor", false);
-                      }}
-                      isChecked={values.dual}
-                    ></Checkbox>
-                    <AppText>Dual</AppText>
-                  </View>
-
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      onPress={() => {
-                        setFieldValue("instructor", !values.instructor);
-                        setFieldValue("dual", false);
-                        setFieldValue("solo", false);
-                      }}
-                      isChecked={values.instructor}
-                    ></Checkbox>
-                    <AppText>CFI</AppText>
-                  </View>
-
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      onPress={() => {
-                        setFieldValue("simulator", !values.simulator);
-                        setFieldValue("cross_country", false);
-                        setFieldValue("solo", false);
-                      }}
-                      isChecked={values.simulator}
-                    ></Checkbox>
-                    <AppText>Sim</AppText>
-                  </View>
-
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      onPress={() => {
-                        setFieldValue("cross_country", !values.cross_country);
-                        setFieldValue("simulator", false);
-                      }}
-                      isChecked={values.cross_country}
-                    ></Checkbox>
-                    <AppText>XC</AppText>
-                  </View>
+                  {!hasRequiredFlightRole(values) && <Text style={styles.errors}>Required</Text>}
                 </View>
+                <View style={styles.roleGrid}>
+                  {FLIGHT_ROLES.filter(([field]) => !PRIMARY_FLIGHT_ROLES.includes(field)).map(([field, label]) => <View key={field}
+                    style={[styles.checkboxContainer, { width: `${100 / Math.min(3, roleColumns)}%` }]}>
+                    <Checkbox label={label} isChecked={values[field]}
+                      onPress={() => setValues(current => toggleFlightRole(current, field))} />
+                  </View>)}
+                </View>
+                {!hasRequiredSoloLandings(values) && <Text style={styles.errors} accessibilityLiveRegion="polite">
+                  Enter Day or Night landings for Solo.
+                </Text>}
                 <View
                   style={{
                     flexDirection: "row",
@@ -457,7 +395,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                     }}
                   >
                     <AppTextInput
-                      isValid={true}
+                      isValid={!errors.landings_day && hasRequiredSoloLandings(values)}
                       value={values.landings_day.toString()}
                       onChangeText={(val) => {
                         setFieldValue("landings_day", val);
@@ -480,7 +418,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
 
                   <View style={{ flexDirection: "column", flex: 0.5 }}>
                     <AppTextInput
-                      isValid={true}
+                      isValid={!errors.landings_night && hasRequiredSoloLandings(values)}
                       value={values.landings_night.toString()}
                       onChangeText={(val) => {
                         setFieldValue("landings_night", val);
@@ -567,7 +505,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                     }}
                   >
                     <AppTextInput
-                      isValid={true}
+                      isValid={!errors.night && !nightPairWarnings(values).night}
                       value={values.night.toString()}
                       onChangeText={(val) => {
                         setFieldValue("night", val);
@@ -587,17 +525,20 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                         </View>
                       )}
                     </View>
+                    <NightPairWarning values={values} />
                   </View>
                 </View>
-                <View style={{ flexDirection: "row" }}>
-                  <ApproachPicker
+                <View style={styles.approachesSection}>
+                  <AppText weight="600" style={{ marginBottom: 4 }}>Approaches</AppText>
+                <View style={styles.approachRow}>
+                  <View style={{ flex: 1, minWidth: 0 }}><ApproachPicker
                     isValid={errors.number ? false : true}
                     setFieldValue={setFieldValue}
                     approachKey={"approaches[0].approach_type"}
                     approachValue={values.approaches[0].approach_type}
                     numberKey={"approaches[0].number"}
                     numberValue={values.approaches[0].number}
-                  ></ApproachPicker>
+                  ></ApproachPicker></View>
                   <View style={styles.clearApproachType}>
                     {formCount == 0 ? (
                       <TouchableOpacity
@@ -615,15 +556,15 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                   </View>
                 </View>
                 {formCount > 0 ? (
-                  <View style={{ flexDirection: "row" }}>
-                    <ApproachPicker
+                  <View style={styles.approachRow}>
+                    <View style={{ flex: 1, minWidth: 0 }}><ApproachPicker
                       isValid={true}
                       setFieldValue={setFieldValue}
                       approachKey={"approaches[1].approach_type"}
                       approachValue={values.approaches[1].approach_type}
                       numberKey={"approaches[1].number"}
                       numberValue={values.approaches[1].number}
-                    ></ApproachPicker>
+                    ></ApproachPicker></View>
                     <View style={styles.clearApproachType}>
                       {formCount == 1 ? (
                         <TouchableOpacity
@@ -644,15 +585,15 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                   <View></View>
                 )}
                 {formCount > 1 ? (
-                  <View style={{ flexDirection: "row" }}>
-                    <ApproachPicker
+                  <View style={styles.approachRow}>
+                    <View style={{ flex: 1, minWidth: 0 }}><ApproachPicker
                       isValid={true}
                       setFieldValue={setFieldValue}
                       approachKey={"approaches[2].approach_type"}
                       approachValue={values.approaches[2].approach_type}
                       numberKey={"approaches[2].number"}
                       numberValue={values.approaches[2].number}
-                    ></ApproachPicker>
+                    ></ApproachPicker></View>
                     <View style={styles.clearApproachType}>
                       {formCount == 2 ? (
                         <TouchableOpacity
@@ -673,15 +614,15 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                   <View></View>
                 )}
                 {formCount > 2 ? (
-                  <View style={{ flexDirection: "row" }}>
-                    <ApproachPicker
+                  <View style={styles.approachRow}>
+                    <View style={{ flex: 1, minWidth: 0 }}><ApproachPicker
                       isValid={true}
                       setFieldValue={setFieldValue}
                       approachKey={"approaches[3].approach_type"}
                       approachValue={values.approaches[3].approach_type}
                       numberKey={"approaches[3].number"}
                       numberValue={values.approaches[3].number}
-                    ></ApproachPicker>
+                    ></ApproachPicker></View>
                     <View style={styles.clearApproachType}>
                       {formCount == 3 ? (
                         <TouchableOpacity
@@ -713,6 +654,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                   ) : (
                     <View style={{ paddingLeft: 125 }}></View>
                   )}
+                </View>
                 </View>
                 <View style={{ flexDirection: "row", marginTop: 10 }}>
                   <Checkbox
@@ -752,15 +694,8 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                   )}
                 </View>
                 <View style={{ paddingTop: 10 }}>
-                  {isValid ? (
-                    <Button
-                      title={!Context.setActivityVisible ? "" : "Submit"}
-                      disabled={isSubmitting}
-                      onPress={handleSubmit}
-                    ></Button>
-                  ) : (
-                    <Button title='Complete required fields.'></Button>
-                  )}
+                  <Button title="Save" disabled={!isValid || isSubmitting || !hasRequiredFlightRole(values) || !hasRequiredSoloLandings(values)}
+                    onPress={handleSubmit} color={STYLES.blue} />
                 </View>
                 {/* <View style={{ marginTop: 30 }}>
                   <Text>{JSON.stringify(values, null, "  ")}</Text>
@@ -841,8 +776,6 @@ const createStyles = STYLES => StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     padding: 14,
-    margin: 12,
-    marginBottom: 24,
   },
 
   modalView: {
@@ -872,19 +805,33 @@ const createStyles = STYLES => StyleSheet.create({
     marginTop: 22,
   },
 
+  roleGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    marginTop: 8,
+    rowGap: 2,
+  },
   checkboxContainer: {
-    flex: 0.1,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    paddingRight: 8,
   },
 
+  approachesSection: {
+    borderWidth: 1,
+    borderColor: STYLES.grey,
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 14,
+    marginBottom: 4,
+  },
+  approachRow: { flexDirection: 'row', alignItems: 'center' },
   clearApproachType: {
-    marginLeft: 0,
-    marginRight: 10,
+    marginLeft: 8,
+    minHeight: 44,
+    minWidth: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingTop: 10,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 

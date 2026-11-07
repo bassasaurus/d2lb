@@ -62,7 +62,7 @@ export default function ProfileEditScreen({ route, navigation }) {
           </View>)}
           {Object.values(errors).map((error, index) => <Text key={index} color={colors.danger}>{error}</Text>)}
           {status && <Text color={colors.danger} accessibilityLiveRegion="polite" style={{ marginVertical: 12 }}>{status}</Text>}
-          <PlatformActionButton title={isSubmitting ? 'Saving…' : 'Save'} disabled={isSubmitting} onPress={handleSubmit} />
+          <PlatformActionButton title="Save" disabled={isSubmitting} onPress={handleSubmit} />
           <Text color={colors.muted} style={{ marginTop: 12 }}>An internet connection is required to save profile changes.</Text>
         </>}
       </DraftForm></Card>

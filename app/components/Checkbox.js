@@ -1,46 +1,16 @@
-import { useMemo } from 'react';
-import React, { useState } from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import React from 'react';
+import { View, Pressable } from 'react-native';
+import AppText from './AppText';
 import { useAppTheme } from '../theme/ThemeProvider';
 
-function Checkbox({ onPress, isChecked }) {
-  const { styles: STYLES } = useAppTheme();
-  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
-  const [checked, setChecked] = useState(false);
-
-  const toggle = () => {
-    setChecked(!checked);
-  };
-
-  return (
-    <View style={styles.container}>
-      <Pressable
-        onPress={() => {
-          {
-            onPress();
-          }
-          setChecked(true);
-          toggle();
-        }}
-      >
-        <View
-          style={{
-            height: 20,
-            width: 20,
-            backgroundColor: isChecked === true ? STYLES.blue : STYLES.white,
-            borderColor: STYLES.grey,
-            borderWidth: 1,
-            marginRight: 3,
-            borderRadius: STYLES.borderRadius,
-          }}
-        ></View>
-      </Pressable>
-    </View>
-  );
+export default function Checkbox({ onPress, isChecked, label }) {
+  const { colors } = useAppTheme();
+  return <Pressable onPress={onPress} accessibilityRole="checkbox"
+    accessibilityState={{ checked: Boolean(isChecked) }} accessibilityLabel={label}
+    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, minHeight: label ? 44 : undefined }}>
+    <View style={{ height: 20, width: 20, flexShrink: 0,
+      backgroundColor: isChecked ? colors.primary : colors.surface,
+      borderColor: colors.border, borderWidth: 1, borderRadius: 5 }} />
+    {label && <AppText numberOfLines={1} style={{ flexShrink: 1 }}>{label}</AppText>}
+  </Pressable>;
 }
-
-const createStyles = STYLES => StyleSheet.create({
-  container: {},
-});
-
-export default Checkbox;

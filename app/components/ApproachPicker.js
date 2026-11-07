@@ -95,8 +95,8 @@ function ApproachPicker({
 
   return (
     <>
-      <View style={{ flexDirection: "row" }}>
-        <View style={{ paddingRight: 10 }}>
+      <View style={{ flexDirection: "row", flex: 1, minWidth: 0 }}>
+        <View style={{ paddingRight: 8, flex: 1, minWidth: 0 }}>
           <Pressable
             onPress={() => {
               fetchData();
@@ -106,7 +106,6 @@ function ApproachPicker({
             <View pointerEvents={"none"}>
               <AppTextInput
                 isValid={true}
-                width={150}
                 value={approachValue}
                 placeholder={"Approach Type"}
               ></AppTextInput>
@@ -114,15 +113,14 @@ function ApproachPicker({
           </Pressable>
         </View>
 
-        <AppTextInput
+        <View style={{ width: 52 }}><AppTextInput
           isValid={true}
-          width={80}
-          placeholder='X'
+          placeholder='#'
           keyboardType='numeric'
           clearButtonMode={"always"}
-          value={numberValue.toString()}
+          value={String(numberValue ?? '')}
           onChangeText={(val) => setFieldValue(numberKey, val)}
-        ></AppTextInput>
+        ></AppTextInput></View>
 
         <View style={{ flexDirection: "row" }}>
           <View

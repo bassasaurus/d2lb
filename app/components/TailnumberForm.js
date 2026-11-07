@@ -5,17 +5,11 @@ import { useMemo } from 'react';
 import React, { useContext, useRef } from 'react';
 import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
 import Text from './AppText';
-import * as yup from 'yup';
+import { OPERATING_RULES as rules, tailnumberSchema as schema } from '../forms/tailnumberValidation.mjs';
 import AircraftPicker from './AircraftPicker';
 import AppTextInput from './AppTextInput';
 import AppContext from './AppContext';
 import { useAppTheme } from '../theme/ThemeProvider';
-
-const rules = [['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
-const schema = yup.object({
-  aircraft: yup.string().required('Select an aircraft.'),
-  registration: yup.string().min(3).max(8).required('Registration is required.'),
-}).test('operating-rule', 'Select one operating rule.', values => rules.filter(([key]) => values[key]).length === 1);
 
 export default function TailnumberForm({ initialValues, method, onSaved, aircraft_type, allowAircraftChange = false }) {
   const { styles: STYLES } = useAppTheme();
@@ -26,7 +20,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
     <ScrollView style={{ backgroundColor: STYLES.itemBackground }} contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Card>
-      <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} onSubmit={async (values, helpers) => {
+      <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} validateOnMount onSubmit={async (values, helpers) => {
         savedNavigation.current = false;
         context.setActivityVisible(true);
         try {
@@ -47,23 +41,25 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           context.setActivityVisible(false);
         }
       }}>
-        {({ values, errors, submitCount, isSubmitting, setFieldValue, handleSubmit }) => <>
+        {({ values, errors, isValid, isValidating, isSubmitting, setFieldValue, handleSubmit }) => <>
           <Text style={styles.heading}>{allowAircraftChange ? 'Aircraft' : aircraft_type}</Text>
           {allowAircraftChange && <AircraftPicker initialValue={values.aircraft} fieldName="aircraft" setFieldValue={setFieldValue} isValid={!errors.aircraft} />}
+          {errors.aircraft && <Text style={styles.error}>{errors.aircraft}</Text>}
           <Text style={styles.label}>Registration</Text>
           <AppTextInput value={values.registration} placeholder="Registration" maxLength={8}
             onChangeText={value => setFieldValue('registration', value.toUpperCase().replace(/\s/g, ''))}
-            isValid={!submitCount || !errors.registration} autoCorrect={false} autoCapitalize="characters" />
+            isValid={Boolean(values.registration) && !errors.registration} autoCorrect={false} autoCapitalize="characters" />
+          {(errors.registration || !values.registration) && <Text style={styles.error}>{errors.registration || 'Required'}</Text>}
           <Text style={styles.label}>Operating rules</Text>
           <View style={styles.rules}>
             {rules.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" accessibilityState={{ checked: values[key] === true }}
               onPress={() => rules.forEach(([field]) => setFieldValue(field, field === key))}
-              style={[styles.rule, values[key] && styles.selected]}>
+              style={[styles.rule, (errors.operating_rules || !rules.some(([field]) => values[field])) && { borderColor: STYLES.danger }, values[key] && styles.selected]}>
               <Text style={{ color: values[key] ? STYLES.blue : STYLES.black }}>{label}</Text>
             </Pressable>)}
           </View>
-          {submitCount > 0 && Object.values(errors).map((error, index) => <Text key={index} style={styles.error}>{String(error)}</Text>)}
-          <View style={{ marginTop: 20 }}><Button title={isSubmitting ? 'Saving…' : 'Save tailnumber'} onPress={handleSubmit} disabled={isSubmitting} /></View>
+          {(errors.operating_rules || !rules.some(([key]) => values[key])) && <Text style={styles.error}>{errors.operating_rules || 'Required'}</Text>}
+          <View style={{ marginTop: 20 }}><Button color={STYLES.blue} title="Save" onPress={handleSubmit} disabled={isSubmitting || isValidating || !isValid || !values.aircraft || !values.registration || rules.filter(([key]) => values[key] === true).length !== 1} /></View>
           <Text style={{ color: STYLES.muted, marginTop: 12 }}>{initialValues.id ? 'A connection is required to update this tailnumber.' : 'Saved on this device first; uploads when connected.'}</Text>
         </>}
       </DraftForm>
@@ -74,6 +70,6 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
 const createStyles = STYLES => StyleSheet.create({
   container: { padding: 12 }, heading: { fontSize: 20, fontWeight: '600' },
   label: { fontWeight: '600', marginTop: 16 }, rules: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
-  rule: { padding: 12, borderWidth: 1, borderColor: STYLES.grey, borderRadius: 5 },
+  rule: { minHeight: 44, padding: 12, borderWidth: 1, borderColor: STYLES.grey, borderRadius: 5 },
   selected: { borderColor: STYLES.blue, backgroundColor: STYLES.selected }, error: { color: STYLES.danger, marginTop: 8 },
 });
