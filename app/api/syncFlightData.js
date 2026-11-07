@@ -9,10 +9,11 @@ import { flightScope, flightStore, tokenPartition } from '../storage/flights';
 import { drainFlightQueue } from './syncEngine.mjs';
 import { syncAircraft } from './syncAircraft';
 import { aircraftScope } from '../storage/aircraft';
+import { logbookPendingCount } from './logbookRefresh.mjs';
 
+export const LAST_SUCCESSFUL_SYNC = 'last-successful-sync';
 const running = new Map();
-async function synchronize() {
-  const partition = await tokenPartition();
+async function synchronize(partition, retry) {
   const capabilities = (await api.get('/api/mobile/session/')).data;
   if (capabilities.sync_protocol !== 1 || !Number.isInteger(capabilities.account_id)) throw new Error('Server sync upgrade is required.');
   if (await tokenPartition() !== partition) throw new Error('Account changed during sync.');
@@ -23,6 +24,8 @@ async function synchronize() {
   await store.moveScope(aircraftScope(previousScope), aircraftScope(scope));
   await store.moveScope(tailnumberScope(previousScope), tailnumberScope(scope));
   await AsyncStorage.setItem(`flight-scope:${partition}`, scope);
+  const scopes = [scope, aircraftScope(scope), tailnumberScope(scope)];
+  if (retry) await store.retryPendingOperations(scopes);
   await syncAircraft(scope, partition, capabilities.aircraft_sync === true, capabilities.default_aircraft_sync === true);
   await syncTailnumbers(scope, partition, capabilities.tailnumber_sync === true);
   await drainFlightQueue({
@@ -48,12 +51,19 @@ async function synchronize() {
       return (await api.post('/api/mobile/flight-sync/', data, { pinnedToken: token })).data;
     },
   });
+  if (await logbookPendingCount(store, scopes) === 0 && await tokenPartition() === partition) {
+    await store.cacheReference(scope, LAST_SUCCESSFUL_SYNC, [{ completed_at: new Date().toISOString() }]);
+  }
   return scope;
 }
-export default async function syncFlightData() {
+export default async function syncFlightData({ retry = false } = {}) {
   const partition = await tokenPartition();
+  if (retry && running.has(partition)) {
+    await running.get(partition).catch(() => {});
+    if (await tokenPartition() !== partition) throw new Error('Account changed during sync.');
+  }
   if (!running.has(partition)) {
-    running.set(partition, synchronize().finally(() => { running.delete(partition); }));
+    running.set(partition, synchronize(partition, retry).finally(() => { running.delete(partition); }));
   }
   return running.get(partition);
 }

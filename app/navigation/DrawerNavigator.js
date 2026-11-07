@@ -3,7 +3,7 @@ import { withScrollOverflow } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 import React, { useContext, useEffect } from "react";
-import { StyleSheet, Alert } from "react-native";
+import { StyleSheet, Alert, View } from "react-native";
 import { flightScope, flightStore } from "../storage/flights";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -16,7 +16,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import RecencyScreen from '../stats/RecencyScreen';
 import StatsScreen from '../stats/StatsScreen';
-import AppearanceScreen from "../theme/AppearanceScreen";
+import SettingsScreen from "../settings/SettingsScreen";
 import LoginScreen from "../Screens/LoginScreen";
 import SyncReviewStackNavigator from "./SyncReviewStackNavigator";
 import AircraftStackNavigator from "./AircraftStackNavigator";
@@ -36,45 +36,49 @@ function DrawerNavigator({ navigation }) {
 
   function LogoutContent(props) {
     return (
-      <OverflowDrawerContentScrollView {...props}>
-        <DrawerItemList {...props} />
-        <DrawerItem
-          label='Logout'
-          onPress={async () => {
-            const logout = async () => {
-              const forms = [...Context.formGuards.current.values()].map(read => read());
-              await Promise.all(forms.map(form => form.flushDraft?.()));
-              await Context.signOut();
-            };
-            try {
-              const forms = [...Context.formGuards.current.values()].map(read => read());
-              if (forms.some(form => form.saving)) {
-                Alert.alert("Saving changes", "Please wait until this save finishes.");
-                return;
+      <View style={styles.container}>
+        <OverflowDrawerContentScrollView {...props} style={styles.container}>
+          <DrawerItemList {...props} />
+        </OverflowDrawerContentScrollView>
+        <SafeAreaView edges={['bottom', 'left', 'right']} style={[styles.footer, { borderTopColor: colors.border }]}>
+          <DrawerItem
+            label='Logout'
+            onPress={async () => {
+              const logout = async () => {
+                const forms = [...Context.formGuards.current.values()].map(read => read());
+                await Promise.all(forms.map(form => form.flushDraft?.()));
+                await Context.signOut();
+              };
+              try {
+                const forms = [...Context.formGuards.current.values()].map(read => read());
+                if (forms.some(form => form.saving)) {
+                  Alert.alert("Saving changes", "Please wait until this save finishes.");
+                  return;
+                }
+                const dirty = forms.some(form => form.dirty);
+                const store = await flightStore();
+                const scope = await flightScope();
+                const pending = await store.pendingCount(scope) + await store.pendingCount(aircraftScope(scope)) + await store.pendingCount(tailnumberScope(scope));
+                if (dirty || pending) {
+                  const message = [
+                    dirty ? "Your unfinished forms will close. Saved drafts remain on this device." : "",
+                    pending ? `${pending} change(s) are saved only on this device. They will remain stored, but will be hidden while signed out.` : "",
+                  ].filter(Boolean).join("\n\n");
+                  Alert.alert(dirty ? "Save drafts and sign out?" : "Unsynced changes", message, [
+                    { text: dirty ? "Keep editing" : "Stay signed in", style: "cancel" },
+                    { text: "Sign out", style: "default",
+                      onPress: () => logout().catch(() => Alert.alert("Unable to sign out")) },
+                  ]);
+                } else {
+                  await logout();
+                }
+              } catch (error) {
+                Alert.alert("Unable to sign out", "Could not check your pending changes. Please try again.");
               }
-              const dirty = forms.some(form => form.dirty);
-              const store = await flightStore();
-              const scope = await flightScope();
-              const pending = await store.pendingCount(scope) + await store.pendingCount(aircraftScope(scope)) + await store.pendingCount(tailnumberScope(scope));
-              if (dirty || pending) {
-                const message = [
-                  dirty ? "Your unfinished forms will close. Saved drafts remain on this device." : "",
-                  pending ? `${pending} change(s) are saved only on this device. They will remain stored, but will be hidden while signed out.` : "",
-                ].filter(Boolean).join("\n\n");
-                Alert.alert(dirty ? "Save drafts and sign out?" : "Unsynced changes", message, [
-                  { text: dirty ? "Keep editing" : "Stay signed in", style: "cancel" },
-                  { text: "Sign out", style: "default",
-                    onPress: () => logout().catch(() => Alert.alert("Unable to sign out")) },
-                ]);
-              } else {
-                await logout();
-              }
-            } catch (error) {
-              Alert.alert("Unable to sign out", "Could not check your pending changes. Please try again.");
-            }
-          }}
-        />
-      </OverflowDrawerContentScrollView>
+            }}
+          />
+        </SafeAreaView>
+      </View>
     );
   }
 
@@ -89,7 +93,7 @@ function DrawerNavigator({ navigation }) {
               <Drawer.Screen name="Totals & Stats" component={StatsScreen} />
               <Drawer.Screen name="Recency" component={RecencyScreen} />
               <Drawer.Screen name="Profile" component={ProfileStackNavigator} options={{ headerShown: false }} />
-              <Drawer.Screen name="Appearance" component={AppearanceScreen} options={{ title: "Appearance" }} />
+              <Drawer.Screen name="Settings" component={SettingsScreen} />
             </Drawer.Navigator>}
           </Root.Screen>
           <Root.Screen name="SyncReview" component={SyncReviewStackNavigator} options={{ presentation: 'modal' }} />
@@ -106,7 +110,8 @@ function DrawerNavigator({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: { flex: 1 },
+  footer: { borderTopWidth: 1, padding: 12 },
 });
 
 export default DrawerNavigator;

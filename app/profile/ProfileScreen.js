@@ -18,8 +18,8 @@ export function profileDate(value) {
 function Detail({ label, value }) {
   const { colors } = useAppTheme();
   return <View style={{ flexDirection: 'row', gap: 16, paddingVertical: 5 }}>
-    <Text color={colors.muted} style={{ flex: 1 }}>{label}</Text>
-    <Text style={{ flex: 2, textAlign: 'right' }} selectable>{value || 'Not recorded'}</Text>
+    <Text color={colors.muted} style={{ flexShrink: 1 }}>{label}</Text>
+    <Text style={{ flex: 1, textAlign: 'right' }} selectable>{value || 'Not recorded'}</Text>
   </View>;
 }
 export default function ProfileScreen({ navigation }) {

@@ -1,0 +1,49 @@
+import { ScrollView } from '../components/OverflowLists';
+import React from 'react';
+import { Alert, Linking, Pressable, View } from 'react-native';
+import Constants from 'expo-constants';
+import Text from '../components/AppText';
+import Card from '../components/Card';
+import PlatformActionButton from '../components/PlatformActionButton';
+import { useAppTheme } from '../theme/ThemeProvider';
+import SyncSettings from './SyncSettings';
+
+export default function SettingsScreen() {
+  const { preference, colors, saving, setPreference } = useAppTheme();
+  const choices = [
+    ['system', 'System', 'Follow your phone’s light or dark appearance.'],
+    ['light', 'Light', 'Always use the light appearance.'],
+    ['dark', 'Dark', 'Use a dark background and softer colors.'],
+  ];
+  return <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={{ padding: 12 }}>
+    <Text accessibilityRole="header" size={18} weight="600" style={{ marginBottom: 12 }}>Appearance</Text>
+    {choices.map(([key, label, description]) => <Pressable key={key} accessibilityRole="radio"
+      accessibilityState={{ checked: preference === key, disabled: saving }} disabled={saving}
+      onPress={() => setPreference(key).catch(() => Alert.alert('Appearance not saved', 'Please try again. Your previous setting is unchanged.'))}
+      style={{ paddingHorizontal: 12, paddingVertical: 8, marginBottom: 8, borderWidth: 1, borderRadius: 10,
+        borderColor: preference === key ? colors.primary : colors.border,
+        backgroundColor: preference === key ? colors.selected : colors.surface }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text size={17} weight="600">{label}</Text><Text color={colors.primary}>{preference === key ? '✓' : ''}</Text>
+      </View>
+      <Text color={colors.muted} style={{ marginTop: 4 }}>{description}</Text>
+    </Pressable>)}
+    {saving && <Text color={colors.muted} accessibilityLiveRegion="polite">Saving appearance…</Text>}
+    <SyncSettings />
+    <View style={{ marginTop: 12 }}>
+      <Text accessibilityRole="header" size={18} weight="600" style={{ marginBottom: 12 }}>About</Text>
+      <Card compact>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text>App version</Text>
+          <Text color={colors.muted}>{Constants.expoConfig?.version ?? 'Unavailable'}</Text>
+        </View>
+        <PlatformActionButton title="Contact Support" variant="text" onPress={() =>
+          Linking.openURL('mailto:support@direct2logbook.com').catch(() =>
+            Alert.alert('Contact Support', 'Email support@direct2logbook.com for help.'))} />
+        <PlatformActionButton title="Privacy Policy" variant="text" onPress={() =>
+          Linking.openURL('https://direct2logbook.com/privacy/').catch(() =>
+            Alert.alert('Privacy Policy', 'Open direct2logbook.com/privacy/ in your browser.'))} />
+      </Card>
+    </View>
+  </ScrollView>;
+}
