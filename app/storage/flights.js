@@ -35,8 +35,6 @@ export async function saveLocalFlight(flight) {
   const localId = flight.local_id || (flight.id ? `server:${flight.id}` : Crypto.randomUUID());
   const store = await flightStore();
   await store.save(scope, localId, flight);
-  // Preference failure must not turn a successful record save into a retry.
-  await store.cacheReference(scope, 'last-aircraft', [{ aircraft_type: flight.aircraft_type }]).catch(() => {});
   return { ...flight, local_id: localId, sync_state: flight.id ? 'pending_update' : 'pending_create' };
 }
 

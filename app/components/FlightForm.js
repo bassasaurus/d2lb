@@ -26,13 +26,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { useAppTheme } from '../theme/ThemeProvider';
 
-function FlightForm({ initialValues, method, onSaved }) {
+function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false, onChooseDefault }) {
   const { styles: STYLES, isDark } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const savedNavigation = useRef(false);
   const draftHandle = useRef(null);
   const airportCheck = useRef(null);
   const [calVisible, setCalVisible] = useState(false);
+  const [defaultSuggestionDismissed, setDefaultSuggestionDismissed] = useState(false);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [formCount, setFormCount] = useState(() => Math.max(0, ...initialValues.approaches.map((item, index) => item.approach_type || item.number ? index : 0)));
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -108,6 +109,23 @@ function FlightForm({ initialValues, method, onSaved }) {
       <PickerOverlayHost>
       <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
         <View style={styles.container}>
+          {noDefaultAircraft && !defaultSuggestionDismissed && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
+            <Pressable accessibilityRole="link" onPress={async () => {
+              try {
+                await draftHandle.current?.flush();
+                onChooseDefault?.();
+              } catch {
+                Alert.alert('Could not save your draft', 'Keep this form open and try again.');
+              }
+            }} hitSlop={{ top: 8, left: 8, right: 8 }} style={{ flex: 1, minHeight: 28, paddingVertical: 4, justifyContent: 'center' }}>
+              <Text style={{ color: STYLES.blue }}>Choose a default aircraft</Text>
+            </Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Dismiss default aircraft suggestion"
+              onPress={() => setDefaultSuggestionDismissed(true)} hitSlop={{ top: 8, left: 4, right: 8 }}
+              style={{ minWidth: 28, minHeight: 28, alignItems: 'center', justifyContent: 'center' }}>
+              <MaterialCommunityIcons name="close" size={20} color={STYLES.muted} />
+            </Pressable>
+          </View>}
           <DraftForm kind="flight" recordKey={initialValues.local_id || initialValues.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={values => setFormCount(Math.max(0, ...values.approaches.map((item, index) => item.approach_type || item.number ? index : 0)))}
             validateOnMount={true}
             initialValues={initialValues}

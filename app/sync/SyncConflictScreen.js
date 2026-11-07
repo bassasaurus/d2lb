@@ -79,7 +79,7 @@ export default function SyncConflictScreen({ route, navigation }) {
   ]);
   const edit = () => navigation.getParent()?.popTo('MainDrawer', {
     screen: kind === 'flight' ? 'Logbook' : 'Aircraft',
-    params: { screen: kind === 'aircraft' ? 'AircraftForm' : kind === 'tailnumber' ? 'TailnumberUpdate' : 'FlightUpdate', params: { item }, initial: false },
+    params: { screen: item?._default_preference ? 'AircraftList' : kind === 'aircraft' ? 'AircraftForm' : kind === 'tailnumber' ? 'TailnumberUpdate' : 'FlightUpdate', params: { item }, initial: false },
   });
   const validation = item?.response && !item.response.code && !item.response.detail;
   const inUse = kind === 'aircraft' && item?.sync_state === 'pending_delete' && /in use/i.test(item.sync_error || '');

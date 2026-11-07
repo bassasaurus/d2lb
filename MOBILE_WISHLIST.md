@@ -416,3 +416,41 @@ success feedback expires and failures remain visible. The explanatory note lasts
 five seconds and manual refresh explains automatic server calculation.
 Validation: 93 mobile tests, lint and iOS/Android exports pass. Django API and home
 regression tests cover ownership, date windows and shared instrument queries.
+
+
+## Explicit default aircraft
+
+Branch: `mobile/default-aircraft`. Each Aircraft list row has a native Default
+switch, saved per account on the device and usable offline. Flight Create
+uses only this explicit setting. With no valid default, the aircraft field
+starts blank; last-used and recent-flight fallback logic has been removed. existing drafts retain their
+saved values. The default does not prefill a registration or route. Removed an
+invalid JSX return from the existing defaults-loading effect cleanup.
+Validation: 96 tests and lint pass; Android export checked; initial detail switch observed in the
+iOS simulator; final location is the aircraft list. No Django/API change is required for this device preference.
+
+
+The shared green + button is draggable on Logbook and Aircraft. Taps still add
+records; moves are clamped to each viewport with safe-area spacing and saved as
+relative coordinates on the device, shared across both screens. Position storage
+serializes rapid writes and ignores stale loads. Validation: 97 mobile tests and
+lint pass; a moved button was observed without opening a form in iOS Simulator.
+
+
+## Server-backed default aircraft (replaces device-only preference)
+
+`mobile/default-aircraft` now has companion Django changes: Aircraft.is_default
+and a conditional unique constraint allow at most one selected type per owner.
+Authenticated DRF default preference sync uses the existing MobileSyncReceipt
+protocol and an independent preference revision, preserving compatibility of
+ordinary aircraft edit revisions. Migration 0066 is applied locally; production
+requires deployment before preference uploads are enabled by the session capability.
+Mobile stores a reserved preference record within the aircraft outbox. Normal
+aircraft operations upload first, then the preference; pending selection survives
+cache refresh and uses existing conflict comparison/archive/rebase. Default flags
+are readable on the aircraft API but changes use the preference endpoint.
+The old device-only default reference and last-used fallback are no longer read.
+Validation: 641 Django tests, 101 mobile tests, lint and iOS/Android exports pass.
+An A320 selection round trip was observed in iOS and confirmed in local Django;
+the previous empty default was restored. Django PR #302 is merged and deployed,
+including migration 0066. Mobile changes are included in this release branch.

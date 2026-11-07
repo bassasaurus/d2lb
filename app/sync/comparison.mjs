@@ -24,12 +24,13 @@ function format(value, key) {
   return String(value);
 }
 export function compareVersions(kind, local, server) {
-  return (kind === 'aircraft' ? aircraftFields : kind === 'tailnumber' ? tailnumberFields : flightFields).map(([key, label]) => {
+  return (local?._default_preference || server?._default_preference ? [['aircraft_type', 'Default aircraft']] : kind === 'aircraft' ? aircraftFields : kind === 'tailnumber' ? tailnumberFields : flightFields).map(([key, label]) => {
     const localValue = format(local?.[key], key);
     const serverValue = server ? format(server[key], key) : 'Not on server';
     return { key, label, localValue, serverValue, changed: localValue !== serverValue };
   });
 }
 export function recordTitle(kind, record) {
+  if (record._default_preference) return `Default aircraft: ${record.aircraft_type || 'None'}`;
   return kind === 'aircraft' ? record.aircraft_type : kind === 'tailnumber' ? record.registration : `${record.date || ''} ${record.route || 'Flight'}`.trim();
 }

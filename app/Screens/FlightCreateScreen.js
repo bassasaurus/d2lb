@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, View } from 'react-native';
 import { flightScope, flightStore } from '../storage/flights';
 import { aircraftScope } from '../storage/aircraft';
-import { lastAircraftType } from '../storage/flightDefaults.mjs';
+import { defaultAircraftType } from '../storage/flightDefaults.mjs';
 import FlightForm from "../components/FlightForm";
 import { useNavigation } from "@react-navigation/native";
 import { saveLocalFlight } from "../storage/flights";
@@ -17,15 +17,13 @@ function FlightCreateScreen() {
     (async () => {
       const scope = await flightScope();
       const store = await flightStore();
-      const [preferred, flights, aircraft, tailnumbers] = await Promise.all([
-        store.reference(scope, 'last-aircraft'), store.list(scope), store.list(aircraftScope(scope)), listTailnumbers(scope),
+      const [aircraft, tailnumbers] = await Promise.all([
+        store.list(aircraftScope(scope)), listTailnumbers(scope),
       ]);
-      const type = lastAircraftType({ preferred: preferred[0]?.aircraft_type, flights, aircraft, tailnumbers });
+      const type = defaultAircraftType({ aircraft, tailnumbers });
       if (active) setDefaults(await flightScope() === scope ? type : '');
     })().catch(() => { if (active) setDefaults(''); });
-    if (defaults === null) return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator /></View>;
-
-  return () => { active = false; };
+    return () => { active = false; };
   }, []);
 
   const initialValues = {
@@ -61,7 +59,8 @@ function FlightCreateScreen() {
   if (defaults === null) return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator /></View>;
 
   return (
-    <FlightForm method={create} initialValues={initialValues} onSaved={() => navigation.navigate("FlightList")}></FlightForm>
+    <FlightForm method={create} initialValues={initialValues} noDefaultAircraft={!defaults}
+      onChooseDefault={() => navigation.navigate("Aircraft", { screen: "AircraftList", initial: false })} onSaved={() => navigation.navigate("FlightList")}></FlightForm>
   );
 }
 

@@ -19,7 +19,7 @@ export async function reviewAccess(kind) {
       const token = await session.getToken();
       await assertCurrent();
       let server;
-      try { server = (await api.get(`/api/${kind === 'aircraft' ? 'aircraft' : kind === 'tailnumber' ? 'tailnumbers' : 'flights'}/${id}/`, { pinnedToken: token })).data; }
+      try { server = (await api.get(kind === 'aircraft' && localId === 'server:-1' ? '/api/mobile/default-aircraft/' : `/api/${kind === 'aircraft' ? 'aircraft' : kind === 'tailnumber' ? 'tailnumbers' : 'flights'}/${id}/`, { pinnedToken: token })).data; }
       catch (error) {
         if (error.response?.status !== 404) throw error;
         server = null;
