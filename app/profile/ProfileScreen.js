@@ -87,7 +87,8 @@ export default function ProfileScreen({ navigation }) {
           {profile.signature?.startsWith('data:image/png;base64,') ? <View style={{ backgroundColor: '#fff', borderRadius: 6, marginTop: 12 }}>
             <Image accessibilityLabel="Your signature" source={{ uri: profile.signature }} resizeMode="contain" style={{ height: 120, width: '100%' }} />
           </View> : <Text color={colors.muted} style={{ marginTop: 8 }}>{profile.signature ? 'Signature saved.' : 'No signature saved.'}</Text>}
-          <Text color={colors.muted} style={{ marginTop: 8 }}>Manage your signature on the website.</Text>
+          <PlatformActionButton title={profile.signature ? "Update signature" : "Create signature"} variant="text"
+            onPress={() => navigation.navigate('SignatureEdit', { revision: profile.signature_revision })} />
         </Card>
         <Text color={colors.muted} style={{ textAlign: 'center', marginBottom: 12 }}>Downloaded {new Date(profile.downloaded_at).toLocaleString()}</Text>
       </>}

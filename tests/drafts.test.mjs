@@ -77,3 +77,12 @@ test('profile drafts are isolated by account and account/medical form', async ()
   assert.equal(await createDraftStore(storage).load(draftKey('other', 'profile-account', 'new')), null);
   assert.equal(await createDraftStore(storage).load(draftKey('owner', 'profile-medical', 'new')), null);
 });
+
+test('signature drawing draft retains normalized strokes and revision across restart', async () => {
+  const storage = memory();
+  const key = draftKey('pilot', 'profile-signature', 'signature');
+  const values = { revision: 'original', strokes: [[[0.1, 0.2], [0.8, 0.7]]] };
+  await createDraftStore(storage).save(key, { revision: 'original', strokes: [] }, values);
+  assert.deepEqual((await createDraftStore(storage).load(key)).values, values);
+  assert.equal(await createDraftStore(storage).load(draftKey('instructor', 'profile-signature', 'signature')), null);
+});

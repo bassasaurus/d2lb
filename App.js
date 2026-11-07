@@ -1,3 +1,4 @@
+import * as ScreenOrientation from 'expo-screen-orientation';
 import LogoLoading from './app/components/LogoLoading';
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState, useRef } from "react";
@@ -22,6 +23,7 @@ Sentry.init({
 
 export default function App() {
   const formGuards = useRef(new Map());
+  useEffect(() => { ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch(() => {}); }, []);
   const [auth, setAuth] = useState(session.snapshot());
   const [sessionError, setSessionError] = useState(false);
   const [startupVisible, setStartupVisible] = useState(true);

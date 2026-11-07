@@ -488,3 +488,10 @@ list/detail and Flight Detail/map visually reviewed in iOS Simulator. Not commit
 - Signature preview and support email; signature management remains on the website.
 - Matching Django branch: mobile/profile-api. No database migration required.
 - Existing uncommitted card-layout changes preserved on mobile/profile.
+
+### Touch signature capture
+- Profile signature editor rotates to landscape; Save/Redo/Undo below the drawing, Back restores portrait.
+- Reusable native SVG drawing pad; normalized strokes, protected account-scoped drafts, online saves.
+- Django renders a PNG into the existing Signature model for website/PDF compatibility; stale replacements rejected.
+- Portrait is restored on save, cancel/navigation away; Expo screen-orientation added with portrait startup configuration.
+- Instructor endorsement signing remains a separate future workflow with its own document/signing records.

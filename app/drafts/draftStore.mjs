@@ -4,7 +4,7 @@ export function fingerprint(value) {
   return JSON.stringify(value);
 }
 export function draftKey(scope, kind, record) {
-  if (!scope || !['flight', 'aircraft', 'tailnumber', 'profile-account', 'profile-medical'].includes(kind)) throw new Error('Unknown draft account or form.');
+  if (!scope || !['flight', 'aircraft', 'tailnumber', 'profile-account', 'profile-medical', 'profile-signature'].includes(kind)) throw new Error('Unknown draft account or form.');
   return `form-draft:v1:${encodeURIComponent(scope)}:${kind}:${encodeURIComponent(record)}`;
 }
 export function createDraftStore(storage, now = () => new Date().toISOString()) {
