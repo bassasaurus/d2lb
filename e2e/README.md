@@ -66,7 +66,31 @@ scenarios. GitHub Actions themselves are pinned to commit SHAs.
 The small Python tests for the downloader, database URL and CI failure handling
 run in the normal PR checks too; emulator execution remains manual.
 
-## Local one-time prerequisites
+## Manual iOS smoke test
+
+Create and boot a dedicated iPhone simulator named `D2LB_iOS_Screen_Tests`
+in Xcode. Get its UDID with `xcrun simctl list devices booted`. This runner
+clears Expo Go and the keychain on that simulator so each run starts signed out.
+Use a simulator reserved for testing.
+
+With the existing Node, Python, PostgreSQL, and Maestro prerequisites installed,
+run this from the mobile repository. Use your simulator's UDID and the matching
+Expo Go simulator bundle.
+
+```sh
+./scripts/mobile run test:screens:ios -- \
+  --ios-simulator YOUR_SIMULATOR_UDID \
+  --maestro "$HOME/Documents/Codex/tools/maestro-2.12.1/maestro/bin/maestro" \
+  --expo-app "$HOME/.expo/ios-simulator-app-cache/Expo-Go-58.0.7.tar.app"
+```
+
+The smoke test signs in with the disposable account, saves a flight using the
+iOS date picker, verifies that it appears in the logbook, and checks that Django
+stored exactly one matching flight and sync receipt. The runner starts the
+temporary API and Metro on ports 8010 and 8082 by default. Reports and
+screenshots go under `.screen-tests/<run-id>/`.
+
+## Local Android prerequisites
 
 - Project dependencies (`npm ci`) and the Node version in `.nvmrc`.
 - A local Django checkout and its Python environment with requirements installed.
@@ -144,10 +168,10 @@ without giving the app access to the API. Server assertions verify that offline
 saves/deletions have not reached Django. Reconnection checks happen before any
 manual refresh, testing automatic reconnection sync.
 
-The screen suite runs locally or through the manual Android workflow, and is
-not a required pull-request check. iOS screen tests, installed production builds, Google authentication,
-signature capture, and aircraft/tailnumber screen tests are separate follow-up
-coverage. The normal PR lint/unit/export workflow remains in place.
+The Android suite runs locally or through the manual GitHub workflow. The iOS
+smoke test runs manually on a Mac. Offline iOS scenarios, installed production
+builds, Google authentication, signature capture, and aircraft/tailnumber
+screen tests are separate follow-ups.
 
 Keep selectors on stable `testID`/accessibility labels. Avoid fixed tap coordinates
 for form controls and fixed sleeps; wait for observable UI or database conditions.

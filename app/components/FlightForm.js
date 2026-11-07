@@ -118,8 +118,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      contentContainerStyle={{ flex: 1 }}
-      behavior={Platform.select({ android: undefined, ios: "position" })}
+      behavior={Platform.select({ android: undefined, ios: "padding" })}
       keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
       enabled={scrollEnabled}
     >
