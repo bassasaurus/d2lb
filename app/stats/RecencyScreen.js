@@ -116,8 +116,7 @@ export default function RecencyScreen() {
       {refreshing && !snapshot && <ActivityIndicator color={colors.primary} />}
       {error ? <Text accessibilityLiveRegion="polite" style={{ color: colors.danger, marginBottom: 12 }}>{error}</Text> : null}
       {snapshot && <>
-        <Text style={{ color: colors.muted, marginBottom: 6, textAlign: 'center' }}>Downloaded {new Date(snapshot.downloaded_at).toLocaleString()}</Text>
-        <Text style={{ color: colors.muted, marginBottom: 16 }}>Calculated by the server as of {snapshot.as_of}. Refresh for current values.</Text>
+        <Text style={{ color: colors.muted, marginBottom: 16, textAlign: 'center' }}>Downloaded {new Date(snapshot.downloaded_at).toLocaleString()}</Text>
         {pending > 0 && <Text style={{ color: colors.danger, marginBottom: 16 }}>{pending} pending change(s) may not yet be included. Sync your logbook, then refresh.</Text>}
         {orderReady && <ReorderableSections order={order} onChange={saveOrder} onDragChange={setDragging}
           sections={[
