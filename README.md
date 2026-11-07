@@ -118,7 +118,8 @@ plus the changelog. It rechecks the PR and main before merging and will not merg
 a changed head using an older successful check. Ordinary feature PRs are still
 merged normally. A failed release check leaves its PR open; after resolving the
 failure, retry **Prepare mobile release** on `main` from Actions → Run workflow.
-An unchanged existing release PR is checked again on retries. Tagging runs in
+Existing release PRs are refreshed from main and checked again on retries,
+including when only CI or documentation changed. Tagging runs in
 the same workflow because a merge by GitHub's built-in token does not start
 another push workflow.
 
