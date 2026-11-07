@@ -1,0 +1,14 @@
+appId: host.exp.exponent
+name: Keep the saved flight after an offline app restart
+---
+- stopApp
+- launchApp:
+    clearState: false
+- openLink: ${EXPO_URL}
+- extendedWaitUntil:
+    visible: KAUS-KDFW
+    timeout: 120000
+- assertVisible: Pending sync
+- assertNotVisible:
+    id: login-email
+- takeScreenshot: persisted-offline

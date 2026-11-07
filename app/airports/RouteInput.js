@@ -48,7 +48,7 @@ export default function RouteInput({ onCheck }) {
   const invalid = new Set(entries.filter(entry => ['unknown', 'ambiguous'].includes(entry.status)).map(entry => entry.code));
   const messages = routeErrors(entries);
   return <View>
-    <TextInput accessibilityLabel="Route" placeholder="Route" placeholderTextColor={colors.placeholder}
+    <TextInput testID="flight-route" accessibilityLabel="Route" placeholder="Route" placeholderTextColor={colors.placeholder}
       autoCapitalize="characters" autoCorrect={false} keyboardAppearance={isDark ? 'dark' : 'light'}
       onChangeText={value => {
         setFieldValue('route', normalizeRoute(value));

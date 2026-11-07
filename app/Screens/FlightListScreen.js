@@ -219,6 +219,7 @@ const FlightListScreen = () => {
       </Animated.View>
       {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
       <FlatList
+        testID="flight-list"
         data={data}
         extraData={syncEvents}
         renderItem={renderItem}

@@ -15,6 +15,20 @@ branch for each numbered item.
 9. Connection and sync status
 10. Mobile testing and release checks
 
+## Item 10: automated screen-test foundation
+
+Branch: `test/mobile-screen-flows`.
+The first Maestro scenario drives Android/Expo Go through sign-in, an offline
+flight save, an offline app restart, automatic reconnection sync, and refresh.
+Database checkpoints verify that the flight stays local until reconnecting and
+that refreshing leaves exactly one server flight and one sync receipt.
+
+The local runner uses a dedicated emulator and a disposable PostgreSQL database
+with the real Django API. It preserves screenshots, JUnit results, and logs, then
+cleans up its database and servers. See [screen-test setup](e2e/README.md).
+This supplements the logic tests; iOS and CI emulator execution remain future
+coverage. No production data or Django application changes are required.
+
 ## Item 1: current implementation
 
 Mobile branch: `mobile/01-offline-first`.

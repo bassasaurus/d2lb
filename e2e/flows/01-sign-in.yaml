@@ -1,0 +1,30 @@
+appId: host.exp.exponent
+name: Sign in and download reference data
+---
+- openLink: ${EXPO_URL}
+- extendedWaitUntil:
+    visible: Continue
+    timeout: 120000
+- tapOn: Continue
+- back
+- extendedWaitUntil:
+    visible:
+      id: login-email
+    timeout: 120000
+- tapOn:
+    id: login-email
+- inputText: screen-test@example.invalid
+- tapOn:
+    id: login-password
+- inputText: Disposable-screen-test-42
+- hideKeyboard
+- tapOn:
+    id: login-submit
+- extendedWaitUntil:
+    visible: New Flight
+    timeout: 30000
+- extendedWaitUntil:
+    notVisible: Sync in Progress
+    timeout: 30000
+- assertNotVisible: KAUS-KDFW
+- takeScreenshot: signed-in

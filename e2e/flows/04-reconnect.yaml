@@ -1,0 +1,9 @@
+appId: host.exp.exponent
+name: Automatically sync after connectivity returns
+---
+- extendedWaitUntil:
+    visible: Synced
+    timeout: 90000
+- assertVisible: KAUS-KDFW
+- assertNotVisible: Pending sync
+- takeScreenshot: reconnected

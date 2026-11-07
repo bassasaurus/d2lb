@@ -95,6 +95,7 @@ function LoginScreen() {
                 }) => (
                   <>
                     <AppTextInput
+                      testID="login-email"
                       placeholder='email'
                       autoCorrect={false}
                       autoCapitalize={"none"}
@@ -115,6 +116,7 @@ function LoginScreen() {
                       )}
                     </View>
                     <AppTextInput
+                      testID="login-password"
                       placeholder='password'
                       autoCorrect={false}
                       autoCapitalize={"none"}
@@ -155,7 +157,7 @@ function LoginScreen() {
                     </View>
 
                     <View style={{ marginTop: 10 }}>
-                      <Button title={isSubmitting ? 'Signing in…' : 'Sign in'}
+                      <Button testID="login-submit" title={isSubmitting ? 'Signing in…' : 'Sign in'}
                         disabled={!isValid || isSubmitting || !values.username || !values.password}
                         onPress={handleSubmit} />
                     </View>

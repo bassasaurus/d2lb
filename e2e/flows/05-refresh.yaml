@@ -1,0 +1,13 @@
+appId: host.exp.exponent
+name: Refresh without duplicating the flight
+---
+- swipe:
+    start: 50%, 30%
+    end: 50%, 85%
+    duration: 600
+- extendedWaitUntil:
+    notVisible: Sync in Progress
+    timeout: 30000
+- assertVisible: KAUS-KDFW
+- assertVisible: Synced
+- takeScreenshot: refreshed

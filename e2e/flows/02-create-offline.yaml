@@ -1,0 +1,34 @@
+appId: host.exp.exponent
+name: Save a flight while disconnected
+---
+- tapOn: New Flight
+- tapOn:
+    id: flight-date
+- tapOn: OK
+- tapOn:
+    id: flight-route
+- inputText: KAUS-KDFW
+- hideKeyboard
+- assertVisible: C172
+- tapOn:
+    id: tailnumber-input
+- tapOn: Select N1234
+- tapOn:
+    id: flight-duration
+- inputText: '1.2'
+- hideKeyboard
+- tapOn: PIC
+- scrollUntilVisible:
+    element:
+      id: flight-save
+    direction: DOWN
+- assertVisible:
+    id: flight-save
+    enabled: true
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible: KAUS-KDFW
+    timeout: 30000
+- assertVisible: Pending sync
+- takeScreenshot: saved-offline
