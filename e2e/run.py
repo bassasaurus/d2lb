@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 AVD = 'D2LB_Screen_Tests'
 IOS_SIMULATOR = 'D2LB_iOS_Screen_Tests'
 IOS_EXPO_ID = 'host.exp.Exponent'
-IOS_SCENARIOS = ('ios-flight-smoke', 'ios-offline-flight')
+IOS_SCENARIOS = ('ios-flight-smoke', 'ios-offline-flight', 'ios-sync-lost-response')
 
 
 def main():
@@ -116,6 +116,10 @@ def run_scenario(args, scenario):
                DATABASE_URL=database_url(args.pg_user, args.pg_port, database, env.get('PGPASSWORD')),
                PYTHONPATH=os.pathsep.join([str(ROOT / 'e2e'), str(args.django)]),
                PYTHONUNBUFFERED='1')
+    trace = output / 'flight-sync-trace.jsonl'
+    env.pop('D2LB_FLIGHT_SYNC_TRACE', None)
+    if scenario == 'ios-sync-lost-response':
+        env['D2LB_FLIGHT_SYNC_TRACE'] = str(trace)
     adb = [str(args.android_sdk / 'platform-tools/adb'), '-s', device]
     children = []
     logs = []
@@ -164,8 +168,12 @@ def run_scenario(args, scenario):
             return False
 
     def start_api(log_name):
-        process = start([sys.executable, args.django / 'manage.py', 'runserver',
-                         f'127.0.0.1:{args.api_port}', '--noreload'], log_name, args.django)
+        argv = [sys.executable, args.django / 'manage.py', 'runserver',
+                f'127.0.0.1:{args.api_port}', '--noreload']
+        if scenario == 'ios-sync-lost-response':
+            # Django closes each HTTP connection when its test server runs without threads.
+            argv.append('--nothreading')
+        process = start(argv, log_name, args.django)
         wait_for('Django', lambda: http_ready(args.api_port, '/api/mobile/session/'), timeout=20, process=process)
         return process
 
@@ -193,11 +201,30 @@ def run_scenario(args, scenario):
                  '-e', f'CHECKPOINT_URL=http://127.0.0.1:{checkpoints.server_port}/{run_id}',
                  ROOT / f'e2e/{scenario}.yaml'], timeout=1200)
 
+    def replay_ready():
+        try:
+            events = [json.loads(line) for line in trace.read_text().splitlines(keepends=True)
+                      if line.endswith('\n')]
+        except FileNotFoundError:
+            return False
+        if len(events) < 2:
+            return False
+        first, retry = events[:2]
+        if len(events) != 2 or not first['dropped'] or retry != {**first, 'dropped': False}:
+            raise AssertionError(f'Expected one dropped acknowledgment and one replay of the same flight: {events}')
+        return True
+
     completed = []
 
     class Checkpoint(BaseHTTPRequestHandler):
         def log_message(self, *_args):
             pass
+
+        def retry_later(self, detail):
+            time.sleep(0.5)
+            self.send_response(202)
+            self.end_headers()
+            self.wfile.write(detail.encode())
 
         def do_POST(self):
             step = self.path.rsplit('/', 1)[-1]
@@ -206,16 +233,16 @@ def run_scenario(args, scenario):
                 return
             _, expected, online = steps[len(completed)]
             try:
+                if step == 'ios-replayed' and not replay_ready():
+                    self.retry_later('Waiting for the app to replay the dropped acknowledgment.')
+                    return
                 # Poll the server when the flow does not wait for a Synced indicator.
                 # Never repeat a UI action or a network change.
                 try:
                     result = backend(expected, capture_output=True, text=True, timeout=10)
                 except subprocess.CalledProcessError as error:
                     if step in ('delete-synced', 'ios-synced') and 'AssertionError' in error.stderr:
-                        time.sleep(0.5)
-                        self.send_response(202)
-                        self.end_headers()
-                        self.wfile.write(error.stderr.encode())
+                        self.retry_later(error.stderr)
                         return
                     raise
                 print(result.stdout.strip(), flush=True)

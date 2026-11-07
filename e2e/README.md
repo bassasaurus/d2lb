@@ -106,6 +106,13 @@ before pulling to refresh and verifies that Django still has exactly one
 flight and one receipt. This exercises API unavailability and automatic retry.
 The simulator's network settings stay as they are.
 
+Run the lost acknowledgment scenario with the same simulator arguments and
+`test:screens:ios:retry`. After Django saves the flight, the test server closes
+the connection without sending the acknowledgment body. The scenario waits
+for the app to retry and checks that Django returns the same operation and
+flight IDs and still has one flight and one receipt. The two responses are
+recorded in `flight-sync-trace.jsonl` in the run's artifact directory.
+
 ## Local Android prerequisites
 
 - Project dependencies (`npm ci`) and the Node version in `.nvmrc`.
@@ -184,7 +191,7 @@ without giving the app access to the API. Server assertions verify that offline
 saves/deletions have not reached Django. Reconnection checks happen before any
 manual refresh, testing automatic reconnection sync.
 
-The Android suite runs locally or through the manual GitHub workflow. Both iOS
+The Android suite runs locally or through the manual GitHub workflow. The iOS
 scenarios run manually on a Mac. Installed production builds, Google authentication,
 signature capture, and aircraft/tailnumber screen tests are separate follow-ups.
 

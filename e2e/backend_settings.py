@@ -21,3 +21,6 @@ CSRF_COOKIE_SECURE = False
 ALLAUTH_TRUSTED_PROXY_COUNT = 0
 PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']
 SENTRY_DSN = ''
+
+if os.environ.get('D2LB_FLIGHT_SYNC_TRACE'):
+    MIDDLEWARE = ['flight_sync_fault.DropFlightSyncAcknowledgment', *MIDDLEWARE]

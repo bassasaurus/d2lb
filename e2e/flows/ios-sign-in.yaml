@@ -20,7 +20,11 @@ name: Sign in on iPhone
 - tapOn:
     id: login-password
 - inputText: Disposable-screen-test-42
-- hideKeyboard
+- extendedWaitUntil:
+    visible:
+      id: login-submit
+      enabled: true
+    timeout: 10000
 - tapOn:
     id: login-submit
 - extendedWaitUntil:
