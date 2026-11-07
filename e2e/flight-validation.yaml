@@ -1,0 +1,36 @@
+appId: host.exp.exponent
+name: Required flight fields block Save but night warnings remain advisory
+---
+- runFlow: flows/01-sign-in.yaml
+- runFlow: flows/12-required-fields.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: required-fields
+- runFlow: flows/13-invalid-duration-route.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: invalid-duration
+- runFlow: flows/14-required-role.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: required-role
+- runFlow: flows/15-solo-landings.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: solo-landings
+- runFlow: flows/16-night-warning.yaml
+- runFlow: flows/04-reconnect.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: warning-saved
+- runFlow: flows/17-night-without-landing.yaml
+- runFlow: flows/04-reconnect.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: night-only-saved

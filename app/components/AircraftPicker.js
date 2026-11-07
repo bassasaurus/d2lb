@@ -46,6 +46,7 @@ function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
   return (
     <>
       <Pressable
+        testID="aircraft-picker"
         onPress={() => {
           fetchData().catch(() => Alert.alert("Unable to load saved aircraft"));
           setVisible(true);

@@ -1,0 +1,25 @@
+appId: host.exp.exponent
+name: Discard an edit without changing the stored flight or keeping a draft
+---
+- tapOn: KAUS-KDFW
+- tapOn: Update flight
+- tapOn:
+    id: flight-duration
+- eraseText
+- inputText: '8.8'
+- hideKeyboard
+- back
+- assertVisible: Leave unfinished form\?
+- tapOn: (?i)Discard draft
+- assertVisible: '1.2'
+- assertNotVisible: '8.8'
+- tapOn: Update flight
+- assertNotVisible: Resume draft
+- assertVisible:
+    id: flight-duration
+    text: '1.2'
+- back
+- back
+- assertVisible: New Flight
+- assertVisible: '1.2'
+- takeScreenshot: edit-discarded

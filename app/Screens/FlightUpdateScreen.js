@@ -23,7 +23,7 @@ function FlightUpdateScreen({ route }) {
 
   const update = data => saveLocalFlight(data);
 
-  return <FlightForm method={update} initialValues={apiData} onSaved={item => navigation.navigate("FlightDetail", { item })}></FlightForm>;
+  return <FlightForm method={update} initialValues={apiData} onSaved={item => navigation.popTo("FlightDetail", { item })}></FlightForm>;
 }
 
 export default FlightUpdateScreen;

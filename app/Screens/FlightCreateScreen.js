@@ -60,7 +60,7 @@ function FlightCreateScreen() {
 
   return (
     <FlightForm method={create} initialValues={initialValues} noDefaultAircraft={!defaults}
-      onChooseDefault={() => navigation.navigate("Aircraft", { screen: "AircraftList", initial: false })} onSaved={() => navigation.navigate("FlightList")}></FlightForm>
+      onChooseDefault={() => navigation.navigate("Aircraft", { screen: "AircraftList", initial: false })} onSaved={() => navigation.popTo("FlightList")}></FlightForm>
   );
 }
 

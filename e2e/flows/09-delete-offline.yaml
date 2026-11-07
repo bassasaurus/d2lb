@@ -1,0 +1,12 @@
+appId: host.exp.exponent
+name: Confirm an offline deletion
+---
+- tapOn: KAUS-KDFW
+- tapOn: Delete flight
+- assertVisible: Are you sure\?
+- tapOn: (?i)^Delete$
+- extendedWaitUntil:
+    visible: New Flight
+    timeout: 30000
+- assertNotVisible: KAUS-KDFW
+- takeScreenshot: deleted-offline

@@ -16,13 +16,14 @@ from flights.models import Aircraft, Flight, MapData, TailNumber  # noqa: E402
 EMAIL = 'screen-test@example.invalid'
 PASSWORD = 'Disposable-screen-test-42'
 
-if sys.argv[1] == 'seed':
+state = sys.argv[1]
+if state in ['seed', 'seed-validation']:
     if get_user_model().objects.exists() or Flight.objects.exists():
         raise RuntimeError('Refusing to seed an occupied database.')
     user = get_user_model().objects.create_user(username=EMAIL, email=EMAIL, password=PASSWORD)
     user.profile.free_access = True
     user.profile.save()
-    aircraft = Aircraft.objects.create(user=user, aircraft_type='C172', is_default=True,
+    aircraft = Aircraft.objects.create(user=user, aircraft_type='C172', is_default=state == 'seed',
                                        aircraft_category='A', aircraft_class='SEL', piston=True, small=True)
     TailNumber.objects.create(user=user, aircraft=aircraft, registration='N1234', is_91=True)
     for icao, iata, name, latitude, longitude in [
@@ -33,18 +34,36 @@ if sys.argv[1] == 'seed':
                                country='United States', latitude=latitude, longitude=longitude)
     print('Seeded disposable account, C172, N1234 and two airports.')
 else:
-    expected = int(sys.argv[1])
+    expected, expected_receipts = {
+        'empty': (0, 0), 'original': (1, 1), 'updated': (1, 2),
+        'deleted': (0, 3), 'night-warning': (1, 1), 'night-only': (1, 2),
+    }[state]
     flights = Flight.objects.count()
-    receipts = MobileSyncReceipt.objects.count()
+    acknowledgements = list(MobileSyncReceipt.objects.order_by('created_at', 'pk'))
+    receipts = len(acknowledgements)
     assert flights == expected, f'Expected {expected} flights, found {flights}'
-    assert receipts == expected, f'Expected {expected} sync receipts, found {receipts}'
+    assert receipts == expected_receipts, f'Expected {expected_receipts} sync receipts, found {receipts}'
+    if receipts:
+        original_id = acknowledgements[0].response['flight']['id']
+        for receipt in acknowledgements:
+            assert receipt.user.username == EMAIL
+            response = receipt.response
+            assert (response['flight']['id'] if 'flight' in response else response['deleted_id']) == original_id
+        if state == 'deleted':
+            assert acknowledgements[-1].response['deleted_id'] == original_id
     if expected:
         flight = Flight.objects.get()
+        assert flight.pk == original_id, 'An update must keep the original flight ID'
         assert flight.user.username == EMAIL
         assert flight.route == 'KAUS-KDFW'
-        assert flight.duration == Decimal('1.2')
+        assert flight.duration == Decimal('2.3' if state == 'updated' else '1.2')
+        assert (flight.remarks or '') == ('Edited while offline' if state == 'updated' else '')
         assert flight.aircraft_type.aircraft_type == 'C172'
         assert flight.registration.registration == 'N1234'
         assert flight.pilot_in_command is True
+        assert flight.solo is False
         assert flight.date == date.today()
-    print(f'PASS: server has {flights} flight(s), {receipts} sync receipt(s).')
+        assert (flight.landings_day or 0) == 0
+        assert (flight.landings_night or 0) == (1 if state == 'night-warning' else 0)
+        assert (flight.night or 0) == (0.4 if state == 'night-only' else 0)
+    print(f'PASS: {state}: {flights} flight(s), {receipts} sync receipt(s); record values and IDs verified.')

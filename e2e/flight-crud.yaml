@@ -1,0 +1,63 @@
+appId: host.exp.exponent
+name: Offline create, cancel, update and delete preserve the flight identity
+---
+- runFlow: offline-flight.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: cancel-offline
+- runFlow: flows/06-cancel-edit.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: cancelled
+- runFlow: flows/07-update-offline.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: edited-offline
+- runFlow: flows/03-reopen-offline.yaml
+- assertVisible: '2.3'
+- assertNotVisible: '1.2'
+- tapOn: KAUS-KDFW
+- assertVisible: 'Remarks: Edited while offline'
+- back
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: edit-reconnect
+- runFlow: flows/04-reconnect.yaml
+- assertVisible: '2.3'
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: edit-synced
+- runFlow: flows/05-refresh.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: delete-offline
+- runFlow: flows/08-cancel-delete.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: delete-cancelled
+- runFlow: flows/09-delete-offline.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: deleted-offline
+- runFlow: flows/10-reopen-deleted.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: delete-reconnect
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: delete-synced
+- runFlow: flows/11-refresh-deleted.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: delete-refreshed

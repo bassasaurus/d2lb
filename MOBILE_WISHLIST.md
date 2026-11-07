@@ -29,6 +29,16 @@ cleans up its database and servers. See [screen-test setup](e2e/README.md).
 This supplements the logic tests; iOS and CI emulator execution remain future
 coverage. No production data or Django application changes are required.
 
+Follow-up branch: `test/mobile-flight-crud-screens`. Adds canceled edits/deletions,
+offline update/delete persistence and reconnection checks, and form validation.
+The validation scenario verifies required fields, duration precision, the primary
+role and Solo landings; it submits a flight with the advisory night warning and
+also saves night time without a landing. The default runner executes both new
+scenarios with separate disposable databases; `--scenario` selects a focused run.
+The edit test also caught a navigation regression: saving pushed another detail
+screen and left the saved form in Back history. Flight create/update now return
+to the existing list/detail screen with `popTo`, like tailnumber updates.
+
 ## Item 1: current implementation
 
 Mobile branch: `mobile/01-offline-first`.
