@@ -454,3 +454,37 @@ Validation: 641 Django tests, 101 mobile tests, lint and iOS/Android exports pas
 An A320 selection round trip was observed in iOS and confirmed in local Django;
 the previous empty default was restored. Django PR #302 is merged and deployed,
 including migration 0066. Mobile changes are included in this release branch.
+
+
+## Logbook refresh policy and placeholders
+
+Branch: `mobile/logbook-refresh-policy`. Normal focus/foreground/reconnect uses
+saved flights without a server refresh after an initial successful download,
+unless flights, aircraft/default preferences or tailnumbers remain pending.
+Manual pull-to-refresh always checks the API. No-pending status is temporary and
+does not claim that remote data was checked; sync failures stay red and visible.
+Placeholders are left-aligned via shared AppTextInput and the route field.
+The floating + buttons are replaced with fixed green New Flight/New Aircraft
+buttons below each list and above the safe area; draggable-position code is removed.
+Validation: mobile tests, lint and Android
+export pass; return from Flight Detail showed the no-pending notice in iOS.
+
+
+## Shared mobile cards
+
+Branch: `mobile/card-layout` preserves the pending refresh-policy and fixed-bottom
+button changes. Shared Card supplies theme-aware surface, corners and padding.
+Compact cards now group Logbook/Aircraft list entries, flight/aircraft/tailnumber
+details and forms, sign-in, recency and sync review; Appearance uses matching
+spacing/corners. The map remains a separate rounded card with full-route fitting.
+Recency drag handles are centered in the header, with title left and chevron right.
+Validation: 100 tests and lint pass; iOS/Android exports pass. Logbook, Aircraft
+list/detail and Flight Detail/map visually reviewed in iOS Simulator. Not committed.
+
+### Mobile profile
+- Profile drawer entry with Account, Subscription, Medical Certificate, and Signature cards.
+- Account/name/company and medical edit screens use account-scoped draft protection; server saves require connectivity.
+- Read-only subscription status from authenticated Django API; no in-app checkout.
+- Signature preview and support email; signature management remains on the website.
+- Matching Django branch: mobile/profile-api. No database migration required.
+- Existing uncommitted card-layout changes preserved on mobile/profile.

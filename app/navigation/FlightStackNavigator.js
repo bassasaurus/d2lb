@@ -34,7 +34,7 @@ function FlightStackNavigator(props) {
         options={{
           title: "Logbook",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: colors.surface },
+          cardStyle: { backgroundColor: colors.background },
           headerShown: true,
           headerLeft: () => (
             <MaterialCommunityIcons
@@ -53,7 +53,7 @@ function FlightStackNavigator(props) {
         options={{
           title: "Detail",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: colors.surface },
+          cardStyle: { backgroundColor: colors.background },
         }}
       />
 
@@ -63,7 +63,7 @@ function FlightStackNavigator(props) {
         options={{
           title: "New Flight",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: colors.surface },
+          cardStyle: { backgroundColor: colors.background },
         }}
       />
 
@@ -73,7 +73,7 @@ function FlightStackNavigator(props) {
         options={{
           title: "Update",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: colors.surface },
+          cardStyle: { backgroundColor: colors.background },
         }}
       />
 
@@ -83,7 +83,7 @@ function FlightStackNavigator(props) {
         options={{
           title: "New Tailnumber",
           cardStyleInterpolator: forFade,
-          cardStyle: { backgroundColor: colors.surface },
+          cardStyle: { backgroundColor: colors.background },
         }}
       />
     </Stack.Navigator>

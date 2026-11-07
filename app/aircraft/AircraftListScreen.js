@@ -2,6 +2,7 @@ import { FlatList } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import React, { useCallback, useState } from 'react';
 import { Alert, Button, RefreshControl, Switch, TouchableOpacity, View } from 'react-native';
+import Card from '../components/Card';
 import Text from '../components/AppText';
 import { useFocusEffect } from '@react-navigation/native';
 import { listAircraft, aircraftScope, saveDefaultAircraft } from '../storage/aircraft';
@@ -9,7 +10,8 @@ import { selectedDefaultType } from '../storage/flightDefaults.mjs';
 import { flightScope, flightStore } from '../storage/flights';
 import syncFlightData from '../api/syncFlightData';
 import { useAppTheme } from '../theme/ThemeProvider';
-import RoundButton from '../components/RoundButton';
+import BottomCreateButton from '../components/BottomCreateButton';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AircraftListScreen({ navigation }) {
   const { styles: STYLES } = useAppTheme();
@@ -84,7 +86,7 @@ export default function AircraftListScreen({ navigation }) {
     load();
     return () => { active = false; refresh.current = null; setDefaultScope(null); };
   }, []));
-  return <View style={{ flex: 1, padding: 12 }}>
+  return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, paddingHorizontal: 12, paddingTop: 12, backgroundColor: STYLES.itemBackground }}>
     {status.trim() ? <Text style={{ paddingVertical: 12 }} accessibilityLiveRegion="polite">{status}</Text> : null}
     {issueCount > 0 && <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SyncReview', { screen: 'SyncReviewList' })}>
       <Text style={{ paddingVertical: 12, color: STYLES.danger }}>Resolve sync problems ({issueCount})</Text>
@@ -105,8 +107,8 @@ export default function AircraftListScreen({ navigation }) {
     <FlatList data={rows} keyExtractor={item => item.local_id} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); refresh.current?.(); }} />}
       ListEmptyComponent={<Text>No aircraft saved yet. Add an aircraft or pull down while connected.</Text>}
       extraData={[defaultType, defaultScope, savingDefault]}
-      renderItem={({ item }) => <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12,
-        paddingVertical: 8, borderBottomWidth: 1, borderColor: STYLES.grey }}>
+      renderItem={({ item }) => <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12,
+        padding: 12, marginBottom: 8 }}>
         <TouchableOpacity accessibilityRole="button" style={{ flex: 1, paddingVertical: 8, minHeight: 56 }}
           onPress={() => navigation.navigate('AircraftDetail', { item })}>
           <Text style={{ color: STYLES.blue, fontSize: 18, fontWeight: '600' }}>{item.aircraft_type}</Text>
@@ -119,7 +121,7 @@ export default function AircraftListScreen({ navigation }) {
             value={defaultType === item.aircraft_type} disabled={!defaultScope || savingDefault}
             onValueChange={enabled => changeDefault(item, enabled)} />
         </View>
-      </View>} />
-    <RoundButton buttonSize={60} buttonColor={STYLES.green} onPress={() => navigation.navigate('AircraftForm')} />
-  </View>;
+      </Card>} />
+    <BottomCreateButton title="New Aircraft" horizontalPadding={0} onPress={() => navigation.navigate('AircraftForm')} />
+  </SafeAreaView>;
 }

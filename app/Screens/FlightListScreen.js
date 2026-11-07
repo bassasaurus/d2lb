@@ -1,5 +1,6 @@
 import { FlatList } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
+import { shouldRefreshLogbook, logbookPendingCount } from '../api/logbookRefresh.mjs';
 import { useMemo } from 'react';
 import React, { useState, useEffect} from "react";
 import { Animated, StyleSheet, TouchableOpacity, RefreshControl, Alert } from 'react-native';
@@ -8,7 +9,7 @@ import { useNavigation, useFocusEffect, useIsFocused } from "@react-navigation/n
 import { useAppTheme } from '../theme/ThemeProvider';
 import syncFlightData from "../api/syncFlightData";
 import FlightItem from "../components/FlightItem";
-import RoundButton from "../components/RoundButton";
+import BottomCreateButton from "../components/BottomCreateButton";
 import AppContext from "../components/AppContext";
 import { Text, AppState } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
@@ -28,7 +29,8 @@ const FlightListScreen = () => {
   const [data, setData] = useState([]);
   const [issueCount, setIssueCount] = useState(0);
   const [windowNotice, setWindowNotice] = useState(true);
-  const [loadingFlights, setLoadingFlights] = useState(true);
+  const [loadingFlights, setLoadingFlights] = useState(false);
+  const [noticeMessage, setNoticeMessage] = useState("Loading saved flights…");
   const [noticeError, setNoticeError] = useState("");
   const [noticeHeight, setNoticeHeight] = useState(26);
   const noticeProgress = React.useRef(new Animated.Value(1)).current;
@@ -45,12 +47,13 @@ const FlightListScreen = () => {
   useFocusEffect(React.useCallback(() => {
     let active = true;
     let running = false;
-    const load = async () => {
+    const load = async (force = false) => {
       if (running) return;
       running = true;
       if (active) {
         clearTimeout(noticeTimer.current);
-        setLoadingFlights(true);
+        setLoadingFlights(false);
+        setNoticeMessage("Loading saved flights…");
         setWindowNotice(true);
       }
       try {
@@ -59,42 +62,50 @@ const FlightListScreen = () => {
         const store = await flightStore();
         const local = await store.list(scope);
         if (active) setData(local);
+        const beforePending = await logbookPendingCount(store, [scope, aircraftScope(scope), tailnumberScope(scope)]);
+        const snapshot = await store.reference(scope, 'flight-window-sync');
+        const needsRefresh = shouldRefreshLogbook({ force, pending: beforePending, hasSnapshot: Boolean(snapshot[0]?.downloaded_at) });
         let downloaded = true;
         let serverUpgradeNeeded = false;
-        try {
-          const network = await NetInfo.fetch();
-          if (!network.isConnected) throw new Error('Offline');
+        if (needsRefresh) {
+          if (active) setLoadingFlights(true);
           try {
-            scope = await syncFlightData();
+            const network = await NetInfo.fetch();
+            if (!network.isConnected) throw new Error('Offline');
+            try {
+              scope = await syncFlightData();
+            } catch (error) {
+              if (error.response?.status !== 404) throw error;
+              serverUpgradeNeeded = true;
+            }
+            await refreshFlightCache(scope);
+            await fetchTailnumbers();
           } catch (error) {
-            if (error.response?.status !== 404) throw error;
-            serverUpgradeNeeded = true;
+            downloaded = false;
           }
-          await refreshFlightCache(scope);
-          await fetchTailnumbers();
-        } catch (error) {
-          downloaded = false;
         }
         if (await tokenPartition() !== partition) return;
         scope = await flightScope();
         const rows = await store.list(scope);
-        const pending = await store.pendingCount(scope) + await store.pendingCount(tailnumberScope(scope));
+        const pending = await logbookPendingCount(store, [scope, aircraftScope(scope), tailnumberScope(scope)]);
         const issues = [...await store.errors(scope), ...await store.errors(aircraftScope(scope)), ...await store.errors(tailnumberScope(scope))];
         const legacy = await AsyncStorage.getItem('offlineFlights');
         const legacyCount = legacy ? JSON.parse(legacy).length : 0;
         if (active) {
           setData(rows);
           setIssueCount(issues.length);
+          setNoticeMessage(needsRefresh ? "Synced last 100 entries" : "No pending changes.\nNo sync required.");
           clearTimeout(noticeTimer.current);
           const syncError = [
             !downloaded ? 'Showing saved flights; sync could not finish.' : '',
             serverUpgradeNeeded ? 'Uploads waiting for the server sync update.' : '',
+            downloaded && pending && !issues.length ? 'Some changes are still waiting to sync.' : '',
             issues.length ? `Needs attention: ${issues.slice(0, 3).map(issue => `${issue.route}: ${issue.message}`).join(' ')}` : '',
           ].filter(Boolean).join(' ');
           const retryMessage = syncError ? `${syncError}\nPull down to retry.` : '';
           setNoticeError(retryMessage);
           setWindowNotice(true);
-          if (!syncError) noticeTimer.current = setTimeout(() => setWindowNotice(false), 3000);
+          if (!syncError) noticeTimer.current = setTimeout(() => setWindowNotice(false), needsRefresh ? 3000 : 1000);
           setStatus(`${pending ? `${pending} pending change(s) saved on device.` : ''} ${legacyCount ? 'Older unsynced flights are preserved separately for review.' : ''}`);
         }
       } catch (error) {
@@ -118,7 +129,7 @@ const FlightListScreen = () => {
       try {
         const store = await flightStore();
         const scope = await flightScope();
-        if (await store.pendingCount(scope) + await store.pendingCount(tailnumberScope(scope))) load();
+        if (await logbookPendingCount(store, [scope, aircraftScope(scope), tailnumberScope(scope)])) load();
       } catch (error) { /* A foreground refresh will display storage errors. */ }
     }, 30000);
     const foreground = AppState.addEventListener('change', state => {
@@ -143,7 +154,7 @@ const FlightListScreen = () => {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    refreshRef.current?.();
+    refreshRef.current?.(true);
   }, []);
 
   const renderItem = ({ item }) => (
@@ -178,7 +189,7 @@ const FlightListScreen = () => {
           height: noticeProgress.interpolate({ inputRange: [0, 1], outputRange: [0, noticeHeight] }) }}>
         <Text onLayout={event => setNoticeHeight(event.nativeEvent.layout.height)}
           style={{ position: 'absolute', left: 0, right: 0, paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: noticeError ? STYLES.danger : STYLES.muted }} accessibilityLiveRegion="polite">
-          {noticeError || (loadingFlights ? "Loading synced flights…" : "Synced last 100 entries")}
+          {noticeError || (loadingFlights ? "Loading synced flights…" : noticeMessage)}
         </Text>
       </Animated.View>
       {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
@@ -189,16 +200,12 @@ const FlightListScreen = () => {
         data={data}
         renderItem={renderItem}
         keyExtractor={item => item.local_id}
+        contentContainerStyle={{ padding: 12 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
-      <RoundButton
-        buttonSize={60}
-        iconName='plus'
-        buttonColor={STYLES.green}
-        onPress={() => navigation.navigate("FlightCreate")}
-      ></RoundButton>
+      <BottomCreateButton title="New Flight" onPress={() => navigation.navigate("FlightCreate")} />
     </SafeAreaView>
   );
 };
@@ -207,6 +214,7 @@ const createStyles = STYLES => StyleSheet.create({
   container: {
     width: "100%",
     flex: 1,
+    backgroundColor: STYLES.itemBackground,
   },
   item: {
     width: "100%",
@@ -223,9 +231,9 @@ const createStyles = STYLES => StyleSheet.create({
   },
   touchable: {
     alignItems: "center",
-    backgroundColor: STYLES.highlight,
+    borderRadius: 10,
     padding: 0,
-    marginTop: 2,
+    marginBottom: 8,
   },
 });
 

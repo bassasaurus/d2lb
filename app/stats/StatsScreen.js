@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView } from '../components/OverflowLists';
+import Card from '../components/Card';
 import Text from '../components/AppText';
 import { useAppTheme } from '../theme/ThemeProvider';
 import api from '../api/axiosConfig';
@@ -26,13 +27,12 @@ function Values({ row, fields }) {
 function Breakdown({ row, title, previewFields = [], primary = false }) {
   const [expanded, setExpanded] = useState(false);
   const { colors } = useAppTheme();
-  return <View style={{ backgroundColor: colors.surface, borderRadius: 10,
-    marginBottom: primary ? 20 : 8, paddingHorizontal: 14 }}>
+  return <Card style={{ marginBottom: primary ? 20 : 8, paddingVertical: 0 }}>
     <Pressable accessibilityRole="button" accessibilityLabel={`${title}, ${metricValue('total_time', row.total_time)}`}
       accessibilityHint="Expand or collapse details" accessibilityState={{ expanded }} onPress={() => setExpanded(value => !value)}
       style={{ minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
       <Text size={primary ? 18 : undefined} weight={primary ? '700' : '600'} style={{ flex: 1 }}>{title}</Text>
-      <View pointerEvents="none" style={{ position: 'absolute', left: '50%', marginLeft: -11, top: 2 }}>
+      <View pointerEvents="none" style={{ position: 'absolute', left: '50%', marginLeft: -11, top: '50%', marginTop: -11 }}>
         <MaterialCommunityIcons name={expanded ? 'chevron-up' : 'chevron-down'} color={colors.muted} size={22} />
       </View>
       <Text size={primary ? 22 : undefined} weight={primary ? '700' : '600'} numberOfLines={1}
@@ -46,7 +46,7 @@ function Breakdown({ row, title, previewFields = [], primary = false }) {
       <Text weight="600" style={{ marginTop: 12, marginBottom: 4 }}>Recency</Text>
       <Values row={row} fields={RECENCY} />
     </View>}
-  </View>;
+  </Card>;
 }
 export default function StatsScreen() {
   const { colors } = useAppTheme();
@@ -110,7 +110,7 @@ export default function StatsScreen() {
         {note ? <Text style={{ color: colors.muted, marginBottom: 6, textAlign: 'center' }}>{note}</Text> : null}
         <Text style={{ color: colors.muted, marginBottom: 16, textAlign: 'center' }}>Downloaded {new Date(snapshot.downloaded_at).toLocaleString()}</Text>
 
-        {all ? <Breakdown row={all} title="Total Flight Time" primary previewFields={METRICS.slice(1, 4)} />
+        {all ? <Breakdown row={all} title="Total" primary previewFields={METRICS.slice(1, 4)} />
           : <Text style={{ marginBottom: 16 }}>No overall total available yet.</Text>}
         {categories.length > 0 && <Text size={18} weight="600" style={{ marginBottom: 10 }}>By Category and Class</Text>}
         {categories.map((row, index) => <Breakdown key={`${row.total}:${index}`} row={row} title={row.total} previewFields={METRICS.slice(1, 4).filter(([key]) => Number(row[key]) > 0)} />)}

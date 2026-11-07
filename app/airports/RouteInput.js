@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, TextInput, View } from 'react-native';
+import { Platform, Pressable, TextInput, View } from 'react-native';
 import { useFormikContext } from 'formik';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Text from '../components/AppText';
@@ -54,8 +54,9 @@ export default function RouteInput({ onCheck }) {
         setFieldValue('route', normalizeRoute(value));
         setFieldValue('route_airport_choices', {});
       }} onBlur={handleBlur('route')} maxLength={50} selectionColor={colors.primary}
-      style={{ height: 40, marginTop: 10, borderWidth: 1, borderRadius: 5, paddingHorizontal: 10,
-        backgroundColor: colors.surface, color: colors.text, borderColor: invalid.size || errors.route ? colors.danger : colors.border }}>
+      style={{ height: Platform.OS === 'android' ? undefined : 40, minHeight: 40,
+        paddingVertical: Platform.OS === 'android' ? 8 : undefined, textAlignVertical: 'center', marginTop: 10, borderWidth: 1, borderRadius: 5, paddingHorizontal: 10,
+        textAlign: 'left', backgroundColor: colors.surface, color: colors.text, borderColor: invalid.size || errors.route ? colors.danger : colors.border }}>
       <Text>{route.split(/([^A-Z0-9]+)/).map((part, index) => <Text key={index} style={{ color: invalid.has(part) ? colors.danger : colors.text }}>{part}</Text>)}</Text>
     </TextInput>
     {messages.map((message, index) => <Text key={index} style={{ color: colors.danger, fontSize: 12, marginTop: 4 }}>{message}</Text>)}

@@ -1,6 +1,7 @@
 import { FlatList } from '../components/OverflowLists';
 import React, { useCallback, useState } from 'react';
 import { Button, RefreshControl, TouchableOpacity, View } from 'react-native';
+import Card from '../components/Card';
 import Text from '../components/AppText';
 import { useFocusEffect } from '@react-navigation/native';
 import { reviewAccess } from './reviewAccess';
@@ -43,17 +44,19 @@ export default function SyncReviewListScreen({ navigation }) {
     load();
     return () => { active = false; refresh.current = null; };
   }, [navigation]));
-  return <View style={{ flex: 1, padding: 16 }}>
+  return <View style={{ flex: 1, padding: 12, backgroundColor: STYLES.itemBackground }}>
     <Text accessibilityLiveRegion="polite" style={{ marginBottom: 12 }}>{status}</Text>
     <Button title={savedCopies ? 'Show unresolved issues' : `Saved copies (${history.length})`} onPress={() => setSavedCopies(value => !value)} />
     <FlatList data={savedCopies ? history : rows} keyExtractor={item => `${item.kind}:${savedCopies ? item.id : item.local_id}`}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); refresh.current?.(); }} />}
       ListEmptyComponent={<Text style={{ marginTop: 20 }}>{savedCopies ? 'Copies are saved here when you resolve an issue.' : 'Your pending uploads will retry when the app is connected.'}</Text>}
-      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" style={{ paddingVertical: 16, borderBottomWidth: 1, borderColor: STYLES.grey }}
+      renderItem={({ item }) => <TouchableOpacity accessibilityRole="button" style={{ marginTop: 8, borderRadius: 10 }}
         onPress={() => navigation.navigate('SyncConflict', { kind: item.kind, localId: item.local_id, historyId: savedCopies ? item.id : undefined })}>
+        <Card>
         <Text style={{ color: STYLES.blue, fontSize: 16, fontWeight: '600' }}>{recordTitle(item.kind, savedCopies ? item.local_record : item)}</Text>
         <Text>{savedCopies ? `Saved ${new Date(item.created_at).toLocaleString()}` : item.sync_error}</Text>
         {!savedCopies && item.sync_state === 'pending_delete' && <Text>Pending deletion</Text>}
+        </Card>
       </TouchableOpacity>} />
   </View>;
 }

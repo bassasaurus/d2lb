@@ -68,3 +68,12 @@ test('baseline comparison ignores object key ordering but detects edited values 
   assert.equal(fingerprint({ revision: 'a', route: 'IAH' }), fingerprint({ route: 'IAH', revision: 'a' }));
   assert.notEqual(fingerprint({ revision: 'a' }), fingerprint({ revision: 'b' }));
 });
+
+test('profile drafts are isolated by account and account/medical form', async () => {
+  const storage = memory();
+  const key = draftKey('owner', 'profile-account', 'new');
+  await createDraftStore(storage).save(key, {}, { first_name: 'Sam' });
+  assert.deepEqual((await createDraftStore(storage).load(key)).values, { first_name: 'Sam' });
+  assert.equal(await createDraftStore(storage).load(draftKey('other', 'profile-account', 'new')), null);
+  assert.equal(await createDraftStore(storage).load(draftKey('owner', 'profile-medical', 'new')), null);
+});

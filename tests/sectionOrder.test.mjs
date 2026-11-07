@@ -20,3 +20,15 @@ test('hidden sections retain their saved positions and boundary moves remain saf
   assert.deepEqual(moveSection(['vfr', 'ifr', 'type'], 'vfr', -1), ['vfr', 'ifr', 'type']);
   assert.deepEqual(moveSection(['vfr', 'ifr', 'type'], 'type', 20), ['vfr', 'ifr', 'type']);
 });
+
+test('live preview shifts neighbors out of the dragged cards slot before release', async () => {
+  const { sectionPreview } = await import('../app/stats/sectionOrder.mjs');
+  const layouts = { vfr: { y: 0, height: 200 }, ifr: { y: 200, height: 100 }, type: { y: 300, height: 80 } };
+  const down = sectionPreview(['vfr', 'ifr', 'type'], 'vfr', 350, layouts);
+  assert.deepEqual(down.order, ['ifr', 'type', 'vfr']);
+  assert.deepEqual(down.offsets, { ifr: -200, type: -200, vfr: 0 });
+  const up = sectionPreview(['vfr', 'ifr', 'type'], 'type', 0, layouts);
+  assert.deepEqual(up.offsets, { type: 0, vfr: 80, ifr: 80 });
+  const unchanged = sectionPreview(['vfr', 'ifr', 'type'], 'ifr', 224, layouts);
+  assert.deepEqual(unchanged.offsets, { vfr: 0, ifr: 0, type: 0 });
+});

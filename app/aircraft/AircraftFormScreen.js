@@ -1,3 +1,4 @@
+import Card from '../components/Card';
 import { ScrollView } from '../components/OverflowLists';
 import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
@@ -34,7 +35,8 @@ export default function AircraftFormScreen({ route, navigation }) {
   const savedNavigation = useRef(false);
   const draftHandle = useRef(null);
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+    <ScrollView style={{ backgroundColor: STYLES.itemBackground }} contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <Card>
       <DraftForm kind="aircraft" recordKey={record?.local_id || record?.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={aircraftValues(record)} validationSchema={schema} onSubmit={async (values, helpers) => {
         savedNavigation.current = false;
         try {
@@ -71,11 +73,12 @@ export default function AircraftFormScreen({ route, navigation }) {
           </>;
         }}
       </DraftForm>
+      </Card>
     </ScrollView>
   </KeyboardAvoidingView>;
 }
 const createStyles = STYLES => StyleSheet.create({
-  container: { padding: 16, paddingBottom: 36 }, label: { fontWeight: '600', marginBottom: 4 },
+  container: { padding: 12, paddingBottom: 24 }, label: { fontWeight: '600', marginBottom: 4 },
   group: { marginTop: 16 }, options: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   option: { padding: 10, borderWidth: 1, borderColor: STYLES.grey, borderRadius: 5 },
   selected: { borderColor: STYLES.blue, backgroundColor: STYLES.selected },

@@ -1,3 +1,4 @@
+import Card from '../components/Card';
 import { ScrollView } from '../components/OverflowLists';
 import { useMemo } from 'react';
 import React, { useState, useContext, useRef } from "react";
@@ -56,7 +57,7 @@ function LoginScreen() {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: STYLES.itemBackground }}>
       <KeyboardAvoidingView
         behavior={Platform.select({ android: undefined, ios: "position" })}
         keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
@@ -75,7 +76,7 @@ function LoginScreen() {
                 <AppText size={18}>No memory items. No limitations.</AppText>
               </View>
             </View>
-            <View style={{ paddingTop: 15 }}>
+            <Card style={{ marginTop: 20, marginBottom: 16 }}>
               {Context.sessionReason === 'expired' && <AppText>Your session is no longer valid. Sign in again. Your saved offline changes are still on this device.</AppText>}
               <Formik
                 validateOnMount={false}
@@ -161,7 +162,7 @@ function LoginScreen() {
                   </>
                 )}
               </Formik>
-            </View>
+            </Card>
             <ActivityModal
               visible={Context.activityVisibleValue}
             ></ActivityModal>

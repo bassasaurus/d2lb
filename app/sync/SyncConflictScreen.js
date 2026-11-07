@@ -2,6 +2,7 @@ import { ScrollView } from '../components/OverflowLists';
 import { flightScope, flightStore } from '../storage/flights';
 import React, { useCallback, useState, useContext } from 'react';
 import { Alert, Button, View } from 'react-native';
+import Card from '../components/Card';
 import Text from '../components/AppText';
 import { useFocusEffect } from '@react-navigation/native';
 import { reviewAccess } from './reviewAccess';
@@ -83,7 +84,8 @@ export default function SyncConflictScreen({ route, navigation }) {
   });
   const validation = item?.response && !item.response.code && !item.response.detail;
   const inUse = kind === 'aircraft' && item?.sync_state === 'pending_delete' && /in use/i.test(item.sync_error || '');
-  return <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
+  return <ScrollView style={{ backgroundColor: STYLES.itemBackground }} contentContainerStyle={{ padding: 12, paddingBottom: 24 }}>
+    <Card>
     {item && <Text style={{ fontSize: 20, fontWeight: '600', marginBottom: 12 }}>{recordTitle(kind, item)}</Text>}
     <Text accessibilityLiveRegion="polite">{message}</Text>
     {item?.sync_error && <Text style={{ color: STYLES.danger, marginTop: 12 }}>{item.sync_error}</Text>}
@@ -108,5 +110,6 @@ export default function SyncConflictScreen({ route, navigation }) {
           onPress={() => confirm('discard_local', 'Remove local draft?', 'The local draft will be saved under Saved copies, then removed from pending uploads.')} /></View>}
       </>}
     </>}
+    </Card>
   </ScrollView>;
 }

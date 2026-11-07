@@ -1,15 +1,26 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Animated, PanResponder, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppTheme } from '../theme/ThemeProvider';
-import { dropSection, moveSection } from '../stats/sectionOrder.mjs';
+import { dropSection, moveSection, sectionPreview } from '../stats/sectionOrder.mjs';
 
-function Section({ id, title, order, layouts, onChange, onDragChange, children }) {
+function Section({ id, title, order, layouts, onChange, onDragChange, onPreview, dragId, previewOffset = 0, children }) {
   const { colors } = useAppTheme();
   const offset = useRef(new Animated.Value(0)).current;
   const [dragging, setDragging] = useState(false);
-  const latest = useRef({ order, layouts, onChange, onDragChange });
-  latest.current = { order, layouts, onChange, onDragChange };
+  const latest = useRef({ order, layouts, onChange, onDragChange, onPreview });
+  latest.current = { order, layouts, onChange, onDragChange, onPreview };
+  useLayoutEffect(() => {
+    if (dragId === id) return;
+    if (!dragId) {
+      offset.stopAnimation();
+      offset.setValue(0);
+      return;
+    }
+    const animation = Animated.timing(offset, { toValue: previewOffset, duration: 160, useNativeDriver: true });
+    animation.start();
+    return () => animation.stop();
+  }, [dragId, id, previewOffset, offset]);
   const active = useRef(false);
   const timer = useRef(null);
   const dy = useRef(0);
@@ -22,6 +33,7 @@ function Section({ id, title, order, layouts, onChange, onDragChange, children }
     }
     active.current = false;
     setDragging(false);
+    current.onPreview(null);
     current.onDragChange(false);
     offset.setValue(0);
   };
@@ -32,6 +44,7 @@ function Section({ id, title, order, layouts, onChange, onDragChange, children }
       timer.current = setTimeout(() => {
         active.current = true;
         setDragging(true);
+        latest.current.onPreview(id, 0);
         latest.current.onDragChange(true);
       }, 200);
     },
@@ -42,12 +55,13 @@ function Section({ id, title, order, layouts, onChange, onDragChange, children }
         return;
       }
       offset.setValue(gesture.dy);
+      latest.current.onPreview(id, gesture.dy);
     },
     onPanResponderRelease: () => finish(true),
     onPanResponderTerminate: () => finish(false),
     onPanResponderTerminationRequest: () => !active.current,
   })).current;
-  useEffect(() => () => { clearTimeout(timer.current); if (active.current) latest.current.onDragChange(false); }, []);
+  useEffect(() => () => { clearTimeout(timer.current); if (active.current) { latest.current.onPreview(null); latest.current.onDragChange(false); } }, []);
   const handle = <View {...responder.panHandlers} accessible accessibilityRole="adjustable"
     accessibilityLabel={`Reorder ${title}`} accessibilityHint="Hold and drag up or down. Swipe up or down with a screen reader to move."
     accessibilityActions={[{ name: 'increment', label: 'Move down' }, { name: 'decrement', label: 'Move up' }]}
@@ -66,6 +80,13 @@ function Section({ id, title, order, layouts, onChange, onDragChange, children }
 }
 export default function ReorderableSections({ sections, order, onChange, onDragChange }) {
   const layouts = useRef({});
+  const [preview, setPreview] = useState(null);
+  const updatePreview = (id, movement = 0) => {
+    if (!id || !layouts.current[id]) { setPreview(null); return; }
+    const next = sectionPreview(order, id, layouts.current[id].y + 24 + movement, layouts.current);
+    setPreview(current => current?.id === id && current.order.join() === next.order.join()
+      ? current : { id, ...next });
+  };
   const visible = sections.filter(section => section.visible !== false);
   useEffect(() => {
     for (const key of Object.keys(layouts.current)) if (!visible.some(section => section.id === key)) delete layouts.current[key];
@@ -73,6 +94,7 @@ export default function ReorderableSections({ sections, order, onChange, onDragC
   return <View>{order.map(id => {
     const section = visible.find(item => item.id === id);
     return section ? <Section key={id} id={id} title={section.title} order={order} layouts={layouts}
-      onChange={onChange} onDragChange={onDragChange}>{section.render}</Section> : null;
+      onChange={onChange} onDragChange={onDragChange} onPreview={updatePreview}
+      dragId={preview?.id} previewOffset={preview?.offsets[id] || 0}>{section.render}</Section> : null;
   })}</View>;
 }

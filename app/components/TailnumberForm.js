@@ -1,3 +1,4 @@
+import Card from './Card';
 import { ScrollView } from './OverflowLists';
 import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
@@ -23,7 +24,8 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
   const draftHandle = useRef(null);
   const context = useContext(AppContext);
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+    <ScrollView style={{ backgroundColor: STYLES.itemBackground }} contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <Card>
       <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} onSubmit={async (values, helpers) => {
         savedNavigation.current = false;
         context.setActivityVisible(true);
@@ -65,11 +67,12 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           <Text style={{ color: STYLES.muted, marginTop: 12 }}>{initialValues.id ? 'A connection is required to update this tailnumber.' : 'Saved on this device first; uploads when connected.'}</Text>
         </>}
       </DraftForm>
+      </Card>
     </ScrollView>
   </KeyboardAvoidingView>;
 }
 const createStyles = STYLES => StyleSheet.create({
-  container: { padding: 16 }, heading: { fontSize: 20, fontWeight: '600' },
+  container: { padding: 12 }, heading: { fontSize: 20, fontWeight: '600' },
   label: { fontWeight: '600', marginTop: 16 }, rules: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   rule: { padding: 12, borderWidth: 1, borderColor: STYLES.grey, borderRadius: 5 },
   selected: { borderColor: STYLES.blue, backgroundColor: STYLES.selected }, error: { color: STYLES.danger, marginTop: 8 },
