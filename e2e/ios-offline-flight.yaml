@@ -1,0 +1,54 @@
+appId: host.exp.Exponent
+name: Offline flight survives an iPhone restart and syncs exactly once
+---
+- runFlow: flows/ios-sign-in.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: offline
+- runFlow: flows/ios-create-flight.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: saved-offline
+- stopApp
+- launchApp:
+    clearState: false
+- openLink: ${EXPO_URL}
+- runFlow:
+    when:
+      visible: '^Open$'
+    commands:
+      - tapOn: Open
+- extendedWaitUntil:
+    visible:
+      id: flight-list
+    timeout: 120000
+- extendedWaitUntil:
+    visible: '.*KAUS-KDFW.*'
+    timeout: 30000
+- assertNotVisible:
+    id: login-email
+- takeScreenshot: ios-flight-persisted-offline
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: reconnect
+# No user action should be needed to send the queued flight.
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: ios-synced
+- swipe:
+    start: 50%, 30%
+    end: 50%, 85%
+    duration: 600
+- extendedWaitUntil:
+    visible: Synced last 100 entries
+    timeout: 30000
+- assertVisible: '.*KAUS-KDFW.*'
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: refreshed
+- takeScreenshot: ios-offline-flight-synced

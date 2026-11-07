@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 AVD = 'D2LB_Screen_Tests'
 IOS_SIMULATOR = 'D2LB_iOS_Screen_Tests'
 IOS_EXPO_ID = 'host.exp.Exponent'
-IOS_SCENARIO = 'ios-flight-smoke'
+IOS_SCENARIOS = ('ios-flight-smoke', 'ios-offline-flight')
 
 
 def main():
@@ -53,8 +53,8 @@ def main():
     if args.ios_simulator:
         if sys.platform != 'darwin':
             parser.error('iOS screen tests require macOS and Xcode.')
-        if args.expo_apk or args.scenario not in (None, IOS_SCENARIO):
-            parser.error('Use --expo-app and the iOS smoke scenario with --ios-simulator.')
+        if args.expo_apk or args.scenario not in (None, *IOS_SCENARIOS):
+            parser.error('Use --expo-app and an iOS scenario with --ios-simulator.')
         if not args.expo_app:
             parser.error('Supply an iOS Simulator Expo Go bundle with --expo-app.')
         try:
@@ -65,10 +65,10 @@ def main():
         if (bundle.get('CFBundleIdentifier') != IOS_EXPO_ID
                 or 'iPhoneSimulator' not in bundle.get('CFBundleSupportedPlatforms', [])):
             parser.error('--expo-app must be Expo Go built for the iOS Simulator.')
-        args.scenario = IOS_SCENARIO
+        args.scenario = args.scenario or IOS_SCENARIOS[0]
     else:
-        if args.expo_app or args.scenario == IOS_SCENARIO:
-            parser.error('The iOS smoke test requires --ios-simulator and --expo-app.')
+        if args.expo_app or args.scenario in IOS_SCENARIOS:
+            parser.error('iOS screen tests require --ios-simulator and --expo-app.')
         if not args.expo_apk or not args.expo_apk.is_file():
             parser.error('Supply an existing Android Expo Go APK with --expo-apk.')
         if not 5554 <= args.emulator_port <= 5682 or args.emulator_port % 2:
@@ -122,6 +122,7 @@ def run_scenario(args, scenario):
     created_db = False
     claimed_device = False
     checkpoints = None
+    api = None
 
     def command(argv, **kwargs):
         return subprocess.run([str(x) for x in argv], env=env, cwd=ROOT, check=True, **kwargs)
@@ -133,6 +134,15 @@ def run_scenario(args, scenario):
                                    stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
         children.append(process)
         return process
+
+    def stop(process):
+        if process.poll() is None:
+            os.killpg(process.pid, signal.SIGTERM)
+            try:
+                process.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                os.killpg(process.pid, signal.SIGKILL)
+                process.wait()
 
     def wait_for(label, predicate, timeout=120, process=None):
         deadline = time.monotonic() + timeout
@@ -152,6 +162,24 @@ def run_scenario(args, scenario):
             return error.code == 401
         except (URLError, TimeoutError):
             return False
+
+    def start_api(log_name):
+        process = start([sys.executable, args.django / 'manage.py', 'runserver',
+                         f'127.0.0.1:{args.api_port}', '--noreload'], log_name, args.django)
+        wait_for('Django', lambda: http_ready(args.api_port, '/api/mobile/session/'), timeout=20, process=process)
+        return process
+
+    def set_online(online):
+        nonlocal api
+        if ios:
+            # Keep Metro reachable for the Expo Go restart. Only this run's API goes offline.
+            if online:
+                api = start_api('django-reconnected.log')
+            else:
+                stop(api)
+        else:
+            command(adb + ['shell', 'cmd', 'connectivity', 'airplane-mode', 'disable' if online else 'enable'])
+            command(adb + ['shell', 'svc', 'wifi', 'enable' if online else 'disable'])
 
     def backend(action, **kwargs):
         return command([sys.executable, ROOT / 'e2e/backend.py', action], **kwargs)
@@ -192,8 +220,7 @@ def run_scenario(args, scenario):
                     raise
                 print(result.stdout.strip(), flush=True)
                 if online is not None:
-                    command(adb + ['shell', 'cmd', 'connectivity', 'airplane-mode', 'disable' if online else 'enable'])
-                    command(adb + ['shell', 'svc', 'wifi', 'enable' if online else 'disable'])
+                    set_online(online)
                 completed.append(step)
                 print(f'CHECKPOINT PASS: {step}', flush=True)
                 self.send_response(200)
@@ -217,7 +244,7 @@ def run_scenario(args, scenario):
                                   capture_output=True, text=True, timeout=20)
             except subprocess.CalledProcessError as error:
                 raise RuntimeError('Cannot reach CoreSimulator. Check that Xcode Simulator is running '
-                                   'and run the smoke test from your Mac terminal.') from error
+                                   'and run the screen test from your Mac terminal.') from error
             simulators = json.loads(listing.stdout)['devices']
             if not any(item['udid'].upper() == device and item['name'] == IOS_SIMULATOR
                        and item['state'] == 'Booted' and item.get('isAvailable')
@@ -244,9 +271,8 @@ def run_scenario(args, scenario):
         with (output / 'migrations.log').open('w') as log:
             command([sys.executable, args.django / 'manage.py', 'migrate', '--noinput'], stdout=log, stderr=subprocess.STDOUT, timeout=180)
         backend('seed-validation' if scenario == 'flight-validation' else 'seed')
-        api = start([sys.executable, args.django / 'manage.py', 'runserver', f'127.0.0.1:{args.api_port}', '--noreload'], 'django.log', args.django)
+        api = start_api('django.log')
         metro = start([ROOT / 'node_modules/.bin/expo', 'start', '--go', '--localhost', '--port', args.metro_port], 'metro.log')
-        wait_for('Django', lambda: http_ready(args.api_port, '/api/mobile/session/'), process=api)
         wait_for('Metro', lambda: http_ready(args.metro_port, '/status'), process=metro)
         checkpoints = ThreadingHTTPServer(('127.0.0.1', 0), Checkpoint)
         threading.Thread(target=checkpoints.serve_forever, daemon=True).start()
@@ -270,13 +296,7 @@ def run_scenario(args, scenario):
                 except (OSError, subprocess.TimeoutExpired) as error:
                     print(f'Emulator cleanup warning: {error}', file=sys.stderr)
         for child in reversed(children):
-            if child.poll() is None:
-                os.killpg(child.pid, signal.SIGTERM)
-                try:
-                    child.wait(timeout=10)
-                except subprocess.TimeoutExpired:
-                    os.killpg(child.pid, signal.SIGKILL)
-                    child.wait()
+            stop(child)
         for log in logs:
             log.close()
         if created_db:

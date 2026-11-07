@@ -14,7 +14,8 @@
     "lint": "eslint App.js index.js app app.config.js scripts/*.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:screens:android": "sh scripts/screen-tests",
-    "test:screens:ios": "sh scripts/screen-tests --scenario ios-flight-smoke"
+    "test:screens:ios": "sh scripts/screen-tests --scenario ios-flight-smoke",
+    "test:screens:ios:offline": "sh scripts/screen-tests --scenario ios-offline-flight"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

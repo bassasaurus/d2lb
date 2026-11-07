@@ -1,0 +1,32 @@
+appId: host.exp.Exponent
+name: Sign in on iPhone
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+- openLink: ${EXPO_URL}
+- runFlow:
+    when:
+      visible: '^Open$'
+    commands:
+      - tapOn: Open
+- extendedWaitUntil:
+    visible:
+      id: login-email
+    timeout: 120000
+- tapOn:
+    id: login-email
+- inputText: screen-test@example.invalid
+- tapOn:
+    id: login-password
+- inputText: Disposable-screen-test-42
+- hideKeyboard
+- tapOn:
+    id: login-submit
+- extendedWaitUntil:
+    visible: New Flight
+    timeout: 30000
+- extendedWaitUntil:
+    notVisible: Sync in Progress
+    timeout: 30000
+- assertNotVisible: KAUS-KDFW

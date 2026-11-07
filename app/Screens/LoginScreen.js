@@ -3,7 +3,7 @@ import { ScrollView } from '../components/OverflowLists';
 import { useMemo } from 'react';
 import React, { useState, useContext, useRef } from "react";
 import { Alert, Platform, View, StyleSheet, Button, Image, KeyboardAvoidingView, Pressable } from 'react-native';
-import Text from '../components/AppText';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme } from '../theme/ThemeProvider';
 import AppTextInput from "../components/AppTextInput";
@@ -63,7 +63,7 @@ function LoginScreen() {
         keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
         enabled={true}
       >
-        <ScrollView>
+        <ScrollView keyboardShouldPersistTaps="handled">
           <View style={styles.container}>
             <View style={{ paddingTop: 100, alignItems: "center" }}>
               <Image
@@ -76,7 +76,7 @@ function LoginScreen() {
                 <AppText size={18}>No memory items. No limitations.</AppText>
               </View>
             </View>
-            <Card style={{ marginTop: 20, marginBottom: 16 }}>
+            <Card compact style={styles.card}>
               {Context.sessionReason === 'expired' && <AppText>Your session is no longer valid. Sign in again. Your saved offline changes are still on this device.</AppText>}
               <Formik
                 validateOnMount={false}
@@ -95,6 +95,7 @@ function LoginScreen() {
                 }) => (
                   <>
                     <AppTextInput
+                      style={styles.input}
                       testID="login-email"
                       placeholder='email'
                       autoCorrect={false}
@@ -108,55 +109,34 @@ function LoginScreen() {
                       autoComplete="username"
                       textContentType="username"
                     ></AppTextInput>
-                    <View>
-                      {errors.username ? (
-                        <Text style={styles.errors}>{errors.username}</Text>
-                      ) : (
-                        <View></View>
-                      )}
-                    </View>
-                    <AppTextInput
-                      testID="login-password"
-                      placeholder='password'
-                      autoCorrect={false}
-                      autoCapitalize={"none"}
-                      keyboardType={"default"}
-                      clearButtonMode={"while-editing"}
-                      password={true}
-                      onChangeText={handleChange("password")}
-                      isValid={errors.password ? false : true}
-                      textContentType='password'
-                      autoComplete='current-password'
-                      value={values.password}
-                      secureTextEntry={passwordSecure}
-                      onBlur={handleBlur("password")}
-                    ></AppTextInput>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <View>
-                        {errors.password ? (
-                          <Text style={styles.errors}>{errors.password}</Text>
-                        ) : (
-                          <View></View>
-                        )}
-                      </View>
-
+                    {errors.username && <AppText style={styles.errors}>{errors.username}</AppText>}
+                    <View style={styles.passwordField}>
+                      <AppTextInput
+                        style={[styles.input, styles.passwordInput]}
+                        testID="login-password"
+                        placeholder="password"
+                        autoCorrect={false}
+                        autoCapitalize="none"
+                        onChangeText={handleChange("password")}
+                        isValid={!errors.password}
+                        textContentType="password"
+                        autoComplete="current-password"
+                        value={values.password}
+                        secureTextEntry={passwordSecure}
+                        onBlur={handleBlur("password")}
+                      />
                       <Pressable
-                        onPress={() => setPasswordSecure(!passwordSecure)}
+                        accessibilityRole="button"
+                        accessibilityLabel={passwordSecure ? 'Show password' : 'Hide password'}
+                        onPress={() => setPasswordSecure(secure => !secure)}
+                        style={styles.passwordToggle}
                       >
-                        {passwordSecure ? (
-                          <AppText color={STYLES.muted}>show</AppText>
-                        ) : (
-                          <AppText color={STYLES.muted}>hide</AppText>
-                        )}
+                        <MaterialCommunityIcons name={passwordSecure ? 'eye-outline' : 'eye-off-outline'}
+                          size={22} color={STYLES.muted} accessible={false} />
                       </Pressable>
                     </View>
-
-                    <View style={{ marginTop: 10 }}>
+                    {errors.password && <AppText style={styles.errors}>{errors.password}</AppText>}
+                    <View style={{ marginTop: 4 }}>
                       <Button testID="login-submit" title={isSubmitting ? 'Signing in…' : 'Sign in'}
                         disabled={!isValid || isSubmitting || !values.username || !values.password}
                         onPress={handleSubmit} />
@@ -177,6 +157,19 @@ function LoginScreen() {
 
 const createStyles = STYLES => StyleSheet.create({
   container: { flexDirection: "column", marginRight: 10, marginLeft: 10 },
+  card: { marginTop: 14, marginBottom: 8 },
+  input: { marginTop: 0 },
+  passwordField: { marginTop: 8 },
+  passwordInput: { paddingRight: 46 },
+  passwordToggle: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 1,
+    width: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   errors: {
     color: STYLES.danger,
   },

@@ -1,0 +1,55 @@
+appId: host.exp.Exponent
+name: Save a flight on iPhone
+---
+- tapOn: New Flight
+- tapOn:
+    id: flight-date
+- tapOn:
+    text: Done
+- extendedWaitUntil:
+    notVisible: Done
+    timeout: 5000
+- tapOn:
+    id: flight-route
+- inputText: KAUS-KDFW
+- hideKeyboard
+- assertVisible:
+    id: aircraft-picker
+- tapOn:
+    id: tailnumber-input
+- tapOn: Select N1234
+- assertVisible:
+    id: tailnumber-input
+    text: '^N1234$'
+- tapOn:
+    id: flight-duration
+- inputText: '1.2'
+# XCTest reports focused=false here even with the numeric keyboard open.
+- assertVisible:
+    id: flight-duration
+    text: '^1\.2$'
+- assertVisible:
+    id: tailnumber-input
+    text: '^N1234$'
+# The numeric keypad has no dismiss key. Tap a noninteractive form label.
+- tapOn: '^Flight role$'
+- scrollUntilVisible:
+    element: PIC
+    direction: DOWN
+- tapOn: PIC
+- scrollUntilVisible:
+    element:
+      id: flight-save
+    direction: DOWN
+- assertVisible:
+    id: flight-save
+    enabled: true
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible:
+      id: flight-list
+    timeout: 30000
+- extendedWaitUntil:
+    visible: '.*KAUS-KDFW.*'
+    timeout: 30000

@@ -59,7 +59,7 @@ function FlightCreateScreen() {
   if (defaults === null) return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator /></View>;
 
   return (
-    <FlightForm method={create} initialValues={initialValues} noDefaultAircraft={!defaults}
+    <FlightForm commitDateOnSelection method={create} initialValues={initialValues} noDefaultAircraft={!defaults}
       onChooseDefault={() => navigation.navigate("Aircraft", { screen: "AircraftList", initial: false })} onSaved={() => navigation.popTo("FlightList")}></FlightForm>
   );
 }

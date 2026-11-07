@@ -36,7 +36,7 @@ function NightPairWarning({ values }) {
   return message ? <AppText color={colors.danger} accessibilityLiveRegion="polite" style={{ marginTop: 4 }}>{message}</AppText> : null;
 }
 
-function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false, onChooseDefault }) {
+function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false, onChooseDefault, commitDateOnSelection = false }) {
   const { styles: STYLES, isDark } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const { width: windowWidth, fontScale } = useWindowDimensions();
@@ -68,6 +68,11 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
   const dashNotSpace = (str) => {
     str = str.replace(/\s/g, "-");
     return str;
+  };
+
+  const commitDate = (date, setFieldValue) => {
+    setFieldValue("date", moment(date).format("M/D/YYYY"));
+    setCalVisible(false);
   };
 
   const required = "Required";
@@ -729,10 +734,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                       <View style={styles.calendarSheet}>
                         <View style={styles.calendarActions}>
                           <Button title="Cancel" onPress={() => setCalVisible(false)} />
-                          <Button title="Done" onPress={() => {
-                            setFieldValue("date", moment(calendarDate).format("M/D/YYYY"));
-                            setCalVisible(false);
-                          }} />
+                          <Button title="Done" onPress={() => commitDate(calendarDate, setFieldValue)} />
                         </View>
                         <DateTimePicker
                           value={calendarDate}
@@ -740,8 +742,9 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                           display="inline"
                           themeVariant={isDark ? "dark" : "light"}
                           style={{ width: "100%" }}
-                          onChange={(event, date) => {
-                            if (date && event.type !== "dismissed") setCalendarDate(date);
+                          onValueChange={(_, date) => {
+                            if (commitDateOnSelection) commitDate(date, setFieldValue);
+                            else setCalendarDate(date);
                           }}
                         />
                       </View>
