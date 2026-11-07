@@ -93,7 +93,7 @@ export default function AircraftListScreen({ navigation }) {
     </TouchableOpacity>}
     {deletions.map(item => <View key={item.local_id} style={{ marginBottom: 12 }}>
       <Text>{item.aircraft_type}: {item.sync_error || 'Deletion pending upload'}</Text>
-      <Button title="Cancel deletion" onPress={async () => {
+      <Button color={STYLES.blue} title="Cancel deletion" onPress={async () => {
         try {
           if (item.sync_error) {
             navigation.navigate('SyncReview', { screen: 'SyncConflict', params: { kind: 'aircraft', localId: item.local_id }, initial: false });
@@ -117,7 +117,7 @@ export default function AircraftListScreen({ navigation }) {
         </TouchableOpacity>
         <View style={{ alignItems: 'center' }}>
           <Text size={12} style={{ color: STYLES.muted }}>Default</Text>
-          <Switch accessibilityLabel={`Use ${item.aircraft_type} by default for new flights`}
+          <Switch trackColor={{ false: STYLES.grey, true: STYLES.blue }} ios_backgroundColor={STYLES.grey} accessibilityLabel={`Use ${item.aircraft_type} by default for new flights`}
             value={defaultType === item.aircraft_type} disabled={!defaultScope || savingDefault}
             onValueChange={enabled => changeDefault(item, enabled)} />
         </View>

@@ -68,7 +68,7 @@ export default function AircraftFormScreen({ route, navigation }) {
             {FLAGS.map(([key, label]) => <View key={key} style={styles.flag}><Text>{label}</Text><Switch value={values[key]} onValueChange={value => setFieldValue(key, value)} accessibilityLabel={label} /></View>)}
             {submitCount > 0 && Object.values(errors).map((error, index) => <Text key={index} style={styles.error}>{String(error)}</Text>)}
             {status && <Text style={styles.error} accessibilityLiveRegion="polite">{status}</Text>}
-            <Button title={isSubmitting ? 'Saving…' : 'Save aircraft'} disabled={isSubmitting} onPress={handleSubmit} />
+            <Button color={STYLES.blue} title={isSubmitting ? 'Saving…' : 'Save aircraft'} disabled={isSubmitting} onPress={handleSubmit} />
             <Text style={styles.help}>Saved on this device first; uploads when connected.</Text>
           </>;
         }}
