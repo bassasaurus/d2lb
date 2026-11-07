@@ -495,3 +495,16 @@ list/detail and Flight Detail/map visually reviewed in iOS Simulator. Not commit
 - Django renders a PNG into the existing Signature model for website/PDF compatibility; stale replacements rejected.
 - Portrait is restored on save, cancel/navigation away; Expo screen-orientation added with portrait startup configuration.
 - Instructor endorsement signing remains a separate future workflow with its own document/signing records.
+
+### Internet reconnect auto-sync
+- App-level sync watches confirmed internet reachability, not just Wi-Fi/radio state.
+- Pending flights, aircraft/default preferences, and tailnumbers upload when connectivity returns while active; rechecks on foreground.
+- Existing queue deduplication, account boundaries, retries, conflict review, and confirmed-sync animations are retained.
+- No operating-system background task is scheduled; a suspended app checks when reopened.
+
+### Record-level issue resolution
+- Removed general sync-manager navigation; only affected records show Update needed / Review.
+- Temporary network failures retry quietly. Blocked validation and conflicts remain visible on flights, aircraft, default preferences, and tailnumbers.
+- Device/online versions appear as selectable themed cards; Choose this flight stays disabled until a choice is made.
+- Existing revision checks, account isolation, deletion protections, and recovery archives are preserved.
+- Compact list cards and a 7px success indicator; confirmed uploads animate for 0.75 seconds, including offline/reconnect uploads.

@@ -1,3 +1,4 @@
+import useAutoSync from './app/api/useAutoSync';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import LogoLoading from './app/components/LogoLoading';
 import { StatusBar } from "expo-status-bar";
@@ -32,6 +33,7 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
   const isSignedIn = Boolean(auth.token);
+  useAutoSync(auth);
   const restoreSession = () => {
     setSessionError(false);
     session.restore().catch(() => setSessionError(true));

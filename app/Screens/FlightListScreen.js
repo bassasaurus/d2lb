@@ -1,3 +1,6 @@
+import { reviewRecord } from '../components/RecordIssue';
+import { internetAvailable, subscribeAutoSync } from '../api/autoSync.mjs';
+import { completedFlightSyncs, flightSyncFeedback } from '../api/flightSyncFeedback.mjs';
 import { FlatList } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { shouldRefreshLogbook, logbookPendingCount } from '../api/logbookRefresh.mjs';
@@ -27,7 +30,8 @@ const FlightListScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
   const [data, setData] = useState([]);
-  const [issueCount, setIssueCount] = useState(0);
+  const [syncEvents, setSyncEvents] = useState({});
+  const feedbackPartition = React.useRef(null);
   const [windowNotice, setWindowNotice] = useState(true);
   const [loadingFlights, setLoadingFlights] = useState(false);
   const [noticeMessage, setNoticeMessage] = useState("Loading saved flights…");
@@ -58,9 +62,15 @@ const FlightListScreen = () => {
       }
       try {
         const partition = await tokenPartition();
+        if (feedbackPartition.current !== partition) {
+          feedbackPartition.current = partition;
+          if (active) setSyncEvents({});
+        }
         let scope = await flightScope();
         const store = await flightStore();
-        const local = await store.list(scope);
+        const readRows = async account => [...await store.list(account),
+          ...(await store.deletedRecords(account)).filter(row => row.needs_attention)];
+        const local = await readRows(scope);
         if (active) setData(local);
         const beforePending = await logbookPendingCount(store, [scope, aircraftScope(scope), tailnumberScope(scope)]);
         const snapshot = await store.reference(scope, 'flight-window-sync');
@@ -71,7 +81,7 @@ const FlightListScreen = () => {
           if (active) setLoadingFlights(true);
           try {
             const network = await NetInfo.fetch();
-            if (!network.isConnected) throw new Error('Offline');
+            if (!internetAvailable(network)) throw new Error('Offline');
             try {
               scope = await syncFlightData();
             } catch (error) {
@@ -86,32 +96,28 @@ const FlightListScreen = () => {
         }
         if (await tokenPartition() !== partition) return;
         scope = await flightScope();
-        const rows = await store.list(scope);
+        const rows = await readRows(scope);
         const pending = await logbookPendingCount(store, [scope, aircraftScope(scope), tailnumberScope(scope)]);
-        const issues = [...await store.errors(scope), ...await store.errors(aircraftScope(scope)), ...await store.errors(tailnumberScope(scope))];
         const legacy = await AsyncStorage.getItem('offlineFlights');
         const legacyCount = legacy ? JSON.parse(legacy).length : 0;
         if (active) {
+          const completed = [...new Set([...completedFlightSyncs(local, rows), ...flightSyncFeedback.take(scope, rows)])];
+          if (completed.length) {
+            const confirmedAt = Date.now();
+            setSyncEvents(previous => ({ ...previous, ...Object.fromEntries(completed.map(key => [key, confirmedAt])) }));
+          }
           setData(rows);
-          setIssueCount(issues.length);
-          setNoticeMessage(needsRefresh ? "Synced last 100 entries" : "No pending changes.\nNo sync required.");
+          setNoticeMessage(pending ? "Saved on this device." : !downloaded ? "Showing saved flights." : needsRefresh ? "Synced last 100 entries" : "No sync required.");
           clearTimeout(noticeTimer.current);
-          const syncError = [
-            !downloaded ? 'Showing saved flights; sync could not finish.' : '',
-            serverUpgradeNeeded ? 'Uploads waiting for the server sync update.' : '',
-            downloaded && pending && !issues.length ? 'Some changes are still waiting to sync.' : '',
-            issues.length ? `Needs attention: ${issues.slice(0, 3).map(issue => `${issue.route}: ${issue.message}`).join(' ')}` : '',
-          ].filter(Boolean).join(' ');
-          const retryMessage = syncError ? `${syncError}\nPull down to retry.` : '';
-          setNoticeError(retryMessage);
+          setNoticeError(serverUpgradeNeeded ? 'App update required.' : '');
           setWindowNotice(true);
-          if (!syncError) noticeTimer.current = setTimeout(() => setWindowNotice(false), needsRefresh ? 3000 : 1000);
-          setStatus(`${pending ? `${pending} pending change(s) saved on device.` : ''} ${legacyCount ? 'Older unsynced flights are preserved separately for review.' : ''}`);
+          noticeTimer.current = setTimeout(() => setWindowNotice(false), needsRefresh ? 3000 : 1000);
+          setStatus(`${legacyCount ? 'Older flights need review.' : ''}`);
         }
       } catch (error) {
         if (active) {
           setWindowNotice(true);
-          setNoticeError('Unable to open local logbook.\nPull down to retry.');
+          setNoticeError('Could not open logbook.\nPull down to retry.');
           setStatus('');
         }
       } finally {
@@ -135,10 +141,27 @@ const FlightListScreen = () => {
     const foreground = AppState.addEventListener('change', state => {
       if (state === 'active') load();
     });
+    const stopAutoSync = subscribeAutoSync(event => {
+      if (!active) return;
+      if (event === 'started') {
+        setNoticeError('');
+        setLoadingFlights(true);
+        setWindowNotice(true);
+      } else if (event === 'completed') load();
+      else if (event === 'failed') {
+        setLoadingFlights(false);
+        setNoticeError('');
+        setNoticeMessage('Saved on this device.');
+        clearTimeout(noticeTimer.current);
+        noticeTimer.current = setTimeout(() => setWindowNotice(false), 1500);
+        setWindowNotice(true);
+      }
+    });
     let wasConnected;
     const unsubscribe = NetInfo.addEventListener(state => {
-      if (wasConnected === false && state.isConnected) load();
-      wasConnected = state.isConnected;
+      const online = internetAvailable(state);
+      if (wasConnected === false && online) load();
+      wasConnected = online;
     });
     return () => {
       active = false;
@@ -148,6 +171,7 @@ const FlightListScreen = () => {
       foreground.remove();
       clearInterval(retryTimer);
       unsubscribe();
+      stopAutoSync();
     };
   }, []));
   const refreshRef = React.useRef(null);
@@ -162,12 +186,13 @@ const FlightListScreen = () => {
       activeOpacity={0.7}
       style={styles.touchable}
       onPress={() =>
-        navigation.navigate("FlightDetail", {
+        item.needs_attention ? reviewRecord(navigation, "flight", item) : navigation.navigate("FlightDetail", {
           item: item,
         })
       }
     >
-      <FlightItem
+      <FlightItem item={item} navigation={navigation}
+        syncEvent={syncEvents[item.local_id]}
         id={item.sync_state === "synced" ? item.id : null}
         date={item.date}
         route={item.route}
@@ -189,15 +214,13 @@ const FlightListScreen = () => {
           height: noticeProgress.interpolate({ inputRange: [0, 1], outputRange: [0, noticeHeight] }) }}>
         <Text onLayout={event => setNoticeHeight(event.nativeEvent.layout.height)}
           style={{ position: 'absolute', left: 0, right: 0, paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: noticeError ? STYLES.danger : STYLES.muted }} accessibilityLiveRegion="polite">
-          {noticeError || (loadingFlights ? "Loading synced flights…" : noticeMessage)}
+          {noticeError || (loadingFlights ? "Sync in Progress" : noticeMessage)}
         </Text>
       </Animated.View>
       {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
-      {issueCount > 0 && <TouchableOpacity accessibilityRole="button" onPress={() => navigation.navigate('SyncReview', { screen: 'SyncReviewList' })}>
-        <Text style={{ padding: 10, textAlign: 'center', color: STYLES.danger }}>Resolve sync problems ({issueCount})</Text>
-      </TouchableOpacity>}
       <FlatList
         data={data}
+        extraData={syncEvents}
         renderItem={renderItem}
         keyExtractor={item => item.local_id}
         contentContainerStyle={{ padding: 12 }}
@@ -233,7 +256,7 @@ const createStyles = STYLES => StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     padding: 0,
-    marginBottom: 8,
+    marginBottom: 6,
   },
 });
 

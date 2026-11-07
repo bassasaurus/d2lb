@@ -1,26 +1,38 @@
-import { useMemo } from 'react';
 import React, { useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import Card from '../components/Card';
 import Text from '../components/AppText';
+import PlatformActionButton from '../components/PlatformActionButton';
 import { compareVersions } from './comparison.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
-export default function VersionComparison({ kind, local, server }) {
-  const { styles: STYLES } = useAppTheme();
-  const styles = useMemo(() => createStyles(STYLES), [STYLES]);
+
+export default function VersionComparison({ kind, local, server, selected, onSelect, localEnabled = false, serverEnabled = false }) {
+  const { colors } = useAppTheme();
   const [showAll, setShowAll] = useState(false);
   const rows = compareVersions(kind, local, server);
-  const changes = rows.filter(row => row.changed);
-  return <View style={{ marginVertical: 16 }}>
-    <View style={styles.columns}><Text style={styles.column}>On this device</Text><Text style={styles.column}>On the server</Text></View>
-    {!changes.length && <Text style={{ marginVertical: 12 }}>The displayed values match. The record or its related data may have changed since it was downloaded.</Text>}
-    {(showAll ? rows : changes).map(row => <View key={row.key} style={styles.row}>
-      <Text style={{ fontWeight: '600', color: row.changed ? STYLES.blue : STYLES.black }}>{row.label}</Text>
-      <View style={styles.columns}><Text selectable style={styles.column}>{row.localValue}</Text><Text selectable style={styles.column}>{row.serverValue}</Text></View>
-    </View>)}
-    <Button title={showAll ? 'Show differences only' : 'Show all fields'} onPress={() => setShowAll(value => !value)} />
+  const differences = rows.filter(row => row.changed);
+  const visible = showAll || !differences.length ? rows : differences;
+  return <View style={{ gap: 12, marginVertical: 12 }}>
+    {[["local", 'On this device', localEnabled], ["server", 'Saved online', serverEnabled]].map(([key, title, enabled]) =>
+      <Pressable key={key} disabled={!enabled} accessibilityRole={enabled ? 'radio' : undefined}
+        accessibilityState={{ checked: selected === key, disabled: !enabled }} accessibilityLabel={`Keep record ${title.toLowerCase()}`}
+        onPress={() => onSelect(key)}>
+        <Card style={{ borderWidth: 2, borderColor: selected === key ? colors.primary : colors.border,
+          backgroundColor: selected === key ? colors.selected : colors.surface }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12, marginBottom: 8 }}>
+            <Text size={18} weight="600">{title}</Text>
+            {enabled && <Text color={colors.primary} weight="600">{selected === key ? '✓ Selected' : 'Select'}</Text>}
+          </View>
+          {key === 'server' && !server ? <Text color={colors.muted}>This record was deleted online.</Text>
+            : visible.map(row => <View key={row.key} style={{ flexDirection: 'row', gap: 12, paddingVertical: 5 }}>
+              <Text color={colors.muted} style={{ flex: 1 }}>{row.label}</Text>
+              <Text selectable weight={row.changed ? '600' : undefined} style={{ flex: 1, textAlign: 'right' }}>
+                {key === 'local' ? row.localValue : row.serverValue}
+              </Text>
+            </View>)}
+          {key === 'local' && local.sync_state === 'pending_delete' && <Text color={colors.danger} style={{ marginTop: 8 }}>Deletion requested on this device.</Text>}
+        </Card>
+      </Pressable>)}
+    <PlatformActionButton title={showAll ? 'Show differences' : 'Show all details'} variant="text" onPress={() => setShowAll(value => !value)} />
   </View>;
 }
-const createStyles = STYLES => StyleSheet.create({
-  columns: { flexDirection: 'row', gap: 12, marginTop: 6 }, column: { flex: 1, flexShrink: 1 },
-  row: { paddingVertical: 12, borderBottomWidth: 1, borderColor: STYLES.grey },
-});

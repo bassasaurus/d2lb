@@ -1,3 +1,4 @@
+import RecordIssue, { reviewRecord } from '../components/RecordIssue';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from '../components/OverflowLists';
 import { listTailnumbers } from '../storage/tailnumbers';
@@ -61,7 +62,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
     <Text>Category: {CATEGORY_CHOICES.find(([key]) => key === item.aircraft_category)?.[1] || 'Not set'}</Text>
     <Text style={{ marginVertical: 8 }}>Class: {CLASS_CHOICES.find(([key]) => key === item.aircraft_class)?.[1] || 'Not set'}</Text>
     {[...ENGINE_CHOICES, ...WEIGHT_CHOICES, ...FLAGS].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
-    {item.sync_state !== 'synced' && <Text style={{ color: STYLES.danger, marginVertical: 16 }}>{item.sync_error || 'Saved on this device — pending upload'}</Text>}
+    <RecordIssue item={item} kind="aircraft" navigation={navigation} />
     <View style={{ marginTop: 4 }}>
     <RecordActions recordName="aircraft"
       onUpdate={() => navigation.navigate('AircraftForm', { item })}
@@ -79,9 +80,10 @@ export default function AircraftDetailScreen({ route, navigation }) {
         contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {[...tailnumbers].sort((a, b) => a.registration.localeCompare(b.registration, 'en', { numeric: true, sensitivity: 'base' })).map((tail, index) =>
           <TouchableOpacity key={tail.local_id || tail.id} accessibilityRole="button" accessibilityLabel={`View ${tail.registration}`}
-            onPress={() => navigation.navigate('TailnumberDetail', { item: tail })}
+            onPress={() => tail.needs_attention ? reviewRecord(navigation, 'tailnumber', tail) : navigation.navigate('TailnumberDetail', { item: tail })}
             style={{ width: `${100 / columns}%`, minHeight: 48, justifyContent: 'center', paddingHorizontal: 8 }}>
-            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: STYLES.blue, textAlign: index % columns === columns - 1 ? 'right' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'left' }}>{tail.registration}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: tail.needs_attention ? STYLES.danger : STYLES.blue, textAlign: index % columns === columns - 1 ? 'right' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'left' }}>{tail.registration}</Text>
+            {tail.needs_attention && <Text size={11} color={STYLES.danger}>Update needed</Text>}
           </TouchableOpacity>)}
       </ScrollView>
     </View>}
