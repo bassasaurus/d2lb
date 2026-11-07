@@ -22,11 +22,17 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    outputs:
+      number: ${{ steps.candidate.outputs.number }}
+      head_sha: ${{ steps.candidate.outputs.head_sha }}
     permissions:
       contents: write
       pull-requests: write
-      actions: write
     steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - name: Confirm main still matches the checked commit
         id: head
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
@@ -45,19 +51,68 @@ jobs:
           target-branch: main
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-      # Token-created PRs do not run normal PR checks automatically without approval.
-      # Explicit dispatch runs the same read-only checks, with no personal token.
-      - name: Run checks on the release PR
-        if: steps.release.outputs.pr != ''
+      - name: Select and validate the pending release
+        id: candidate
+        if: steps.head.outputs.current == 'true'
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
-        env:
-          RELEASE_PR: ${{ steps.release.outputs.pr }}
         with:
           script: |
-            const pr = JSON.parse(process.env.RELEASE_PR);
-            await github.rest.actions.createWorkflowDispatch({
-              ...context.repo,
-              workflow_id: 'mobile-checks.yml',
-              ref: pr.headBranchName,
+            const { findReleaseCandidate } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/release-pr.mjs`);
+            const pr = await findReleaseCandidate({ github, context });
+            if (pr) {
+              core.setOutput('number', pr.number);
+              core.setOutput('head_sha', pr.head.sha);
+              core.info(`Checking release PR #${pr.number} at ${pr.head.sha}.`);
+            } else {
+              core.info('No current release PR to merge.');
+            }
+
+  # Reuse the trusted workflow with read-only permissions on the exact release SHA.
+  # This also avoids approval prompts on bot-created pull_request workflow runs.
+  verify_release:
+    needs: release
+    if: needs.release.outputs.number != ''
+    uses: ./.github/workflows/mobile-checks.yml
+    with:
+      ref: ${{ needs.release.outputs.head_sha }}
+
+  merge_release:
+    needs: [release, verify_release]
+    if: needs.verify_release.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # Load merge logic from the checked main commit, never from the release PR.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Merge the checked release
+        id: merge
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          RELEASE_NUMBER: ${{ needs.release.outputs.number }}
+          CHECKED_HEAD: ${{ needs.release.outputs.head_sha }}
+          CHECKS_RESULT: ${{ needs.verify_release.result }}
+        with:
+          script: |
+            const { mergeCheckedRelease } = await import(`${process.env.GITHUB_WORKSPACE}/scripts/release-pr.mjs`);
+            const merged = await mergeCheckedRelease({
+              github, context, number: Number(process.env.RELEASE_NUMBER),
+              expectedHead: process.env.CHECKED_HEAD, checksResult: process.env.CHECKS_RESULT,
             });
-            core.info(`Requested mobile checks for release PR #${pr.number}.`);
+            core.setOutput('merged', merged);
+            core.info(merged ? 'Release merged.' : 'Release or main changed; a new check run is needed.');
+      # GITHUB_TOKEN merges do not trigger the push workflow. Finish tagging here.
+      - name: Create the version tag and GitHub Release
+        if: steps.merge.outputs.merged == 'true'
+        uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target-branch: main
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          skip-github-pull-request: true

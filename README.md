@@ -82,7 +82,7 @@ version with **Development** in Expo Go. Installed apps show their native versio
 and build number, so an updated JavaScript bundle cannot mislabel the installed
 binary. Expo Go's own version/build are never shown as the app's version.
 
-After this setup reaches `main`, GitHub's **Prepare mobile release** workflow
+After a merge to `main`, GitHub's **Prepare mobile release** workflow
 checks the app and lets Release Please maintain a release PR. Use conventional
 PR titles and **Squash and merge** for feature branches:
 
@@ -99,8 +99,8 @@ Use `!` only for a breaking change. Multiple merged changes accumulate in one
 release PR, with the highest applicable version bump.
 
 The release PR updates `package.json`, `package-lock.json`, the release manifest,
-and `CHANGELOG.md`. Review its checks and **merge it when ready to release**.
-That merge creates a Git tag and GitHub Release; it does not build or submit an
+and `CHANGELOG.md`. The workflow **automatically merges it after its checks pass**,
+then creates the Git tag and GitHub Release. It does not build or submit an
 app to Apple or Google, or publish an Expo update. The initial manifest is
 `0.0.1`; `last-release-sha` in `release-please-config.json` excludes development
 history before this setup, including history after the old `v0.0.1` tag.
@@ -109,12 +109,19 @@ Release Please handles subsequent version changes.
 
 The workflows use GitHub's built-in token; no new token or secret is needed.
 Repository Settings → Actions → General must allow GitHub Actions to create
-pull requests (already enabled for this repository). Because token-created PRs
-need approval for normal PR-triggered workflows, the release workflow explicitly
-dispatches **Mobile checks** on the release branch. That run checks the actual
-release changes without needing a personal token. To retry, use Actions →
-Mobile checks → Run workflow and select the release PR's branch. To retry
-preparing a release, run **Prepare mobile release** on `main`.
+pull requests (already enabled for this repository). The release workflow calls
+**Mobile checks** directly on the release PR's exact commit, with read-only
+permissions, so bot PR workflow approval prompts do not block the release.
+Only the release bot's PR on its designated branch can merge automatically.
+The guard allows only version changes in the package files and release manifest,
+plus the changelog. It rechecks the PR and main before merging and will not merge
+a changed head using an older successful check. Ordinary feature PRs are still
+merged normally. A failed release check leaves its PR open; after resolving the
+failure, retry **Prepare mobile release** on `main` from Actions → Run workflow.
+Existing release PRs are refreshed from main and checked again on retries,
+including when only CI or documentation changed. Tagging runs in
+the same workflow because a merge by GitHub's built-in token does not start
+another push workflow.
 
 Native build numbers are separate. `eas.json` already uses remote version
 management and `production.autoIncrement: true`: each production EAS build gets
