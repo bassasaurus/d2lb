@@ -58,39 +58,40 @@ export default function ProfileScreen({ navigation }) {
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollView contentContainerStyle={{ padding: 12 }} refreshControl={<RefreshControl refreshing={refreshing}
       onRefresh={() => setRefreshKey(value => value + 1)} />}>
+      {profile && <Text color={colors.muted} style={{ textAlign: 'center', marginBottom: 12 }}>Downloaded {new Date(profile.downloaded_at).toLocaleString()}</Text>}
       {message ? <Text color={colors.danger} style={{ textAlign: 'center', marginBottom: 12 }} accessibilityLiveRegion="polite">{message}</Text> : null}
       {profile && <>
-        <Card style={{ marginBottom: 12 }}>
+        <Card compact style={{ marginBottom: 8 }}>
           <Text size={18} weight="600">Account</Text>
           <Detail label="Name" value={[account.first_name, account.last_name].filter(Boolean).join(' ') || account.username} />
           <Detail label="Email" value={account.email} />
           <Detail label="Company" value={account.company} />
           <Detail label="Joined" value={profileDate(account.joined)} />
-          <PlatformActionButton title="Update account" variant="text" onPress={() => navigation.navigate('ProfileEdit', { section: 'account', values: {
+          <PlatformActionButton title="Update Account" variant="text" onPress={() => navigation.navigate('ProfileEdit', { section: 'account', values: {
             first_name: account.first_name, last_name: account.last_name, company: account.company } })} />
         </Card>
-        <Card style={{ marginBottom: 12 }}>
+        <Card compact style={{ marginBottom: 8 }}>
           <Text size={18} weight="600">Subscription</Text>
           <Detail label="Status" value={subscription.status} />
           {subscription.plan && <Detail label="Plan" value={subscription.plan} />}
           {subscription.end_date && <Detail label={['Free trial', 'Expiring soon'].includes(subscription.status) ? 'Trial ends' : subscription.status === 'Active' ? 'Next billing date' : 'Access ends'} value={profileDate(subscription.end_date)} />}
         </Card>
-        <Card style={{ marginBottom: 12 }}>
+        <Card compact style={{ marginBottom: 8 }}>
           <Text size={18} weight="600">Medical Certificate</Text>
           <Detail label="Issued" value={profileDate(medical.medical_issue_date)} />
           <Detail label="Class" value={medical.first_class ? 'First Class' : medical.second_class ? 'Second Class' : medical.third_class ? 'Third Class' : 'Not recorded'} />
           <Detail label="Over 40" value={medical.over_40 ? 'Yes' : 'No'} />
-          <PlatformActionButton title="Update medical info" variant="text" onPress={() => navigation.navigate('ProfileEdit', { section: 'medical', values: medical })} />
+          <Detail label="Due Date" value={profileDate(profile.medical_due_date)} />
+          <PlatformActionButton title="Update Medical" variant="text" onPress={() => navigation.navigate('ProfileEdit', { section: 'medical', values: medical })} />
         </Card>
-        <Card style={{ marginBottom: 12 }}>
+        <Card compact style={{ marginBottom: 8 }}>
           <Text size={18} weight="600">Signature</Text>
           {profile.signature?.startsWith('data:image/png;base64,') ? <View style={{ backgroundColor: '#fff', borderRadius: 6, marginTop: 12 }}>
             <Image accessibilityLabel="Your signature" source={{ uri: profile.signature }} resizeMode="contain" style={{ height: 120, width: '100%' }} />
           </View> : <Text color={colors.muted} style={{ marginTop: 8 }}>{profile.signature ? 'Signature saved.' : 'No signature saved.'}</Text>}
-          <PlatformActionButton title={profile.signature ? "Update signature" : "Create signature"} variant="text"
+          <PlatformActionButton title="Update Signature" variant="text"
             onPress={() => navigation.navigate('SignatureEdit', { revision: profile.signature_revision, signature: profile.signature })} />
         </Card>
-        <Text color={colors.muted} style={{ textAlign: 'center', marginBottom: 12 }}>Downloaded {new Date(profile.downloaded_at).toLocaleString()}</Text>
       </>}
       <PlatformActionButton title="Contact support" variant="text" onPress={() => Linking.openURL('mailto:support@direct2logbook.com').catch(() => setMessage('Email support@direct2logbook.com for help.'))} />
     </ScrollView>
