@@ -66,7 +66,7 @@ scenarios. GitHub Actions themselves are pinned to commit SHAs.
 The small Python tests for the downloader, database URL and CI failure handling
 run in the normal PR checks too; emulator execution remains manual.
 
-## Manual iOS smoke test
+## Manual iOS screen tests
 
 Create and boot a dedicated iPhone simulator named `D2LB_iOS_Screen_Tests`
 in Xcode. Get its UDID with `xcrun simctl list devices booted`. This runner
@@ -89,6 +89,22 @@ iOS date picker, verifies that it appears in the logbook, and checks that Django
 stored exactly one matching flight and sync receipt. The runner starts the
 temporary API and Metro on ports 8010 and 8082 by default. Reports and
 screenshots go under `.screen-tests/<run-id>/`.
+
+Run the offline scenario with the same arguments:
+
+```sh
+./scripts/mobile run test:screens:ios:offline -- \
+  --ios-simulator YOUR_SIMULATOR_UDID \
+  --maestro "$HOME/Documents/Codex/tools/maestro-2.12.1/maestro/bin/maestro" \
+  --expo-app "$HOME/.expo/ios-simulator-app-cache/Expo-Go-58.0.7.tar.app"
+```
+
+The runner stops its disposable Django API while leaving Metro reachable.
+The flight must appear after a full app restart while Django still has no
+flight or receipt. Once the API returns, the test waits for automatic sync
+before pulling to refresh and verifies that Django still has exactly one
+flight and one receipt. This exercises API unavailability and automatic retry.
+The simulator's network settings stay as they are.
 
 ## Local Android prerequisites
 
@@ -168,10 +184,9 @@ without giving the app access to the API. Server assertions verify that offline
 saves/deletions have not reached Django. Reconnection checks happen before any
 manual refresh, testing automatic reconnection sync.
 
-The Android suite runs locally or through the manual GitHub workflow. The iOS
-smoke test runs manually on a Mac. Offline iOS scenarios, installed production
-builds, Google authentication, signature capture, and aircraft/tailnumber
-screen tests are separate follow-ups.
+The Android suite runs locally or through the manual GitHub workflow. Both iOS
+scenarios run manually on a Mac. Installed production builds, Google authentication,
+signature capture, and aircraft/tailnumber screen tests are separate follow-ups.
 
 Keep selectors on stable `testID`/accessibility labels. Avoid fixed tap coordinates
 for form controls and fixed sleeps; wait for observable UI or database conditions.

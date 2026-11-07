@@ -15,6 +15,10 @@ SCENARIOS = {
         ('signed-in', 'empty', None),
         ('ios-synced', 'original', None),
     ],
+    'ios-offline-flight': [
+        ('ios-synced', expected, online) if step == 'synced' else (step, expected, online)
+        for step, expected, online in CREATE_STEPS
+    ],
     'offline-flight': CREATE_STEPS,
     'flight-crud': CREATE_STEPS + [
         ('cancel-offline', 'original', False),
