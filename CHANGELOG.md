@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.3](https://github.com/bassasaurus/d2lb/compare/v0.1.2...v0.1.3) (2026-11-07)
+
+
+### Bug Fixes
+
+* keep iOS flight entry visible above the keyboard ([#57](https://github.com/bassasaurus/d2lb/issues/57)) ([0f61adf](https://github.com/bassasaurus/d2lb/commit/0f61adf4a040c5eb3e7c3f5027bf462a120895df))
+
 ## [0.1.2](https://github.com/bassasaurus/d2lb/compare/v0.1.1...v0.1.2) (2026-11-07)
 
 
