@@ -64,7 +64,7 @@ export default function SignatureScreen({ route, navigation }) {
               onPress={() => { setFieldValue('strokes', []); setFieldValue('showExisting', false); }} />
           </View>
           <View style={{ flex: 1, alignItems: 'center' }}>
-            <PlatformActionButton title={isSubmitting ? 'Saving…' : 'Save'} disabled={isSubmitting || !values.strokes.length} onPress={handleSubmit} />
+            <PlatformActionButton title="Save" disabled={isSubmitting || !values.strokes.length} onPress={handleSubmit} />
           </View>
           <View style={{ flex: 1, alignItems: 'flex-end' }}>
             <PlatformActionButton title="Cancel" variant="text" disabled={isSubmitting} onPress={cancel} />
