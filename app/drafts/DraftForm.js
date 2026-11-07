@@ -11,14 +11,14 @@ import { createDraftStore, draftKey, fingerprint } from './draftStore.mjs';
 
 const store = createDraftStore(AsyncStorage);
 
-export default function DraftForm({ kind, recordKey = 'new', draftHandle, savedNavigation, onResume, children, ...props }) {
+export default function DraftForm({ kind, recordKey = 'new', draftHandle, savedNavigation, onResume, contentStyle, children, ...props }) {
   return <Formik {...props}>{formik => <DraftBoundary kind={kind} recordKey={recordKey}
-    draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={onResume}>
+    draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={onResume} contentStyle={contentStyle}>
     {children(formik)}
   </DraftBoundary>}</Formik>;
 }
 
-function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume, children }) {
+function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume, contentStyle, children }) {
   const form = useFormikContext();
   const { colors } = useAppTheme();
   const [state, setState] = useState({ loading: true, pending: null, message: null });
@@ -146,7 +146,7 @@ function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume
     <View pointerEvents={state.loading || pending || state.blocked ? 'none' : 'auto'}
       accessibilityElementsHidden={Boolean(state.loading || pending || state.blocked)}
       importantForAccessibility={state.loading || pending || state.blocked ? 'no-hide-descendants' : 'auto'}
-      style={{ opacity: state.loading || pending || state.blocked ? 0.5 : 1 }}>
+      style={[{ opacity: state.loading || pending || state.blocked ? 0.5 : 1 }, contentStyle]}>
       {children}
     </View>
   </>;

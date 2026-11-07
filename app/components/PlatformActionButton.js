@@ -12,8 +12,8 @@ export default function PlatformActionButton({ title, onPress, accessibilityLabe
   return <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel || title}
     accessibilityState={{ disabled }} disabled={disabled} onPress={onPress}
     android_ripple={{ color: `${accent}24` }}
-    style={[styles.button, { opacity: disabled ? 0.4 : 1,
-      backgroundColor: filled ? colors.actionBlue : 'transparent',
+    style={[styles.button, { opacity: disabled && !filled ? 0.4 : 1,
+      backgroundColor: filled ? (destructive ? colors.actionDanger : colors.actionBlue) : 'transparent',
       borderWidth: variant === 'outlined' ? 1 : 0, borderColor: colors.border }]}>
     <Text style={[styles.label, { color: filled ? colors.onAction : accent }]}>{title}</Text>
   </Pressable>;

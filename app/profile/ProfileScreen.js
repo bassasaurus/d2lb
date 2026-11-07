@@ -88,7 +88,7 @@ export default function ProfileScreen({ navigation }) {
             <Image accessibilityLabel="Your signature" source={{ uri: profile.signature }} resizeMode="contain" style={{ height: 120, width: '100%' }} />
           </View> : <Text color={colors.muted} style={{ marginTop: 8 }}>{profile.signature ? 'Signature saved.' : 'No signature saved.'}</Text>}
           <PlatformActionButton title={profile.signature ? "Update signature" : "Create signature"} variant="text"
-            onPress={() => navigation.navigate('SignatureEdit', { revision: profile.signature_revision })} />
+            onPress={() => navigation.navigate('SignatureEdit', { revision: profile.signature_revision, signature: profile.signature })} />
         </Card>
         <Text color={colors.muted} style={{ textAlign: 'center', marginBottom: 12 }}>Downloaded {new Date(profile.downloaded_at).toLocaleString()}</Text>
       </>}
