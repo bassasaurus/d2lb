@@ -25,7 +25,48 @@ must not add extra operations or resurrect the flight.
 No mocked login, bypass endpoints, production credentials, or changes to the
 Django application are needed. The fixtures use an `example.invalid` account.
 
-## One-time prerequisites
+## Manual GitHub Actions workflow
+
+After `.github/workflows/screen-tests.yml` is merged into `main`, open the mobile
+repository's **Actions → Android screen tests (manual) → Run workflow**.
+
+- Choose the mobile branch to test (normally `main`).
+- Leave **scenario** set to `all` for CRUD and validation, or select one scenario.
+- Leave **django_ref** as `master` to test the current backend. A Django branch,
+  tag, or exact commit SHA can be selected for compatibility checks.
+
+The workflow is manual only. It does not run on pull requests or pushes, and it
+does not deploy either application. GitHub requires the workflow file to exist
+on the default branch before the Run workflow button is available.
+
+The Ubuntu runner checks out both repositories, starts PostgreSQL 16 and a
+dedicated Pixel 7/API 34 x86_64 emulator, and runs the same screen scenarios
+against a temporary Django API. Django's repository is public, so no additional
+GitHub token or production secret is needed. The database password in the
+workflow belongs only to its disposable PostgreSQL service.
+
+The job summary records both commit SHAs and the selected scenario. Download the
+`android-screen-tests-<run-id>-<attempt>` artifact for screenshots, JUnit results,
+the test terminal output, Android logcat, and Django/Metro/migration logs. These
+artifacts are retained for seven days, including after failures. The workflow
+has a 45-minute timeout and queues runs for the same mobile branch.
+
+Equivalent CLI command after merge:
+
+```sh
+gh workflow run screen-tests.yml --ref main -f scenario=all -f django_ref=master
+```
+
+`e2e/ci-tools.json` pins Maestro and the SDK-compatible Expo Go APK, including
+SHA-256 hashes from their official GitHub releases. `install_tools.py` verifies
+each download and fails early when the project's Expo SDK no longer matches.
+When upgrading Expo, update these pins and verify the new APK with the screen
+scenarios. GitHub Actions themselves are pinned to commit SHAs.
+
+The small Python tests for the downloader, database URL and CI failure handling
+run in the normal PR checks too; emulator execution remains manual.
+
+## Local one-time prerequisites
 
 - Project dependencies (`npm ci`) and the Node version in `.nvmrc`.
 - A local Django checkout and its Python environment with requirements installed.
@@ -67,6 +108,8 @@ uses `.local-node-path` when present. Python defaults to
 `~/.virtualenvs/logbook312/bin/python`; override with `D2LB_DJANGO_PYTHON`.
 `--django` defaults to `~/django/direct2logbook`. `--help` lists port/SDK/DB options.
 The default local PostgreSQL user is the OS username; use `--pg-user` if different.
+For password authentication, supply `PGPASSWORD` in the environment; it is used
+by both database administration and Django. `--pg-port` defaults to 5432.
 Use `--scenario flight-crud` or `--scenario flight-validation` for a focused run.
 `--scenario offline-flight` retains the original, shorter create/restart/sync test.
 
@@ -101,8 +144,8 @@ without giving the app access to the API. Server assertions verify that offline
 saves/deletions have not reached Django. Reconnection checks happen before any
 manual refresh, testing automatic reconnection sync.
 
-This suite is **Android/local only**, not yet a required GitHub Actions
-check. iOS screen tests, installed production builds, Google authentication,
+The screen suite runs locally or through the manual Android workflow, and is
+not a required pull-request check. iOS screen tests, installed production builds, Google authentication,
 signature capture, and aircraft/tailnumber screen tests are separate follow-up
 coverage. The normal PR lint/unit/export workflow remains in place.
 

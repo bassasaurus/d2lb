@@ -43,5 +43,7 @@ jobs:
       - run: npm run check:version
       - run: npm run lint
       - run: npm test
+      - name: Test screen-test tooling
+        run: python3 -m unittest discover -s e2e/tests -v
       - run: npm run export:ios
       - run: npm run export:android

@@ -1,0 +1,139 @@
+name: Android screen tests (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      scenario:
+        description: Screen scenarios to run
+        type: choice
+        default: all
+        options: [all, flight-crud, flight-validation, offline-flight]
+      django_ref:
+        description: Django branch, tag, or commit to test against
+        type: string
+        default: master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-screen-tests-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  screens:
+    name: Android screens against a disposable Django API
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: screen-tests-only-password
+          POSTGRES_DB: postgres
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      CI: '1'
+      EXPO_NO_DOTENV: '1'
+      EXPO_NO_TELEMETRY: '1'
+      PGPASSWORD: screen-tests-only-password
+      SCREEN_TEST_SCENARIO: ${{ inputs.scenario }}
+    steps:
+      - name: Check out mobile
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Check out Django for the temporary API
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: bassasaurus/direct2logbook
+          ref: ${{ inputs.django_ref }}
+          path: .screen-test-backend
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12.16'
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Record tested versions
+        run: |
+          mkdir -p .screen-tests
+          {
+            printf 'Mobile commit: %s\n' "$(git rev-parse HEAD)"
+            printf 'Django commit: %s\n' "$(git -C .screen-test-backend rev-parse HEAD)"
+            printf 'Scenario: %s\n' "$SCREEN_TEST_SCENARIO"
+            node --version
+            python --version
+            cat e2e/ci-tools.json
+          } | tee .screen-tests/versions.txt
+      - name: Install mobile dependencies and check the test tooling
+        run: |
+          npm ci
+          python -m unittest discover -s e2e/tests -v
+      - name: Install exact Django dependencies
+        run: |
+          python -m venv "$RUNNER_TEMP/screen-test-installer"
+          "$RUNNER_TEMP/screen-test-installer/bin/python" -m pip install 'uv==0.13.6'
+          python -m venv "$RUNNER_TEMP/screen-test-backend"
+          "$RUNNER_TEMP/screen-test-installer/bin/uv" pip sync \
+            --python "$RUNNER_TEMP/screen-test-backend/bin/python" .screen-test-backend/requirements.txt
+          "$RUNNER_TEMP/screen-test-installer/bin/uv" pip check --python "$RUNNER_TEMP/screen-test-backend/bin/python"
+      - name: Download checksum-verified Maestro and Expo Go
+        run: python e2e/install_tools.py "$RUNNER_TEMP/screen-test-tools"
+      - name: Enable emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          test -r /dev/kvm && test -w /dev/kvm
+      - name: Run the Android screen scenarios
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_7
+          avd-name: D2LB_Screen_Tests
+          emulator-port: 5556
+          ram-size: 2048M
+          disable-animations: true
+          disable-spellchecker: true
+          disable-linux-hw-accel: false
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: bash e2e/ci-run.sh
+      - name: Upload screenshots, test reports and logs
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: android-screen-tests-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .screen-tests/
+            !.screen-tests/maestro-home/**
+            !.screen-tests/run.lock
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Summarize screen test results
+        if: always()
+        env:
+          SCREEN_TEST_JOB_STATUS: ${{ job.status }}
+        run: |
+          {
+            printf '## Android screen tests: %s\n\n' "$SCREEN_TEST_JOB_STATUS"
+            printf '```text\n'
+            if [ -f .screen-tests/versions.txt ]; then cat .screen-tests/versions.txt; fi
+            if [ -f .screen-tests/terminal.log ]; then grep '^PASS:' .screen-tests/terminal.log || true; fi
+            printf '```\n\nDownload the Android screen-test artifact for screenshots, JUnit reports, and logs.\n'
+          } >> "$GITHUB_STEP_SUMMARY"
