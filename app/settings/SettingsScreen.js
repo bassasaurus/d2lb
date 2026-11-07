@@ -1,6 +1,7 @@
 import { ScrollView } from '../components/OverflowLists';
 import React from 'react';
-import { Alert, Pressable, View } from 'react-native';
+import { Alert, Platform, Pressable, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
 import { isRunningInExpoGo } from 'expo';
@@ -14,6 +15,7 @@ import { formatAppVersion } from './appVersion.mjs';
 
 export default function SettingsScreen({ navigation }) {
   const { preference, colors, saving, setPreference } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const version = formatAppVersion({
     projectVersion: Constants.expoConfig?.version,
     nativeVersion: Application.nativeApplicationVersion,
@@ -26,7 +28,8 @@ export default function SettingsScreen({ navigation }) {
     ['light', 'Light', 'Always use the light appearance.'],
     ['dark', 'Dark', 'Use a dark background and softer colors.'],
   ];
-  return <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={{ padding: 12 }}>
+  return <ScrollView style={{ backgroundColor: colors.background }}
+    contentContainerStyle={{ padding: 12, paddingBottom: 12 + (Platform.OS === 'android' ? insets.bottom : 0), flexGrow: 1 }}>
     <Text accessibilityRole="header" size={18} weight="600" style={{ marginBottom: 12 }}>Appearance</Text>
     {choices.map(([key, label, description]) => <Pressable key={key} accessibilityRole="radio"
       accessibilityState={{ checked: preference === key, disabled: saving }} disabled={saving}
@@ -41,18 +44,17 @@ export default function SettingsScreen({ navigation }) {
     </Pressable>)}
     {saving && <Text color={colors.muted} accessibilityLiveRegion="polite">Saving appearance…</Text>}
     <SyncSettings />
-    <View style={{ marginTop: 12 }}>
-      <Text accessibilityRole="header" size={18} weight="600" style={{ marginBottom: 12 }}>About</Text>
-      <Card compact>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text>App version</Text>
-          <Text color={colors.muted} style={{ flexShrink: 1, marginLeft: 12, textAlign: 'right' }}>{version}</Text>
-        </View>
+    <View style={{ marginTop: 'auto', paddingTop: 8 }}>
+      <Card compact style={{ marginBottom: 4, paddingVertical: 4 }}>
         <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />
-        <View style={{ height: 1, backgroundColor: colors.border }} />
+      </Card>
+      <Card compact style={{ paddingVertical: 4 }}>
         <PlatformActionButton title="Privacy Policy" variant="text" onPress={() =>
           navigation.navigate('PrivacyPolicy')} />
       </Card>
+    </View>
+    <View style={{ paddingTop: 8 }}>
+      <Text size={14} color={colors.muted} style={{ textAlign: 'center' }}>Version {version}</Text>
     </View>
   </ScrollView>;
 }
