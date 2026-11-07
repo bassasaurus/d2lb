@@ -1,11 +1,11 @@
 import { FLIGHT_SYNC_LIMIT } from './flightWindow.mjs';
 
 // Transport-independent worker. Persist the immutable operation before sending it.
-export async function drainFlightQueue({ store, scope, send, uuid, isCurrent, now = () => Date.now(), label = 'flight' }) {
+export async function drainFlightQueue({ store, scope, send, uuid, isCurrent, now = () => Date.now(), label = 'flight', operationFilter }) {
   let completed = 0;
   for (let count = 0; count < FLIGHT_SYNC_LIMIT; count++) {
     if (!await isCurrent()) throw new Error('Account changed during sync.');
-    const operation = await store.nextOperation(scope, uuid(), now());
+    const operation = await store.nextOperation(scope, uuid(), now(), operationFilter);
     if (!operation) return completed;
     try {
       const response = await send(JSON.parse(operation.request));

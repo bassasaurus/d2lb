@@ -22,7 +22,7 @@ async function synchronize() {
   await store.moveScope(aircraftScope(previousScope), aircraftScope(scope));
   await store.moveScope(tailnumberScope(previousScope), tailnumberScope(scope));
   await AsyncStorage.setItem(`flight-scope:${partition}`, scope);
-  await syncAircraft(scope, partition, capabilities.aircraft_sync === true);
+  await syncAircraft(scope, partition, capabilities.aircraft_sync === true, capabilities.default_aircraft_sync === true);
   await syncTailnumbers(scope, partition, capabilities.tailnumber_sync === true);
   await drainFlightQueue({
     store, scope,

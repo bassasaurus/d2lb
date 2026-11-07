@@ -63,14 +63,18 @@ export async function createFlightStore(db) {
         await tx.runAsync('UPDATE mobile_review_history SET scope=? WHERE scope=?', to, from);
       });
     },
-    async nextOperation(scope, operationId, now = Date.now()) {
+    async nextOperation(scope, operationId, now = Date.now(), filter) {
       requireScope(scope);
       let operation;
+      const selection = filter === 'aircraft-records' ? " AND local_id!='server:-1'"
+        : filter === 'aircraft-default' ? " AND local_id='server:-1'" : '';
+      const recordSelection = filter === 'aircraft-records' ? " AND f.local_id!='server:-1'"
+        : filter === 'aircraft-default' ? " AND f.local_id='server:-1'" : '';
       await db.withExclusiveTransactionAsync(async tx => {
-        const existing = await tx.getFirstAsync('SELECT * FROM mobile_operations WHERE scope=? AND blocked=0 AND retry_at<=? ORDER BY rowid LIMIT 1', scope, now);
+        const existing = await tx.getFirstAsync(`SELECT * FROM mobile_operations WHERE scope=? AND blocked=0 AND retry_at<=?${selection} ORDER BY rowid LIMIT 1`, scope, now);
         if (existing) { operation = existing; return; }
         const row = await tx.getFirstAsync(`SELECT f.* FROM mobile_flights f WHERE f.scope=? AND f.state!='synced' AND f.sync_error IS NULL
-          AND NOT EXISTS(SELECT 1 FROM mobile_operations o WHERE o.scope=f.scope AND o.local_id=f.local_id)
+          AND NOT EXISTS(SELECT 1 FROM mobile_operations o WHERE o.scope=f.scope AND o.local_id=f.local_id)${recordSelection}
           ORDER BY f.rowid LIMIT 1`, scope);
         if (!row) return;
         const payload = JSON.parse(row.payload);

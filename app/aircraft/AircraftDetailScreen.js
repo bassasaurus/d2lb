@@ -54,7 +54,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
     <ScrollView style={{ flexGrow: 0, maxHeight: '65%' }} contentContainerStyle={{ paddingTop: 16 }}>
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
       <Text style={{ fontSize: 24, fontWeight: '600', flexShrink: 1 }}>{item.aircraft_type}</Text>
-      <Text style={{ color: STYLES.muted }}>{tailnumbers.length} tailnumbers</Text>
+      <Text style={{ color: STYLES.muted }}>{tailnumbers.length} Tailnumbers</Text>
     </View>
     <Text>Category: {CATEGORY_CHOICES.find(([key]) => key === item.aircraft_category)?.[1] || 'Not set'}</Text>
     <Text style={{ marginVertical: 8 }}>Class: {CLASS_CHOICES.find(([key]) => key === item.aircraft_class)?.[1] || 'Not set'}</Text>
