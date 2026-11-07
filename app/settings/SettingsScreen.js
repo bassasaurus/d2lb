@@ -49,6 +49,7 @@ export default function SettingsScreen({ navigation }) {
           <Text color={colors.muted} style={{ flexShrink: 1, marginLeft: 12, textAlign: 'right' }}>{version}</Text>
         </View>
         <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />
+        <View style={{ height: 1, backgroundColor: colors.border }} />
         <PlatformActionButton title="Privacy Policy" variant="text" onPress={() =>
           navigation.navigate('PrivacyPolicy')} />
       </Card>
