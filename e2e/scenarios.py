@@ -11,6 +11,10 @@ CREATE_STEPS = [
 ]
 
 SCENARIOS = {
+    'ios-flight-smoke': [
+        ('signed-in', 'empty', None),
+        ('ios-synced', 'original', None),
+    ],
     'offline-flight': CREATE_STEPS,
     'flight-crud': CREATE_STEPS + [
         ('cancel-offline', 'original', False),

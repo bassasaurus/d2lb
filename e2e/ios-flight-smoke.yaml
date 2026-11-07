@@ -1,0 +1,90 @@
+appId: host.exp.Exponent
+name: Sign in, save a flight, and verify it syncs on iPhone
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+- openLink: ${EXPO_URL}
+- runFlow:
+    when:
+      visible: '^Open$'
+    commands:
+      - tapOn: Open
+- extendedWaitUntil:
+    visible:
+      id: login-email
+    timeout: 120000
+- tapOn:
+    id: login-email
+- inputText: screen-test@example.invalid
+- tapOn:
+    id: login-password
+- inputText: Disposable-screen-test-42
+- hideKeyboard
+- tapOn:
+    id: login-submit
+- extendedWaitUntil:
+    visible: New Flight
+    timeout: 30000
+- extendedWaitUntil:
+    notVisible: Sync in Progress
+    timeout: 30000
+- assertNotVisible: KAUS-KDFW
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: signed-in
+- tapOn: New Flight
+- tapOn:
+    id: flight-date
+- tapOn:
+    text: Done
+- tapOn:
+    id: flight-route
+- inputText: KAUS-KDFW
+- hideKeyboard
+- assertVisible:
+    id: aircraft-picker
+- tapOn:
+    id: tailnumber-input
+- tapOn: Select N1234
+- assertVisible:
+    id: tailnumber-input
+    text: '^N1234$'
+- tapOn:
+    id: flight-duration
+- inputText: '1.2'
+# XCTest reports focused=false here even with the numeric keyboard open.
+- assertVisible:
+    id: flight-duration
+    text: '^1\.2$'
+- assertVisible:
+    id: tailnumber-input
+    text: '^N1234$'
+# The numeric keypad has no dismiss key. Tap a noninteractive form label.
+- tapOn: '^Flight role$'
+- scrollUntilVisible:
+    element: PIC
+    direction: DOWN
+- tapOn: PIC
+- scrollUntilVisible:
+    element:
+      id: flight-save
+    direction: DOWN
+- assertVisible:
+    id: flight-save
+    enabled: true
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible:
+      id: flight-list
+    timeout: 30000
+- extendedWaitUntil:
+    visible: '.*KAUS-KDFW.*'
+    timeout: 30000
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: ios-synced
+- takeScreenshot: ios-flight-synced
