@@ -1,3 +1,4 @@
+import Card from '../components/Card';
 import { ScrollView } from '../components/OverflowLists';
 import { routeFitCoordinates, routeMapPadding, validCoordinate } from '../maps/routeBounds.mjs';
 import FlightHeader from '../components/FlightHeader';
@@ -78,7 +79,8 @@ function FlightDetailScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={{ maxHeight: hasMap ? '55%' : undefined, flexGrow: hasMap ? 0 : 1 }} contentContainerStyle={styles.detailsPanel}>
+      <ScrollView style={{ maxHeight: hasMap ? '55%' : undefined, flexGrow: hasMap ? 0 : 1, margin: 12 }}>
+        <Card>
         {route.params.item.sync_state !== 'synced' && (
           <AppText color={STYLES.danger}>{route.params.item.sync_error || "Saved on this device — pending upload"}</AppText>
         )}
@@ -95,6 +97,7 @@ function FlightDetailScreen({ route, navigation }) {
           onDelete={() => showAlert(route.params.item.id, route.params.item.date, route.params.item.route)}
           onUpdate={() => navigation.navigate("FlightUpdate", { item: route.params.item })}
         />
+        </Card>
       </ScrollView>
 
       {hasMap && <View style={styles.mapView}>
@@ -146,6 +149,7 @@ function FlightDetailScreen({ route, navigation }) {
 const createStyles = STYLES => StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: STYLES.itemBackground,
     flexDirection: "column",
     justifyContent: "flex-start",
   },
@@ -159,7 +163,7 @@ const createStyles = STYLES => StyleSheet.create({
     backgroundColor: STYLES.white,
     borderRadius: STYLES.borderRadius,
   },
-  mapView: { flex: 1, minHeight: 120 },
+  mapView: { flex: 1, minHeight: 120, marginHorizontal: 12, marginBottom: 12, borderRadius: 10, overflow: 'hidden' },
   airportLabel: {
     minWidth: 42, maxWidth: 100, paddingHorizontal: 6, paddingVertical: 3,
     borderWidth: 1, borderRadius: 4, alignItems: "center",

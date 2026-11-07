@@ -17,3 +17,16 @@ export function dropSection(order, key, headerCenter, layouts) {
   const anchor = visibleRemaining[target];
   return moveSection(order, key, anchor ? remaining.indexOf(anchor) : remaining.length);
 }
+
+export function sectionPreview(order, key, headerCenter, layouts) {
+  const previewOrder = dropSection(order, key, headerCenter, layouts);
+  const visible = order.filter(id => layouts[id]);
+  let cursor = visible.length ? Math.min(...visible.map(id => layouts[id].y)) : 0;
+  const offsets = {};
+  for (const id of previewOrder) {
+    if (!layouts[id]) continue;
+    offsets[id] = id === key ? 0 : cursor - layouts[id].y;
+    cursor += layouts[id].height || 0;
+  }
+  return { order: previewOrder, offsets };
+}

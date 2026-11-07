@@ -2,15 +2,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from '../components/OverflowLists';
 import { listTailnumbers } from '../storage/tailnumbers';
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Alert, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import Card from '../components/Card';
 import Text from '../components/AppText';
-import { aircraftScope } from '../storage/aircraft';
+import { aircraftScope, listAircraft } from '../storage/aircraft';
 import { flightScope, flightStore } from '../storage/flights';
 import { CATEGORY_CHOICES, CLASS_CHOICES, ENGINE_CHOICES, FLAGS, WEIGHT_CHOICES } from './fields.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 import RecordActions from '../components/RecordActions';
 import Separator from '../components/Separator';
-import PlatformActionButton from '../components/PlatformActionButton';
+import BottomCreateButton from '../components/BottomCreateButton';
 
 export default function AircraftDetailScreen({ route, navigation }) {
   const { styles: STYLES } = useAppTheme();
@@ -23,7 +24,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
     let active = true;
     const refresh = async () => {
       try {
-        const records = await (await flightStore()).list(aircraftScope(await flightScope()));
+        const records = await listAircraft();
         const current = records.find(row => row.local_id === route.params.item.local_id || row.aircraft_type === route.params.item.aircraft_type);
         const tails = await listTailnumbers();
         if (active) {
@@ -50,8 +51,9 @@ export default function AircraftDetailScreen({ route, navigation }) {
       navigation.navigate('AircraftList');
     } catch (error) { Alert.alert('Aircraft not deleted', 'Your record is still saved. Please try again.'); }
   };
-  return <SafeAreaView edges={['bottom']} style={{ flex: 1, paddingHorizontal: 16 }}>
-    <ScrollView style={{ flexGrow: 0, maxHeight: '65%' }} contentContainerStyle={{ paddingTop: 16 }}>
+  return <SafeAreaView edges={['bottom']} style={{ flex: 1, paddingHorizontal: 12, backgroundColor: STYLES.itemBackground }}>
+    <ScrollView style={{ flexGrow: 0, maxHeight: '65%', marginTop: 12 }}>
+    <Card>
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
       <Text style={{ fontSize: 24, fontWeight: '600', flexShrink: 1 }}>{item.aircraft_type}</Text>
       <Text style={{ color: STYLES.muted }}>{tailnumbers.length} Tailnumbers</Text>
@@ -68,15 +70,11 @@ export default function AircraftDetailScreen({ route, navigation }) {
       ])}
     />
     </View>
+    </Card>
     </ScrollView>
-    <View style={{ flex: 1, marginTop: 8 }}>
-      <Separator />
-    <View style={{ justifyContent: 'center', paddingBottom: 10 }}>
-      <PlatformActionButton title="New Tailnumber"
-        onPress={() => navigation.navigate('AircraftTailnumberCreate', { aircraft_type: item.aircraft_type, fromAircraft: true })} />
-    </View>
+    <Card style={{ flex: 1, marginTop: 12, marginBottom: 12 }}>
+    {tailnumbers.length === 0 && <Text style={{ color: STYLES.muted }}>No tailnumbers saved for this aircraft.</Text>}
     {tailnumbers.length > 0 && <View style={{ flex: 1 }}>
-      <Separator />
       <ScrollView nestedScrollEnabled persistentScrollbar style={{ flex: 1 }}
         contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {[...tailnumbers].sort((a, b) => a.registration.localeCompare(b.registration, 'en', { numeric: true, sensitivity: 'base' })).map((tail, index) =>
@@ -87,6 +85,8 @@ export default function AircraftDetailScreen({ route, navigation }) {
           </TouchableOpacity>)}
       </ScrollView>
     </View>}
-    </View>
+    </Card>
+    <BottomCreateButton title="New Tailnumber" horizontalPadding={0}
+      onPress={() => navigation.navigate('AircraftTailnumberCreate', { aircraft_type: item.aircraft_type, fromAircraft: true })} />
   </SafeAreaView>;
 }

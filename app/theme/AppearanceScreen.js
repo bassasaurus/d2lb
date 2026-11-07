@@ -11,12 +11,12 @@ export default function AppearanceScreen() {
     ['light', 'Light', 'Always use the light appearance.'],
     ['dark', 'Dark', 'Use a dark background and softer colors.'],
   ];
-  return <ScrollView contentContainerStyle={{ padding: 16 }}>
+  return <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={{ padding: 12 }}>
     <Text style={{ marginBottom: 16 }}>Choose the appearance for this app.</Text>
     {choices.map(([key, label, description]) => <Pressable key={key} accessibilityRole="radio"
       accessibilityState={{ checked: preference === key, disabled: saving }} disabled={saving}
       onPress={() => setPreference(key).catch(() => Alert.alert('Appearance not saved', 'Please try again. Your previous setting is unchanged.'))}
-      style={{ padding: 16, marginBottom: 12, borderWidth: 1, borderRadius: 8,
+      style={{ padding: 16, marginBottom: 12, borderWidth: 1, borderRadius: 10,
         borderColor: preference === key ? colors.primary : colors.border,
         backgroundColor: preference === key ? colors.selected : colors.surface }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

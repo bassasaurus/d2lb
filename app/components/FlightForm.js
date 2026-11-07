@@ -1,3 +1,4 @@
+import Card from './Card';
 import { ScrollView } from './OverflowLists';
 import { listTailnumbers } from '../storage/tailnumbers';
 import RouteInput from '../airports/RouteInput';
@@ -107,8 +108,8 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
       enabled={scrollEnabled}
     >
       <PickerOverlayHost>
-      <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
-        <View style={styles.container}>
+      <ScrollView style={{ backgroundColor: STYLES.itemBackground }} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
+        <Card style={styles.container}>
           {noDefaultAircraft && !defaultSuggestionDismissed && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
             <Pressable accessibilityRole="link" onPress={async () => {
               try {
@@ -811,7 +812,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
             )}
           </DraftForm>
           <ActivityModal></ActivityModal>
-        </View>
+        </Card>
       </ScrollView>
       </PickerOverlayHost>
     </KeyboardAvoidingView>
@@ -839,9 +840,9 @@ const createStyles = STYLES => StyleSheet.create({
   container: {
     flexDirection: "column",
     justifyContent: "space-between",
-    paddingLeft: 10,
-    paddingRight: 10,
-    marginBottom: 20,
+    padding: 14,
+    margin: 12,
+    marginBottom: 24,
   },
 
   modalView: {

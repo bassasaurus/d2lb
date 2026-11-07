@@ -1,3 +1,4 @@
+import ProfileStackNavigator from './ProfileStackNavigator';
 import { withScrollOverflow } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
@@ -87,6 +88,7 @@ function DrawerNavigator({ navigation }) {
               <Drawer.Screen name="Aircraft" component={AircraftStackNavigator} options={{ headerShown: false }} />
               <Drawer.Screen name="Totals & Stats" component={StatsScreen} />
               <Drawer.Screen name="Recency" component={RecencyScreen} />
+              <Drawer.Screen name="Profile" component={ProfileStackNavigator} options={{ headerShown: false }} />
               <Drawer.Screen name="Appearance" component={AppearanceScreen} options={{ title: "Appearance" }} />
             </Drawer.Navigator>}
           </Root.Screen>

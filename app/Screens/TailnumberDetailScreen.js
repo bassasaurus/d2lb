@@ -3,11 +3,14 @@ import { listTailnumbers } from '../storage/tailnumbers';
 import React, { useCallback, useState } from 'react';
 
 import { useFocusEffect } from '@react-navigation/native';
+import Card from '../components/Card';
+import { useAppTheme } from '../theme/ThemeProvider';
 import Text from '../components/AppText';
 import RecordActions from '../components/RecordActions';
 import Separator from '../components/Separator';
 
 export default function TailnumberDetailScreen({ route, navigation }) {
+  const { colors } = useAppTheme();
   const [item, setItem] = useState(route.params.item);
   useFocusEffect(useCallback(() => {
     let active = true;
@@ -21,7 +24,8 @@ export default function TailnumberDetailScreen({ route, navigation }) {
     const timer = setInterval(() => load().catch(() => {}), 3000);
     return () => { active = false; clearInterval(timer); };
   }, [route.params.item]));
-  return <ScrollView contentContainerStyle={{ padding: 16 }}>
+  return <ScrollView style={{ backgroundColor: colors.background }} contentContainerStyle={{ padding: 12 }}>
+    <Card>
     <Text style={{ fontSize: 24, fontWeight: '600', marginBottom: 16 }}>{item.registration}</Text>
     <Text style={{ marginBottom: 12 }}>Aircraft: {item.aircraft}</Text>
     <Text style={{ marginBottom: 16 }}>Operating rules: {[[item.is_91, 'Part 91'], [item.is_135, 'Part 135'], [item.is_121, 'Part 121']]
@@ -30,5 +34,6 @@ export default function TailnumberDetailScreen({ route, navigation }) {
     <Separator />
     <RecordActions recordName="tailnumber"
       onUpdate={() => navigation.navigate('TailnumberUpdate', { item })} />
+    </Card>
   </ScrollView>;
 }

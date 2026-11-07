@@ -44,5 +44,7 @@ export async function refreshFlightCache(scope) {
     getPage: async url => (await api.get(url)).data,
     isCurrent: async () => await flightScope() === scope,
   });
-  await (await flightStore()).cacheSnapshot(scope, flights);
+  const store = await flightStore();
+  await store.cacheSnapshot(scope, flights);
+  await store.cacheReference(scope, 'flight-window-sync', [{ downloaded_at: new Date().toISOString() }]);
 }

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView } from '../components/OverflowLists';
+import Card from '../components/Card';
 import Text from '../components/AppText';
 import { useAppTheme } from '../theme/ThemeProvider';
 import api from '../api/axiosConfig';
@@ -26,22 +27,24 @@ function Status({ label, value, message }) {
 function RecencySection({ title, handle, children }) {
   const [expanded, setExpanded] = useState(true);
   const { colors } = useAppTheme();
-  return <View style={{ marginBottom: 20 }}>
+  return <Card style={{ marginBottom: 12, paddingVertical: 0 }}>
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <Pressable accessibilityRole="button" accessibilityState={{ expanded }} onPress={() => setExpanded(value => !value)}
         style={{ flex: 1, flexDirection: 'row', alignItems: 'center', minHeight: 48, gap: 8 }}>
         <Text size={18} weight="600" style={{ flex: 1 }}>{title}</Text>
         <MaterialCommunityIcons name={expanded ? 'chevron-up' : 'chevron-down'} color={colors.muted} size={22} />
       </Pressable>
-      {handle}
+      {handle && <View style={{ position: 'absolute', left: '50%', marginLeft: -22, top: 0 }}>
+        {handle}
+      </View>}
     </View>
-    {expanded && children}
-  </View>;
+    {expanded && <View style={{ paddingBottom: 14 }}>{children}</View>}
+  </Card>;
 }
 function LandingSection({ title, rows, handle }) {
   const { colors } = useAppTheme();
   return <RecencySection title={title} handle={handle}>
-    {rows.map(row => <View key={row.label} style={{ backgroundColor: colors.surface, borderRadius: 10, padding: 14, marginBottom: 8 }}>
+    {rows.map(row => <View key={row.label} style={{ paddingVertical: 8 }}>
       <Text weight="600" style={{ marginBottom: 4 }}>{row.label}</Text>
       <Status label="Day landings" value={row.day} />
       <Status label="Night landings" value={row.night} />
@@ -121,7 +124,7 @@ export default function RecencyScreen() {
             { id: 'vfr', title: 'VFR', visible: snapshot.categories.length > 0,
               render: handle => <LandingSection title="VFR" rows={snapshot.categories} handle={handle} /> },
             { id: 'ifr', title: 'IFR', render: handle => <RecencySection title="IFR" handle={handle}>
-        <View style={{ backgroundColor: colors.surface, padding: 14, borderRadius: 10, marginBottom: 0 }}>
+        <View style={{ paddingVertical: 8 }}>
           <Status label="Approaches" value={snapshot.instrument.approaches}
             message={snapshot.instrument.approaches.current
               ? `${snapshot.instrument.approaches.count}/6 - Current until ${snapshot.instrument.approaches.until || '—'}`
