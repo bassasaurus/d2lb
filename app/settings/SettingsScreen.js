@@ -2,15 +2,25 @@ import { ScrollView } from '../components/OverflowLists';
 import React from 'react';
 import { Alert, Pressable, View } from 'react-native';
 import Constants from 'expo-constants';
+import * as Application from 'expo-application';
+import { isRunningInExpoGo } from 'expo';
 import Text from '../components/AppText';
 import Card from '../components/Card';
 import PlatformActionButton from '../components/PlatformActionButton';
 import { useAppTheme } from '../theme/ThemeProvider';
 import SyncSettings from './SyncSettings';
 import { openContactEmail } from './contactEmail';
+import { formatAppVersion } from './appVersion.mjs';
 
 export default function SettingsScreen({ navigation }) {
   const { preference, colors, saving, setPreference } = useAppTheme();
+  const version = formatAppVersion({
+    projectVersion: Constants.expoConfig?.version,
+    nativeVersion: Application.nativeApplicationVersion,
+    buildVersion: Application.nativeBuildVersion,
+    expoGo: isRunningInExpoGo(),
+    development: __DEV__,
+  });
   const choices = [
     ['system', 'System', 'Follow your phone’s light or dark appearance.'],
     ['light', 'Light', 'Always use the light appearance.'],
@@ -36,7 +46,7 @@ export default function SettingsScreen({ navigation }) {
       <Card compact>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text>App version</Text>
-          <Text color={colors.muted}>{Constants.expoConfig?.version ?? 'Unavailable'}</Text>
+          <Text color={colors.muted} style={{ flexShrink: 1, marginLeft: 12, textAlign: 'right' }}>{version}</Text>
         </View>
         <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />
         <PlatformActionButton title="Privacy Policy" variant="text" onPress={() =>

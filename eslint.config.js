@@ -1,7 +1,7 @@
 module.exports = [{
   ignores: ["node_modules/**", "android/**", "ios/**", ".expo/**", "dist/**"],
 }, {
-  files: ["App.js", "index.js", "app/**/*.js", "*.config.js"],
+  files: ["App.js", "index.js", "app/**/*.js", "app/**/*.mjs", "scripts/*.mjs", "*.config.js"],
   languageOptions: {
     ecmaVersion: "latest",
     sourceType: "module",

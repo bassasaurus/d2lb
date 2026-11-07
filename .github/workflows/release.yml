@@ -1,0 +1,63 @@
+name: Prepare mobile release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-release-main
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/mobile-checks.yml
+
+  release:
+    if: github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - name: Confirm main still matches the checked commit
+        id: head
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        with:
+          script: |
+            const { data } = await github.rest.git.getRef({ ...context.repo, ref: 'heads/main' });
+            const current = data.object.sha === context.sha;
+            core.setOutput('current', current);
+            if (!current) core.info('Main advanced during checks; its newer workflow will prepare the release.');
+      - name: Prepare release PR or tag the merged release
+        id: release
+        if: steps.head.outputs.current == 'true'
+        uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          target-branch: main
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+      # Token-created PRs do not run normal PR checks automatically without approval.
+      # Explicit dispatch runs the same read-only checks, with no personal token.
+      - name: Run checks on the release PR
+        if: steps.release.outputs.pr != ''
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
+        env:
+          RELEASE_PR: ${{ steps.release.outputs.pr }}
+        with:
+          script: |
+            const pr = JSON.parse(process.env.RELEASE_PR);
+            await github.rest.actions.createWorkflowDispatch({
+              ...context.repo,
+              workflow_id: 'mobile-checks.yml',
+              ref: pr.headBranchName,
+            });
+            core.info(`Requested mobile checks for release PR #${pr.number}.`);

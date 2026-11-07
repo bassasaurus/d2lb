@@ -8,9 +8,10 @@
     "web": "expo start --web",
     "doctor": "npx expo-doctor",
     "check:dependencies": "expo install --check",
+    "check:version": "node scripts/check-app-version.mjs",
     "export:ios": "expo export --platform ios",
     "export:android": "expo export --platform android",
-    "lint": "eslint App.js index.js app",
+    "lint": "eslint App.js index.js app app.config.js scripts/*.mjs",
     "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
