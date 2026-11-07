@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Image, Linking, RefreshControl, View } from 'react-native';
+import { Image, RefreshControl, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from '../components/OverflowLists';
@@ -9,6 +9,7 @@ import PlatformActionButton from '../components/PlatformActionButton';
 import { useAppTheme } from '../theme/ThemeProvider';
 import api from '../api/axiosConfig';
 import { flightScope, flightStore, tokenPartition } from '../storage/flights';
+import { openContactEmail } from '../settings/contactEmail';
 
 export function profileDate(value) {
   if (!value) return 'Not recorded';
@@ -93,7 +94,7 @@ export default function ProfileScreen({ navigation }) {
             onPress={() => navigation.navigate('SignatureEdit', { revision: profile.signature_revision, signature: profile.signature })} />
         </Card>
       </>}
-      <PlatformActionButton title="Contact support" variant="text" onPress={() => Linking.openURL('mailto:support@direct2logbook.com').catch(() => setMessage('Email support@direct2logbook.com for help.'))} />
+      <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />
     </ScrollView>
   </SafeAreaView>;
 }
