@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.2](https://github.com/bassasaurus/d2lb/compare/v0.1.1...v0.1.2) (2026-11-07)
+
+
+### Bug Fixes
+
+* restore flight save navigation and add CRUD screen tests ([#54](https://github.com/bassasaurus/d2lb/issues/54)) ([c9d54ef](https://github.com/bassasaurus/d2lb/commit/c9d54eff2563faff6320f1126e3faeedad97cc25))
+
 ## [0.1.1](https://github.com/bassasaurus/d2lb/compare/v0.1.0...v0.1.1) (2026-11-07)
 
 
