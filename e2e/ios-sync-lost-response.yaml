@@ -1,0 +1,16 @@
+appId: host.exp.Exponent
+name: Retry a saved flight after losing Django's acknowledgment
+---
+- runFlow: flows/ios-sign-in.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: signed-in
+- runFlow: flows/ios-create-flight.yaml
+# Wait for the app to retry by itself before taking any further UI action.
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: ios-replayed
+- assertVisible: '.*KAUS-KDFW.*'
+- takeScreenshot: ios-sync-replayed
