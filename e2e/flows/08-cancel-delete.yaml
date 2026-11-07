@@ -1,0 +1,12 @@
+appId: host.exp.exponent
+name: Cancel a deletion and keep the flight
+---
+- tapOn: KAUS-KDFW
+- tapOn: Delete flight
+- assertVisible: Are you sure\?
+- tapOn: (?i)Cancel
+- assertVisible: '2.3'
+- back
+- assertVisible: KAUS-KDFW
+- assertVisible: Synced
+- takeScreenshot: deletion-cancelled

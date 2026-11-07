@@ -1,0 +1,22 @@
+appId: host.exp.exponent
+name: Night Time Required warns but allows the valid flight to save and sync
+---
+- scrollUntilVisible:
+    element:
+      id: flight-landings-night
+    direction: UP
+- tapOn:
+    id: flight-landings-night
+- inputText: '1'
+- hideKeyboard
+- scrollUntilVisible:
+    element: Night Time Required
+    direction: DOWN
+- assertVisible: Night Time Required
+- takeScreenshot: advisory-night-warning
+- runFlow: assert-save-enabled.yaml
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible: KAUS-KDFW
+    timeout: 30000

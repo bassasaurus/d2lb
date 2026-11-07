@@ -1,0 +1,49 @@
+appId: host.exp.exponent
+name: Complete the required date, aircraft, tailnumber, route, duration and role
+---
+- tapOn: New Flight
+- runFlow: assert-save-disabled.yaml
+- scrollUntilVisible:
+    element:
+      id: flight-duration
+    direction: UP
+- tapOn:
+    id: flight-duration
+- inputText: '1.2'
+- hideKeyboard
+- tapOn: PIC
+- scrollUntilVisible:
+    element:
+      id: flight-route
+    direction: UP
+- tapOn:
+    id: flight-route
+- inputText: KAUS-KDFW
+- hideKeyboard
+- runFlow: assert-save-disabled.yaml
+- scrollUntilVisible:
+    element:
+      id: aircraft-picker
+    direction: UP
+- tapOn:
+    id: aircraft-picker
+- tapOn: C172
+- runFlow: assert-save-disabled.yaml
+- scrollUntilVisible:
+    element:
+      id: tailnumber-input
+    direction: UP
+- tapOn:
+    id: tailnumber-input
+- tapOn: Select N1234
+# Date is now the only missing requirement.
+- runFlow: assert-save-disabled.yaml
+- scrollUntilVisible:
+    element:
+      id: flight-date
+    direction: UP
+- tapOn:
+    id: flight-date
+- tapOn: OK
+- runFlow: assert-save-enabled.yaml
+- takeScreenshot: required-fields-complete

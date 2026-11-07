@@ -1,0 +1,13 @@
+appId: host.exp.exponent
+name: A primary flight role is required
+---
+- scrollUntilVisible:
+    element: PIC
+    direction: UP
+- tapOn: PIC
+- runFlow: assert-save-disabled.yaml
+- scrollUntilVisible:
+    element: PIC
+    direction: UP
+- tapOn: PIC
+- runFlow: assert-save-enabled.yaml

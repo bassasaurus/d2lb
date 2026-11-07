@@ -1,0 +1,9 @@
+appId: host.exp.exponent
+---
+- scrollUntilVisible:
+    element:
+      id: flight-save
+    direction: DOWN
+- assertVisible:
+    id: flight-save
+    enabled: true

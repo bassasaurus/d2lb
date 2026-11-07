@@ -397,6 +397,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                     }}
                   >
                     <AppTextInput
+                      testID="flight-landings-day"
                       isValid={!errors.landings_day && hasRequiredSoloLandings(values)}
                       value={values.landings_day.toString()}
                       onChangeText={(val) => {
@@ -420,6 +421,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
 
                   <View style={{ flexDirection: "column", flex: 0.5 }}>
                     <AppTextInput
+                      testID="flight-landings-night"
                       isValid={!errors.landings_night && hasRequiredSoloLandings(values)}
                       value={values.landings_night.toString()}
                       onChangeText={(val) => {
@@ -507,6 +509,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                     }}
                   >
                     <AppTextInput
+                      testID="flight-night"
                       isValid={!errors.night && !nightPairWarnings(values).night}
                       value={values.night.toString()}
                       onChangeText={(val) => {
@@ -680,6 +683,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                     borderRadius: STYLES.borderRadius,
                     borderColor: STYLES.grey,
                   }}
+                  testID="flight-remarks"
                   value={values.remarks}
                   onChangeText={(val) => {
                     setFieldValue("remarks", val);

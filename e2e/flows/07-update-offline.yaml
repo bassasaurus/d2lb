@@ -1,0 +1,29 @@
+appId: host.exp.exponent
+name: Save changed duration and remarks while offline
+---
+- tapOn: KAUS-KDFW
+- tapOn: Update flight
+- tapOn:
+    id: flight-duration
+- eraseText
+- inputText: '2.3'
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: flight-remarks
+    direction: DOWN
+- tapOn:
+    id: flight-remarks
+- inputText: Edited while offline
+- hideKeyboard
+- runFlow: assert-save-enabled.yaml
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible: 'Remarks: Edited while offline'
+    timeout: 30000
+- assertVisible: '2.3'
+- back
+- assertVisible: New Flight
+- assertVisible: Pending sync
+- takeScreenshot: edited-offline

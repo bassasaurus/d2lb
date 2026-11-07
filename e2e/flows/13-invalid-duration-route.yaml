@@ -1,0 +1,46 @@
+appId: host.exp.exponent
+name: Empty route, missing duration and excess precision prevent saving
+---
+- scrollUntilVisible:
+    element:
+      id: flight-route
+    direction: UP
+- tapOn:
+    id: flight-route
+- eraseText
+- hideKeyboard
+- runFlow: assert-save-disabled.yaml
+- scrollUntilVisible:
+    element:
+      id: flight-route
+    direction: UP
+- tapOn:
+    id: flight-route
+- inputText: KAUS-KDFW
+- hideKeyboard
+- tapOn:
+    id: flight-duration
+- eraseText
+- hideKeyboard
+- runFlow: assert-save-disabled.yaml
+- scrollUntilVisible:
+    element:
+      id: flight-duration
+    direction: UP
+- tapOn:
+    id: flight-duration
+- inputText: '1.25'
+- hideKeyboard
+- assertVisible: max 1 decimal place
+- runFlow: assert-save-disabled.yaml
+- scrollUntilVisible:
+    element:
+      id: flight-duration
+    direction: UP
+- tapOn:
+    id: flight-duration
+- eraseText
+- inputText: '1.2'
+- hideKeyboard
+- runFlow: assert-save-enabled.yaml
+- takeScreenshot: corrected-duration

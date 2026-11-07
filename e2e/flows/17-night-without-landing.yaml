@@ -1,0 +1,31 @@
+appId: host.exp.exponent
+name: Night time can be saved without a night landing
+---
+- tapOn: KAUS-KDFW
+- tapOn: Update flight
+- scrollUntilVisible:
+    element:
+      id: flight-landings-night
+    direction: DOWN
+- tapOn:
+    id: flight-landings-night
+- eraseText
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: flight-night
+    direction: DOWN
+- tapOn:
+    id: flight-night
+- inputText: '0.4'
+- hideKeyboard
+- assertNotVisible: Night Time Required
+- runFlow: assert-save-enabled.yaml
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible: Update flight
+    timeout: 30000
+- back
+- assertVisible: New Flight
+- takeScreenshot: night-without-landing

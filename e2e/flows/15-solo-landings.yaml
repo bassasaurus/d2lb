@@ -1,0 +1,29 @@
+appId: host.exp.exponent
+name: Solo requires a landing and switching back to PIC removes that requirement
+---
+- scrollUntilVisible:
+    element: Solo
+    direction: UP
+- tapOn: Solo
+- assertVisible: Enter Day or Night landings for Solo\.
+- runFlow: assert-save-disabled.yaml
+- scrollUntilVisible:
+    element:
+      id: flight-landings-day
+    direction: UP
+- tapOn:
+    id: flight-landings-day
+- inputText: '1'
+- hideKeyboard
+- assertNotVisible: Enter Day or Night landings for Solo\.
+- runFlow: assert-save-enabled.yaml
+- scrollUntilVisible:
+    element: Solo
+    direction: UP
+- tapOn: Solo
+- tapOn: PIC
+- tapOn:
+    id: flight-landings-day
+- eraseText
+- hideKeyboard
+- runFlow: assert-save-enabled.yaml
