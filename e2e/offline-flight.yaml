@@ -1,0 +1,28 @@
+appId: host.exp.exponent
+name: Offline flight survives restart and syncs exactly once
+---
+- runFlow: flows/01-sign-in.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: offline
+- runFlow: flows/02-create-offline.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: saved-offline
+- runFlow: flows/03-reopen-offline.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: reconnect
+- runFlow: flows/04-reconnect.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: synced
+- runFlow: flows/05-refresh.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: refreshed

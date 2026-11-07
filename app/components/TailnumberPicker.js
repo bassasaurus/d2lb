@@ -81,7 +81,7 @@ export default function TailnumberPicker({ initialValue, setFieldValue, aircraft
     return () => { active = false; };
   }, [visible, suggestions, loading, error, colors, overlay]);
   return <View ref={anchor} collapsable={false}>
-    <AppTextInput isValid={isValid} value={text} placeholder="Tailnumber" autoCapitalize="characters" autoCorrect={false}
+    <AppTextInput testID="tailnumber-input" isValid={isValid} value={text} placeholder="Tailnumber" autoCapitalize="characters" autoCorrect={false}
       accessibilityLabel="Tailnumber" autoComplete="off" maxLength={10}
       onFocus={() => { clearTimeout(blurTimer.current); setVisible(true); }}
       onChangeText={value => {

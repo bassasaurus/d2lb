@@ -12,7 +12,8 @@
     "export:ios": "expo export --platform ios",
     "export:android": "expo export --platform android",
     "lint": "eslint App.js index.js app app.config.js scripts/*.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "test:screens:android": "sh scripts/screen-tests"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

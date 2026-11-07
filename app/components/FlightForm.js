@@ -176,6 +176,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
             }) => (
               <>
                 <Pressable
+                  testID="flight-date"
                   onPress={() => {
                     const parsed = moment(values.date, "M/D/YYYY", true);
                     setCalendarDate(parsed.isValid() ? parsed.toDate() : new Date());
@@ -267,6 +268,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                 >
                   <View style={{ flexDirection: "column", flex: 0.7 }}>
                     <AppTextInput
+                      testID="flight-duration"
                       isValid={errors.duration ? false : true}
                       value={values.duration}
                       onChangeText={(val) => {
@@ -694,7 +696,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                   )}
                 </View>
                 <View style={{ paddingTop: 10 }}>
-                  <Button title="Save" disabled={!isValid || isSubmitting || !hasRequiredFlightRole(values) || !hasRequiredSoloLandings(values)}
+                  <Button testID="flight-save" title="Save" disabled={!isValid || isSubmitting || !hasRequiredFlightRole(values) || !hasRequiredSoloLandings(values)}
                     onPress={handleSubmit} color={STYLES.blue} />
                 </View>
                 {/* <View style={{ marginTop: 30 }}>

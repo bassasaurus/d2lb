@@ -189,3 +189,5 @@ dist/
 /ios/
 
 .local-node-path
+/.screen-tests/
+/e2e/__pycache__/

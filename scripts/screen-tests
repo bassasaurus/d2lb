@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")/.."
+if [ -f .local-node-path ]; then
+  PATH="$(cat .local-node-path):$PATH"
+  export PATH
+fi
+exec "${D2LB_DJANGO_PYTHON:-$HOME/.virtualenvs/logbook312/bin/python}" e2e/run.py "$@"
