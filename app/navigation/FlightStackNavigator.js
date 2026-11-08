@@ -40,6 +40,9 @@ function FlightStackNavigator(props) {
             <MaterialCommunityIcons
               style={{ paddingLeft: 5 }}
               name='menu-open'
+              accessibilityRole="button"
+              accessibilityLabel="Open navigation menu"
+              testID="logbook-menu"
               size={30} color={colors.text}
               onPress={() => navigation.openDrawer()}
             />
@@ -52,6 +55,7 @@ function FlightStackNavigator(props) {
         component={FlightDetailScreen}
         options={{
           title: "Detail",
+          headerBackTestID: "flight-detail-back",
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: colors.background },
         }}

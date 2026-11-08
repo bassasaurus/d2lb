@@ -16,7 +16,8 @@
     "test:screens:android": "sh scripts/screen-tests",
     "test:screens:ios": "sh scripts/screen-tests --scenario ios-flight-smoke",
     "test:screens:ios:offline": "sh scripts/screen-tests --scenario ios-offline-flight",
-    "test:screens:ios:retry": "sh scripts/screen-tests --scenario ios-sync-lost-response"
+    "test:screens:ios:retry": "sh scripts/screen-tests --scenario ios-sync-lost-response",
+    "test:screens:ios:conflict": "sh scripts/screen-tests --scenario ios-keep-server-conflict"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

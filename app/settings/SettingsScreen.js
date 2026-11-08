@@ -43,7 +43,7 @@ export default function SettingsScreen({ navigation }) {
       <Text color={colors.muted} style={{ marginTop: 4 }}>{description}</Text>
     </Pressable>)}
     {saving && <Text color={colors.muted} accessibilityLiveRegion="polite">Saving appearance…</Text>}
-    <SyncSettings />
+    <SyncSettings navigation={navigation} />
     <View style={{ marginTop: 'auto', paddingTop: 8 }}>
       <Card compact style={{ marginBottom: 4, paddingVertical: 4 }}>
         <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />

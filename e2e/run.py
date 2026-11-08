@@ -27,7 +27,9 @@ ROOT = Path(__file__).resolve().parent.parent
 AVD = 'D2LB_Screen_Tests'
 IOS_SIMULATOR = 'D2LB_iOS_Screen_Tests'
 IOS_EXPO_ID = 'host.exp.Exponent'
-IOS_SCENARIOS = ('ios-flight-smoke', 'ios-offline-flight', 'ios-sync-lost-response')
+IOS_SCENARIOS = (
+    'ios-flight-smoke', 'ios-offline-flight', 'ios-sync-lost-response', 'ios-keep-server-conflict',
+)
 
 
 def main():
