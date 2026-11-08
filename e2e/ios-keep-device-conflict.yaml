@@ -1,0 +1,51 @@
+appId: host.exp.Exponent
+name: Keep the device version after an iPhone sync conflict
+---
+- runFlow: flows/ios-sign-in.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: signed-in
+- runFlow: flows/ios-create-flight.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: ios-synced
+- runFlow: flows/ios-edit-conflicting-flight.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: edited-offline
+- runFlow: flows/ios-open-conflict.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: conflict-detected
+- tapOn: Keep record on this device
+- scrollUntilVisible:
+    element: Choose this flight
+    direction: DOWN
+- tapOn: Choose this flight
+- extendedWaitUntil:
+    visible: Sync & Offline
+    timeout: 30000
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: kept-device
+- tapOn: Show navigation menu
+- tapOn: '^Logbook$'
+- tapOn: '.*KAUS-KDFW.*'
+- assertVisible: '^2\.3$'
+- assertNotVisible: '^3\.4$'
+- assertNotVisible: Update needed
+- takeScreenshot: ios-kept-device-flight
+- tapOn:
+    id: flight-detail-back
+- tapOn:
+    id: logbook-menu
+- tapOn: '^Settings$'
+- scrollUntilVisible:
+    element: 'Pending changes: 0'
+    direction: DOWN
+- assertNotVisible: Review sync issue

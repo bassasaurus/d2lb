@@ -38,7 +38,7 @@ else:
     expected, expected_receipts = {
         'empty': (0, 0), 'original': (1, 1), 'updated': (1, 2),
         'deleted': (0, 3), 'night-warning': (1, 1), 'night-only': (1, 2),
-        'server-conflict': (1, 1),
+        'server-conflict': (1, 1), 'device-conflict-resolved': (1, 2),
     }[state]
     flights = Flight.objects.count()
     acknowledgements = list(MobileSyncReceipt.objects.order_by('created_at', 'pk'))
@@ -51,6 +51,8 @@ else:
             assert receipt.user.username == EMAIL
             response = receipt.response
             assert (response['flight']['id'] if 'flight' in response else response['deleted_id']) == original_id
+        if state == 'device-conflict-resolved':
+            assert Decimal(str(acknowledgements[-1].response['flight']['duration'])) == Decimal('2.3')
         if state == 'deleted':
             assert acknowledgements[-1].response['deleted_id'] == original_id
     if expected:
@@ -58,7 +60,9 @@ else:
         assert flight.pk == original_id, 'An update must keep the original flight ID'
         assert flight.user.username == EMAIL
         assert flight.route == 'KAUS-KDFW'
-        expected_duration = {'updated': '2.3', 'server-conflict': '3.4'}.get(state, '1.2')
+        expected_duration = {
+            'updated': '2.3', 'server-conflict': '3.4', 'device-conflict-resolved': '2.3',
+        }.get(state, '1.2')
         assert flight.duration == Decimal(expected_duration)
         assert (flight.remarks or '') == ('Edited while offline' if state == 'updated' else '')
         assert flight.aircraft_type.aircraft_type == 'C172'

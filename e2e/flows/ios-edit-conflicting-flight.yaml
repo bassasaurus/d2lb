@@ -1,0 +1,27 @@
+appId: host.exp.Exponent
+name: Change the flight duration offline
+---
+- tapOn: '.*KAUS-KDFW.*'
+- scrollUntilVisible:
+    element: Update flight
+    direction: DOWN
+- tapOn: Update flight
+- tapOn:
+    id: flight-duration
+- eraseText
+- inputText: '2.3'
+- assertVisible:
+    id: flight-duration
+    text: '^2\.3$'
+- tapOn: '^Flight role$'
+- scrollUntilVisible:
+    element:
+      id: flight-save
+    direction: DOWN
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible: '^2\.3$'
+    timeout: 30000
+- tapOn:
+    id: flight-detail-back

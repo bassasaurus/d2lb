@@ -11,49 +11,12 @@ name: Keep Django's version after an iPhone sync conflict
     file: checkpoint.js
     env:
       STEP: ios-synced
-- tapOn: '.*KAUS-KDFW.*'
-- scrollUntilVisible:
-    element: Update flight
-    direction: DOWN
-- tapOn: Update flight
-- tapOn:
-    id: flight-duration
-- eraseText
-- inputText: '2.3'
-- assertVisible:
-    id: flight-duration
-    text: '^2\.3$'
-- tapOn: '^Flight role$'
-- scrollUntilVisible:
-    element:
-      id: flight-save
-    direction: DOWN
-- tapOn:
-    id: flight-save
-- extendedWaitUntil:
-    visible: '^2\.3$'
-    timeout: 30000
-- tapOn:
-    id: flight-detail-back
+- runFlow: flows/ios-edit-conflicting-flight.yaml
 - runScript:
     file: checkpoint.js
     env:
       STEP: edited-offline
-- extendedWaitUntil:
-    visible: '.*Update needed.*'
-    timeout: 90000
-- tapOn:
-    id: logbook-menu
-- tapOn: '^Settings$'
-- scrollUntilVisible:
-    element: Review sync issue
-    direction: DOWN
-- tapOn: Review sync issue
-- extendedWaitUntil:
-    visible: This record changed in two places. Select the version to keep.
-    timeout: 30000
-- assertVisible: Keep record on this device
-- assertVisible: Keep record saved online
+- runFlow: flows/ios-open-conflict.yaml
 - runScript:
     file: checkpoint.js
     env:
