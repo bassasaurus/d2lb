@@ -4,7 +4,15 @@
   },
   "build": {
     "beta": {
-      "channel": "beta"
+      "channel": "beta",
+      "android": {
+        "distribution": "internal",
+        "buildType": "apk",
+        "autoIncrement": true,
+        "env": {
+          "EXPO_PUBLIC_API_URL": "https://direct2logbook.com"
+        }
+      }
     },
     "preview": {
       "channel": "preview"
