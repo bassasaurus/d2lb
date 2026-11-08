@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.6](https://github.com/bassasaurus/d2lb/compare/v0.1.5...v0.1.6) (2026-11-08)
+
+
+### Bug Fixes
+
+* keep Save visible and cover Android sync recovery ([#65](https://github.com/bassasaurus/d2lb/issues/65)) ([353c1c0](https://github.com/bassasaurus/d2lb/commit/353c1c055d6c965d992b149e79e5258ac9637e87))
+
 ## [0.1.5](https://github.com/bassasaurus/d2lb/compare/v0.1.4...v0.1.5) (2026-11-08)
 
 
