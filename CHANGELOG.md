@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.5](https://github.com/bassasaurus/d2lb/compare/v0.1.4...v0.1.5) (2026-11-08)
+
+
+### Bug Fixes
+
+* open sync conflict review from settings ([#62](https://github.com/bassasaurus/d2lb/issues/62)) ([d56762f](https://github.com/bassasaurus/d2lb/commit/d56762f83e753e45124c41c5d2c7e4c53ccd8fa4))
+
 ## [0.1.4](https://github.com/bassasaurus/d2lb/compare/v0.1.3...v0.1.4) (2026-11-07)
 
 
