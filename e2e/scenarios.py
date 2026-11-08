@@ -10,6 +10,13 @@ CREATE_STEPS = [
     ('refreshed', 'original', None),
 ]
 
+CONFLICT_STEPS = [
+    ('signed-in', 'empty', None),
+    ('ios-synced', 'original', False),
+    ('edited-offline', 'stage-server-conflict', True),
+    ('conflict-detected', 'server-conflict', None),
+]
+
 SCENARIOS = {
     'ios-flight-smoke': [
         ('signed-in', 'empty', None),
@@ -23,13 +30,8 @@ SCENARIOS = {
         ('signed-in', 'empty', None),
         ('ios-replayed', 'original', None),
     ],
-    'ios-keep-server-conflict': [
-        ('signed-in', 'empty', None),
-        ('ios-synced', 'original', False),
-        ('edited-offline', 'stage-server-conflict', True),
-        ('conflict-detected', 'server-conflict', None),
-        ('kept-server', 'server-conflict', None),
-    ],
+    'ios-keep-server-conflict': CONFLICT_STEPS + [('kept-server', 'server-conflict', None)],
+    'ios-keep-device-conflict': CONFLICT_STEPS + [('kept-device', 'device-conflict-resolved', None)],
     'offline-flight': CREATE_STEPS,
     'flight-crud': CREATE_STEPS + [
         ('cancel-offline', 'original', False),

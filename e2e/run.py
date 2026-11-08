@@ -28,7 +28,8 @@ AVD = 'D2LB_Screen_Tests'
 IOS_SIMULATOR = 'D2LB_iOS_Screen_Tests'
 IOS_EXPO_ID = 'host.exp.Exponent'
 IOS_SCENARIOS = (
-    'ios-flight-smoke', 'ios-offline-flight', 'ios-sync-lost-response', 'ios-keep-server-conflict',
+    'ios-flight-smoke', 'ios-offline-flight', 'ios-sync-lost-response',
+    'ios-keep-server-conflict', 'ios-keep-device-conflict',
 )
 
 
@@ -243,7 +244,7 @@ def run_scenario(args, scenario):
                 try:
                     result = backend(expected, capture_output=True, text=True, timeout=10)
                 except subprocess.CalledProcessError as error:
-                    if step in ('delete-synced', 'ios-synced') and 'AssertionError' in error.stderr:
+                    if step in ('delete-synced', 'ios-synced', 'kept-device') and 'AssertionError' in error.stderr:
                         self.retry_later(error.stderr)
                         return
                     raise

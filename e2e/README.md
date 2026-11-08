@@ -120,6 +120,12 @@ disposable database before bringing the API back. The scenario opens the
 comparison from Settings, selects **Saved online**, and checks that the
 logbook shows 3.4 hours and Django still has one flight and one sync receipt.
 
+Use `test:screens:ios:conflict:device` with the same arguments to select **On
+this device** in the comparison. The test checks that the issue clears and
+that the existing Django flight changes to 2.3 hours. Django must retain the
+original flight ID with one flight and two receipts, one for creation and one
+for the accepted update.
+
 ## Local Android prerequisites
 
 - Project dependencies (`npm ci`) and the Node version in `.nvmrc`.
