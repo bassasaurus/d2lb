@@ -1,8 +1,7 @@
 import { hasRequiredSoloLandings } from '../forms/landingRequirements.mjs';
 import { nightPairWarnings } from '../forms/nightWarning.mjs';
 import { FLIGHT_ROLES, PRIMARY_FLIGHT_ROLES, hasRequiredFlightRole, toggleFlightRole } from '../forms/flightRoles.mjs';
-import Card from './Card';
-import { ScrollView } from './OverflowLists';
+import ScrollableFormCard from './ScrollableFormCard';
 import { listTailnumbers } from '../storage/tailnumbers';
 import RouteInput from '../airports/RouteInput';
 import { normalizeRoute, routeErrors } from '../airports/routeCheck.mjs';
@@ -128,26 +127,31 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
       enabled={scrollEnabled}
     >
       <PickerOverlayHost>
-      <ScrollView style={{ backgroundColor: STYLES.itemBackground }} contentContainerStyle={{ padding: 12, paddingBottom: 24 }} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
-        <Card style={styles.container}>
-          {noDefaultAircraft && !defaultSuggestionDismissed && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
-            <Pressable accessibilityRole="link" onPress={async () => {
-              try {
-                await draftHandle.current?.flush();
-                onChooseDefault?.();
-              } catch {
-                Alert.alert('Could not save your draft', 'Keep this form open and try again.');
-              }
-            }} hitSlop={{ top: 8, left: 8, right: 8 }} style={{ flex: 1, minHeight: 28, paddingVertical: 4, justifyContent: 'center' }}>
-              <Text style={{ color: STYLES.blue }}>Choose a default aircraft</Text>
-            </Pressable>
-            <Pressable accessibilityRole="button" accessibilityLabel="Dismiss default aircraft suggestion"
-              onPress={() => setDefaultSuggestionDismissed(true)} hitSlop={{ top: 8, left: 4, right: 8 }}
-              style={{ minWidth: 28, minHeight: 28, alignItems: 'center', justifyContent: 'center' }}>
-              <MaterialCommunityIcons name="close" size={20} color={STYLES.muted} />
-            </Pressable>
-          </View>}
           <DraftForm kind="flight" recordKey={initialValues.local_id || initialValues.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={values => setFormCount(Math.max(0, ...values.approaches.map((item, index) => item.approach_type || item.number ? index : 0)))}
+            renderLayout={({ content, form: { values, isValid, isSubmitting, handleSubmit }, draftBlocked }) => (
+              <ScrollableFormCard cardStyle={styles.container} keyboardDismissMode="on-drag"
+                footer={<Button testID="flight-save" title="Save" color={STYLES.blue} onPress={handleSubmit}
+                  disabled={draftBlocked || !isValid || isSubmitting || !hasRequiredFlightRole(values) || !hasRequiredSoloLandings(values)} />}>
+                {noDefaultAircraft && !defaultSuggestionDismissed && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
+                  <Pressable accessibilityRole="link" onPress={async () => {
+                    try {
+                      await draftHandle.current?.flush();
+                      onChooseDefault?.();
+                    } catch {
+                      Alert.alert('Could not save your draft', 'Keep this form open and try again.');
+                    }
+                  }} hitSlop={{ top: 8, left: 8, right: 8 }} style={{ flex: 1, minHeight: 28, paddingVertical: 4, justifyContent: 'center' }}>
+                    <Text style={{ color: STYLES.blue }}>Choose a default aircraft</Text>
+                  </Pressable>
+                  <Pressable accessibilityRole="button" accessibilityLabel="Dismiss default aircraft suggestion"
+                    onPress={() => setDefaultSuggestionDismissed(true)} hitSlop={{ top: 8, left: 4, right: 8 }}
+                    style={{ minWidth: 28, minHeight: 28, alignItems: 'center', justifyContent: 'center' }}>
+                    <MaterialCommunityIcons name="close" size={20} color={STYLES.muted} />
+                  </Pressable>
+                </View>}
+                {content}
+              </ScrollableFormCard>
+            )}
             validateOnMount={true}
             initialValues={initialValues}
             validationSchema={flightSchema}
@@ -169,9 +173,6 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
             {({
               values,
               errors,
-              isValid,
-              handleSubmit,
-              isSubmitting,
               touched,
               handleChange,
               setFieldValue,
@@ -703,13 +704,6 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                     <View></View>
                   )}
                 </View>
-                <View style={{ paddingTop: 10 }}>
-                  <Button testID="flight-save" title="Save" disabled={!isValid || isSubmitting || !hasRequiredFlightRole(values) || !hasRequiredSoloLandings(values)}
-                    onPress={handleSubmit} color={STYLES.blue} />
-                </View>
-                {/* <View style={{ marginTop: 30 }}>
-                  <Text>{JSON.stringify(values, null, "  ")}</Text>
-                </View> */}
                 {calVisible && Platform.OS === "android" && (
                   <DateTimePicker
                     value={calendarDate}
@@ -754,9 +748,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
               </>
             )}
           </DraftForm>
-          <ActivityModal></ActivityModal>
-        </Card>
-      </ScrollView>
+          <ActivityModal />
       </PickerOverlayHost>
     </KeyboardAvoidingView>
   );

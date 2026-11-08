@@ -1,0 +1,18 @@
+appId: host.exp.exponent
+name: Open the conflict comparison from Settings
+---
+- extendedWaitUntil:
+    visible: Update needed
+    timeout: 90000
+- tapOn:
+    id: logbook-menu
+- tapOn: '^Settings$'
+- scrollUntilVisible:
+    element: Review sync issue
+    direction: DOWN
+- tapOn: Review sync issue
+- extendedWaitUntil:
+    visible: This record changed in two places. Select the version to keep.
+    timeout: 30000
+- assertVisible: Keep record on this device
+- assertVisible: Keep record saved online

@@ -1,0 +1,46 @@
+appId: host.exp.exponent
+name: Keep Django's version after an Android sync conflict
+---
+- runFlow: flows/01-sign-in.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: signed-in
+- runFlow: flows/android-create-flight.yaml
+- extendedWaitUntil:
+    visible: Synced
+    timeout: 90000
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: conflict-flight-synced
+- runFlow: flows/android-edit-conflicting-flight.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: edited-offline
+- runFlow: flows/android-open-conflict.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: conflict-detected
+- tapOn: Keep record saved online
+- scrollUntilVisible:
+    element: Choose this flight
+    direction: DOWN
+- tapOn: Choose this flight
+- extendedWaitUntil:
+    visible: 'Pending changes: 0'
+    timeout: 30000
+- assertNotVisible: Review sync issue
+- tapOn: Show navigation menu
+- tapOn: '^Logbook$'
+- tapOn: KAUS-KDFW
+- assertVisible: '^3\.4$'
+- assertNotVisible: '^2\.3$'
+- assertNotVisible: Update needed
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: kept-server
+- takeScreenshot: android-kept-server-flight

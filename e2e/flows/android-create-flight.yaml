@@ -1,0 +1,33 @@
+appId: host.exp.exponent
+name: Save a flight on Android
+---
+- tapOn: New Flight
+- extendedWaitUntil:
+    visible:
+      id: flight-save
+      enabled: false
+    timeout: 10000
+- tapOn:
+    id: flight-date
+- tapOn: OK
+- tapOn:
+    id: flight-route
+- inputText: KAUS-KDFW
+- hideKeyboard
+- assertVisible: C172
+- tapOn:
+    id: tailnumber-input
+- tapOn: Select N1234
+- tapOn:
+    id: flight-duration
+- inputText: '1.2'
+- hideKeyboard
+- tapOn: PIC
+- assertVisible:
+    id: flight-save
+    enabled: true
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible: KAUS-KDFW
+    timeout: 30000

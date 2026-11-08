@@ -1,5 +1,4 @@
-import Card from '../components/Card';
-import { ScrollView } from '../components/OverflowLists';
+import ScrollableFormCard from '../components/ScrollableFormCard';
 import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import React, { useRef } from 'react';
@@ -28,9 +27,14 @@ export default function AircraftFormScreen({ route, navigation }) {
   const savedNavigation = useRef(false);
   const draftHandle = useRef(null);
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-    <ScrollView style={{ backgroundColor: STYLES.itemBackground }} contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Card>
-      <DraftForm kind="aircraft" recordKey={record?.local_id || record?.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={aircraftValues(record)} validationSchema={schema} validateOnMount onSubmit={async (values, helpers) => {
+      <DraftForm kind="aircraft" recordKey={record?.local_id || record?.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={aircraftValues(record)} validationSchema={schema} validateOnMount
+        renderLayout={({ content, form: { values, isSubmitting, isValidating, isValid, handleSubmit }, draftBlocked }) => (
+          <ScrollableFormCard footer={<Button color={STYLES.blue} title="Save" onPress={handleSubmit}
+            disabled={draftBlocked || isSubmitting || isValidating || !isValid || !values.aircraft_type || !values.aircraft_category || !values.aircraft_class || ENGINE_CHOICES.filter(([key]) => values[key]).length !== 1 || WEIGHT_CHOICES.filter(([key]) => values[key]).length !== 1} />}>
+            {content}
+          </ScrollableFormCard>
+        )}
+        onSubmit={async (values, helpers) => {
         savedNavigation.current = false;
         try {
           const item = await saveAircraft(values);
@@ -42,7 +46,7 @@ export default function AircraftFormScreen({ route, navigation }) {
           helpers.setStatus(error.message || 'Aircraft not saved. Your changes remain in this form.');
         } finally { helpers.setSubmitting(false); }
       }}>
-        {({ values, errors, submitCount, status, isSubmitting, isValid, isValidating, setFieldValue, handleSubmit }) => {
+        {({ values, errors, status, setFieldValue }) => {
           const chooseFlag = (choices, key) => choices.forEach(([field]) => setFieldValue(field, field === key));
           return <>
             <Text style={styles.label}>Aircraft Type</Text>
@@ -62,17 +66,14 @@ export default function AircraftFormScreen({ route, navigation }) {
             {FLAGS.map(([key, label]) => <View key={key} style={styles.flag}><Text>{label}</Text><Switch value={values[key]} onValueChange={value => setFieldValue(key, value)} accessibilityLabel={label} /></View>)}
             {errors[''] && <Text style={styles.error}>{errors['']}</Text>}
             {status && <Text style={styles.error} accessibilityLiveRegion="polite">{status}</Text>}
-            <Button color={STYLES.blue} title="Save" disabled={isSubmitting || isValidating || !isValid || !values.aircraft_type || !values.aircraft_category || !values.aircraft_class || ENGINE_CHOICES.filter(([key]) => values[key]).length !== 1 || WEIGHT_CHOICES.filter(([key]) => values[key]).length !== 1} onPress={handleSubmit} />
             <Text style={styles.help}>Saved on this device first; uploads when connected.</Text>
           </>;
         }}
       </DraftForm>
-      </Card>
-    </ScrollView>
   </KeyboardAvoidingView>;
 }
 const createStyles = STYLES => StyleSheet.create({
-  container: { padding: 12, paddingBottom: 24 }, label: { fontWeight: '600', marginBottom: 4 },
+  label: { fontWeight: '600', marginBottom: 4 },
   group: { marginTop: 16 }, options: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   option: { padding: 10, borderWidth: 1, borderColor: STYLES.grey, borderRadius: 5 },
   selected: { borderColor: STYLES.blue, backgroundColor: STYLES.selected },

@@ -2,8 +2,7 @@ import React, { useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, Switch, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as yup from 'yup';
-import { ScrollView } from '../components/OverflowLists';
-import Card from '../components/Card';
+import ScrollableFormCard from '../components/ScrollableFormCard';
 import Text from '../components/AppText';
 import AppTextInput from '../components/AppTextInput';
 import PlatformActionButton from '../components/PlatformActionButton';
@@ -22,9 +21,14 @@ export default function ProfileEditScreen({ route, navigation }) {
   const schema = medical ? yup.object({ medical_issue_date: yup.string().required('Select an issue date.') })
     : yup.object({ first_name: yup.string().max(150), last_name: yup.string().max(150), company: yup.string().max(50) });
   return <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-    <ScrollView contentContainerStyle={{ padding: 12 }} keyboardShouldPersistTaps="handled">
-      <Card><DraftForm kind={`profile-${section}`} initialValues={initialValues} validationSchema={schema}
-        draftHandle={draftHandle} savedNavigation={savedNavigation} onSubmit={async (values, helpers) => {
+    <DraftForm kind={`profile-${section}`} initialValues={initialValues} validationSchema={schema}
+      draftHandle={draftHandle} savedNavigation={savedNavigation}
+      renderLayout={({ content, form: { handleSubmit, isSubmitting }, draftBlocked }) => (
+        <ScrollableFormCard footer={<PlatformActionButton title="Save" disabled={draftBlocked || isSubmitting} onPress={handleSubmit} />}>
+          {content}
+        </ScrollableFormCard>
+      )}
+      onSubmit={async (values, helpers) => {
           try {
             await api.patch('/api/mobile/profile/', { [section]: values });
             await draftHandle.current.complete();
@@ -37,7 +41,7 @@ export default function ProfileEditScreen({ route, navigation }) {
               : 'Could not save to the server. Check your connection and retry. Your draft remains on this device.');
           } finally { helpers.setSubmitting(false); }
         }}>
-        {({ values, setFieldValue, handleSubmit, isSubmitting, errors, status }) => <>
+        {({ values, setFieldValue, errors, status }) => <>
           {medical ? <>
             <Text weight="600">Issue date</Text>
             <PlatformActionButton title={profileDate(values.medical_issue_date)} variant="text" onPress={() => setShowDate(true)} />
@@ -62,10 +66,8 @@ export default function ProfileEditScreen({ route, navigation }) {
           </View>)}
           {Object.values(errors).map((error, index) => <Text key={index} color={colors.danger}>{error}</Text>)}
           {status && <Text color={colors.danger} accessibilityLiveRegion="polite" style={{ marginVertical: 12 }}>{status}</Text>}
-          <PlatformActionButton title="Save" disabled={isSubmitting} onPress={handleSubmit} />
           <Text color={colors.muted} style={{ marginTop: 12 }}>An internet connection is required to save profile changes.</Text>
         </>}
-      </DraftForm></Card>
-    </ScrollView>
+    </DraftForm>
   </KeyboardAvoidingView>;
 }

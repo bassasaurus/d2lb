@@ -11,14 +11,14 @@ import { createDraftStore, draftKey, fingerprint } from './draftStore.mjs';
 
 const store = createDraftStore(AsyncStorage);
 
-export default function DraftForm({ kind, recordKey = 'new', draftHandle, savedNavigation, onResume, contentStyle, children, ...props }) {
+export default function DraftForm({ kind, recordKey = 'new', draftHandle, savedNavigation, onResume, contentStyle, renderLayout, children, ...props }) {
   return <Formik {...props}>{formik => <DraftBoundary kind={kind} recordKey={recordKey}
-    draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={onResume} contentStyle={contentStyle}>
+    draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={onResume} contentStyle={contentStyle} renderLayout={renderLayout}>
     {children(formik)}
   </DraftBoundary>}</Formik>;
 }
 
-function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume, contentStyle, children }) {
+function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume, contentStyle, renderLayout, children }) {
   const form = useFormikContext();
   const { colors } = useAppTheme();
   const [state, setState] = useState({ loading: true, pending: null, message: null });
@@ -121,7 +121,8 @@ function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume
     { text: 'Keep draft', style: 'cancel' },
     { text: 'Discard', style: 'destructive', onPress: () => discard().catch(error => update({ error: error.message })) },
   ]);
-  return <>
+  const draftBlocked = Boolean(state.loading || pending || state.blocked);
+  const content = <>
     <UnsavedFormGuard savedNavigation={savedNavigation} draftHandle={draftHandle} />
     {state.loading ? <Text style={{ color: colors.muted, marginVertical: 8 }}>Checking for an unfinished draft…</Text>
       : pending || state.blocked ? <View style={{ padding: 12, marginVertical: 10, borderWidth: 1, borderColor: colors.border, borderRadius: 6, backgroundColor: colors.selected }}>
@@ -143,11 +144,12 @@ function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume
         {state.message && <Text accessibilityLiveRegion="polite" style={{ color: colors.muted, fontSize: 12, marginVertical: 8 }}>{state.message}</Text>}
         {state.error && <><Text style={{ color: colors.danger }}>{state.error}</Text>{action('Retry draft save', () => flush().catch(() => {}))}</>}
       </View>}
-    <View pointerEvents={state.loading || pending || state.blocked ? 'none' : 'auto'}
-      accessibilityElementsHidden={Boolean(state.loading || pending || state.blocked)}
-      importantForAccessibility={state.loading || pending || state.blocked ? 'no-hide-descendants' : 'auto'}
-      style={[{ opacity: state.loading || pending || state.blocked ? 0.5 : 1 }, contentStyle]}>
+    <View pointerEvents={draftBlocked ? 'none' : 'auto'}
+      accessibilityElementsHidden={draftBlocked}
+      importantForAccessibility={draftBlocked ? 'no-hide-descendants' : 'auto'}
+      style={[{ opacity: draftBlocked ? 0.5 : 1 }, contentStyle]}>
       {children}
     </View>
   </>;
+  return renderLayout ? renderLayout({ content, form, draftBlocked }) : content;
 }

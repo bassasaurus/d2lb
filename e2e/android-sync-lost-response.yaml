@@ -1,0 +1,15 @@
+appId: host.exp.exponent
+name: Retry a saved flight after losing Django's acknowledgment
+---
+- runFlow: flows/01-sign-in.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: signed-in
+- runFlow: flows/android-create-flight.yaml
+# Wait for the app to retry by itself before taking any further UI action.
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: replayed
+- runFlow: flows/04-reconnect.yaml
