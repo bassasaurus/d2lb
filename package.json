@@ -1,5 +1,5 @@
 {
-  "version": "0.1.4",
+  "version": "0.1.5",
   "scripts": {
     "start": "expo start --dev-client",
     "start:go": "expo start --go",
