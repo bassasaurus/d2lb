@@ -12,10 +12,14 @@ CREATE_STEPS = [
 
 CONFLICT_STEPS = [
     ('signed-in', 'empty', None),
-    ('ios-synced', 'original', False),
+    ('conflict-flight-synced', 'original', False),
     ('edited-offline', 'stage-server-conflict', True),
     ('conflict-detected', 'server-conflict', None),
 ]
+
+ANDROID_SYNC_RECOVERY = (
+    'android-sync-lost-response', 'android-keep-server-conflict', 'android-keep-device-conflict',
+)
 
 SCENARIOS = {
     'ios-flight-smoke': [
@@ -32,6 +36,12 @@ SCENARIOS = {
     ],
     'ios-keep-server-conflict': CONFLICT_STEPS + [('kept-server', 'server-conflict', None)],
     'ios-keep-device-conflict': CONFLICT_STEPS + [('kept-device', 'device-conflict-resolved', None)],
+    'android-sync-lost-response': [
+        ('signed-in', 'empty', None),
+        ('replayed', 'original', None),
+    ],
+    'android-keep-server-conflict': CONFLICT_STEPS + [('kept-server', 'server-conflict', None)],
+    'android-keep-device-conflict': CONFLICT_STEPS + [('kept-device', 'device-conflict-resolved', None)],
     'offline-flight': CREATE_STEPS,
     'flight-crud': CREATE_STEPS + [
         ('cancel-offline', 'original', False),

@@ -20,7 +20,7 @@ import uuid
 
 import psycopg2
 from psycopg2 import sql
-from scenarios import SCENARIOS
+from scenarios import ANDROID_SYNC_RECOVERY, SCENARIOS
 from config import database_url
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -46,7 +46,7 @@ def main():
     parser.add_argument('--api-port', type=int, default=8010)
     parser.add_argument('--metro-port', type=int, default=8082)
     parser.add_argument('--emulator-port', type=int, default=5556)
-    parser.add_argument('--scenario', choices=['all', *SCENARIOS],
+    parser.add_argument('--scenario', choices=['all', 'sync-recovery', *SCENARIOS],
                         help='Defaults to all Android scenarios, or the iOS smoke test with --ios-simulator')
     args = parser.parse_args()
     if not args.maestro or not Path(args.maestro).is_file():
@@ -78,7 +78,10 @@ def main():
             parser.error('The emulator port must be an even number from 5554 to 5682.')
         args.scenario = args.scenario or 'all'
 
-    scenarios = ['flight-crud', 'flight-validation'] if args.scenario == 'all' else [args.scenario]
+    scenarios = {
+        'all': ('flight-crud', 'flight-validation', *ANDROID_SYNC_RECOVERY),
+        'sync-recovery': ANDROID_SYNC_RECOVERY,
+    }.get(args.scenario, (args.scenario,))
     for scenario in scenarios:
         run_scenario(args, scenario)
     print(f'\nPASS: {len(scenarios)}/{len(scenarios)} screen scenarios.', flush=True)
@@ -121,7 +124,7 @@ def run_scenario(args, scenario):
                PYTHONUNBUFFERED='1')
     trace = output / 'flight-sync-trace.jsonl'
     env.pop('D2LB_FLIGHT_SYNC_TRACE', None)
-    if scenario == 'ios-sync-lost-response':
+    if scenario in ('ios-sync-lost-response', 'android-sync-lost-response'):
         env['D2LB_FLIGHT_SYNC_TRACE'] = str(trace)
     adb = [str(args.android_sdk / 'platform-tools/adb'), '-s', device]
     children = []
@@ -173,7 +176,7 @@ def run_scenario(args, scenario):
     def start_api(log_name):
         argv = [sys.executable, args.django / 'manage.py', 'runserver',
                 f'127.0.0.1:{args.api_port}', '--noreload']
-        if scenario == 'ios-sync-lost-response':
+        if scenario in ('ios-sync-lost-response', 'android-sync-lost-response'):
             # Django closes each HTTP connection when its test server runs without threads.
             argv.append('--nothreading')
         process = start(argv, log_name, args.django)
@@ -236,7 +239,7 @@ def run_scenario(args, scenario):
                 return
             _, expected, online = steps[len(completed)]
             try:
-                if step == 'ios-replayed' and not replay_ready():
+                if step in ('ios-replayed', 'replayed') and not replay_ready():
                     self.retry_later('Waiting for the app to replay the dropped acknowledgment.')
                     return
                 # Poll the server when the flow does not wait for a Synced indicator.
@@ -244,7 +247,7 @@ def run_scenario(args, scenario):
                 try:
                     result = backend(expected, capture_output=True, text=True, timeout=10)
                 except subprocess.CalledProcessError as error:
-                    if step in ('delete-synced', 'ios-synced', 'kept-device') and 'AssertionError' in error.stderr:
+                    if step in ('delete-synced', 'ios-synced', 'conflict-flight-synced', 'kept-device') and 'AssertionError' in error.stderr:
                         self.retry_later(error.stderr)
                         return
                     raise

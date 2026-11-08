@@ -2,6 +2,11 @@ appId: host.exp.Exponent
 name: Save a flight on iPhone
 ---
 - tapOn: New Flight
+- extendedWaitUntil:
+    visible:
+      id: flight-save
+      enabled: false
+    timeout: 10000
 - tapOn:
     id: flight-date
 - tapOn:
@@ -37,10 +42,6 @@ name: Save a flight on iPhone
     element: PIC
     direction: DOWN
 - tapOn: PIC
-- scrollUntilVisible:
-    element:
-      id: flight-save
-    direction: DOWN
 - assertVisible:
     id: flight-save
     enabled: true

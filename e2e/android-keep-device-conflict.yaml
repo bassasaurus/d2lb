@@ -1,0 +1,53 @@
+appId: host.exp.exponent
+name: Keep the device version after an Android sync conflict
+---
+- runFlow: flows/01-sign-in.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: signed-in
+- runFlow: flows/android-create-flight.yaml
+- extendedWaitUntil:
+    visible: Synced
+    timeout: 90000
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: conflict-flight-synced
+- runFlow: flows/android-edit-conflicting-flight.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: edited-offline
+- runFlow: flows/android-open-conflict.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: conflict-detected
+- tapOn: Keep record on this device
+- scrollUntilVisible:
+    element: Choose this flight
+    direction: DOWN
+- tapOn: Choose this flight
+- extendedWaitUntil:
+    visible: Sync & Offline
+    timeout: 30000
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: kept-device
+- tapOn: Show navigation menu
+- tapOn: '^Logbook$'
+- tapOn: KAUS-KDFW
+- assertVisible: '^2\.3$'
+- assertNotVisible: '^3\.4$'
+- assertNotVisible: Update needed
+- takeScreenshot: android-kept-device-flight
+- back
+- tapOn:
+    id: logbook-menu
+- tapOn: '^Settings$'
+- scrollUntilVisible:
+    element: 'Pending changes: 0'
+    direction: DOWN
+- assertNotVisible: Review sync issue

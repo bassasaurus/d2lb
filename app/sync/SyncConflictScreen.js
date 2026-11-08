@@ -37,13 +37,13 @@ export default function SyncConflictScreen({ route, navigation }) {
           return;
         }
         if (active) setItem(local);
-        if (!local.id) { if (active) setMessage('Check the details below, then update this record.'); return; }
+        if (!local.id) { if (active) setMessage('Fix the record details before syncing.'); return; }
         try {
           const compared = await access.refresh(localId, local.generation, local.id);
           await access.assertCurrent();
           if (active) {
             setItem(compared); setFresh(true);
-            setMessage(isValidationIssue(compared.response) ? 'Check the details below, then update this record.'
+            setMessage(isValidationIssue(compared.response) ? 'Fix the record details before syncing.'
               : compared.server_record ? 'This record changed in two places. Select the version to keep.'
               : 'This record was deleted online. Choose whether to keep that deletion or save your device version as a new record.');
           }
@@ -84,6 +84,7 @@ export default function SyncConflictScreen({ route, navigation }) {
     params: { screen: item?._default_preference ? 'AircraftList' : kind === 'aircraft' ? 'AircraftForm' : kind === 'tailnumber' ? 'TailnumberUpdate' : 'FlightUpdate', params: { item }, initial: false },
   });
   const validation = isValidationIssue(item?.response);
+  const canFixDetails = item?.can_resolve && item.sync_state !== 'pending_delete' && (validation || !item.id);
   const inUse = kind === 'aircraft' && item?.sync_state === 'pending_delete' && /in use/i.test(JSON.stringify(item.response || {}));
   const localEnabled = Boolean(fresh && !validation && !inUse);
   const apply = () => {
@@ -108,8 +109,8 @@ export default function SyncConflictScreen({ route, navigation }) {
       <PlatformActionButton title={busy ? 'Saving…' : selected === 'local' && item.sync_state === 'pending_delete' ? 'Keep deletion request' : `Choose this ${kind === 'flight' ? 'flight' : 'record'}`}
         disabled={busy || !selected} onPress={apply} />
     </View>}
-    {item?.can_resolve && item.sync_state !== 'pending_delete' && <View style={{ marginTop: 8 }}>
-      <PlatformActionButton title="Update details" variant="text" disabled={busy} onPress={edit} />
+    {canFixDetails && <View style={{ marginTop: 8 }}>
+      <PlatformActionButton title="Fix Details" variant="text" disabled={busy} onPress={edit} />
     </View>}
     {!item?.id && item?.can_resolve && <PlatformActionButton title="Discard draft" variant="text" destructive disabled={busy}
       onPress={() => confirm('discard_local', 'Discard this draft?', 'Remove this record from your device? A recovery copy is retained.')} />}

@@ -7,7 +7,15 @@ on:
         description: Screen scenarios to run
         type: choice
         default: all
-        options: [all, flight-crud, flight-validation, offline-flight]
+        options:
+          - all
+          - flight-crud
+          - flight-validation
+          - offline-flight
+          - sync-recovery
+          - android-sync-lost-response
+          - android-keep-server-conflict
+          - android-keep-device-conflict
       django_ref:
         description: Django branch, tag, or commit to test against
         type: string

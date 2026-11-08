@@ -10,7 +10,7 @@ name: Keep the device version after an iPhone sync conflict
 - runScript:
     file: checkpoint.js
     env:
-      STEP: ios-synced
+      STEP: conflict-flight-synced
 - runFlow: flows/ios-edit-conflicting-flight.yaml
 - runScript:
     file: checkpoint.js

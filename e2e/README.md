@@ -31,7 +31,7 @@ After `.github/workflows/screen-tests.yml` is merged into `main`, open the mobil
 repository's **Actions → Android screen tests (manual) → Run workflow**.
 
 - Choose the mobile branch to test (normally `main`).
-- Leave **scenario** set to `all` for CRUD and validation, or select one scenario.
+- Leave **scenario** set to `all` for CRUD, validation, and sync recovery, or choose a focused run.
 - Leave **django_ref** as `master` to test the current backend. A Django branch,
   tag, or exact commit SHA can be selected for compatibility checks.
 
@@ -172,6 +172,14 @@ For password authentication, supply `PGPASSWORD` in the environment; it is used
 by both database administration and Django. `--pg-port` defaults to 5432.
 Use `--scenario flight-crud` or `--scenario flight-validation` for a focused run.
 `--scenario offline-flight` retains the original, shorter create/restart/sync test.
+
+Use `--scenario sync-recovery` to run the three Android recovery tests together.
+To run one, select `android-sync-lost-response`, `android-keep-server-conflict`,
+or `android-keep-device-conflict`. The manual GitHub workflow offers the same
+choices, and `all` includes all three. Each test checks that Django has one
+flight with its original ID. A lost acknowledgment and **Saved online** leave
+one sync receipt. **On this device** adds a receipt for the accepted update.
+
 
 The runner:
 

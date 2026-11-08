@@ -1,5 +1,4 @@
-import Card from './Card';
-import { ScrollView } from './OverflowLists';
+import ScrollableFormCard from './ScrollableFormCard';
 import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import React, { useContext, useRef } from 'react';
@@ -18,9 +17,14 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
   const draftHandle = useRef(null);
   const context = useContext(AppContext);
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-    <ScrollView style={{ backgroundColor: STYLES.itemBackground }} contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Card>
-      <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} validateOnMount onSubmit={async (values, helpers) => {
+      <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} validateOnMount
+        renderLayout={({ content, form: { values, isSubmitting, isValidating, isValid, handleSubmit }, draftBlocked }) => (
+          <ScrollableFormCard footer={<Button color={STYLES.blue} title="Save" onPress={handleSubmit}
+            disabled={draftBlocked || isSubmitting || isValidating || !isValid || !values.aircraft || !values.registration || rules.filter(([key]) => values[key] === true).length !== 1} />}>
+            {content}
+          </ScrollableFormCard>
+        )}
+        onSubmit={async (values, helpers) => {
         savedNavigation.current = false;
         context.setActivityVisible(true);
         try {
@@ -41,7 +45,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           context.setActivityVisible(false);
         }
       }}>
-        {({ values, errors, isValid, isValidating, isSubmitting, setFieldValue, handleSubmit }) => <>
+        {({ values, errors, setFieldValue }) => <>
           <Text style={styles.heading}>{allowAircraftChange ? 'Aircraft' : aircraft_type}</Text>
           {allowAircraftChange && <AircraftPicker initialValue={values.aircraft} fieldName="aircraft" setFieldValue={setFieldValue} isValid={!errors.aircraft} />}
           {errors.aircraft && <Text style={styles.error}>{errors.aircraft}</Text>}
@@ -59,16 +63,13 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
             </Pressable>)}
           </View>
           {(errors.operating_rules || !rules.some(([key]) => values[key])) && <Text style={styles.error}>{errors.operating_rules || 'Required'}</Text>}
-          <View style={{ marginTop: 20 }}><Button color={STYLES.blue} title="Save" onPress={handleSubmit} disabled={isSubmitting || isValidating || !isValid || !values.aircraft || !values.registration || rules.filter(([key]) => values[key] === true).length !== 1} /></View>
           <Text style={{ color: STYLES.muted, marginTop: 12 }}>{initialValues.id ? 'A connection is required to update this tailnumber.' : 'Saved on this device first; uploads when connected.'}</Text>
         </>}
       </DraftForm>
-      </Card>
-    </ScrollView>
   </KeyboardAvoidingView>;
 }
 const createStyles = STYLES => StyleSheet.create({
-  container: { padding: 12 }, heading: { fontSize: 20, fontWeight: '600' },
+  heading: { fontSize: 20, fontWeight: '600' },
   label: { fontWeight: '600', marginTop: 16 }, rules: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   rule: { minHeight: 44, padding: 12, borderWidth: 1, borderColor: STYLES.grey, borderRadius: 5 },
   selected: { borderColor: STYLES.blue, backgroundColor: STYLES.selected }, error: { color: STYLES.danger, marginTop: 8 },
