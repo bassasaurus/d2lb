@@ -4,6 +4,17 @@ import api from '../api/axiosConfig';
 import { flightStore, flightScope, tokenPartition } from '../storage/flights';
 import { aircraftScope } from '../storage/aircraft';
 
+export async function reviewableRecords(store, scope) {
+  const groups = await Promise.all([
+    ['flight', scope],
+    ['aircraft', aircraftScope(scope)],
+    ['tailnumber', tailnumberScope(scope)],
+  ].map(async ([kind, recordScope]) => (await store.reviewList(recordScope))
+    .filter(item => item.can_resolve)
+    .map(item => ({ ...item, kind }))));
+  return groups.flat();
+}
+
 export async function reviewAccess(kind) {
   if (!['flight', 'aircraft', 'tailnumber'].includes(kind)) throw new Error('Unknown record type.');
   const partition = await tokenPartition();

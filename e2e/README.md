@@ -113,6 +113,13 @@ for the app to retry and checks that Django returns the same operation and
 flight IDs and still has one flight and one receipt. The two responses are
 recorded in `flight-sync-trace.jsonl` in the run's artifact directory.
 
+Run the keep-server conflict scenario with the same simulator arguments and
+`test:screens:ios:conflict`. The iPhone changes the flight to 2.3 hours while
+the API is offline. The runner sets the same flight to 3.4 hours in the
+disposable database before bringing the API back. The scenario opens the
+comparison from Settings, selects **Saved online**, and checks that the
+logbook shows 3.4 hours and Django still has one flight and one sync receipt.
+
 ## Local Android prerequisites
 
 - Project dependencies (`npm ci`) and the Node version in `.nvmrc`.

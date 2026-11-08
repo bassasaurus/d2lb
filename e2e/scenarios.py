@@ -23,6 +23,13 @@ SCENARIOS = {
         ('signed-in', 'empty', None),
         ('ios-replayed', 'original', None),
     ],
+    'ios-keep-server-conflict': [
+        ('signed-in', 'empty', None),
+        ('ios-synced', 'original', False),
+        ('edited-offline', 'stage-server-conflict', True),
+        ('conflict-detected', 'server-conflict', None),
+        ('kept-server', 'server-conflict', None),
+    ],
     'offline-flight': CREATE_STEPS,
     'flight-crud': CREATE_STEPS + [
         ('cancel-offline', 'original', False),

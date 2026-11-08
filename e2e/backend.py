@@ -16,7 +16,8 @@ from flights.models import Aircraft, Flight, MapData, TailNumber  # noqa: E402
 EMAIL = 'screen-test@example.invalid'
 PASSWORD = 'Disposable-screen-test-42'
 
-state = sys.argv[1]
+stage_conflict = sys.argv[1] == 'stage-server-conflict'
+state = 'original' if stage_conflict else sys.argv[1]
 if state in ['seed', 'seed-validation']:
     if get_user_model().objects.exists() or Flight.objects.exists():
         raise RuntimeError('Refusing to seed an occupied database.')
@@ -37,6 +38,7 @@ else:
     expected, expected_receipts = {
         'empty': (0, 0), 'original': (1, 1), 'updated': (1, 2),
         'deleted': (0, 3), 'night-warning': (1, 1), 'night-only': (1, 2),
+        'server-conflict': (1, 1),
     }[state]
     flights = Flight.objects.count()
     acknowledgements = list(MobileSyncReceipt.objects.order_by('created_at', 'pk'))
@@ -56,7 +58,8 @@ else:
         assert flight.pk == original_id, 'An update must keep the original flight ID'
         assert flight.user.username == EMAIL
         assert flight.route == 'KAUS-KDFW'
-        assert flight.duration == Decimal('2.3' if state == 'updated' else '1.2')
+        expected_duration = {'updated': '2.3', 'server-conflict': '3.4'}.get(state, '1.2')
+        assert flight.duration == Decimal(expected_duration)
         assert (flight.remarks or '') == ('Edited while offline' if state == 'updated' else '')
         assert flight.aircraft_type.aircraft_type == 'C172'
         assert flight.registration.registration == 'N1234'
@@ -67,3 +70,6 @@ else:
         assert (flight.landings_night or 0) == (1 if state == 'night-warning' else 0)
         assert (flight.night or 0) == (0.4 if state == 'night-only' else 0)
     print(f'PASS: {state}: {flights} flight(s), {receipts} sync receipt(s); record values and IDs verified.')
+    if stage_conflict:
+        Flight.objects.filter(pk=flight.pk).update(duration=Decimal('3.4'))
+        print('Staged a server edit to 3.4 hours on the original flight.')
