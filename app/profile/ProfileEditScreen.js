@@ -1,3 +1,4 @@
+import PrimaryActionButton from '../components/PrimaryActionButton';
 import React, { useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, Switch, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -24,7 +25,7 @@ export default function ProfileEditScreen({ route, navigation }) {
     <DraftForm kind={`profile-${section}`} initialValues={initialValues} validationSchema={schema}
       draftHandle={draftHandle} savedNavigation={savedNavigation}
       renderLayout={({ content, form: { handleSubmit, isSubmitting }, draftBlocked }) => (
-        <ScrollableFormCard footer={<PlatformActionButton title="Save" disabled={draftBlocked || isSubmitting} onPress={handleSubmit} />}>
+        <ScrollableFormCard footer={<PrimaryActionButton title="Save" disabled={draftBlocked || isSubmitting} onPress={handleSubmit} />}>
           {content}
         </ScrollableFormCard>
       )}

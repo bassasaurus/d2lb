@@ -1,4 +1,5 @@
 import Card from '../components/Card';
+import PrimaryActionButton from '../components/PrimaryActionButton';
 import { ScrollView } from '../components/OverflowLists';
 import { useMemo } from 'react';
 import React, { useState, useContext, useRef } from "react";
@@ -14,6 +15,8 @@ import ActivityModal from "../components/ActivityModal";
 import { Formik } from "formik";
 import * as yup from "yup";
 import AppText from "../components/AppText";
+
+const SignInButton = Platform.OS === 'android' ? PrimaryActionButton : Button;
 
 function LoginScreen() {
   const { styles: STYLES } = useAppTheme();
@@ -136,8 +139,8 @@ function LoginScreen() {
                       </Pressable>
                     </View>
                     {errors.password && <AppText style={styles.errors}>{errors.password}</AppText>}
-                    <View style={{ marginTop: 4 }}>
-                      <Button testID="login-submit" title={isSubmitting ? 'Signing in…' : 'Sign in'}
+                    <View style={styles.submit}>
+                      <SignInButton testID="login-submit" title={isSubmitting ? 'Signing in…' : 'Sign in'}
                         disabled={!isValid || isSubmitting || !values.username || !values.password}
                         onPress={handleSubmit} />
                     </View>
@@ -157,7 +160,12 @@ function LoginScreen() {
 
 const createStyles = STYLES => StyleSheet.create({
   container: { flexDirection: "column", marginRight: 10, marginLeft: 10 },
-  card: { marginTop: 14, marginBottom: 8 },
+  card: {
+    marginTop: 14,
+    marginBottom: 8,
+    ...Platform.select({ android: { paddingBottom: 6 } }),
+  },
+  submit: { marginTop: Platform.OS === 'android' ? 8 : 4 },
   input: { marginTop: 0 },
   passwordField: { marginTop: 8 },
   passwordInput: { paddingRight: 46 },

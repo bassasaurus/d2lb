@@ -86,7 +86,7 @@ export default function AircraftListScreen({ navigation }) {
     return () => { active = false; refresh.current = null; setDefaultScope(null); };
   }, []));
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, paddingHorizontal: 12, paddingTop: 12, backgroundColor: STYLES.itemBackground }}>
-    {status.trim() ? <Text style={{ paddingVertical: 12 }} accessibilityLiveRegion="polite">{status}</Text> : null}
+    {status.trim() ? <Text style={{ paddingVertical: 12, textAlign: 'center' }} accessibilityLiveRegion="polite">{status}</Text> : null}
     {defaultIssue && <Card compact style={{ marginBottom: 6 }}>
       <Text weight="600">Default aircraft</Text>
       <RecordIssue item={defaultIssue} kind="aircraft" navigation={navigation} />

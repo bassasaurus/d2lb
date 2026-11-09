@@ -1,8 +1,9 @@
+import PrimaryActionButton from '../components/PrimaryActionButton';
 import ScrollableFormCard from '../components/ScrollableFormCard';
 import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import React, { useRef } from 'react';
-import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, StyleSheet, Switch, View } from 'react-native';
 import Text from '../components/AppText';
 import { aircraftSchema as schema } from './validation.mjs';
 import AppTextInput from '../components/AppTextInput';
@@ -29,7 +30,7 @@ export default function AircraftFormScreen({ route, navigation }) {
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <DraftForm kind="aircraft" recordKey={record?.local_id || record?.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={aircraftValues(record)} validationSchema={schema} validateOnMount
         renderLayout={({ content, form: { values, isSubmitting, isValidating, isValid, handleSubmit }, draftBlocked }) => (
-          <ScrollableFormCard footer={<Button color={STYLES.blue} title="Save" onPress={handleSubmit}
+          <ScrollableFormCard footer={<PrimaryActionButton title="Save" onPress={handleSubmit}
             disabled={draftBlocked || isSubmitting || isValidating || !isValid || !values.aircraft_type || !values.aircraft_category || !values.aircraft_class || ENGINE_CHOICES.filter(([key]) => values[key]).length !== 1 || WEIGHT_CHOICES.filter(([key]) => values[key]).length !== 1} />}>
             {content}
           </ScrollableFormCard>
