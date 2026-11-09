@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.7](https://github.com/bassasaurus/d2lb/compare/v0.1.6...v0.1.7) (2026-11-09)
+
+
+### Bug Fixes
+
+* polish mobile action buttons and privacy theme ([#68](https://github.com/bassasaurus/d2lb/issues/68)) ([0251f29](https://github.com/bassasaurus/d2lb/commit/0251f29ee3d7717edfb948b636006f332c65482b))
+
 ## [0.1.6](https://github.com/bassasaurus/d2lb/compare/v0.1.5...v0.1.6) (2026-11-08)
 
 
