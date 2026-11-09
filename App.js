@@ -1,8 +1,8 @@
 import useAutoSync from './app/api/useAutoSync';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import LogoLoading from './app/components/LogoLoading';
+import StartupArtwork from './app/components/StartupArtwork';
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
 import AppContext from "./app/components/AppContext";
 import * as Sentry from "@sentry/react-native";
@@ -28,10 +28,7 @@ export default function App() {
   const [auth, setAuth] = useState(session.snapshot());
   const [sessionError, setSessionError] = useState(false);
   const [startupVisible, setStartupVisible] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => setStartupVisible(false), 900);
-    return () => clearTimeout(timer);
-  }, []);
+  const finishStartup = useCallback(() => setStartupVisible(false), []);
   const isSignedIn = Boolean(auth.token);
   useAutoSync(auth);
   const restoreSession = () => {
@@ -81,13 +78,18 @@ export default function App() {
     <SafeAreaProvider>
       <AppContext.Provider value={appSettings}>
         {!auth.ready || startupVisible ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          {sessionError ? <><AppText>Could not unlock your saved session.</AppText><Button title="Try again" onPress={restoreSession} /></> : <LogoLoading label="Opening your logbook…" />}
+          {sessionError ? <><AppText>Could not unlock your saved session.</AppText><Button title="Try again" onPress={restoreSession} /></> : <ThemedStartupArtwork onNameVisible={finishStartup} />}
         </View> : <DrawerNavigator />}
       </AppContext.Provider>
     </SafeAreaProvider>
     </AppAppearance>
     </ThemeProvider>
   );
+}
+
+function ThemedStartupArtwork({ onNameVisible }) {
+  const { colors } = useAppTheme();
+  return <StartupArtwork colors={colors} onNameVisible={onNameVisible} />;
 }
 
 function AppAppearance({ children }) {
