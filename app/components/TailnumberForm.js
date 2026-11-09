@@ -1,8 +1,9 @@
+import PrimaryActionButton from './PrimaryActionButton';
 import ScrollableFormCard from './ScrollableFormCard';
 import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import React, { useContext, useRef } from 'react';
-import { Alert, Button, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
 import Text from './AppText';
 import { OPERATING_RULES as rules, tailnumberSchema as schema } from '../forms/tailnumberValidation.mjs';
 import AircraftPicker from './AircraftPicker';
@@ -19,7 +20,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} validateOnMount
         renderLayout={({ content, form: { values, isSubmitting, isValidating, isValid, handleSubmit }, draftBlocked }) => (
-          <ScrollableFormCard footer={<Button color={STYLES.blue} title="Save" onPress={handleSubmit}
+          <ScrollableFormCard footer={<PrimaryActionButton title="Save" onPress={handleSubmit}
             disabled={draftBlocked || isSubmitting || isValidating || !isValid || !values.aircraft || !values.registration || rules.filter(([key]) => values[key] === true).length !== 1} />}>
             {content}
           </ScrollableFormCard>

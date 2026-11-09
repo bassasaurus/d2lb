@@ -1,3 +1,4 @@
+import PrimaryActionButton from './PrimaryActionButton';
 import { hasRequiredSoloLandings } from '../forms/landingRequirements.mjs';
 import { nightPairWarnings } from '../forms/nightWarning.mjs';
 import { FLIGHT_ROLES, PRIMARY_FLIGHT_ROLES, hasRequiredFlightRole, toggleFlightRole } from '../forms/flightRoles.mjs';
@@ -130,7 +131,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
           <DraftForm kind="flight" recordKey={initialValues.local_id || initialValues.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={values => setFormCount(Math.max(0, ...values.approaches.map((item, index) => item.approach_type || item.number ? index : 0)))}
             renderLayout={({ content, form: { values, isValid, isSubmitting, handleSubmit }, draftBlocked }) => (
               <ScrollableFormCard cardStyle={styles.container} keyboardDismissMode="on-drag"
-                footer={<Button testID="flight-save" title="Save" color={STYLES.blue} onPress={handleSubmit}
+                footer={<PrimaryActionButton testID="flight-save" title="Save" onPress={handleSubmit}
                   disabled={draftBlocked || !isValid || isSubmitting || !hasRequiredFlightRole(values) || !hasRequiredSoloLandings(values)} />}>
                 {noDefaultAircraft && !defaultSuggestionDismissed && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
                   <Pressable accessibilityRole="link" onPress={async () => {

@@ -6,11 +6,13 @@ import Text from '../components/AppText';
 import PlatformActionButton from '../components/PlatformActionButton';
 import { useAppTheme } from '../theme/ThemeProvider';
 import { openContactEmail } from './contactEmail';
+import api from '../api/axiosConfig';
 
-const policyURL = 'https://direct2logbook.com/privacy/';
+const policyBaseURL = __DEV__ ? api.defaults.baseURL : 'https://direct2logbook.com';
 
 export default function PrivacyPolicyScreen() {
-  const { colors } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
+  const policyURL = `${policyBaseURL}/privacy/${isDark ? '?appearance=dark' : ''}`;
   const [failed, setFailed] = useState(false);
 
   function allowNavigation(request) {
@@ -30,6 +32,7 @@ export default function PrivacyPolicyScreen() {
       <PlatformActionButton title="Try Again" variant="text" onPress={() => setFailed(false)} />
     </View> : <WebView
       source={{ uri: policyURL }}
+      style={{ backgroundColor: colors.background }}
       originWhitelist={['*']}
       onShouldStartLoadWithRequest={allowNavigation}
       javaScriptEnabled={false}
