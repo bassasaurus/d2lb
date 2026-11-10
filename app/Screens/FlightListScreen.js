@@ -12,6 +12,7 @@ import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { useCardAnimation } from "@react-navigation/stack";
 import { useAppTheme } from '../theme/ThemeProvider';
 import syncFlightData from "../api/syncFlightData";
+import LogbookReminders from '../components/LogbookReminders';
 import FlightItem from "../components/FlightItem";
 import BottomCreateButton from "../components/BottomCreateButton";
 import AppContext from "../components/AppContext";
@@ -238,6 +239,7 @@ const FlightListScreen = ({ navigation, route }) => {
       <FlatList
         testID="flight-list"
         data={data}
+        ListHeaderComponent={LogbookReminders}
         extraData={syncEvents}
         renderItem={renderItem}
         keyExtractor={item => item.local_id}

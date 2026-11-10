@@ -16,6 +16,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import RecencyScreen from '../stats/RecencyScreen';
 import StatsScreen from '../stats/StatsScreen';
+import ManageRemindersScreen from "../settings/ManageRemindersScreen";
+import ReminderEditScreen from "../settings/ReminderEditScreen";
 import SettingsScreen from "../settings/SettingsScreen";
 import PrivacyPolicyScreen from "../settings/PrivacyPolicyScreen";
 import LoginScreen from "../Screens/LoginScreen";
@@ -98,6 +100,11 @@ function DrawerNavigator({ navigation }) {
             </Drawer.Navigator>}
           </Root.Screen>
           <Root.Screen name="SyncReview" component={SyncReviewStackNavigator} options={{ presentation: 'modal' }} />
+          <Root.Screen name="ManageReminders" component={ManageRemindersScreen}
+            options={{ headerShown: true, title: 'Manage Reminders', headerBackButtonDisplayMode: 'minimal' }} />
+          <Root.Screen name="EditReminder" component={ReminderEditScreen}
+            options={({ route }) => ({ headerShown: true, title: route.params?.reminder ? 'Edit Reminder' : 'Add Reminder',
+              headerBackButtonDisplayMode: 'minimal' })} />
           <Root.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen}
             options={{ headerShown: true, title: 'Privacy Policy', headerBackButtonDisplayMode: 'minimal' }} />
         </Root.Navigator>

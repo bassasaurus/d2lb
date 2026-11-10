@@ -44,6 +44,9 @@ export default function SettingsScreen({ navigation }) {
     </Pressable>)}
     {saving && <Text color={colors.muted} accessibilityLiveRegion="polite">Saving appearance…</Text>}
     <SyncSettings navigation={navigation} />
+    <Card compact style={{ marginTop: 8, paddingVertical: 4 }}>
+      <PlatformActionButton title="Manage Reminders" variant="text" onPress={() => navigation.navigate('ManageReminders')} />
+    </Card>
     <View style={{ marginTop: 'auto', paddingTop: 8 }}>
       <Card compact style={{ marginBottom: 4, paddingVertical: 4 }}>
         <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />
