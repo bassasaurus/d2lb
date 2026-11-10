@@ -123,6 +123,11 @@ including when only CI or documentation changed. Tagging runs in
 the same workflow because a merge by GitHub's built-in token does not start
 another push workflow.
 
+Before shipping a user-facing update, replace the highlights in
+`app/components/updateNotes.js` and give the announcement a new ID. The app
+shows those notes once per device after startup. Keep the same ID for rebuilds
+of the same update so testers who dismissed it do not see it again.
+
 Native build numbers are separate. `eas.json` already uses remote version
 management and `production.autoIncrement: true`: each production EAS build gets
 a new Android version code/iOS build number. A merge or Expo Go reload does not

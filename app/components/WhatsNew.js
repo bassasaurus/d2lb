@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, ScrollView, StyleSheet } from 'react-native';
+import { Modal, ScrollView, StyleSheet, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../theme/ThemeProvider';
 import Text from './AppText';
-import Card from './Card';
 import PrimaryActionButton from './PrimaryActionButton';
 
-// Rebuilds of this announcement share the key. Change it with new notes.
-const SEEN_KEY = 'whats-new:reminders-and-logbook';
-const HIGHLIGHTS = [
-  'Find Manage Reminders in the main menu and track flight-time milestones.',
-  'See medical certificate alerts in the Logbook. Dismiss the yellow warning or tap Update to edit your certificate.',
-  'Spot flights waiting to sync or needing your attention with orange and red indicators.',
-];
+import { updateNotes } from './updateNotes';
+
+const SEEN_KEY = `whats-new:${updateNotes.id}`;
 
 export default function WhatsNew() {
   const { colors } = useAppTheme();
@@ -35,23 +30,23 @@ export default function WhatsNew() {
   if (!visible) return null;
 
   return (
-    <Modal transparent animationType="fade" onRequestClose={dismiss}>
-      <SafeAreaView style={[styles.overlay, { backgroundColor: `${colors.shadow}80` }]}>
-        <Card style={styles.card} accessibilityViewIsModal>
+    <Modal animationType="fade" presentationStyle="fullScreen" onRequestClose={dismiss}>
+      <SafeAreaView style={[styles.screen, { backgroundColor: colors.surface }]}>
+        <View style={styles.content} accessibilityViewIsModal>
           <Text size={22} weight="600" accessibilityRole="header">What’s in this update</Text>
           <ScrollView style={styles.notes} contentContainerStyle={styles.highlights}>
-            {HIGHLIGHTS.map(highlight => <Text key={highlight}>{highlight}</Text>)}
+            {updateNotes.highlights.map(highlight => <Text key={highlight}>{highlight}</Text>)}
           </ScrollView>
           <PrimaryActionButton testID="whats-new-dismiss" title="Got it" onPress={dismiss} />
-        </Card>
+        </View>
       </SafeAreaView>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-  card: { width: '100%', maxWidth: 420, maxHeight: '90%', padding: 20, gap: 16 },
+  screen: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+  content: { width: '100%', maxWidth: 420, maxHeight: '100%', gap: 16 },
   notes: { flexGrow: 0 },
   highlights: { gap: 12 },
 });
