@@ -4,7 +4,6 @@
     "name": "D2LB",
     "slug": "direct2lobook",
     "orientation": "default",
-    "icon": "./app/assets/playstore.png",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -13,6 +12,7 @@
     ],
     "ios": {
       "supportsTablet": false,
+      "icon": "./app/assets/ic_launcher_foreground.png",
       "bundleIdentifier": "com.direct2lobook.mobile",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -21,6 +21,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./app/assets/ic_launcher_foreground.png",
+        "monochromeImage": "./app/assets/ic_launcher_foreground.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.direct2lobook.mobile",
@@ -42,14 +43,13 @@
       [
         "expo-splash-screen",
         {
-          "image": "./app/assets/D2LB_LOGO_Dark_top.png",
+          "image": "./app/assets/ic_launcher_foreground.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "image": "./app/assets/D2LB_LOGO_Dark_top.png",
-            "backgroundColor": "#ffffff"
-          },
-          "imageWidth": 300
+          "backgroundColor": "#f5f6f8",
+          "imageWidth": 288,
+          "ios": {
+            "imageWidth": 456
+          }
         }
       ],
       "expo-secure-store",

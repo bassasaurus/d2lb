@@ -1,4 +1,4 @@
-import LogoArtwork from '../components/LogoArtwork';
+import StartupArtwork from '../components/StartupArtwork';
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Appearance, useColorScheme, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -48,7 +48,7 @@ export function ThemeProvider({ children }) {
     };
   }, [scheme, preference, writes]);
   if (!ready) return <View style={{ flex: 1, backgroundColor: PALETTES[scheme].background, alignItems: 'center', justifyContent: 'center' }}>
-    <LogoArtwork color={PALETTES[scheme].text} mutedColor={PALETTES[scheme].muted} label="Opening your logbook…" />
+    <StartupArtwork colors={PALETTES[scheme]} />
   </View>;
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
