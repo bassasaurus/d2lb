@@ -6,9 +6,10 @@ import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { shouldRefreshLogbook, logbookPendingCount } from '../api/logbookRefresh.mjs';
 import { useMemo } from 'react';
 import React, { useState, useEffect} from "react";
-import { Animated, StyleSheet, TouchableOpacity, RefreshControl, Alert } from 'react-native';
+import { AccessibilityInfo, Animated, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useCardAnimation } from "@react-navigation/stack";
 import { useAppTheme } from '../theme/ThemeProvider';
 import syncFlightData from "../api/syncFlightData";
 import FlightItem from "../components/FlightItem";
@@ -21,15 +22,47 @@ import { flightStore, flightScope, tokenPartition, refreshFlightCache } from "..
 import { aircraftScope } from "../storage/aircraft";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const FlightListScreen = () => {
+const FlightListScreen = ({ navigation, route }) => {
   const { styles: STYLES } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
 
   // removeAsyncData('offlineFlights')
 
   const [refreshing, setRefreshing] = useState(false);
-  const navigation = useNavigation();
   const [data, setData] = useState([]);
+  const deletedFlightId = route.params?.deletedFlightId;
+  const isFocused = useIsFocused();
+  const { next } = useCardAnimation();
+  const removalProgress = React.useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    // Wait until the detail card has finished closing so the exit is visible.
+    if (!deletedFlightId || !isFocused || next) return;
+    let active = true;
+    let animation;
+    removalProgress.setValue(1);
+    const finish = () => {
+      if (!active) return;
+      setData(rows => rows.filter(row => row.local_id !== deletedFlightId));
+      navigation.setParams({ deletedFlightId: undefined });
+    };
+    const start = reduceMotion => {
+      if (!active) return;
+      if (reduceMotion) {
+        finish();
+        return;
+      }
+      animation = Animated.timing(removalProgress, {
+        toValue: 0, duration: 250, useNativeDriver: false,
+      });
+      animation.start(({ finished }) => { if (finished) finish(); });
+    };
+    AccessibilityInfo.isReduceMotionEnabled().then(start, () => start(false));
+    return () => {
+      active = false;
+      animation?.stop();
+    };
+  }, [deletedFlightId, isFocused, navigation, next, removalProgress]);
   const [syncEvents, setSyncEvents] = useState({});
   const feedbackPartition = React.useRef(null);
   const [windowNotice, setWindowNotice] = useState(true);
@@ -49,6 +82,8 @@ const FlightListScreen = () => {
   const [status, setStatus] = useState("");
 
   useFocusEffect(React.useCallback(() => {
+    // Keep the previous rows mounted until the local deletion finishes animating.
+    if (deletedFlightId) return;
     let active = true;
     let running = false;
     const load = async (force = false) => {
@@ -173,37 +208,19 @@ const FlightListScreen = () => {
       unsubscribe();
       stopAutoSync();
     };
-  }, []));
+  }, [deletedFlightId]));
   const refreshRef = React.useRef(null);
 
   const onRefresh = React.useCallback(() => {
+    if (!refreshRef.current) return;
     setRefreshing(true);
-    refreshRef.current?.(true);
+    refreshRef.current(true);
   }, []);
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      style={styles.touchable}
-      onPress={() =>
-        item.needs_attention ? reviewRecord(navigation, "flight", item) : navigation.navigate("FlightDetail", {
-          item: item,
-        })
-      }
-    >
-      <FlightItem item={item} navigation={navigation}
-        syncEvent={syncEvents[item.local_id]}
-        id={item.sync_state === "synced" ? item.id : null}
-        date={item.date}
-        route={item.route}
-        type={item.aircraft_type}
-        reg={item.registration}
-        dur={item.duration}
-        crew={item.second_in_command ? "SIC" : "PIC"}
-        dayL={item.landings_day ? item.landings_day : 0}
-        nitL={item.landings_night ? item.landings_night : 0}
-      />
-    </TouchableOpacity>
+    <FlightRow item={item} navigation={navigation} style={styles.touchable}
+      syncEvent={syncEvents[item.local_id]}
+      removalProgress={item.local_id === deletedFlightId ? removalProgress : null} />
   );
 
   return (
@@ -233,6 +250,46 @@ const FlightListScreen = () => {
     </SafeAreaView>
   );
 };
+
+function FlightRow({ item, navigation, style, syncEvent, removalProgress }) {
+  const [height, setHeight] = useState(0);
+  const removing = Boolean(removalProgress);
+  return (
+    <Animated.View
+      pointerEvents={removing ? "none" : "auto"}
+      accessibilityElementsHidden={removing}
+      importantForAccessibility={removing ? "no-hide-descendants" : "auto"}
+      onLayout={event => { if (!removing) setHeight(event.nativeEvent.layout.height); }}
+      style={removing ? {
+        overflow: "hidden",
+        opacity: removalProgress,
+        height: height ? Animated.multiply(removalProgress, height) : undefined,
+      } : undefined}
+    >
+      <TouchableOpacity
+        activeOpacity={0.7}
+        disabled={removing}
+        style={style}
+        onPress={() => item.needs_attention
+          ? reviewRecord(navigation, "flight", item)
+          : navigation.navigate("FlightDetail", { item })}
+      >
+        <FlightItem item={item} navigation={navigation}
+          syncEvent={syncEvent}
+          id={item.sync_state === "synced" ? item.id : null}
+          date={item.date}
+          route={item.route}
+          type={item.aircraft_type}
+          reg={item.registration}
+          dur={item.duration}
+          crew={item.second_in_command ? "SIC" : "PIC"}
+          dayL={item.landings_day ? item.landings_day : 0}
+          nitL={item.landings_night ? item.landings_night : 0}
+        />
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
 
 const createStyles = STYLES => StyleSheet.create({
   container: {
