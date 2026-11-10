@@ -1,3 +1,4 @@
+import { recordSyncFeedback } from './flightSyncFeedback.mjs';
 import { completeReferenceRows } from './referenceRows.mjs';
 import { session } from '../auth/session';
 import * as Crypto from 'expo-crypto';
@@ -12,6 +13,7 @@ export async function syncAircraft(scope, partition, enabled, defaultEnabled = f
   if (enabled) {
     await drainFlightQueue({
       store, scope: localScope, label: 'aircraft', operationFilter: 'aircraft-records', uuid: () => Crypto.randomUUID(),
+      onAcknowledged: ({ scope, operation, flight }) => recordSyncFeedback.record(scope, operation, flight),
       isCurrent: async () => await tokenPartition() === partition,
       send: async request => {
         const { flight_id, ...operation } = request;

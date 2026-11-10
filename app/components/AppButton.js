@@ -5,7 +5,7 @@ import { useAppTheme } from '../theme/ThemeProvider';
 
 export default function AppButton({
   title, onPress, accessibilityLabel, variant = 'filled', tone = 'default',
-  icon, disabled = false, testID,
+  icon, disabled = false, testID, style,
 }) {
   const { colors } = useAppTheme();
   const accent = tone === 'danger' ? colors.danger : colors.primary;
@@ -21,7 +21,7 @@ export default function AppButton({
       borderWidth: variant === 'outlined' ? 1 : 0,
       borderColor: colors.border,
       opacity: disabled ? 0.45 : pressed && Platform.OS !== 'android' ? 0.75 : 1,
-    }]}>
+    }, style]}>
     {icon && <MaterialCommunityIcons name={icon} size={22} color={labelColor} accessible={false} />}
     <Text style={[styles.label, { color: labelColor }]}>{title}</Text>
   </Pressable>;

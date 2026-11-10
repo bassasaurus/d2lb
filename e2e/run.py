@@ -18,6 +18,7 @@ from urllib.request import urlopen
 from urllib.error import HTTPError, URLError
 import uuid
 
+from PIL import Image, ImageColor
 import psycopg2
 from psycopg2 import sql
 from scenarios import ANDROID_SYNC_RECOVERY, SCENARIOS
@@ -195,6 +196,29 @@ def run_scenario(args, scenario):
             command(adb + ['shell', 'cmd', 'connectivity', 'airplane-mode', 'disable' if online else 'enable'])
             command(adb + ['shell', 'svc', 'wifi', 'enable' if online else 'disable'])
 
+    def assert_sync_dot(label, expected_colors, step):
+        density = command(adb + ['shell', 'wm', 'density'], capture_output=True,
+                          text=True, timeout=10).stdout.splitlines()[-1]
+        scale = int(density.split()[-1]) / 160
+        # The list and card each have 12 dp of left padding. Sample the center
+        # of the 7 dp dot so antialiasing and nearby text cannot match it.
+        left, right = round(26 * scale), round(29 * scale)
+        core_height = round(3 * scale)
+        screenshot = output / f'{step}-sync-dot.png'
+        screenshot.write_bytes(command(adb + ['exec-out', 'screencap', '-p'],
+                                       capture_output=True, timeout=10).stdout)
+        with Image.open(screenshot) as image:
+            band = image.convert('RGB').crop((left, 0, right, image.height))
+        for color in map(ImageColor.getrgb, expected_colors):
+            consecutive = 0
+            for y in range(band.height):
+                row = band.crop((0, y, band.width, y + 1))
+                consecutive = consecutive + 1 if row.getcolors() == [(band.width, color)] else 0
+                if consecutive >= core_height:
+                    print(f'PASS: {label} dot color', flush=True)
+                    return
+        raise AssertionError(f'{label} dot did not match {expected_colors}. See {screenshot}.')
+
     def backend(action, **kwargs):
         return command([sys.executable, ROOT / 'e2e/backend.py', action], **kwargs)
 
@@ -252,6 +276,11 @@ def run_scenario(args, scenario):
                         return
                     raise
                 print(result.stdout.strip(), flush=True)
+                if scenario == 'android-keep-server-conflict':
+                    if step == 'edited-offline':
+                        assert_sync_dot('Pending sync', ('#b45309', '#ffad66'), step)
+                    elif step == 'failed-dot':
+                        assert_sync_dot('Sync failed', ('#ba1a2c', '#ffb1b8'), step)
                 if online is not None:
                     set_online(online)
                 completed.append(step)

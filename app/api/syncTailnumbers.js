@@ -1,3 +1,4 @@
+import { recordSyncFeedback } from './flightSyncFeedback.mjs';
 import * as Crypto from 'expo-crypto';
 import api from './axiosConfig';
 import { session } from '../auth/session';
@@ -10,6 +11,7 @@ export async function syncTailnumbers(scope, partition, enabled) {
   const store = await flightStore();
   if (enabled) await drainFlightQueue({
     store, scope: tailnumberScope(scope), label: 'tailnumber', uuid: () => Crypto.randomUUID(),
+    onAcknowledged: ({ scope, operation, flight }) => recordSyncFeedback.record(scope, operation, flight),
     isCurrent: async () => await tokenPartition() === partition,
     send: async operation => {
       const aircraft = await store.list(aircraftScope(scope));

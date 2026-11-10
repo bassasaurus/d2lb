@@ -56,6 +56,7 @@ export default function ProfileScreen({ navigation }) {
   const account = profile?.account;
   const medical = profile?.medical;
   const subscription = profile?.subscription;
+  const freeAccess = subscription?.status === 'Free access';
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollView contentContainerStyle={{ padding: 12 }} refreshControl={<RefreshControl refreshing={refreshing}
       onRefresh={() => setRefreshKey(value => value + 1)} />}>
@@ -75,7 +76,8 @@ export default function ProfileScreen({ navigation }) {
           <Text size={18} weight="600">Subscription</Text>
           <Detail label="Status" value={subscription.status} />
           {subscription.plan && <Detail label="Plan" value={subscription.plan} />}
-          {subscription.end_date && <Detail label={['Free trial', 'Expiring soon'].includes(subscription.status) ? 'Trial ends' : subscription.status === 'Active' ? 'Next billing date' : 'Access ends'} value={profileDate(subscription.end_date)} />}
+          {freeAccess && <Detail label="Access ends" value="Never" />}
+          {!freeAccess && subscription.end_date && <Detail label={['Free trial', 'Expiring soon'].includes(subscription.status) ? 'Trial ends' : subscription.status === 'Active' ? 'Next billing date' : 'Access ends'} value={profileDate(subscription.end_date)} />}
         </Card>
         <Card compact style={{ marginBottom: 8 }}>
           <Text size={18} weight="600">Medical Certificate</Text>

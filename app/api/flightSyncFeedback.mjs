@@ -5,8 +5,7 @@ export function completedFlightSyncs(before, after) {
     old.local_id === row.local_id || (old.id != null && old.id === row.id))).map(row => row.local_id);
 }
 
-// Reconnect may finish uploading from another screen before Logbook reads its
-// first snapshot. Keep acknowledgements until that account's list can show them.
+// Keep acknowledgements until a screen in the same account and record scope can show them.
 export function createFlightSyncFeedback(now = () => Date.now()) {
   const accounts = new Map();
   return {
@@ -31,4 +30,4 @@ export function createFlightSyncFeedback(now = () => Date.now()) {
     },
   };
 }
-export const flightSyncFeedback = createFlightSyncFeedback();
+export const recordSyncFeedback = createFlightSyncFeedback();

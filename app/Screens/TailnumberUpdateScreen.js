@@ -1,3 +1,5 @@
+import { recordSyncFeedback } from '../api/flightSyncFeedback.mjs';
+import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { saveLocalTailnumber } from '../storage/tailnumbers';
 import React from 'react';
 import api from '../api/axiosConfig';
@@ -29,6 +31,7 @@ export default function TailnumberUpdateScreen({ route, navigation }) {
       await store.cacheReference(scope, 'tailnumbers', rows.map(row => row.id === item.id ? response.data : row));
       await fetchTailnumbers();
     } catch (error) { /* Keep the successful save and refresh next time. */ }
+    recordSyncFeedback.record(tailnumberScope(scope), { local_id: item.local_id ?? `server:${item.id}` }, response.data);
     return response.data;
   };
   return <TailnumberForm initialValues={{ ...item, is_91: Boolean(item.is_91), is_135: Boolean(item.is_135), is_121: Boolean(item.is_121) }}

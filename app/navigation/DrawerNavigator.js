@@ -96,12 +96,11 @@ function DrawerNavigator({ navigation }) {
               <Drawer.Screen name="Totals & Stats" component={StatsScreen} />
               <Drawer.Screen name="Recency" component={RecencyScreen} />
               <Drawer.Screen name="Profile" component={ProfileStackNavigator} options={{ headerShown: false }} />
+              <Drawer.Screen name="ManageReminders" component={ManageRemindersScreen} options={{ title: 'Manage Reminders' }} />
               <Drawer.Screen name="Settings" component={SettingsScreen} />
             </Drawer.Navigator>}
           </Root.Screen>
           <Root.Screen name="SyncReview" component={SyncReviewStackNavigator} options={{ presentation: 'modal' }} />
-          <Root.Screen name="ManageReminders" component={ManageRemindersScreen}
-            options={{ headerShown: true, title: 'Manage Reminders', headerBackButtonDisplayMode: 'minimal' }} />
           <Root.Screen name="EditReminder" component={ReminderEditScreen}
             options={({ route }) => ({ headerShown: true, title: route.params?.reminder ? 'Edit Reminder' : 'Add Reminder',
               headerBackButtonDisplayMode: 'minimal' })} />

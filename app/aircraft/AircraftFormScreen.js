@@ -1,3 +1,4 @@
+import syncFlightData from '../api/syncFlightData';
 import PrimaryActionButton from '../components/PrimaryActionButton';
 import ScrollableFormCard from '../components/ScrollableFormCard';
 import DraftForm from '../drafts/DraftForm';
@@ -43,6 +44,7 @@ export default function AircraftFormScreen({ route, navigation }) {
           savedNavigation.current = true;
           helpers.resetForm({ values });
           navigation.popTo('AircraftDetail', { item });
+          syncFlightData().catch(() => {});
         } catch (error) {
           helpers.setStatus(error.message || 'Aircraft not saved. Your changes remain in this form.');
         } finally { helpers.setSubmitting(false); }
