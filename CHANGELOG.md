@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/bassasaurus/d2lb/compare/v0.2.0...v0.3.0) (2026-11-10)
+
+
+### Features
+
+* animate deleted flights out of the logbook ([#73](https://github.com/bassasaurus/d2lb/issues/73)) ([e1d76d8](https://github.com/bassasaurus/d2lb/commit/e1d76d8f665de27c385bc439790cb8ccc6708e98))
+
 ## [0.2.0](https://github.com/bassasaurus/d2lb/compare/v0.1.7...v0.2.0) (2026-11-10)
 
 
