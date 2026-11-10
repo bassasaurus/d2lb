@@ -215,3 +215,39 @@ test('snapshot keeps an uploaded flight local key so its pending-to-synced card 
   assert.equal((await store.list('b'))[0].local_id, 'server:99');
   db.close();
 });
+
+test('concurrent cache refresh and flight save keep both records', async () => {
+  const db = new DatabaseSync(':memory:');
+  try {
+    const store = await createFlightStore(adapter(db));
+    await Promise.all([
+      store.cacheSnapshot('a', [{ ...flight, id: 1 }]),
+      store.save('a', 'offline-flight', flight),
+      store.cacheReference('a', 'tailnumbers', [{ registration: 'N123AB' }]),
+    ]);
+    const rows = await store.list('a');
+    assert.deepEqual(new Set(rows.map(row => row.local_id)), new Set(['server:1', 'offline-flight']));
+    assert.equal(await store.pendingCount('a'), 1);
+    assert.deepEqual(await store.reference('a', 'tailnumbers'), [{ registration: 'N123AB' }]);
+  } finally {
+    db.close();
+  }
+});
+
+test('switching to an existing account cache preserves old downloads and blocks unsynced edits', async () => {
+  const db = new DatabaseSync(':memory:');
+  try {
+    const store = await createFlightStore(adapter(db));
+    await store.cacheSnapshot('old-token', [{ ...flight, id: 1 }]);
+    await store.cacheSnapshot('account', [{ ...flight, id: 2 }]);
+    await store.moveScope('old-token', 'account');
+    assert.deepEqual((await store.list('account')).map(row => row.id), [2]);
+    assert.deepEqual((await store.list('old-token')).map(row => row.id), [1]);
+
+    await store.save('old-token', 'unsynced', flight);
+    await assert.rejects(store.moveScope('old-token', 'account'), /caches need review/);
+    assert.equal(await store.pendingCount('old-token'), 1);
+  } finally {
+    db.close();
+  }
+});
