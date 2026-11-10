@@ -1,3 +1,4 @@
+import PlatformActionButton from './app/components/PlatformActionButton';
 import useAutoSync from './app/api/useAutoSync';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import StartupArtwork from './app/components/StartupArtwork';
@@ -9,7 +10,7 @@ import * as Sentry from "@sentry/react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { session } from "./app/auth/session";
-import { Button, View } from "react-native";
+import { View } from "react-native";
 import AppText from "./app/components/AppText";
 import { ThemeProvider, useAppTheme } from "./app/theme/ThemeProvider";
 import fetchTailnumbers from "./app/api/fetchTailnumbers";
@@ -78,7 +79,7 @@ export default function App() {
     <SafeAreaProvider>
       <AppContext.Provider value={appSettings}>
         {!auth.ready || startupVisible ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          {sessionError ? <><AppText>Could not unlock your saved session.</AppText><Button title="Try again" onPress={restoreSession} /></> : <ThemedStartupArtwork onNameVisible={finishStartup} />}
+          {sessionError ? <><AppText>Could not unlock your saved session.</AppText><PlatformActionButton variant="text" title="Try again" onPress={restoreSession} /></> : <ThemedStartupArtwork onNameVisible={finishStartup} />}
         </View> : <DrawerNavigator />}
       </AppContext.Provider>
     </SafeAreaProvider>
