@@ -1,3 +1,5 @@
+import RecordSyncIndicator from '../components/RecordSyncIndicator';
+import { subscribeAutoSync } from '../api/autoSync.mjs';
 import RecordIssue, { reviewRecord } from '../components/RecordIssue';
 import { FlatList } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
@@ -58,7 +60,7 @@ export default function AircraftListScreen({ navigation }) {
         setDefaultScope(scope);
       }
     };
-    const load = async () => {
+    const load = async (upload = true) => {
       if (running) return;
       running = true;
       try {
@@ -66,7 +68,9 @@ export default function AircraftListScreen({ navigation }) {
         if (active) setRows(local);
         await loadDefault();
         let offline = false;
-        try { await syncFlightData(); } catch (error) { offline = true; }
+        if (upload) {
+          try { await syncFlightData(); } catch { offline = true; }
+        }
         const records = await listAircraft();
         await loadDefault();
         const store = await flightStore();
@@ -83,7 +87,10 @@ export default function AircraftListScreen({ navigation }) {
     };
     refresh.current = load;
     load();
-    return () => { active = false; refresh.current = null; setDefaultScope(null); };
+    const unsubscribe = subscribeAutoSync(event => {
+      if (event === 'completed' || event === 'failed') load(false);
+    });
+    return () => { active = false; unsubscribe(); refresh.current = null; setDefaultScope(null); };
   }, []));
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, paddingHorizontal: 12, paddingTop: 12, backgroundColor: STYLES.itemBackground }}>
     {status.trim() ? <Text style={{ paddingVertical: 12, textAlign: 'center' }} accessibilityLiveRegion="polite">{status}</Text> : null}
@@ -105,6 +112,7 @@ export default function AircraftListScreen({ navigation }) {
           <Text style={{ color: STYLES.blue, fontSize: 18, fontWeight: '600' }}>{item.aircraft_type}</Text>
           <Text>{item.aircraft_class || 'Class not set'}{item.sync_state !== 'synced' && !item.needs_attention ? ' · Saved on device' : ''}</Text>
           <RecordIssue item={item} kind="aircraft" navigation={navigation} />
+          <RecordSyncIndicator item={item} scope={defaultScope ? aircraftScope(defaultScope) : undefined} />
         </TouchableOpacity>
         <View style={{ alignItems: 'center' }}>
           <Text size={12} style={{ color: STYLES.muted }}>Default</Text>

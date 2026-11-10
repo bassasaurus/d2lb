@@ -1,8 +1,13 @@
+import RecordSyncIndicator from '../components/RecordSyncIndicator';
+import { subscribeAutoSync } from '../api/autoSync.mjs';
+import api from '../api/axiosConfig';
+import NetInfo from '@react-native-community/netinfo';
+import { useFocusEffect } from '@react-navigation/native';
 import RecordIssue, { reviewRecord } from '../components/RecordIssue';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from '../components/OverflowLists';
-import { listTailnumbers } from '../storage/tailnumbers';
-import React, { useEffect, useState } from 'react';
+import { listTailnumbers, tailnumberScope } from '../storage/tailnumbers';
+import React, { useCallback, useState } from 'react';
 import { Alert, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Card from '../components/Card';
 import Text from '../components/AppText';
@@ -11,47 +16,103 @@ import { flightScope, flightStore } from '../storage/flights';
 import { CATEGORY_CHOICES, CLASS_CHOICES, ENGINE_CHOICES, FLAGS, WEIGHT_CHOICES } from './fields.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 import RecordActions from '../components/RecordActions';
-import Separator from '../components/Separator';
 import BottomCreateButton from '../components/BottomCreateButton';
+
+async function aircraftUsage(scope, aircraftType) {
+  const store = await flightStore();
+  const [flights, tails] = await Promise.all([store.list(scope), listTailnumbers(scope)]);
+  const tailnumbers = tails.filter(tail => tail.aircraft === aircraftType);
+  return {
+    tailnumbers,
+    inUse: tailnumbers.length > 0 || flights.some(flight => flight.aircraft_type === aircraftType),
+  };
+}
+
+async function serverAllowsDeletion(id, signal) {
+  const response = await api.get(`/api/aircraft/${id}/deletion-eligibility/`, { signal });
+  return response.data?.can_delete === true;
+}
 
 export default function AircraftDetailScreen({ route, navigation }) {
   const { styles: STYLES } = useAppTheme();
   const { width } = useWindowDimensions();
   const columns = Math.max(2, Math.min(4, Math.floor((width - 32) / 105)));
   const [item, setItem] = useState(route.params.item);
-  const [tailnumbers, setTailnumbers] = useState([]);
-  useEffect(() => {
+  const [usage, setUsage] = useState(null);
+  const [eligibleId, setEligibleId] = useState(null);
+  const tailnumbers = usage?.tailnumbers ?? [];
+  const canDelete = usage?.aircraftType === item.aircraft_type && !usage.inUse
+    && (!item.id || eligibleId === item.id);
+  const [scope, setScope] = useState(null);
+  useFocusEffect(useCallback(() => {
     setItem(route.params.item);
+    setUsage(null);
     let active = true;
     const refresh = async () => {
       try {
-        const records = await listAircraft();
+        const account = await flightScope();
+        const records = await listAircraft(account);
         const current = records.find(row => row.local_id === route.params.item.local_id || row.aircraft_type === route.params.item.aircraft_type);
-        const tails = await listTailnumbers();
-        if (active) {
+        const aircraftType = current?.aircraft_type ?? route.params.item.aircraft_type;
+        const usage = await aircraftUsage(account, aircraftType);
+        if (await flightScope() === account && active) {
+          setScope(account);
           if (current) setItem(current);
-          setTailnumbers(tails.filter(tail => tail.aircraft === route.params.item.aircraft_type));
+          setUsage({ ...usage, aircraftType });
         }
       } catch (error) { /* Preserve the last saved detail while unavailable. */ }
     };
     refresh();
     const timer = setInterval(refresh, 3000);
-    return () => { active = false; clearInterval(timer); };
-  }, [route.params.item]);
+    const unsubscribe = subscribeAutoSync(event => {
+      if (event === 'completed' || event === 'failed') refresh();
+    });
+    return () => { active = false; unsubscribe(); clearInterval(timer); };
+  }, [route.params.item]));
+  useFocusEffect(useCallback(() => {
+    setEligibleId(null);
+    if (!scope || !item.id) return;
+    let request;
+    const check = async (online) => {
+      request?.abort();
+      setEligibleId(null);
+      if (!online) return;
+      const controller = new AbortController();
+      request = controller;
+      try {
+        const allowed = await serverAllowsDeletion(item.id, controller.signal);
+        if (allowed && await flightScope() === scope && !controller.signal.aborted) setEligibleId(item.id);
+      } catch { /* Keep Delete hidden until Django confirms eligibility. */ }
+    };
+    const unsubscribe = NetInfo.addEventListener(state => check(state.isConnected && state.isInternetReachable !== false));
+    return () => { unsubscribe(); request?.abort(); };
+  }, [scope, item.id, route.params.item]));
   const remove = async () => {
     try {
-      const scope = await flightScope();
-      const store = await flightStore();
-      const flights = await store.list(scope);
-      const tails = await listTailnumbers(scope);
-      if (flights.some(flight => flight.aircraft_type === item.aircraft_type) || tails.some(tail => tail.aircraft === item.aircraft_type)) {
+      if (!scope || await flightScope() !== scope) return;
+      const records = await listAircraft(scope);
+      const current = records.find(row => row.local_id === item.local_id);
+      if (!current) return;
+      if (current.id && !await serverAllowsDeletion(current.id)) {
+        setEligibleId(null);
+        Alert.alert('Aircraft is in use', 'Aircraft linked to flights, tailnumbers or imported totals cannot be deleted.');
+        return;
+      }
+      const usage = await aircraftUsage(scope, item.aircraft_type);
+      if (await flightScope() !== scope) return;
+      if (usage.inUse) {
+        setUsage({ ...usage, aircraftType: item.aircraft_type });
         Alert.alert('Aircraft is in use', 'Aircraft referenced by flights or tailnumbers cannot be deleted.');
         return;
       }
-      await store.remove(aircraftScope(scope), item.local_id);
+      await (await flightStore()).remove(aircraftScope(scope), item.local_id);
       navigation.navigate('AircraftList');
-    } catch (error) { Alert.alert('Aircraft not deleted', 'Your record is still saved. Please try again.'); }
+    } catch (error) {
+      setEligibleId(null);
+      Alert.alert('Aircraft not deleted', 'Your record is still saved. Please try again.');
+    }
   };
+  const update = () => navigation.navigate('AircraftForm', { item });
   return <SafeAreaView edges={['bottom']} style={{ flex: 1, paddingHorizontal: 12, backgroundColor: STYLES.itemBackground }}>
     <ScrollView style={{ flexGrow: 0, maxHeight: '65%', marginTop: 12 }}>
     <Card>
@@ -63,12 +124,15 @@ export default function AircraftDetailScreen({ route, navigation }) {
     <Text style={{ marginVertical: 8 }}>Class: {CLASS_CHOICES.find(([key]) => key === item.aircraft_class)?.[1] || 'Not set'}</Text>
     {[...ENGINE_CHOICES, ...WEIGHT_CHOICES, ...FLAGS].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
     <RecordIssue item={item} kind="aircraft" navigation={navigation} />
-    <View style={{ marginTop: 4 }}>
+    <RecordSyncIndicator item={item} scope={scope ? aircraftScope(scope) : undefined} />
+    <View style={{ marginTop: 8 }}>
+    <Text size={14} color={STYLES.muted}>Use Update to correct this aircraft and keep its linked records.</Text>
     <RecordActions recordName="aircraft"
-      onUpdate={() => navigation.navigate('AircraftForm', { item })}
-      onDelete={() => Alert.alert('Delete aircraft?', 'Aircraft in use cannot be deleted. Otherwise this deletion will sync when connected.', [
-        { text: 'Cancel', style: 'cancel' }, { text: 'Delete', style: 'destructive', onPress: remove },
-      ])}
+      onUpdate={update}
+      onDelete={canDelete ? () => Alert.alert('Delete aircraft?', 'Use Update to change its details. Aircraft linked to flights, tailnumbers or imported totals cannot be deleted in the app.', [
+        { text: 'Cancel', style: 'cancel' }, { text: 'Update Aircraft', onPress: update },
+        { text: 'Delete', style: 'destructive', onPress: remove },
+      ]) : undefined}
     />
     </View>
     </Card>
@@ -84,6 +148,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
             style={{ width: `${100 / columns}%`, minHeight: 48, justifyContent: 'center', paddingHorizontal: 8 }}>
             <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: tail.needs_attention ? STYLES.danger : STYLES.blue, textAlign: index % columns === columns - 1 ? 'right' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'left' }}>{tail.registration}</Text>
             {tail.needs_attention && <Text size={11} color={STYLES.danger}>Update needed</Text>}
+            <RecordSyncIndicator item={tail} scope={scope ? tailnumberScope(scope) : undefined} />
           </TouchableOpacity>)}
       </ScrollView>
     </View>}

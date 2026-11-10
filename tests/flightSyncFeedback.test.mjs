@@ -21,6 +21,9 @@ test('offline reconnect acknowledgement survives a list mounting after upload', 
   assert.deepEqual(feedback.take('account-b', [{ id: 42, local_id: 'server:42', sync_state: 'synced' }]), []);
   assert.deepEqual(feedback.take('account-a', [{ id: 42, local_id: 'server:42', sync_state: 'pending_update' }]), []);
   const rows = [{ id: 42, local_id: 'server:42', sync_state: 'synced' }];
+  feedback.record('account-a:tailnumbers', { local_id: 'offline-tail' }, { id: 42 });
+  assert.deepEqual(feedback.take('account-a:aircraft', rows), []);
+  assert.deepEqual(feedback.take('account-a:tailnumbers', rows), ['server:42']);
   assert.deepEqual(feedback.take('account-a', rows), ['server:42']);
   assert.deepEqual(feedback.take('account-a', rows), []);
 });

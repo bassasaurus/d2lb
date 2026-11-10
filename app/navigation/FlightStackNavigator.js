@@ -5,6 +5,7 @@ import FlightListScreen from "../Screens/FlightListScreen";
 import FlightDetailScreen from "../Screens/FlightDetailScreen";
 import FlightCreateScreen from "../Screens/FlightCreateScreen";
 import FlightUpdateScreen from "../Screens/FlightUpdateScreen";
+import ProfileEditScreen from '../profile/ProfileEditScreen';
 import { Button, Pressable } from 'react-native';
 import Text from '../components/AppText';
 import { useNavigation } from "@react-navigation/native";
@@ -79,6 +80,12 @@ function FlightStackNavigator(props) {
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: colors.background },
         }}
+      />
+
+      <Stack.Screen
+        name="MedicalEdit"
+        component={ProfileEditScreen}
+        options={{ title: 'Update Medical', cardStyle: { backgroundColor: colors.background } }}
       />
 
       <Stack.Screen

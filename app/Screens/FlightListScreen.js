@@ -1,6 +1,6 @@
 import { reviewRecord } from '../components/RecordIssue';
 import { internetAvailable, subscribeAutoSync } from '../api/autoSync.mjs';
-import { completedFlightSyncs, flightSyncFeedback } from '../api/flightSyncFeedback.mjs';
+import { completedFlightSyncs, recordSyncFeedback } from '../api/flightSyncFeedback.mjs';
 import { FlatList } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { shouldRefreshLogbook, logbookPendingCount } from '../api/logbookRefresh.mjs';
@@ -23,6 +23,8 @@ import { flightStore, flightScope, tokenPartition, refreshFlightCache } from "..
 import { aircraftScope } from "../storage/aircraft";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const LOGBOOK_INSET = 12;
+
 const FlightListScreen = ({ navigation, route }) => {
   const { styles: STYLES } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
@@ -30,6 +32,7 @@ const FlightListScreen = ({ navigation, route }) => {
   // removeAsyncData('offlineFlights')
 
   const [refreshing, setRefreshing] = useState(false);
+  const [reminderRefresh, setReminderRefresh] = useState(0);
   const [data, setData] = useState([]);
   const deletedFlightId = route.params?.deletedFlightId;
   const isFocused = useIsFocused();
@@ -54,7 +57,7 @@ const FlightListScreen = ({ navigation, route }) => {
         return;
       }
       animation = Animated.timing(removalProgress, {
-        toValue: 0, duration: 250, useNativeDriver: false,
+        toValue: 0, duration: 600, useNativeDriver: false,
       });
       animation.start(({ finished }) => { if (finished) finish(); });
     };
@@ -70,7 +73,7 @@ const FlightListScreen = ({ navigation, route }) => {
   const [loadingFlights, setLoadingFlights] = useState(false);
   const [noticeMessage, setNoticeMessage] = useState("Loading saved flights…");
   const [noticeError, setNoticeError] = useState("");
-  const [noticeHeight, setNoticeHeight] = useState(26);
+  const [noticeHeight, setNoticeHeight] = useState(38);
   const noticeProgress = React.useRef(new Animated.Value(1)).current;
   useEffect(() => {
     const animation = Animated.timing(noticeProgress, {
@@ -137,12 +140,13 @@ const FlightListScreen = ({ navigation, route }) => {
         const legacy = await AsyncStorage.getItem('offlineFlights');
         const legacyCount = legacy ? JSON.parse(legacy).length : 0;
         if (active) {
-          const completed = [...new Set([...completedFlightSyncs(local, rows), ...flightSyncFeedback.take(scope, rows)])];
+          const completed = [...new Set([...completedFlightSyncs(local, rows), ...recordSyncFeedback.take(scope, rows)])];
           if (completed.length) {
             const confirmedAt = Date.now();
             setSyncEvents(previous => ({ ...previous, ...Object.fromEntries(completed.map(key => [key, confirmedAt])) }));
           }
           setData(rows);
+          if (needsRefresh && downloaded) setReminderRefresh(previous => previous + 1);
           setNoticeMessage(pending ? "Saved on this device." : !downloaded ? "Showing saved flights." : needsRefresh ? "Synced last 100 entries" : "No sync required.");
           clearTimeout(noticeTimer.current);
           setNoticeError(serverUpgradeNeeded ? 'App update required.' : '');
@@ -183,7 +187,10 @@ const FlightListScreen = ({ navigation, route }) => {
         setNoticeError('');
         setLoadingFlights(true);
         setWindowNotice(true);
-      } else if (event === 'completed') load();
+      } else if (event === 'completed') {
+        setReminderRefresh(previous => previous + 1);
+        load();
+      }
       else if (event === 'failed') {
         setLoadingFlights(false);
         setNoticeError('');
@@ -231,19 +238,19 @@ const FlightListScreen = ({ navigation, route }) => {
         style={{ overflow: 'hidden', opacity: noticeProgress,
           height: noticeProgress.interpolate({ inputRange: [0, 1], outputRange: [0, noticeHeight] }) }}>
         <Text onLayout={event => setNoticeHeight(event.nativeEvent.layout.height)}
-          style={{ position: 'absolute', left: 0, right: 0, paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: noticeError ? STYLES.danger : STYLES.muted }} accessibilityLiveRegion="polite">
+          style={[styles.syncNoticeText, { color: noticeError ? STYLES.danger : STYLES.muted }]} accessibilityLiveRegion="polite">
           {noticeError || (loadingFlights ? "Sync in Progress" : noticeMessage)}
         </Text>
       </Animated.View>
       {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
+      <LogbookReminders refreshVersion={reminderRefresh} style={styles.reminderList} />
       <FlatList
         testID="flight-list"
         data={data}
-        ListHeaderComponent={LogbookReminders}
         extraData={syncEvents}
         renderItem={renderItem}
         keyExtractor={item => item.local_id}
-        contentContainerStyle={{ padding: 12 }}
+        contentContainerStyle={styles.flightListContent}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -254,8 +261,11 @@ const FlightListScreen = ({ navigation, route }) => {
 };
 
 function FlightRow({ item, navigation, style, syncEvent, removalProgress }) {
+  const { colors } = useAppTheme();
   const [height, setHeight] = useState(0);
   const removing = Boolean(removalProgress);
+  // Let the tint appear before the row starts fading and closing up.
+  const exit = removalProgress?.interpolate({ inputRange: [0, 0.75, 1], outputRange: [0, 1, 1] });
   return (
     <Animated.View
       pointerEvents={removing ? "none" : "auto"}
@@ -264,8 +274,8 @@ function FlightRow({ item, navigation, style, syncEvent, removalProgress }) {
       onLayout={event => { if (!removing) setHeight(event.nativeEvent.layout.height); }}
       style={removing ? {
         overflow: "hidden",
-        opacity: removalProgress,
-        height: height ? Animated.multiply(removalProgress, height) : undefined,
+        opacity: exit,
+        height: height ? Animated.multiply(exit, height) : undefined,
       } : undefined}
     >
       <TouchableOpacity
@@ -278,7 +288,6 @@ function FlightRow({ item, navigation, style, syncEvent, removalProgress }) {
       >
         <FlightItem item={item} navigation={navigation}
           syncEvent={syncEvent}
-          id={item.sync_state === "synced" ? item.id : null}
           date={item.date}
           route={item.route}
           type={item.aircraft_type}
@@ -288,6 +297,11 @@ function FlightRow({ item, navigation, style, syncEvent, removalProgress }) {
           dayL={item.landings_day ? item.landings_day : 0}
           nitL={item.landings_night ? item.landings_night : 0}
         />
+        {removing && <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, {
+          borderRadius: 10,
+          backgroundColor: colors.actionDanger,
+          opacity: removalProgress.interpolate({ inputRange: [0, 0.75, 1], outputRange: [0.4, 0.4, 0] }),
+        }]} />}
       </TouchableOpacity>
     </Animated.View>
   );
@@ -298,6 +312,25 @@ const createStyles = STYLES => StyleSheet.create({
     width: "100%",
     flex: 1,
     backgroundColor: STYLES.itemBackground,
+  },
+  reminderList: {
+    flexGrow: 0,
+    maxHeight: '30%',
+    marginHorizontal: LOGBOOK_INSET,
+  },
+  flightListContent: {
+    padding: LOGBOOK_INSET,
+  },
+  syncNoticeText: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    paddingHorizontal: 12,
+    // The list adds 12 points of space below the notice.
+    paddingTop: 16,
+    paddingBottom: 4,
+    includeFontPadding: false,
+    textAlign: 'center',
   },
   item: {
     width: "100%",

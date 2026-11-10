@@ -15,10 +15,22 @@ name: Keep Django's version after an Android sync conflict
     env:
       STEP: conflict-flight-synced
 - runFlow: flows/android-edit-conflicting-flight.yaml
+- extendedWaitUntil:
+    visible: Pending sync
+    timeout: 30000
+- assertNotVisible: Sync failed
 - runScript:
     file: checkpoint.js
     env:
       STEP: edited-offline
+- extendedWaitUntil:
+    visible: Sync failed
+    timeout: 90000
+- assertNotVisible: Pending sync
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: failed-dot
 - runFlow: flows/android-open-conflict.yaml
 - runScript:
     file: checkpoint.js
@@ -35,6 +47,8 @@ name: Keep Django's version after an Android sync conflict
 - assertNotVisible: Review sync issue
 - tapOn: Show navigation menu
 - tapOn: '^Logbook$'
+- assertVisible: Synced
+- assertNotVisible: Sync failed
 - tapOn: KAUS-KDFW
 - assertVisible: '^3\.4$'
 - assertNotVisible: '^2\.3$'

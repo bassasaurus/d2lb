@@ -100,7 +100,7 @@ function DetailsPanel({ route }) {
           </View>
         </View>
         <View style={styles.thirdColumn}>
-          {route.params.item.hold ? <AppText size={16}>Hold</AppText> : null}
+          {route.params.item.hold ? <AppText size={16}>Holding</AppText> : null}
         </View>
       </View>
       {/* fifth row */}

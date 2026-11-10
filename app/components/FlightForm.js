@@ -670,14 +670,10 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                 </View>
                 <View style={{ flexDirection: "row", marginTop: 10 }}>
                   <Checkbox
-                    onPress={() => {
-                      setFieldValue("hold", !values.hold);
-                    }}
+                    label="Holding"
+                    onPress={() => setFieldValue("hold", !values.hold)}
                     isChecked={values.hold}
-                  ></Checkbox>
-                  <View>
-                    <AppText>Hold</AppText>
-                  </View>
+                  />
                 </View>
                 <AppTextInput
                   isValid={true}

@@ -5,8 +5,8 @@ import { flightStore, flightScope } from './flights';
 // Reuse the durable record/outbox repository in a distinct account namespace.
 // Aircraft and flights never share records, UUIDs or cache replacement operations.
 export const aircraftScope = scope => `${scope}:aircraft`;
-export async function listAircraft() {
-  const rows = await (await flightStore()).list(aircraftScope(await flightScope()));
+export async function listAircraft(scope) {
+  const rows = await (await flightStore()).list(aircraftScope(scope ?? await flightScope()));
   const defaultType = selectedDefaultType(rows);
   return rows.filter(row => !row._default_preference).map(row => ({ ...row, is_default: row.aircraft_type === defaultType })).sort((a, b) => a.aircraft_type.localeCompare(b.aircraft_type, 'en', { sensitivity: 'base' }));
 }

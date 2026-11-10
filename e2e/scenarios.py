@@ -40,7 +40,11 @@ SCENARIOS = {
         ('signed-in', 'empty', None),
         ('replayed', 'original', None),
     ],
-    'android-keep-server-conflict': CONFLICT_STEPS + [('kept-server', 'server-conflict', None)],
+    'android-keep-server-conflict': CONFLICT_STEPS[:3] + [
+        ('failed-dot', 'server-conflict', None),
+        CONFLICT_STEPS[3],
+        ('kept-server', 'server-conflict', None),
+    ],
     'android-keep-device-conflict': CONFLICT_STEPS + [('kept-device', 'device-conflict-resolved', None)],
     'offline-flight': CREATE_STEPS,
     'flight-crud': CREATE_STEPS + [
