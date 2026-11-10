@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.1](https://github.com/bassasaurus/d2lb/compare/v0.4.0...v0.4.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* serialize offline sync writes and preserve account caches ([#77](https://github.com/bassasaurus/d2lb/issues/77)) ([d402b8a](https://github.com/bassasaurus/d2lb/commit/d402b8a60df85519840b42b55651f46a98bce238))
+
 ## [0.4.0](https://github.com/bassasaurus/d2lb/compare/v0.3.0...v0.4.0) (2026-11-10)
 
 
