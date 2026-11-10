@@ -41,18 +41,34 @@ export async function createFlightStore(db) {
     });
   }
   if (version.user_version < 3) await db.execAsync('PRAGMA user_version = 3;');
+  // Expo opens a separate connection for exclusive transactions. Queue writes
+  // across the store so a refresh cannot collide with another local write.
+  let pendingWrite = Promise.resolve();
+  const write = action => {
+    const result = pendingWrite.then(action);
+    pendingWrite = result.catch(() => {});
+    return result;
+  };
+  const writeTransaction = action => write(() => db.withExclusiveTransactionAsync(action));
+
   const requireScope = scope => {
     if (!scope) throw new Error('Sign in before accessing local flights.');
   };
   return {
-    ...createReviewStore(db, requireScope),
+    ...createReviewStore(db, requireScope, writeTransaction),
     async moveScope(from, to) {
       requireScope(from); requireScope(to);
       if (from === to) return;
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         const source = await tx.getFirstAsync('SELECT COUNT(*) AS count FROM mobile_flights WHERE scope=?', from);
         const target = await tx.getFirstAsync('SELECT COUNT(*) AS count FROM mobile_flights WHERE scope=?', to);
-        if (source.count && target.count) throw new Error('Two local account caches need review before they can be combined.');
+        if (source.count && target.count) {
+          const pending = await tx.getFirstAsync(
+            "SELECT 1 FROM mobile_flights WHERE scope=? AND state!='synced' LIMIT 1", from);
+          const queued = await tx.getFirstAsync('SELECT 1 FROM mobile_operations WHERE scope=? LIMIT 1', from);
+          if (pending || queued) throw new Error('Two local account caches need review before they can be combined.');
+          // The account cache takes precedence over an older downloaded copy.
+        }
         if (!target.count) {
           for (const table of ['mobile_flights', 'mobile_operations', 'mobile_review_data']) {
             await tx.runAsync(`UPDATE ${table} SET scope=? WHERE scope=?`, to, from);
@@ -70,7 +86,7 @@ export async function createFlightStore(db) {
         : filter === 'aircraft-default' ? " AND local_id='server:-1'" : '';
       const recordSelection = filter === 'aircraft-records' ? " AND f.local_id!='server:-1'"
         : filter === 'aircraft-default' ? " AND f.local_id='server:-1'" : '';
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         const existing = await tx.getFirstAsync(`SELECT * FROM mobile_operations WHERE scope=? AND blocked=0 AND retry_at<=?${selection} ORDER BY rowid LIMIT 1`, scope, now);
         if (existing) { operation = existing; return; }
         const row = await tx.getFirstAsync(`SELECT f.* FROM mobile_flights f WHERE f.scope=? AND f.state!='synced' AND f.sync_error IS NULL
@@ -116,7 +132,7 @@ export async function createFlightStore(db) {
       if (response.deleted_id && (request.action !== 'delete' || response.deleted_id !== request.flight_id)) {
         throw new Error('Invalid deletion acknowledgement.');
       }
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         const row = await tx.getFirstAsync('SELECT * FROM mobile_flights WHERE scope=? AND local_id=?', scope, operation.local_id);
         if (!row) throw new Error('Pending flight is missing.');
         if (response.deleted_id) {
@@ -134,7 +150,7 @@ export async function createFlightStore(db) {
     async failOperation(scope, operation, message, blocked, now = Date.now(), response = null) {
       const attempts = operation.attempts + 1;
       const delay = Math.min(300000, 5000 * 2 ** Math.min(attempts - 1, 6));
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         await tx.runAsync('UPDATE mobile_operations SET attempts=?,retry_at=?,blocked=? WHERE scope=? AND operation_id=?',
           attempts, now + delay, blocked ? 1 : 0, scope, operation.operation_id);
         await tx.runAsync('UPDATE mobile_flights SET sync_error=? WHERE scope=? AND local_id=?', message, scope, operation.local_id);
@@ -155,8 +171,8 @@ export async function createFlightStore(db) {
     async cacheReference(scope, name, rows) {
       requireScope(scope);
       if (!Array.isArray(rows)) throw new Error('Invalid reference response.');
-      await db.runAsync(`INSERT INTO mobile_reference(scope,name,payload) VALUES(?,?,?)
-        ON CONFLICT(scope,name) DO UPDATE SET payload=excluded.payload`, scope, name, JSON.stringify(rows));
+      await write(() => db.runAsync(`INSERT INTO mobile_reference(scope,name,payload) VALUES(?,?,?)
+        ON CONFLICT(scope,name) DO UPDATE SET payload=excluded.payload`, scope, name, JSON.stringify(rows)));
     },
     async list(scope) {
       requireScope(scope);
@@ -177,7 +193,7 @@ export async function createFlightStore(db) {
     },
     async cancelDeletion(scope, localId) {
       requireScope(scope);
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         const operation = await tx.getFirstAsync('SELECT blocked FROM mobile_operations WHERE scope=? AND local_id=?', scope, localId);
         if (operation && !operation.blocked) throw new Error('Deletion has been attempted. Reconnect to confirm the result before changing it.');
         await tx.runAsync('DELETE FROM mobile_operations WHERE scope=? AND local_id=?', scope, localId);
@@ -196,13 +212,13 @@ export async function createFlightStore(db) {
     async retryPendingOperations(scopes) {
       for (const scope of scopes) requireScope(scope);
       const placeholders = scopes.map(() => '?').join(', ');
-      await db.runAsync(`UPDATE mobile_operations SET retry_at=0 WHERE scope IN (${placeholders}) AND blocked=0`, ...scopes);
+      await write(() => db.runAsync(`UPDATE mobile_operations SET retry_at=0 WHERE scope IN (${placeholders}) AND blocked=0`, ...scopes));
     },
     async save(scope, localId, flight, options = {}) {
       requireScope(scope);
       // One durable row is both the local record and its outbox entry.
       const { local_id, sync_state, sync_error, needs_attention, ...payload } = flight;
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         const existing = await tx.getFirstAsync('SELECT payload,state FROM mobile_flights WHERE scope=? AND local_id=?', scope, localId);
         if (options.unattemptedCreateOnly) {
           const tails = await tx.getAllAsync('SELECT local_id,payload FROM mobile_flights WHERE scope=?', scope);
@@ -229,7 +245,7 @@ export async function createFlightStore(db) {
     },
     async remove(scope, localId) {
       requireScope(scope);
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         const row = await tx.getFirstAsync('SELECT state FROM mobile_flights WHERE scope=? AND local_id=?', scope, localId);
         if (!row) throw new Error('Flight not found on this device.');
         const operation = await tx.getFirstAsync('SELECT operation_id,blocked FROM mobile_operations WHERE scope=? AND local_id=?', scope, localId);
@@ -249,7 +265,7 @@ export async function createFlightStore(db) {
       if (!Array.isArray(flights) || flights.some(flight => !Number.isInteger(flight.id))) {
         throw new Error('Invalid flight response; local records were preserved.');
       }
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         // Acknowledged creates keep their original local key so refreshes do not
         // remount cards (or invalidate record/draft navigation) after uploading.
         const before = await tx.getAllAsync('SELECT local_id,payload FROM mobile_flights WHERE scope=?', scope);

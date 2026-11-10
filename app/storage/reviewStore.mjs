@@ -14,7 +14,7 @@ const reviewQuery = `SELECT f.*,o.operation_id,o.blocked,r.server_payload,r.serv
   LEFT JOIN mobile_operations o ON o.scope=f.scope AND o.local_id=f.local_id
   LEFT JOIN mobile_review_data r ON r.scope=f.scope AND r.local_id=f.local_id`;
 
-export function createReviewStore(db, requireScope) {
+export function createReviewStore(db, requireScope, writeTransaction) {
   return {
     async reviewList(scope) {
       requireScope(scope);
@@ -26,7 +26,7 @@ export function createReviewStore(db, requireScope) {
     },
     async captureServer(scope, localId, generation, server) {
       requireScope(scope);
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         const row = await tx.getFirstAsync('SELECT payload,generation FROM mobile_flights WHERE scope=? AND local_id=?', scope, localId);
         if (!row || row.generation !== generation) throw new Error('Local changes were updated. Reload this comparison.');
         const local = JSON.parse(row.payload);
@@ -41,7 +41,7 @@ export function createReviewStore(db, requireScope) {
     async resolveReview(scope, localId, generation, choice, expectedServerRevision) {
       requireScope(scope);
       if (!['use_server', 'keep_local', 'recreate', 'discard_local'].includes(choice)) throw new Error('Unknown resolution.');
-      await db.withExclusiveTransactionAsync(async tx => {
+      await writeTransaction(async tx => {
         const row = await tx.getFirstAsync(`${reviewQuery} WHERE f.scope=? AND f.local_id=?`, scope, localId);
         if (!row || row.generation !== generation || !row.sync_error) throw new Error('This record changed. Reload the comparison.');
         if (row.operation_id && row.blocked !== 1) throw new Error('Upload is uncertain. Reconnect before resolving it.');
