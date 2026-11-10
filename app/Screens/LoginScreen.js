@@ -3,7 +3,7 @@ import PrimaryActionButton from '../components/PrimaryActionButton';
 import { ScrollView } from '../components/OverflowLists';
 import { useMemo } from 'react';
 import React, { useState, useContext, useRef } from "react";
-import { Alert, Platform, View, StyleSheet, Button, Image, KeyboardAvoidingView, Pressable } from 'react-native';
+import { Alert, Platform, View, StyleSheet, Image, KeyboardAvoidingView, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme } from '../theme/ThemeProvider';
@@ -15,8 +15,6 @@ import ActivityModal from "../components/ActivityModal";
 import { Formik } from "formik";
 import * as yup from "yup";
 import AppText from "../components/AppText";
-
-const SignInButton = Platform.OS === 'android' ? PrimaryActionButton : Button;
 
 function LoginScreen() {
   const { styles: STYLES } = useAppTheme();
@@ -140,7 +138,7 @@ function LoginScreen() {
                     </View>
                     {errors.password && <AppText style={styles.errors}>{errors.password}</AppText>}
                     <View style={styles.submit}>
-                      <SignInButton testID="login-submit" title={isSubmitting ? 'Signing in…' : 'Sign in'}
+                      <PrimaryActionButton testID="login-submit" title={isSubmitting ? 'Signing in…' : 'Sign in'}
                         disabled={!isValid || isSubmitting || !values.username || !values.password}
                         onPress={handleSubmit} />
                     </View>

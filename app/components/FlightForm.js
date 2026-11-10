@@ -1,3 +1,4 @@
+import PlatformActionButton from './PlatformActionButton';
 import PrimaryActionButton from './PrimaryActionButton';
 import { hasRequiredSoloLandings } from '../forms/landingRequirements.mjs';
 import { nightPairWarnings } from '../forms/nightWarning.mjs';
@@ -11,7 +12,7 @@ import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import moment from "moment";
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { View, StyleSheet, Modal, Pressable, TouchableOpacity, KeyboardAvoidingView, Platform, Button, Alert, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, Modal, Pressable, TouchableOpacity, KeyboardAvoidingView, Platform, Alert, useWindowDimensions } from 'react-native';
 import Text from './AppText';
 import * as yup from "yup";
 
@@ -728,8 +729,8 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                     <View style={styles.calendarBackdrop}>
                       <View style={styles.calendarSheet}>
                         <View style={styles.calendarActions}>
-                          <Button title="Cancel" onPress={() => setCalVisible(false)} />
-                          <Button title="Done" onPress={() => commitDate(calendarDate, setFieldValue)} />
+                          <PlatformActionButton variant="text" title="Cancel" onPress={() => setCalVisible(false)} />
+                          <PlatformActionButton variant="text" title="Done" onPress={() => commitDate(calendarDate, setFieldValue)} />
                         </View>
                         <DateTimePicker
                           value={calendarDate}

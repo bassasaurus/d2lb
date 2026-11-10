@@ -1,5 +1,6 @@
+import PlatformActionButton from '../components/PlatformActionButton';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, AppState, Pressable, View } from 'react-native';
+import { Alert, AppState, View } from 'react-native';
 import { Formik, useFormikContext } from 'formik';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { flightScope } from '../storage/flights';
@@ -115,8 +116,9 @@ function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume
 
   const pending = state.pending;
   const stale = pending && !String(recordKey).startsWith('new') && pending.baseline !== fingerprint(initial.current);
-  const action = (title, onPress, danger = false) => <Pressable accessibilityRole="button" onPress={onPress}
-    style={{ paddingVertical: 10, paddingRight: 20 }}><Text style={{ color: danger ? colors.danger : colors.primary, fontWeight: '600' }}>{title}</Text></Pressable>;
+  const action = (title, onPress, danger = false) => (
+    <PlatformActionButton title={title} variant="text" destructive={danger} onPress={onPress} />
+  );
   const confirmDiscard = () => Alert.alert('Discard saved draft?', 'This removes only the unfinished draft on this device.', [
     { text: 'Keep draft', style: 'cancel' },
     { text: 'Discard', style: 'destructive', onPress: () => discard().catch(error => update({ error: error.message })) },

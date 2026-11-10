@@ -1,3 +1,5 @@
+import PlatformActionButton from './PlatformActionButton';
+import PrimaryActionButton from './PrimaryActionButton';
 import { FlatList } from './OverflowLists';
 import { listTailnumbers } from '../storage/tailnumbers';
 import { useMemo } from 'react';
@@ -9,7 +11,7 @@ import { flightStore, flightScope } from "../storage/flights";
 
 import { listAircraft } from "../storage/aircraft";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Alert } from "react-native";
+import { Alert } from "react-native";
 import { useAppTheme } from '../theme/ThemeProvider';
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
@@ -64,8 +66,8 @@ function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
       <View style={styles.centeredView}>
         <Modal animationType='slide' transparent={true} visible={visible} onRequestClose={() => setVisible(false)}>
           <View style={styles.modalView}>
-            <Button title="Cancel" onPress={() => setVisible(false)} />
-            <Button title="New Aircraft" onPress={() => {
+            <PlatformActionButton variant="text" title="Cancel" onPress={() => setVisible(false)} />
+            <PrimaryActionButton title="New Aircraft" icon="plus" onPress={() => {
               setVisible(false);
               navigation.navigate("Aircraft", { screen: "AircraftForm", initial: false });
             }} />

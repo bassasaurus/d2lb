@@ -1,3 +1,4 @@
+import PrimaryActionButton from '../components/PrimaryActionButton';
 import React, { useCallback, useRef, useState } from 'react';
 import { Alert, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -64,7 +65,7 @@ export default function SignatureScreen({ route, navigation }) {
               onPress={() => { setFieldValue('strokes', []); setFieldValue('showExisting', false); }} />
           </View>
           <View style={{ flex: 1, alignItems: 'center' }}>
-            <PlatformActionButton title="Save" disabled={isSubmitting || !values.strokes.length} onPress={handleSubmit} />
+            <PrimaryActionButton title="Save" disabled={isSubmitting || !values.strokes.length} onPress={handleSubmit} />
           </View>
           <View style={{ flex: 1, alignItems: 'flex-end' }}>
             <PlatformActionButton title="Cancel" variant="text" disabled={isSubmitting} onPress={cancel} />
