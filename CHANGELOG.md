@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/bassasaurus/d2lb/compare/v0.5.0...v0.6.0) (2026-11-10)
+
+
+### Features
+
+* show update highlights on first launch ([#82](https://github.com/bassasaurus/d2lb/issues/82)) ([513001f](https://github.com/bassasaurus/d2lb/commit/513001fdec87c72b4eb90df9f7713aec4dd28aa8))
+
 ## [0.5.0](https://github.com/bassasaurus/d2lb/compare/v0.4.1...v0.5.0) (2026-11-10)
 
 
