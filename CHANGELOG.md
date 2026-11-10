@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.2.0](https://github.com/bassasaurus/d2lb/compare/v0.1.7...v0.2.0) (2026-11-10)
+
+
+### Features
+
+* refresh mobile launcher and startup branding ([#71](https://github.com/bassasaurus/d2lb/issues/71)) ([38f2f98](https://github.com/bassasaurus/d2lb/commit/38f2f98f082bc1b32ad2926674c3696041a28dcc))
+
 ## [0.1.7](https://github.com/bassasaurus/d2lb/compare/v0.1.6...v0.1.7) (2026-11-09)
 
 
