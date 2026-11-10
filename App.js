@@ -2,6 +2,7 @@ import PlatformActionButton from './app/components/PlatformActionButton';
 import useAutoSync from './app/api/useAutoSync';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import StartupArtwork from './app/components/StartupArtwork';
+import WhatsNew from './app/components/WhatsNew';
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import DrawerNavigator from "./app/navigation/DrawerNavigator";
@@ -80,7 +81,10 @@ export default function App() {
       <AppContext.Provider value={appSettings}>
         {!auth.ready || startupVisible ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           {sessionError ? <><AppText>Could not unlock your saved session.</AppText><PlatformActionButton variant="text" title="Try again" onPress={restoreSession} /></> : <ThemedStartupArtwork onNameVisible={finishStartup} />}
-        </View> : <DrawerNavigator />}
+        </View> : <>
+          <DrawerNavigator />
+          <WhatsNew />
+        </>}
       </AppContext.Provider>
     </SafeAreaProvider>
     </AppAppearance>
