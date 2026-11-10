@@ -9,6 +9,12 @@ name: Sign in and download reference data
 - back
 - extendedWaitUntil:
     visible:
+      id: whats-new-dismiss
+    timeout: 120000
+- tapOn:
+    id: whats-new-dismiss
+- extendedWaitUntil:
+    visible:
       id: login-email
     timeout: 120000
 - tapOn:
