@@ -68,8 +68,8 @@ function FlightDetailScreen({ route, navigation }) {
 
   const deleteItem = async () => {
     try {
-      await (await flightStore()).remove(await flightScope(), route.params.item.local_id);
-      navigation.goBack();
+      await (await flightStore()).remove(await flightScope(), localId);
+      navigation.popTo("FlightList", { deletedFlightId: localId });
     } catch (error) {
       Alert.alert("Flight not deleted", "Please try again.");
     } finally {
@@ -77,14 +77,14 @@ function FlightDetailScreen({ route, navigation }) {
     }
   };
 
-  const showAlert = (primary_key, date, route) =>
+  const showAlert = () =>
     Alert.alert("Are you sure?", "This can't be undone", [
       {
         text: "Delete",
         style: "destructive",
         onPress: () => {
-          deleteItem(primary_key, date, route);
           Context.setActivityVisible(true);
+          deleteItem();
         },
       },
       { text: "Cancel", style: "cancel" },
@@ -105,7 +105,7 @@ function FlightDetailScreen({ route, navigation }) {
         {/* sixth row */}
         <Separator />
         <RecordActions recordName="flight"
-          onDelete={() => showAlert(route.params.item.id, route.params.item.date, route.params.item.route)}
+          onDelete={showAlert}
           onUpdate={() => navigation.navigate("FlightUpdate", { item: route.params.item })}
         />
         </Card>
