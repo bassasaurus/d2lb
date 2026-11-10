@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/bassasaurus/d2lb/compare/v0.4.1...v0.5.0) (2026-11-10)
+
+
+### Features
+
+* expand reminders and polish logbook sync ([#80](https://github.com/bassasaurus/d2lb/issues/80)) ([4e404d5](https://github.com/bassasaurus/d2lb/commit/4e404d5bd4cea4d64fc767a6846f8bc979272e88))
+
 ## [0.4.1](https://github.com/bassasaurus/d2lb/compare/v0.4.0...v0.4.1) (2026-11-10)
 
 
