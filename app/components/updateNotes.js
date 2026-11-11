@@ -1,9 +1,9 @@
 // Give each user-facing release a new ID and replace these highlights.
 export const updateNotes = {
-  id: 'reminders-and-logbook',
+  id: 'tailnumber-sync-and-profile',
   highlights: [
-    'Find Manage Reminders in the main menu and track flight-time milestones.',
-    'See medical certificate alerts in the Logbook. Dismiss the yellow warning or tap Update to edit your certificate.',
-    'Spot flights waiting to sync or needing your attention with orange and red indicators.',
+    'New tailnumbers open on their detail page, where you can watch them sync.',
+    'Sync indicators have clearer alignment and spacing in aircraft and tailnumber lists.',
+    'Find the app version at the bottom of the menu. Your profile signature now follows dark mode.',
   ],
 };
