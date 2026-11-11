@@ -22,6 +22,11 @@ ANDROID_SYNC_RECOVERY = (
 )
 
 SCENARIOS = {
+    'android-tailnumber-create': [
+        ('offline', 'empty', False),
+        ('tailnumber-saved-offline', 'empty', True),
+        ('tailnumber-synced', 'tailnumber-created', None),
+    ],
     'ios-flight-smoke': [
         ('signed-in', 'empty', None),
         ('ios-synced', 'original', None),

@@ -20,7 +20,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
   return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} validateOnMount
         renderLayout={({ content, form: { values, isSubmitting, isValidating, isValid, handleSubmit }, draftBlocked }) => (
-          <ScrollableFormCard footer={<PrimaryActionButton title="Save" onPress={handleSubmit}
+          <ScrollableFormCard footer={<PrimaryActionButton testID="tailnumber-save" title="Save" onPress={handleSubmit}
             disabled={draftBlocked || isSubmitting || isValidating || !isValid || !values.aircraft || !values.registration || rules.filter(([key]) => values[key] === true).length !== 1} />}>
             {content}
           </ScrollableFormCard>

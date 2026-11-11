@@ -124,7 +124,9 @@ export default function AircraftDetailScreen({ route, navigation }) {
     <Text style={{ marginVertical: 8 }}>Class: {CLASS_CHOICES.find(([key]) => key === item.aircraft_class)?.[1] || 'Not set'}</Text>
     {[...ENGINE_CHOICES, ...WEIGHT_CHOICES, ...FLAGS].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
     <RecordIssue item={item} kind="aircraft" navigation={navigation} />
-    <RecordSyncIndicator item={item} scope={scope ? aircraftScope(scope) : undefined} />
+    <View style={{ marginTop: 2 }}>
+      <RecordSyncIndicator item={item} scope={scope ? aircraftScope(scope) : undefined} />
+    </View>
     <View style={{ marginTop: 8 }}>
     <Text size={14} color={STYLES.muted}>Use Update to correct this aircraft and keep its linked records.</Text>
     <RecordActions recordName="aircraft"
@@ -145,10 +147,14 @@ export default function AircraftDetailScreen({ route, navigation }) {
         {[...tailnumbers].sort((a, b) => a.registration.localeCompare(b.registration, 'en', { numeric: true, sensitivity: 'base' })).map((tail, index) =>
           <TouchableOpacity key={tail.local_id || tail.id} accessibilityRole="button" accessibilityLabel={`View ${tail.registration}`}
             onPress={() => tail.needs_attention ? reviewRecord(navigation, 'tailnumber', tail) : navigation.navigate('TailnumberDetail', { item: tail })}
-            style={{ width: `${100 / columns}%`, minHeight: 48, justifyContent: 'center', paddingHorizontal: 8 }}>
-            <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: tail.needs_attention ? STYLES.danger : STYLES.blue, textAlign: index % columns === columns - 1 ? 'right' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'left' }}>{tail.registration}</Text>
+            style={{ width: `${100 / columns}%`, minHeight: 48, justifyContent: 'center', paddingHorizontal: 8, alignItems: index % columns === columns - 1 ? 'flex-end' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'flex-start' }}>
+            <View style={{ maxWidth: '100%' }}>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: tail.needs_attention ? STYLES.danger : STYLES.blue, textAlign: index % columns === columns - 1 ? 'right' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'left' }}>{tail.registration}</Text>
+              <View style={{ marginTop: 2 }}>
+                <RecordSyncIndicator animate={false} item={tail} scope={scope ? tailnumberScope(scope) : undefined} />
+              </View>
+            </View>
             {tail.needs_attention && <Text size={11} color={STYLES.danger}>Update needed</Text>}
-            <RecordSyncIndicator item={tail} scope={scope ? tailnumberScope(scope) : undefined} />
           </TouchableOpacity>)}
       </ScrollView>
     </View>}

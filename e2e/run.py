@@ -271,7 +271,7 @@ def run_scenario(args, scenario):
                 try:
                     result = backend(expected, capture_output=True, text=True, timeout=10)
                 except subprocess.CalledProcessError as error:
-                    if step in ('delete-synced', 'ios-synced', 'conflict-flight-synced', 'kept-device') and 'AssertionError' in error.stderr:
+                    if step in ('delete-synced', 'ios-synced', 'conflict-flight-synced', 'kept-device', 'tailnumber-synced') and 'AssertionError' in error.stderr:
                         self.retry_later(error.stderr)
                         return
                     raise

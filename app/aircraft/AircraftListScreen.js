@@ -112,7 +112,9 @@ export default function AircraftListScreen({ navigation }) {
           <Text style={{ color: STYLES.blue, fontSize: 18, fontWeight: '600' }}>{item.aircraft_type}</Text>
           <Text>{item.aircraft_class || 'Class not set'}{item.sync_state !== 'synced' && !item.needs_attention ? ' · Saved on device' : ''}</Text>
           <RecordIssue item={item} kind="aircraft" navigation={navigation} />
-          <RecordSyncIndicator item={item} scope={defaultScope ? aircraftScope(defaultScope) : undefined} />
+          <View style={{ marginTop: 8 }}>
+            <RecordSyncIndicator item={item} scope={defaultScope ? aircraftScope(defaultScope) : undefined} />
+          </View>
         </TouchableOpacity>
         <View style={{ alignItems: 'center' }}>
           <Text size={12} style={{ color: STYLES.muted }}>Default</Text>

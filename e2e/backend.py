@@ -34,6 +34,14 @@ if state in ['seed', 'seed-validation']:
         MapData.objects.create(icao=icao, iata=iata, name=name, city=name,
                                country='United States', latitude=latitude, longitude=longitude)
     print('Seeded disposable account, C172, N1234 and two airports.')
+elif state == 'tailnumber-created':
+    assert Flight.objects.count() == 0
+    user = get_user_model().objects.get(username=EMAIL)
+    tail = TailNumber.objects.get(user=user, registration='N5678')
+    assert tail.aircraft.aircraft_type == 'C172'
+    assert tail.is_91 and not tail.is_135 and not tail.is_121
+    assert TailNumber.objects.count() == 2
+    print('PASS: one new N5678 tailnumber saved for C172, with Part 91 rules.')
 else:
     expected, expected_receipts = {
         'empty': (0, 0), 'original': (1, 1), 'updated': (1, 2),

@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { Image, RefreshControl, View } from 'react-native';
+import Svg, { Defs, Filter, FeColorMatrix, Image as SvgImage } from 'react-native-svg';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from '../components/OverflowLists';
@@ -24,7 +25,7 @@ function Detail({ label, value }) {
   </View>;
 }
 export default function ProfileScreen({ navigation }) {
-  const { colors } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
   const [profile, setProfile] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [message, setMessage] = useState('');
@@ -89,8 +90,17 @@ export default function ProfileScreen({ navigation }) {
         </Card>
         <Card compact style={{ marginBottom: 8 }}>
           <Text size={18} weight="600">Signature</Text>
-          {profile.signature?.startsWith('data:image/png;base64,') ? <View style={{ backgroundColor: '#fff', borderRadius: 6, marginTop: 12 }}>
-            <Image accessibilityLabel="Your signature" source={{ uri: profile.signature }} resizeMode="contain" style={{ height: 120, width: '100%' }} />
+          {profile.signature?.startsWith('data:image/png;base64,') ? <View style={{ backgroundColor: isDark ? '#000' : '#fff', borderRadius: 6, marginTop: 12 }}>
+            {isDark ? <Svg accessibilityLabel="Your signature" height={120} width="100%" viewBox="0 0 900 300">
+              <Defs>
+                <Filter id="signature-dark">
+                  <FeColorMatrix type="matrix" values="-1 0 0 0 1  0 -1 0 0 1  0 0 -1 0 1  0 0 0 1 0" />
+                </Filter>
+              </Defs>
+              <SvgImage href={{ uri: profile.signature }} width={900} height={300}
+                preserveAspectRatio="xMidYMid meet" filter="url(#signature-dark)" />
+            </Svg> : <Image accessibilityLabel="Your signature" source={{ uri: profile.signature }}
+              resizeMode="contain" style={{ height: 120, width: '100%' }} />}
           </View> : <Text color={colors.muted} style={{ marginTop: 8 }}>{profile.signature ? 'Signature saved.' : 'No signature saved.'}</Text>}
           <PlatformActionButton title="Update Signature" variant="text"
             onPress={() => navigation.navigate('SignatureEdit', { revision: profile.signature_revision, signature: profile.signature })} />

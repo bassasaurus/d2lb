@@ -3,7 +3,7 @@ import { Animated, View } from 'react-native';
 import { recordSyncFeedback } from '../api/flightSyncFeedback.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 
-export default function RecordSyncIndicator({ item, scope, syncEvent }) {
+export default function RecordSyncIndicator({ item, scope, syncEvent, animate = true }) {
   const { colors } = useAppTheme();
   const synced = (item.sync_state ?? 'synced') === 'synced';
   const failed = Boolean(item.sync_error || item.needs_attention);
@@ -16,14 +16,14 @@ export default function RecordSyncIndicator({ item, scope, syncEvent }) {
   const [width, setWidth] = useState(0);
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
-    if (!scope || !synced) return;
+    if (!animate || !scope || !synced) return;
     const row = { ...item, local_id: item.local_id ?? `server:${item.id}`, sync_state: 'synced' };
     if (recordSyncFeedback.take(scope, [row]).length) setRecordEvent(Date.now());
-  }, [item, scope, synced]);
+  }, [item, scope, synced, animate]);
   useEffect(() => {
     if (!width) return;
     const confirmedEvent = event && event !== lastEvent.current && Date.now() - event < 5000;
-    const completed = synced && (confirmedEvent || (!scope && !previous.current));
+    const completed = animate && synced && (confirmedEvent || (!scope && !previous.current));
     lastEvent.current = event;
     previous.current = synced;
     if (!completed) {
@@ -41,7 +41,7 @@ export default function RecordSyncIndicator({ item, scope, syncEvent }) {
     ]);
     animation.start(({ finished }) => { if (finished) setPlaying(false); });
     return () => animation.stop();
-  }, [synced, event, scope, width, progress, opacity]);
+  }, [synced, event, scope, width, progress, opacity, animate]);
   const label = synced ? 'Synced' : failed ? 'Sync failed' : 'Pending sync';
   const dotColor = synced ? colors.success : failed ? colors.danger : colors.syncPending;
   return <View accessible accessibilityLabel={label}
@@ -49,7 +49,7 @@ export default function RecordSyncIndicator({ item, scope, syncEvent }) {
     style={{ height: 7, width: '100%', overflow: 'hidden', borderRadius: 3.5 }}>
     <View style={{ height: 7, width: 7, borderRadius: 3.5,
       backgroundColor: dotColor, opacity: playing ? 0 : 1 }} />
-    <Animated.View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0,
+    <Animated.View testID={playing ? "record-sync-animation" : undefined} pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0,
       width: '100%', height: 7, borderRadius: 3.5, backgroundColor: colors.success, opacity,
       transform: [{ translateX: progress.interpolate({ inputRange: [0, 1], outputRange: [-width, 0] }) }] }} />
   </View>;
