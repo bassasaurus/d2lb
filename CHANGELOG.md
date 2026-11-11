@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/bassasaurus/d2lb/compare/v0.6.0...v0.7.0) (2026-11-11)
+
+
+### Features
+
+* refine tailnumber sync feedback and profile theme ([#84](https://github.com/bassasaurus/d2lb/issues/84)) ([dc9d78d](https://github.com/bassasaurus/d2lb/commit/dc9d78d342623c4402dbe28ab1e667b511e99e6f))
+
 ## [0.6.0](https://github.com/bassasaurus/d2lb/compare/v0.5.0...v0.6.0) (2026-11-10)
 
 
