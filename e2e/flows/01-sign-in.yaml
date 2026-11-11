@@ -2,17 +2,20 @@ appId: host.exp.exponent
 name: Sign in and download reference data
 ---
 - openLink: ${EXPO_URL}
-- extendedWaitUntil:
-    visible: Continue
-    timeout: 120000
-- tapOn: Continue
-- back
+- tapOn:
+    text: Continue
+    optional: true
 - extendedWaitUntil:
     visible:
-      id: whats-new-dismiss
+      id: "whats-new-dismiss|login-email"
     timeout: 120000
-- tapOn:
-    id: whats-new-dismiss
+- runFlow:
+    when:
+      visible:
+        id: whats-new-dismiss
+    commands:
+      - tapOn:
+          id: whats-new-dismiss
 - extendedWaitUntil:
     visible:
       id: login-email

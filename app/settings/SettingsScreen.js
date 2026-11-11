@@ -2,27 +2,16 @@ import { ScrollView } from '../components/OverflowLists';
 import React from 'react';
 import { Alert, Platform, Pressable, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Constants from 'expo-constants';
-import * as Application from 'expo-application';
-import { isRunningInExpoGo } from 'expo';
 import Text from '../components/AppText';
 import Card from '../components/Card';
 import PlatformActionButton from '../components/PlatformActionButton';
 import { useAppTheme } from '../theme/ThemeProvider';
 import SyncSettings from './SyncSettings';
 import { openContactEmail } from './contactEmail';
-import { formatAppVersion } from './appVersion.mjs';
 
 export default function SettingsScreen({ navigation }) {
   const { preference, colors, saving, setPreference } = useAppTheme();
   const insets = useSafeAreaInsets();
-  const version = formatAppVersion({
-    projectVersion: Constants.expoConfig?.version,
-    nativeVersion: Application.nativeApplicationVersion,
-    buildVersion: Application.nativeBuildVersion,
-    expoGo: isRunningInExpoGo(),
-    development: __DEV__,
-  });
   const choices = [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']];
   return <ScrollView style={{ backgroundColor: colors.background }}
     contentContainerStyle={{ padding: 12, paddingBottom: 12 + (Platform.OS === 'android' ? insets.bottom : 0), flexGrow: 1 }}>
@@ -49,9 +38,6 @@ export default function SettingsScreen({ navigation }) {
         <PlatformActionButton title="Privacy Policy" variant="text" onPress={() =>
           navigation.navigate('PrivacyPolicy')} />
       </Card>
-    </View>
-    <View style={{ paddingTop: 8 }}>
-      <Text size={14} color={colors.muted} style={{ textAlign: 'center' }}>Version {version}</Text>
     </View>
   </ScrollView>;
 }

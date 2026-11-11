@@ -1,3 +1,8 @@
+import Constants from 'expo-constants';
+import * as Application from 'expo-application';
+import { isRunningInExpoGo } from 'expo';
+import { formatAppVersion } from '../settings/appVersion.mjs';
+import Text from '../components/AppText';
 import ProfileStackNavigator from './ProfileStackNavigator';
 import { withScrollOverflow } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
@@ -35,6 +40,14 @@ const Root = createStackNavigator();
 function DrawerNavigator({ navigation }) {
   const { colors, navigationTheme } = useAppTheme();
   const Context = useContext(AppContext);
+  const version = formatAppVersion({
+    projectVersion: Constants.expoConfig?.version,
+    nativeVersion: Application.nativeApplicationVersion,
+    buildVersion: Application.nativeBuildVersion,
+    expoGo: isRunningInExpoGo(),
+    development: __DEV__,
+  });
+
 
 
   function LogoutContent(props) {
@@ -43,7 +56,7 @@ function DrawerNavigator({ navigation }) {
         <OverflowDrawerContentScrollView {...props} style={styles.container}>
           <DrawerItemList {...props} />
         </OverflowDrawerContentScrollView>
-        <SafeAreaView edges={['bottom', 'left', 'right']} style={[styles.footer, { borderTopColor: colors.border }]}>
+        <View style={{ borderTopWidth: 1, borderTopColor: colors.border, paddingHorizontal: 12 }}>
           <DrawerItem
             label='Logout'
             onPress={async () => {
@@ -80,6 +93,9 @@ function DrawerNavigator({ navigation }) {
               }
             }}
           />
+        </View>
+        <SafeAreaView edges={['bottom', 'left', 'right']} style={[styles.footer, { borderTopColor: colors.border }]}>
+          <Text size={14} color={colors.muted} style={{ textAlign: 'center', marginVertical: 8 }}>Version {version}</Text>
         </SafeAreaView>
       </View>
     );

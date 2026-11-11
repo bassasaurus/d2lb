@@ -19,7 +19,7 @@ function TailnumberCreateScreen({ route }) {
   return (
     <TailnumberForm
       method={create}
-      onSaved={() => { navigation.goBack(); syncFlightData().catch(() => {}); }}
+      onSaved={item => { navigation.replace('TailnumberDetail', { item }); syncFlightData().catch(() => {}); }}
       initialValues={initialValues}
       aircraft_type={route.params.aircraft_type}
     ></TailnumberForm>

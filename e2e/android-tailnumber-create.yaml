@@ -1,0 +1,50 @@
+appId: host.exp.exponent
+name: Save a tailnumber and show its sync on the detail page
+---
+- runFlow: flows/01-sign-in.yaml
+- tapOn:
+    id: logbook-menu
+- tapOn: Aircraft
+- tapOn: C172
+- tapOn: New Tailnumber
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: offline
+- tapOn: Registration
+- inputText: N5678
+- hideKeyboard
+- tapOn: Part 91
+- extendedWaitUntil:
+    visible:
+      id: tailnumber-save
+      enabled: true
+    timeout: 10000
+- tapOn:
+    id: tailnumber-save
+- assertVisible: Tailnumber details
+- assertVisible: N5678
+- assertVisible: Pending sync
+- takeScreenshot: tailnumber-detail-pending
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: tailnumber-saved-offline
+- extendedWaitUntil:
+    visible:
+      id: record-sync-animation
+    timeout: 30000
+- takeScreenshot: tailnumber-detail-sync-animation
+- extendedWaitUntil:
+    visible: Synced
+    timeout: 30000
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: tailnumber-synced
+- assertVisible: Tailnumber details
+- back
+- assertVisible: Aircraft details
+- assertVisible: N5678
+- assertNotVisible:
+    id: record-sync-animation
