@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.2](https://github.com/bassasaurus/d2lb/compare/v0.7.1...v0.7.2) (2026-11-12)
+
+
+### Bug Fixes
+
+* keep form fields visible and reopen release notes ([#88](https://github.com/bassasaurus/d2lb/issues/88)) ([4020d34](https://github.com/bassasaurus/d2lb/commit/4020d34e18084c52d43947eaba531caf7c5a8c62))
+
 ## [0.7.1](https://github.com/bassasaurus/d2lb/compare/v0.7.0...v0.7.1) (2026-11-12)
 
 
