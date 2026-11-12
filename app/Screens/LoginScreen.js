@@ -1,9 +1,10 @@
+import FormKeyboardAvoidingView from '../components/FormKeyboardAvoidingView';
 import Card from '../components/Card';
 import PrimaryActionButton from '../components/PrimaryActionButton';
-import { ScrollView } from '../components/OverflowLists';
+import FormScrollView from '../components/FormScrollView';
 import { useMemo } from 'react';
 import React, { useState, useContext, useRef } from "react";
-import { Alert, Platform, View, StyleSheet, Image, KeyboardAvoidingView, Pressable } from 'react-native';
+import { Alert, Platform, View, StyleSheet, Image, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme } from '../theme/ThemeProvider';
@@ -59,12 +60,10 @@ function LoginScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: STYLES.itemBackground }}>
-      <KeyboardAvoidingView
-        behavior={Platform.select({ android: undefined, ios: "position" })}
-        keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
+      <FormKeyboardAvoidingView style={{ flex: 1 }}
         enabled={true}
       >
-        <ScrollView keyboardShouldPersistTaps="handled">
+        <FormScrollView keyboardShouldPersistTaps="handled">
           <View style={styles.container}>
             <View style={{ paddingTop: 100, alignItems: "center" }}>
               <Image
@@ -150,8 +149,8 @@ function LoginScreen() {
               visible={Context.activityVisibleValue}
             ></ActivityModal>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </FormScrollView>
+      </FormKeyboardAvoidingView>
     </SafeAreaView>
   );
 }

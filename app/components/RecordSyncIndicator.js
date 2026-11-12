@@ -3,7 +3,7 @@ import { Animated, View } from 'react-native';
 import { recordSyncFeedback } from '../api/flightSyncFeedback.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 
-export default function RecordSyncIndicator({ item, scope, syncEvent, animate = true }) {
+export default function RecordSyncIndicator({ item, scope, syncEvent, animate = true, showDot = true }) {
   const { colors } = useAppTheme();
   const synced = (item.sync_state ?? 'synced') === 'synced';
   const failed = Boolean(item.sync_error || item.needs_attention);
@@ -44,11 +44,11 @@ export default function RecordSyncIndicator({ item, scope, syncEvent, animate = 
   }, [synced, event, scope, width, progress, opacity, animate]);
   const label = synced ? 'Synced' : failed ? 'Sync failed' : 'Pending sync';
   const dotColor = synced ? colors.success : failed ? colors.danger : colors.syncPending;
-  return <View accessible accessibilityLabel={label}
+  return <View accessible={showDot || playing} accessibilityLabel={showDot || playing ? label : undefined}
     onLayout={event => setWidth(event.nativeEvent.layout.width)}
     style={{ height: 7, width: '100%', overflow: 'hidden', borderRadius: 3.5 }}>
-    <View style={{ height: 7, width: 7, borderRadius: 3.5,
-      backgroundColor: dotColor, opacity: playing ? 0 : 1 }} />
+    {showDot && <View style={{ height: 7, width: 7, borderRadius: 3.5,
+      backgroundColor: dotColor, opacity: playing ? 0 : 1 }} />}
     <Animated.View testID={playing ? "record-sync-animation" : undefined} pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0,
       width: '100%', height: 7, borderRadius: 3.5, backgroundColor: colors.success, opacity,
       transform: [{ translateX: progress.interpolate({ inputRange: [0, 1], outputRange: [-width, 0] }) }] }} />

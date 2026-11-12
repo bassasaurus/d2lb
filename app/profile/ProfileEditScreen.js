@@ -1,6 +1,7 @@
+import FormKeyboardAvoidingView from '../components/FormKeyboardAvoidingView';
 import PrimaryActionButton from '../components/PrimaryActionButton';
 import React, { useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, Switch, View } from 'react-native';
+import { Platform, Pressable, Switch, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as yup from 'yup';
 import ScrollableFormCard from '../components/ScrollableFormCard';
@@ -21,7 +22,7 @@ export default function ProfileEditScreen({ route, navigation }) {
   const medical = section === 'medical';
   const schema = medical ? yup.object({ medical_issue_date: yup.string().required('Select an issue date.') })
     : yup.object({ first_name: yup.string().max(150), last_name: yup.string().max(150), company: yup.string().max(50) });
-  return <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+  return <FormKeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }}>
     <DraftForm kind={`profile-${section}`} initialValues={initialValues} validationSchema={schema}
       draftHandle={draftHandle} savedNavigation={savedNavigation}
       renderLayout={({ content, form: { handleSubmit, isSubmitting }, draftBlocked }) => (
@@ -70,5 +71,5 @@ export default function ProfileEditScreen({ route, navigation }) {
           <Text color={colors.muted} style={{ marginTop: 12 }}>An internet connection is required to save profile changes.</Text>
         </>}
     </DraftForm>
-  </KeyboardAvoidingView>;
+  </FormKeyboardAvoidingView>;
 }

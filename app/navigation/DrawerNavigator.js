@@ -3,12 +3,13 @@ import * as Application from 'expo-application';
 import { isRunningInExpoGo } from 'expo';
 import { formatAppVersion } from '../settings/appVersion.mjs';
 import Text from '../components/AppText';
+import WhatsNew from '../components/WhatsNew';
 import ProfileStackNavigator from './ProfileStackNavigator';
 import { withScrollOverflow } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
-import React, { useContext, useEffect } from "react";
-import { StyleSheet, Alert, View } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, Alert, View, Pressable } from "react-native";
 import { flightScope, flightStore } from "../storage/flights";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -51,6 +52,7 @@ function DrawerNavigator({ navigation }) {
 
 
   function LogoutContent(props) {
+    const [showReleaseNotes, setShowReleaseNotes] = useState(false);
     return (
       <View style={styles.container}>
         <OverflowDrawerContentScrollView {...props} style={styles.container}>
@@ -95,8 +97,13 @@ function DrawerNavigator({ navigation }) {
           />
         </View>
         <SafeAreaView edges={['bottom', 'left', 'right']} style={[styles.footer, { borderTopColor: colors.border }]}>
-          <Text size={14} color={colors.muted} style={{ textAlign: 'center', marginVertical: 8 }}>Version {version}</Text>
+          <Pressable testID="drawer-release-notes" accessibilityRole="button"
+            accessibilityLabel={`View release notes for version ${version}`}
+            onPress={() => setShowReleaseNotes(true)} style={{ minHeight: 44, justifyContent: 'center' }}>
+            <Text size={14} color={colors.muted} style={{ textAlign: 'center', marginVertical: 8 }}>Version {version}</Text>
+          </Pressable>
         </SafeAreaView>
+        <WhatsNew visible={showReleaseNotes} onDismiss={() => setShowReleaseNotes(false)} />
       </View>
     );
   }

@@ -1,3 +1,4 @@
+import FormKeyboardAvoidingView from './FormKeyboardAvoidingView';
 import PlatformActionButton from './PlatformActionButton';
 import PrimaryActionButton from './PrimaryActionButton';
 import { hasRequiredSoloLandings } from '../forms/landingRequirements.mjs';
@@ -12,7 +13,7 @@ import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import moment from "moment";
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { View, StyleSheet, Modal, Pressable, TouchableOpacity, KeyboardAvoidingView, Platform, Alert, useWindowDimensions } from 'react-native';
+import { View, StyleSheet, Modal, Pressable, TouchableOpacity, Platform, Alert, useWindowDimensions } from 'react-native';
 import Text from './AppText';
 import * as yup from "yup";
 
@@ -122,10 +123,8 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
   });
 
   return (
-    <KeyboardAvoidingView
+    <FormKeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.select({ android: undefined, ios: "padding" })}
-      keyboardVerticalOffset={Platform.select({ ios: 90, android: 78 })}
       enabled={scrollEnabled}
     >
       <PickerOverlayHost>
@@ -748,7 +747,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
           </DraftForm>
           <ActivityModal />
       </PickerOverlayHost>
-    </KeyboardAvoidingView>
+    </FormKeyboardAvoidingView>
   );
 }
 
