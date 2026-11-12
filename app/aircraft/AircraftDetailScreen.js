@@ -125,7 +125,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
     {[...ENGINE_CHOICES, ...WEIGHT_CHOICES, ...FLAGS].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
     <RecordIssue item={item} kind="aircraft" navigation={navigation} />
     <View style={{ marginTop: 2 }}>
-      <RecordSyncIndicator item={item} scope={scope ? aircraftScope(scope) : undefined} />
+      <RecordSyncIndicator showDot={false} item={item} scope={scope ? aircraftScope(scope) : undefined} />
     </View>
     <View style={{ marginTop: 8 }}>
     <Text size={14} color={STYLES.muted}>Use Update to correct this aircraft and keep its linked records.</Text>

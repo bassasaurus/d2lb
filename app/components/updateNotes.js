@@ -1,9 +1,9 @@
 // Give each user-facing release a new ID and replace these highlights.
 export const updateNotes = {
-  id: 'tailnumber-sync-and-profile',
+  id: 'keyboard-and-release-notes',
   highlights: [
-    'New tailnumbers open on their detail page, where you can watch them sync.',
-    'Sync indicators have clearer alignment and spacing in aircraft and tailnumber lists.',
-    'Find the app version at the bottom of the menu. Your profile signature now follows dark mode.',
+    'Form fields stay visible while typing, including when adding or editing reminders.',
+    'Tap the version at the bottom of the menu to read these update notes again.',
+    'Aircraft Detail keeps its sync animation without the status dot.',
   ],
 };

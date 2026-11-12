@@ -1,9 +1,10 @@
+import FormKeyboardAvoidingView from './FormKeyboardAvoidingView';
 import PrimaryActionButton from './PrimaryActionButton';
 import ScrollableFormCard from './ScrollableFormCard';
 import DraftForm from '../drafts/DraftForm';
 import { useMemo } from 'react';
 import React, { useContext, useRef } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import Text from './AppText';
 import { OPERATING_RULES as rules, tailnumberSchema as schema } from '../forms/tailnumberValidation.mjs';
 import AircraftPicker from './AircraftPicker';
@@ -17,7 +18,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
   const savedNavigation = useRef(false);
   const draftHandle = useRef(null);
   const context = useContext(AppContext);
-  return <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+  return <FormKeyboardAvoidingView style={{ flex: 1 }}>
       <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} validateOnMount
         renderLayout={({ content, form: { values, isSubmitting, isValidating, isValid, handleSubmit }, draftBlocked }) => (
           <ScrollableFormCard footer={<PrimaryActionButton testID="tailnumber-save" title="Save" onPress={handleSubmit}
@@ -67,7 +68,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           <Text style={{ color: STYLES.muted, marginTop: 12 }}>{initialValues.id ? 'A connection is required to update this tailnumber.' : 'Saved on this device first; uploads when connected.'}</Text>
         </>}
       </DraftForm>
-  </KeyboardAvoidingView>;
+  </FormKeyboardAvoidingView>;
 }
 const createStyles = STYLES => StyleSheet.create({
   heading: { fontSize: 20, fontWeight: '600' },

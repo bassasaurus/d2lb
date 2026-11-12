@@ -11,24 +11,26 @@ import { updateNotes } from './updateNotes';
 
 const SEEN_KEY = `whats-new:${updateNotes.id}`;
 
-export default function WhatsNew() {
+export default function WhatsNew({ visible: requestedVisible, onDismiss }) {
   const { colors } = useAppTheme();
-  const [visible, setVisible] = useState(false);
+  const [automaticVisible, setVisible] = useState(false);
 
   useEffect(() => {
+    if (requestedVisible !== undefined) return;
     let active = true;
     AsyncStorage.getItem(SEEN_KEY).then(value => {
       if (active && value === null) setVisible(true);
     }).catch(() => {});
     return () => { active = false; };
-  }, []);
+  }, [requestedVisible]);
 
   function dismiss() {
     setVisible(false);
+    onDismiss?.();
     AsyncStorage.setItem(SEEN_KEY, 'seen').catch(() => {});
   }
 
-  if (!visible) return null;
+  if (!(requestedVisible ?? automaticVisible)) return null;
 
   return (
     <Modal animationType="fade" presentationStyle="fullScreen" onRequestClose={dismiss}>

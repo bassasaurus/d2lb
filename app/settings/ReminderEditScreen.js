@@ -1,5 +1,6 @@
+import FormKeyboardAvoidingView from '../components/FormKeyboardAvoidingView';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, StyleSheet } from 'react-native';
+import { Alert, Platform, Pressable, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { usePreventRemove } from '@react-navigation/native';
 import api from '../api/axiosConfig';
@@ -152,8 +153,7 @@ export default function ReminderEditScreen({ navigation, route }) {
     </>;
   }
 
-  return <KeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }}
-    behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+  return <FormKeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollableFormCard footer={<PrimaryActionButton title={saving ? 'Saving…' : 'Save'} onPress={save}
       disabled={saving || (expiration ? !title.trim() || !dueDate : !targetHours.trim()) ||
         (typeMilestone && (!selectedAircraft || aircraftLoadFailed)) || (crewMilestone && !crewPosition) ||
@@ -214,7 +214,7 @@ export default function ReminderEditScreen({ navigation, route }) {
       </>}
       {error !== '' && <Text color={colors.danger} style={styles.heading} accessibilityLiveRegion="polite">{error}</Text>}
     </ScrollableFormCard>
-  </KeyboardAvoidingView>;
+  </FormKeyboardAvoidingView>;
 }
 
 const styles = StyleSheet.create({
