@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, View } from 'react-native';
+import { Modal, ScrollView, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppTheme } from '../theme/ThemeProvider';
 import Text from './AppText';
+import Card from './Card';
 import PrimaryActionButton from './PrimaryActionButton';
 
 import { updateNotes } from './updateNotes';
@@ -31,14 +32,14 @@ export default function WhatsNew() {
 
   return (
     <Modal animationType="fade" presentationStyle="fullScreen" onRequestClose={dismiss}>
-      <SafeAreaView style={[styles.screen, { backgroundColor: colors.surface }]}>
-        <View style={styles.content} accessibilityViewIsModal>
+      <SafeAreaView style={[styles.screen, { backgroundColor: colors.background }]}>
+        <Card style={styles.content} accessibilityViewIsModal>
           <Text size={22} weight="600" accessibilityRole="header">What’s in this update</Text>
           <ScrollView style={styles.notes} contentContainerStyle={styles.highlights}>
             {updateNotes.highlights.map(highlight => <Text key={highlight}>{highlight}</Text>)}
           </ScrollView>
           <PrimaryActionButton testID="whats-new-dismiss" title="Got it" onPress={dismiss} />
-        </View>
+        </Card>
       </SafeAreaView>
     </Modal>
   );
