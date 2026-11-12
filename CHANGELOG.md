@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.1](https://github.com/bassasaurus/d2lb/compare/v0.7.0...v0.7.1) (2026-11-12)
+
+
+### Bug Fixes
+
+* present update notes in a themed card ([#86](https://github.com/bassasaurus/d2lb/issues/86)) ([acb6fd6](https://github.com/bassasaurus/d2lb/commit/acb6fd609f2692c8e4d92917926c4073300fedca))
+
 ## [0.7.0](https://github.com/bassasaurus/d2lb/compare/v0.6.0...v0.7.0) (2026-11-11)
 
 
