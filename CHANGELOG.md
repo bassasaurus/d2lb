@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/bassasaurus/d2lb/compare/v0.7.2...v0.8.0) (2026-11-13)
+
+
+### Features
+
+* show flight mileage with saved distance units ([#90](https://github.com/bassasaurus/d2lb/issues/90)) ([5a4f19c](https://github.com/bassasaurus/d2lb/commit/5a4f19c24cdda841010641de6fc1d6080d6b3507))
+
 ## [0.7.2](https://github.com/bassasaurus/d2lb/compare/v0.7.1...v0.7.2) (2026-11-12)
 
 
