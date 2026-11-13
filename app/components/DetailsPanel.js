@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import AppText from "./AppText";
+import Mileage from './Mileage';
 import { useAppTheme } from '../theme/ThemeProvider';
 
 function DetailsPanel({ route }) {
@@ -26,6 +27,7 @@ function DetailsPanel({ route }) {
         </View>
       </View>
       {/* third row */}
+      <Mileage flight={route.params.item} />
       <View style={styles.rowContainer}>
         <View style={styles.firstColumn}>
           <View style={styles.rowContainer}>
