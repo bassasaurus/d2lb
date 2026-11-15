@@ -4,7 +4,7 @@ import { localChanges } from './localChanges.mjs';
 // Database-only repository: also exercised against real SQLite in Node tests.
 export async function createFlightStore(db) {
   const version = await db.getFirstAsync('PRAGMA user_version');
-  if (version.user_version > 3) throw new Error('This local database requires a newer app.');
+  if (version.user_version > 4) throw new Error('This local database requires a newer app.');
   await db.execAsync(`
     PRAGMA journal_mode = WAL;
     CREATE TABLE IF NOT EXISTS mobile_flights (
@@ -42,6 +42,15 @@ export async function createFlightStore(db) {
     });
   }
   if (version.user_version < 3) await db.execAsync('PRAGMA user_version = 3;');
+  if (version.user_version < 4) {
+    await db.withExclusiveTransactionAsync(async tx => {
+      // One authoritative preference per account/namespace. Aircraft is_default
+      // flags are downloaded snapshots; the queued preference overrides them.
+      await tx.execAsync(`CREATE UNIQUE INDEX IF NOT EXISTS mobile_one_default_preference
+        ON mobile_flights(scope) WHERE json_extract(payload, '$._default_preference') = 1;
+        PRAGMA user_version = 4;`);
+    });
+  }
   // Expo opens a separate connection for exclusive transactions. Queue writes
   // across the store so a refresh cannot collide with another local write.
   let pendingWrite = Promise.resolve();
@@ -217,6 +226,9 @@ export async function createFlightStore(db) {
     },
     async save(scope, localId, flight, options = {}) {
       requireScope(scope);
+      if (flight._default_preference && (flight._default_preference !== true || localId !== 'server:-1' || flight.id !== -1)) {
+        throw new Error('Default aircraft must use the account preference record.');
+      }
       let generation;
       // One durable row is both the local record and its outbox entry.
       const { local_id, sync_state, sync_error, needs_attention, sync_generation, ...payload } = flight;
@@ -270,6 +282,11 @@ export async function createFlightStore(db) {
       requireScope(scope);
       if (!Array.isArray(flights) || flights.some(flight => !Number.isInteger(flight.id))) {
         throw new Error('Invalid flight response; local records were preserved.');
+      }
+      const defaults = flights.filter(row => row._default_preference);
+      if (defaults.length > 1 || defaults.some(row => row._default_preference !== true || row.id !== -1)
+          || (scope.endsWith(':aircraft') && flights.filter(row => !row._default_preference && row.is_default).length > 1)) {
+        throw new Error('More than one default aircraft returned; saved records were preserved.');
       }
       await writeTransaction(async tx => {
         // Acknowledged creates keep their original local key so refreshes do not

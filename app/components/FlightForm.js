@@ -1,3 +1,4 @@
+import { formFeedback } from '../forms/errorFeedback.mjs';
 import FormKeyboardAvoidingView from './FormKeyboardAvoidingView';
 import PlatformActionButton from './PlatformActionButton';
 import PrimaryActionButton from './PrimaryActionButton';
@@ -93,7 +94,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
       .number()
       .typeError(number)
       .required(required)
-      .min(0.1, "Must be greater than 0.1")
+      .min(0.1, ({ value }) => value < 0 ? "Hours cannot be negative." : "Must be greater than 0.1")
       .max(30.0, "Seems unlikely.")
       .test("maxDigitsAfterDecimal", "max 1 decimal place", (number) =>
         /^\d+(\.\d{1,1})?$/.test(number)
@@ -108,12 +109,12 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
       .typeError(number)
       .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
-    night: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
-    instrument: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
+    night: yup.number().typeError(number).moreThan(0, ({ value }) => value < 0 ? "Hours cannot be negative." : "Leave blank for 0"),
+    instrument: yup.number().typeError(number).moreThan(0, ({ value }) => value < 0 ? "Hours cannot be negative." : "Leave blank for 0"),
     simulated_instrument: yup
       .number()
       .typeError(number)
-      .moreThan(0, "Leave blank for 0"),
+      .moreThan(0, ({ value }) => value < 0 ? "Hours cannot be negative." : "Leave blank for 0"),
     remarks: yup.string().max(256, "256 Character Maximum"),
     number: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
   }).test('flight-role', 'Required', function(values) {
@@ -165,7 +166,9 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                 helpers.resetForm({ values });
                 onSaved?.(result);
               } catch (error) {
-                Alert.alert("Flight not saved", "Your changes are still in this form. Please try again.");
+                const feedback = formFeedback(error, 'flight');
+                helpers.setErrors(feedback.fields);
+                helpers.setStatus(feedback.status);
               } finally {
                 helpers.setSubmitting(false);
               }
@@ -174,6 +177,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
             {({
               values,
               errors,
+              status,
               touched,
               handleChange,
               setFieldValue,
@@ -181,6 +185,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
               handleBlur,
             }) => (
               <>
+                {status && <Text accessibilityLiveRegion="polite" style={styles.errors}>{status}</Text>}
                 <Pressable
                   testID="flight-date"
                   onPress={() => {

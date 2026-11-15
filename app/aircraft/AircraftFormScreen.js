@@ -1,3 +1,4 @@
+import { formFeedback } from '../forms/errorFeedback.mjs';
 import FormKeyboardAvoidingView from '../components/FormKeyboardAvoidingView';
 import PrimaryActionButton from '../components/PrimaryActionButton';
 import ScrollableFormCard from '../components/ScrollableFormCard';
@@ -45,7 +46,9 @@ export default function AircraftFormScreen({ route, navigation }) {
           helpers.resetForm({ values });
           navigation.popTo('AircraftDetail', { item });
         } catch (error) {
-          helpers.setStatus(error.message || 'Aircraft not saved. Your changes remain in this form.');
+          const feedback = formFeedback(error, 'aircraft');
+          helpers.setErrors(feedback.fields);
+          helpers.setStatus(feedback.status);
         } finally { helpers.setSubmitting(false); }
       }}>
         {({ values, errors, status, setFieldValue }) => {
