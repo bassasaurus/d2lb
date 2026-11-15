@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/bassasaurus/d2lb/compare/v0.9.1...v0.10.0) (2026-11-15)
+
+
+### Features
+
+* scan tailnumbers offline and return to unfinished flights ([#98](https://github.com/bassasaurus/d2lb/issues/98)) ([ae2911c](https://github.com/bassasaurus/d2lb/commit/ae2911c71aa143a3bd070c533f09771303807322))
+
 ## [0.9.1](https://github.com/bassasaurus/d2lb/compare/v0.9.0...v0.9.1) (2026-11-15)
 
 
