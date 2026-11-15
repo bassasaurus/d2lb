@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/bassasaurus/d2lb/compare/v0.8.1...v0.9.0) (2026-11-15)
+
+
+### Features
+
+* restore dismissed reminders from Manage Reminders ([#94](https://github.com/bassasaurus/d2lb/issues/94)) ([752b541](https://github.com/bassasaurus/d2lb/commit/752b5417b884120024129be912d371ae45e3440b))
+
 ## [0.8.1](https://github.com/bassasaurus/d2lb/compare/v0.8.0...v0.8.1) (2026-11-15)
 
 
