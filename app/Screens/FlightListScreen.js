@@ -1,5 +1,6 @@
 import { reviewRecord } from '../components/RecordIssue';
-import { internetAvailable, subscribeAutoSync } from '../api/autoSync.mjs';
+import { canAttemptApiSync, subscribeAutoSync } from '../api/autoSync.mjs';
+import api from '../api/axiosConfig';
 import { completedFlightSyncs, recordSyncFeedback } from '../api/flightSyncFeedback.mjs';
 import { FlatList } from '../components/OverflowLists';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
@@ -68,6 +69,7 @@ const FlightListScreen = ({ navigation, route }) => {
     };
   }, [deletedFlightId, isFocused, navigation, next, removalProgress]);
   const [syncEvents, setSyncEvents] = useState({});
+  const [recordScope, setRecordScope] = useState(null);
   const feedbackPartition = React.useRef(null);
   const [windowNotice, setWindowNotice] = useState(true);
   const [loadingFlights, setLoadingFlights] = useState(false);
@@ -110,7 +112,7 @@ const FlightListScreen = ({ navigation, route }) => {
         const readRows = async account => [...await store.list(account),
           ...(await store.deletedRecords(account)).filter(row => row.needs_attention)];
         const local = await readRows(scope);
-        if (active) setData(local);
+        if (active) { setData(local); setRecordScope(scope); }
         const beforePending = await logbookPendingCount(store, [scope, aircraftScope(scope), tailnumberScope(scope)]);
         const snapshot = await store.reference(scope, 'flight-window-sync');
         const needsRefresh = shouldRefreshLogbook({ force, pending: beforePending, hasSnapshot: Boolean(snapshot[0]?.downloaded_at) });
@@ -120,7 +122,7 @@ const FlightListScreen = ({ navigation, route }) => {
           if (active) setLoadingFlights(true);
           try {
             const network = await NetInfo.fetch();
-            if (!internetAvailable(network)) throw new Error('Offline');
+            if (!canAttemptApiSync(network, api.defaults.baseURL)) throw new Error('Offline');
             try {
               scope = await syncFlightData();
             } catch (error) {
@@ -146,6 +148,7 @@ const FlightListScreen = ({ navigation, route }) => {
             setSyncEvents(previous => ({ ...previous, ...Object.fromEntries(completed.map(key => [key, confirmedAt])) }));
           }
           setData(rows);
+          setRecordScope(scope);
           if (needsRefresh && downloaded) setReminderRefresh(previous => previous + 1);
           setNoticeMessage(pending ? "Saved on this device." : !downloaded ? "Showing saved flights." : needsRefresh ? "Synced last 100 entries" : "No sync required.");
           clearTimeout(noticeTimer.current);
@@ -202,7 +205,7 @@ const FlightListScreen = ({ navigation, route }) => {
     });
     let wasConnected;
     const unsubscribe = NetInfo.addEventListener(state => {
-      const online = internetAvailable(state);
+      const online = canAttemptApiSync(state, api.defaults.baseURL);
       if (wasConnected === false && online) load();
       wasConnected = online;
     });
@@ -226,7 +229,7 @@ const FlightListScreen = ({ navigation, route }) => {
   }, []);
 
   const renderItem = ({ item }) => (
-    <FlightRow item={item} navigation={navigation} style={styles.touchable}
+    <FlightRow item={item} navigation={navigation} style={styles.touchable} scope={recordScope}
       syncEvent={syncEvents[item.local_id]}
       removalProgress={item.local_id === deletedFlightId ? removalProgress : null} />
   );
@@ -260,7 +263,7 @@ const FlightListScreen = ({ navigation, route }) => {
   );
 };
 
-function FlightRow({ item, navigation, style, syncEvent, removalProgress }) {
+function FlightRow({ item, navigation, style, syncEvent, removalProgress, scope }) {
   const { colors } = useAppTheme();
   const [height, setHeight] = useState(0);
   const removing = Boolean(removalProgress);
@@ -286,7 +289,7 @@ function FlightRow({ item, navigation, style, syncEvent, removalProgress }) {
           ? reviewRecord(navigation, "flight", item)
           : navigation.navigate("FlightDetail", { item })}
       >
-        <FlightItem item={item} navigation={navigation}
+        <FlightItem item={item} navigation={navigation} scope={scope}
           syncEvent={syncEvent}
           date={item.date}
           route={item.route}

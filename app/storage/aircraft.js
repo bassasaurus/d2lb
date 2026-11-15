@@ -19,8 +19,8 @@ export async function saveAircraft(record) {
     throw new Error('This aircraft type already exists in your account.');
   }
   const localId = record.local_id || (record.id ? `server:${record.id}` : Crypto.randomUUID());
-  await store.save(scope, localId, { ...record, aircraft_type: code });
-  return { ...record, aircraft_type: code, local_id: localId, sync_state: record.id ? 'pending_update' : 'pending_create' };
+  const sync_generation = await store.save(scope, localId, { ...record, aircraft_type: code });
+  return { ...record, sync_generation, aircraft_type: code, local_id: localId, sync_state: record.id ? 'pending_update' : 'pending_create' };
 }
 
 export async function saveDefaultAircraft(aircraftType) {

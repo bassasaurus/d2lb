@@ -7,13 +7,16 @@ import { aircraftScope } from '../storage/aircraft';
 import { tailnumberScope } from '../storage/tailnumberRecords.mjs';
 import { logbookPendingCount } from './logbookRefresh.mjs';
 import syncFlightData from './syncFlightData';
-import { createAutoSync, notifyAutoSync } from './autoSync.mjs';
+import { canAttemptApiSync, createAutoSync, notifyAutoSync } from './autoSync.mjs';
+import api from './axiosConfig';
+import { localChanges } from '../storage/localChanges.mjs';
 
 export default function useAutoSync(auth) {
   useEffect(() => {
     if (!auth.ready || !auth.token) return;
     let foreground = AppState.currentState === 'active';
     const worker = createAutoSync({
+      isOnline: state => canAttemptApiSync(state, api.defaults.baseURL),
       isActive: () => foreground && session.snapshot().version === auth.version,
       hasPending: async () => {
         const scope = await flightScope();
@@ -26,11 +29,12 @@ export default function useAutoSync(auth) {
     });
     const unsubscribe = NetInfo.addEventListener(state => worker.network(state));
     const check = () => NetInfo.refresh().then(state => worker.network(state, true)).catch(() => {});
+    const stopLocalChanges = localChanges.subscribe(check);
     const subscription = AppState.addEventListener('change', state => {
       foreground = state === 'active';
       if (foreground) check();
     });
     const timer = setInterval(() => worker.request(), 30000);
-    return () => { unsubscribe(); subscription.remove(); clearInterval(timer); worker.dispose(); };
+    return () => { stopLocalChanges(); unsubscribe(); subscription.remove(); clearInterval(timer); worker.dispose(); };
   }, [auth.ready, auth.token, auth.version]);
 }

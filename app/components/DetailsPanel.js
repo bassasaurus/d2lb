@@ -27,7 +27,6 @@ function DetailsPanel({ route }) {
         </View>
       </View>
       {/* third row */}
-      <Mileage flight={route.params.item} />
       <View style={styles.rowContainer}>
         <View style={styles.firstColumn}>
           <View style={styles.rowContainer}>
@@ -111,6 +110,7 @@ function DetailsPanel({ route }) {
           <AppText size={16}>Remarks: {route.params.item.remarks}</AppText>
         </View>
       </View>
+      <Mileage flight={route.params.item} />
     </View>
   );
 }

@@ -2,15 +2,24 @@ import FormKeyboardAvoidingView from './FormKeyboardAvoidingView';
 import PrimaryActionButton from './PrimaryActionButton';
 import ScrollableFormCard from './ScrollableFormCard';
 import DraftForm from '../drafts/DraftForm';
+import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
 import React, { useContext, useRef } from 'react';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import Text from './AppText';
-import { OPERATING_RULES as rules, tailnumberSchema as schema } from '../forms/tailnumberValidation.mjs';
+import { OPERATING_RULES as rules, tailnumberSchema as schema, selectOperatingRule } from '../forms/tailnumberValidation.mjs';
 import AircraftPicker from './AircraftPicker';
 import AppTextInput from './AppTextInput';
 import AppContext from './AppContext';
 import { useAppTheme } from '../theme/ThemeProvider';
+
+function OriginAircraft({ aircraft }) {
+  const { values, setFieldValue } = useFormikContext();
+  React.useEffect(() => {
+    if (aircraft && values.aircraft !== aircraft) setFieldValue('aircraft', aircraft);
+  }, [aircraft, values.aircraft, setFieldValue]);
+  return null;
+}
 
 export default function TailnumberForm({ initialValues, method, onSaved, aircraft_type, allowAircraftChange = false }) {
   const { styles: STYLES } = useAppTheme();
@@ -47,7 +56,8 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           context.setActivityVisible(false);
         }
       }}>
-        {({ values, errors, setFieldValue }) => <>
+        {({ values, errors, setFieldValue, setValues }) => <>
+          {!allowAircraftChange && <OriginAircraft aircraft={aircraft_type} />}
           <Text style={styles.heading}>{allowAircraftChange ? 'Aircraft' : aircraft_type}</Text>
           {allowAircraftChange && <AircraftPicker initialValue={values.aircraft} fieldName="aircraft" setFieldValue={setFieldValue} isValid={!errors.aircraft} />}
           {errors.aircraft && <Text style={styles.error}>{errors.aircraft}</Text>}
@@ -59,7 +69,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           <Text style={styles.label}>Operating rules</Text>
           <View style={styles.rules}>
             {rules.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" accessibilityState={{ checked: values[key] === true }}
-              onPress={() => rules.forEach(([field]) => setFieldValue(field, field === key))}
+              onPress={() => setValues(current => selectOperatingRule(current, key))}
               style={[styles.rule, (errors.operating_rules || !rules.some(([field]) => values[field])) && { borderColor: STYLES.danger }, values[key] && styles.selected]}>
               <Text style={{ color: values[key] ? STYLES.blue : STYLES.black }}>{label}</Text>
             </Pressable>)}

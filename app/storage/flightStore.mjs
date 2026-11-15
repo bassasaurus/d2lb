@@ -1,4 +1,5 @@
 import { createReviewStore } from './reviewStore.mjs';
+import { localChanges } from './localChanges.mjs';
 
 // Database-only repository: also exercised against real SQLite in Node tests.
 export async function createFlightStore(db) {
@@ -182,14 +183,14 @@ export async function createFlightStore(db) {
         const [month, day, year] = String(value || '').split('/').map(Number);
         return (year || 0) * 10000 + (month || 0) * 100 + (day || 0);
       };
-      return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_state: row.state, sync_error: row.sync_error, needs_attention: blocked.has(row.local_id) }))
+      return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_state: row.state, sync_generation: row.generation, sync_error: row.sync_error, needs_attention: blocked.has(row.local_id) }))
         .sort((a, b) => dateKey(b.date) - dateKey(a.date));
     },
     async deletedRecords(scope) {
       requireScope(scope);
       const rows = await db.getAllAsync("SELECT * FROM mobile_flights WHERE scope=? AND state='pending_delete'", scope);
       const blocked = new Set((await db.getAllAsync('SELECT local_id FROM mobile_operations WHERE scope=? AND blocked=1', scope)).map(row => row.local_id));
-      return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_state: row.state, sync_error: row.sync_error, needs_attention: blocked.has(row.local_id) }));
+      return rows.map(row => ({ ...JSON.parse(row.payload), local_id: row.local_id, sync_state: row.state, sync_generation: row.generation, sync_error: row.sync_error, needs_attention: blocked.has(row.local_id) }));
     },
     async cancelDeletion(scope, localId) {
       requireScope(scope);
@@ -216,8 +217,9 @@ export async function createFlightStore(db) {
     },
     async save(scope, localId, flight, options = {}) {
       requireScope(scope);
+      let generation;
       // One durable row is both the local record and its outbox entry.
-      const { local_id, sync_state, sync_error, needs_attention, ...payload } = flight;
+      const { local_id, sync_state, sync_error, needs_attention, sync_generation, ...payload } = flight;
       await writeTransaction(async tx => {
         const existing = await tx.getFirstAsync('SELECT payload,state FROM mobile_flights WHERE scope=? AND local_id=?', scope, localId);
         if (options.unattemptedCreateOnly) {
@@ -241,7 +243,10 @@ export async function createFlightStore(db) {
         await tx.runAsync(`INSERT INTO mobile_flights(scope,local_id,payload,state) VALUES(?,?,?,?)
           ON CONFLICT(scope,local_id) DO UPDATE SET payload=excluded.payload,state=excluded.state,
           generation=mobile_flights.generation+1,sync_error=NULL`, scope, localId, JSON.stringify(payload), state);
+        generation = (await tx.getFirstAsync('SELECT generation FROM mobile_flights WHERE scope=? AND local_id=?', scope, localId)).generation;
       });
+      localChanges.notify(scope);
+      return generation;
     },
     async remove(scope, localId) {
       requireScope(scope);
@@ -259,6 +264,7 @@ export async function createFlightStore(db) {
           await tx.runAsync("UPDATE mobile_flights SET state='pending_delete',generation=generation+1,sync_error=NULL WHERE scope=? AND local_id=?", scope, localId);
         }
       });
+      localChanges.notify(scope);
     },
     async cacheSnapshot(scope, flights) {
       requireScope(scope);

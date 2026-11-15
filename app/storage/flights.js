@@ -34,8 +34,8 @@ export async function saveLocalFlight(flight) {
   const scope = await flightScope();
   const localId = flight.local_id || (flight.id ? `server:${flight.id}` : Crypto.randomUUID());
   const store = await flightStore();
-  await store.save(scope, localId, flight);
-  return { ...flight, local_id: localId, sync_state: flight.id ? 'pending_update' : 'pending_create' };
+  const sync_generation = await store.save(scope, localId, flight);
+  return { ...flight, sync_generation, local_id: localId, sync_state: flight.id ? 'pending_update' : 'pending_create' };
 }
 
 export async function refreshFlightCache(scope) {

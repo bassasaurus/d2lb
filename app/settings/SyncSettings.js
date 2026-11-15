@@ -2,7 +2,8 @@ import React, { useCallback, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
-import { internetAvailable, subscribeAutoSync } from '../api/autoSync.mjs';
+import { canAttemptApiSync, subscribeAutoSync } from '../api/autoSync.mjs';
+import api from '../api/axiosConfig';
 import { logbookPendingCount } from '../api/logbookRefresh.mjs';
 import syncFlightData, { LAST_SUCCESSFUL_SYNC } from '../api/syncFlightData';
 import Text from '../components/AppText';
@@ -56,7 +57,7 @@ export default function SyncSettings({ navigation }) {
     setRetrying(true);
     setRetryMessage('');
     try {
-      if (!internetAvailable(await NetInfo.refresh())) {
+      if (!canAttemptApiSync(await NetInfo.refresh(), api.defaults.baseURL)) {
         setRetryMessage('You’re offline. Reconnect to sync your changes.');
         return;
       }

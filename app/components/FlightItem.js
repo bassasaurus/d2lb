@@ -8,7 +8,7 @@ import { StyleSheet, View } from 'react-native';
 import { useAppTheme } from '../theme/ThemeProvider';
 import AppText from './AppText';
 
-function FlightItem({ date, route, type, reg, dur, crew, syncEvent, item, navigation }) {
+function FlightItem({ date, route, type, reg, dur, crew, syncEvent, item, navigation, scope }) {
   const { styles: STYLES } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   return <Card compact style={styles.itemContainer}>
@@ -21,7 +21,7 @@ function FlightItem({ date, route, type, reg, dur, crew, syncEvent, item, naviga
       <AppText color={STYLES.black} numberOfLines={1} style={styles.crew}>{crew}</AppText>
     </View>
     <RecordIssue item={item} kind="flight" navigation={navigation} />
-    <RecordSyncIndicator item={item} syncEvent={syncEvent} />
+    <RecordSyncIndicator item={item} syncEvent={syncEvent} scope={scope} />
   </Card>;
 }
 const createStyles = STYLES => StyleSheet.create({
