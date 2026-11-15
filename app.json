@@ -58,6 +58,14 @@
         {
           "initialOrientation": "PORTRAIT_UP"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Allow Direct2Logbook to photograph an aircraft registration for offline text recognition.",
+          "microphonePermission": false,
+          "photosPermission": false
+        }
       ]
     ],
     "userInterfaceStyle": "automatic",

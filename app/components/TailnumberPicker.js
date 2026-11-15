@@ -1,17 +1,19 @@
 import { listTailnumbers } from '../storage/tailnumbers';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Keyboard, Pressable, View } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import AppText from './AppText';
 import AppTextInput from './AppTextInput';
-import { flightStore, flightScope } from '../storage/flights';
+import RegistrationScanButton from '../ocr/RegistrationScanButton';
+import { createdTailnumberSelection, normalizeRegistration, scannedTailnumber } from '../ocr/registrationCandidates.mjs';
 import { usePickerOverlay } from './PickerOverlayHost';
 import { useAppTheme } from '../theme/ThemeProvider';
 import { tailnumberSuggestions } from './tailnumberSuggestions.mjs';
 
-export default function TailnumberPicker({ initialValue, setFieldValue, aircraftId, isValid, aircraft_type, onBlur }) {
+export default function TailnumberPicker({ initialValue, setFieldValue, aircraftId, isValid, aircraft_type, onBlur, beforeCreate, onScanBusyChange }) {
   const { colors } = useAppTheme();
   const navigation = useNavigation();
+  const route = useRoute();
   const overlay = usePickerOverlay();
   const anchor = useRef(null);
   const [data, setData] = useState([]);
@@ -19,6 +21,7 @@ export default function TailnumberPicker({ initialValue, setFieldValue, aircraft
   const [query, setQuery] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [navigationError, setNavigationError] = useState(null);
   const blurTimer = useRef(null);
   const previousAircraft = useRef(aircraftId);
   useEffect(() => {
@@ -44,6 +47,37 @@ export default function TailnumberPicker({ initialValue, setFieldValue, aircraft
     })().catch(() => { if (active) { setError(true); setLoading(false); } });
     return () => { active = false; };
   }, []));
+  const created = route.params?.createdTailnumber;
+  useFocusEffect(React.useCallback(() => {
+    if (!created) return;
+    const selection = createdTailnumberSelection(created, aircraftId);
+    if (selection) {
+      setFieldValue('registration', selection);
+      setQuery(null);
+    }
+    navigation.setParams({ createdTailnumber: undefined });
+  }, [created, aircraftId, navigation, setFieldValue]));
+  async function addTailnumber(registration = '') {
+    close();
+    setNavigationError(null);
+    await beforeCreate?.();
+    navigation.navigate('TailnumberCreate', { aircraft_type, registration,
+      returnToFlight: { key: route.key, stackKey: navigation.getState().key } });
+  }
+  async function selectScanned(registration) {
+    const rows = await listTailnumbers();
+    const match = scannedTailnumber(rows, registration, aircraftId);
+    if (match.kind === 'existing') {
+      setData(rows);
+      setFieldValue('registration', match.item.registration);
+      setQuery(null);
+      close();
+    } else if (match.kind === 'new') {
+      await addTailnumber(registration);
+    } else {
+      throw new Error('Choose a tailnumber for this aircraft.');
+    }
+  }
   const text = query ?? initialValue ?? '';
   const suggestions = useMemo(() => tailnumberSuggestions(data, aircraftId, text), [data, aircraftId, text]);
   function close() {
@@ -65,8 +99,7 @@ export default function TailnumberPicker({ initialValue, setFieldValue, aircraft
         </Pressable>)}
         {!suggestions.total && <AppText style={{ padding: 10, color: colors.muted }}>No matching tailnumbers for this aircraft.</AppText>}
         <Pressable accessibilityRole="button" onPress={() => {
-          close();
-          navigation.navigate('TailnumberCreate', { aircraft_type });
+          addTailnumber(normalizeRegistration(text)).catch(() => { setNavigationError('Couldn’t save your unfinished flight. Keep this form open and try again.'); });
         }} style={{ padding: 10, minHeight: 44, justifyContent: 'center' }}>
           <AppText style={{ color: colors.success }}>+ Add tailnumber</AppText>
         </Pressable>
@@ -80,8 +113,8 @@ export default function TailnumberPicker({ initialValue, setFieldValue, aircraft
     else overlay.hide();
     return () => { active = false; };
   }, [visible, suggestions, loading, error, colors, overlay]);
-  return <View ref={anchor} collapsable={false}>
-    <AppTextInput testID="tailnumber-input" isValid={isValid} value={text} placeholder="Tailnumber" autoCapitalize="characters" autoCorrect={false}
+  return <View ref={anchor} collapsable={false} style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', paddingTop: 10 }}>
+    <View style={{ flex: 1 }}><AppTextInput style={{ marginTop: 0 }} testID="tailnumber-input" isValid={isValid} value={text} placeholder="Tailnumber" autoCapitalize="characters" autoCorrect={false}
       accessibilityLabel="Tailnumber" autoComplete="off" maxLength={10}
       onFocus={() => { clearTimeout(blurTimer.current); setVisible(true); }}
       onChangeText={value => {
@@ -93,6 +126,9 @@ export default function TailnumberPicker({ initialValue, setFieldValue, aircraft
         onBlur?.(event);
         // Allow a suggestion's press to complete before removing its row.
         blurTimer.current = setTimeout(() => setVisible(false), 180);
-      }} />
+      }} /></View>
+    <RegistrationScanButton aircraft={aircraftId} tailnumbers={data} beforeCapture={beforeCreate}
+      onConfirm={selectScanned} onBusyChange={onScanBusyChange} onOpen={close} />
+    {navigationError && <AppText accessibilityLiveRegion="polite" style={{ color: colors.danger, flexBasis: '100%', marginTop: 6 }}>{navigationError}</AppText>}
   </View>;
 }

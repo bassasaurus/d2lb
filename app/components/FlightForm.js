@@ -54,6 +54,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
   const [formCount, setFormCount] = useState(() => Math.max(0, ...initialValues.approaches.map((item, index) => item.approach_type || item.number ? index : 0)));
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [tailnumbers, setTailnumbers] = useState([]);
+  const [scanningTailnumber, setScanningTailnumber] = useState(false);
   useFocusEffect(React.useCallback(() => {
     let active = true;
     (async () => {
@@ -133,7 +134,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
             renderLayout={({ content, form: { values, isValid, isSubmitting, handleSubmit }, draftBlocked }) => (
               <ScrollableFormCard cardStyle={styles.container} keyboardDismissMode="on-drag"
                 footer={<PrimaryActionButton testID="flight-save" title="Save" onPress={handleSubmit}
-                  disabled={draftBlocked || !isValid || isSubmitting || !hasRequiredFlightRole(values) || !hasRequiredSoloLandings(values)} />}>
+                  disabled={draftBlocked || scanningTailnumber || !isValid || isSubmitting || !hasRequiredFlightRole(values) || !hasRequiredSoloLandings(values)} />}>
                 {noDefaultAircraft && !defaultSuggestionDismissed && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
                   <Pressable accessibilityRole="link" onPress={async () => {
                     try {
@@ -244,6 +245,8 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                           aircraftId={values.aircraft_type}
                           onBlur={handleBlur("registration")}
                           aircraft_type={values.aircraft_type}
+                          beforeCreate={() => draftHandle.current?.flush()}
+                          onScanBusyChange={setScanningTailnumber}
                         ></TailnumberPicker>
                         <View>
                           {errors.registration ? (
