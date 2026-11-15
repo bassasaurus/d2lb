@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.1](https://github.com/bassasaurus/d2lb/compare/v0.8.0...v0.8.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* stabilize CRUD sync feedback and navigation ([#92](https://github.com/bassasaurus/d2lb/issues/92)) ([072205b](https://github.com/bassasaurus/d2lb/commit/072205b1db2a7a918f176d3c9be24258f1e0fab6))
+
 ## [0.8.0](https://github.com/bassasaurus/d2lb/compare/v0.7.2...v0.8.0) (2026-11-13)
 
 
