@@ -1,3 +1,4 @@
+import NavigationMenuButton from '../components/NavigationMenuButton';
 import { useAppTheme } from '../theme/ThemeProvider';
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -6,20 +7,15 @@ import FlightDetailScreen from "../Screens/FlightDetailScreen";
 import FlightCreateScreen from "../Screens/FlightCreateScreen";
 import FlightUpdateScreen from "../Screens/FlightUpdateScreen";
 import ProfileEditScreen from '../profile/ProfileEditScreen';
-import { Button, Pressable } from 'react-native';
-import Text from '../components/AppText';
-import { useNavigation } from "@react-navigation/native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import TailnumberCreateScreen from "../Screens/TailnumberCreateScreen";
 
 
 const Stack = createStackNavigator();
 
-function FlightStackNavigator(props) {
-  const { colors, navigationTheme } = useAppTheme();
+function FlightStackNavigator() {
+  const { colors } = useAppTheme();
 
-  const navigation = useNavigation();
 
   const forFade = ({ current }) => ({
     cardStyle: {
@@ -28,7 +24,7 @@ function FlightStackNavigator(props) {
   });
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerLeft: () => <NavigationMenuButton mainPage={{ route: 'FlightList', label: 'Logbook' }} /> }}>
       <Stack.Screen
         name='FlightList'
         component={FlightListScreen}
@@ -37,17 +33,7 @@ function FlightStackNavigator(props) {
           cardStyleInterpolator: forFade,
           cardStyle: { backgroundColor: colors.background },
           headerShown: true,
-          headerLeft: () => (
-            <MaterialCommunityIcons
-              style={{ paddingLeft: 5 }}
-              name='menu-open'
-              accessibilityRole="button"
-              accessibilityLabel="Open navigation menu"
-              testID="logbook-menu"
-              size={30} color={colors.text}
-              onPress={() => navigation.openDrawer()}
-            />
-          ),
+          headerLeft: () => <NavigationMenuButton testID="logbook-menu" />,
         }}
       />
 

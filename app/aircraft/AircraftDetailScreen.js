@@ -125,7 +125,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
     {[...ENGINE_CHOICES, ...WEIGHT_CHOICES, ...FLAGS].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
     <RecordIssue item={item} kind="aircraft" navigation={navigation} />
     <View style={{ marginTop: 2 }}>
-      <RecordSyncIndicator showDot={false} item={item} scope={scope ? aircraftScope(scope) : undefined} />
+      <RecordSyncIndicator item={item} scope={scope ? aircraftScope(scope) : undefined} />
     </View>
     <View style={{ marginTop: 8 }}>
     <Text size={14} color={STYLES.muted}>Use Update to correct this aircraft and keep its linked records.</Text>
@@ -149,12 +149,11 @@ export default function AircraftDetailScreen({ route, navigation }) {
             onPress={() => tail.needs_attention ? reviewRecord(navigation, 'tailnumber', tail) : navigation.navigate('TailnumberDetail', { item: tail })}
             style={{ width: `${100 / columns}%`, minHeight: 48, justifyContent: 'center', paddingHorizontal: 8, alignItems: index % columns === columns - 1 ? 'flex-end' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'flex-start' }}>
             <View style={{ maxWidth: '100%' }}>
-              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: tail.needs_attention ? STYLES.danger : STYLES.blue, textAlign: index % columns === columns - 1 ? 'right' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'left' }}>{tail.registration}</Text>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85} style={{ color: tail.needs_attention || tail.sync_error ? STYLES.danger : STYLES.blue, textAlign: index % columns === columns - 1 ? 'right' : columns % 2 === 1 && index % columns === Math.floor(columns / 2) ? 'center' : 'left' }}>{tail.registration}</Text>
               <View style={{ marginTop: 2 }}>
-                <RecordSyncIndicator animate={false} item={tail} scope={scope ? tailnumberScope(scope) : undefined} />
+                <RecordSyncIndicator item={tail} scope={scope ? tailnumberScope(scope) : undefined} />
               </View>
             </View>
-            {tail.needs_attention && <Text size={11} color={STYLES.danger}>Update needed</Text>}
           </TouchableOpacity>)}
       </ScrollView>
     </View>}

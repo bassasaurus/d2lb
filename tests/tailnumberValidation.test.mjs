@@ -1,7 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { OPERATING_RULES, tailnumberSchema } from '../app/forms/tailnumberValidation.mjs';
+import { OPERATING_RULES, tailnumberSchema, selectOperatingRule } from '../app/forms/tailnumberValidation.mjs';
 const valid = { aircraft: 'C172', registration: 'N1234', is_91: true, is_135: false, is_121: false };
+test('changing operating rules produces one complete valid state without losing entered fields', () => {
+  let values = { ...valid, is_91: false };
+  for (const [key] of [...OPERATING_RULES, ...OPERATING_RULES.toReversed()]) {
+    const previous = values;
+    values = selectOperatingRule(values, key);
+    assert.notEqual(values, previous);
+    assert.equal(tailnumberSchema.isValidSync(values), true);
+    assert.deepEqual(OPERATING_RULES.filter(([field]) => values[field]).map(([field]) => field), [key]);
+    assert.equal(values.aircraft, valid.aircraft);
+    assert.equal(values.registration, valid.registration);
+  }
+});
 test('tailnumber requires registration and an aircraft', () => {
   assert.equal(tailnumberSchema.isValidSync(valid), true);
   for (const registration of ['', 'N1', 'N12345678']) {

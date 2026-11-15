@@ -18,6 +18,6 @@ export async function saveLocalTailnumber(values) {
   const prepared = prepareLocalTailnumber(values, rows, flights, aircraft, references);
   const local_id = values.local_id || Crypto.randomUUID();
   const record = { ...prepared, local_id };
-  await store.save(tailnumberScope(scope), local_id, record, { unattemptedCreateOnly: true });
-  return { ...record, sync_state: 'pending_create' };
+  const sync_generation = await store.save(tailnumberScope(scope), local_id, record, { unattemptedCreateOnly: true });
+  return { ...record, sync_generation, sync_state: 'pending_create' };
 }

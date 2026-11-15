@@ -1,4 +1,5 @@
 import RecordIssue from '../components/RecordIssue';
+import RecordSyncIndicator from '../components/RecordSyncIndicator';
 import { useFocusEffect } from '@react-navigation/native';
 import Card from '../components/Card';
 import { ScrollView } from '../components/OverflowLists';
@@ -32,10 +33,13 @@ function FlightDetailScreen({ route, navigation }) {
   const mapRef = useRef(null);
   const Context = useContext(AppContext);
   const localId = route.params.item.local_id;
+  const [scope, setScope] = useState(null);
   useFocusEffect(React.useCallback(() => {
     let active = true;
     const reload = async () => {
-      const current = (await (await flightStore()).list(await flightScope())).find(row => row.local_id === localId);
+      const account = await flightScope();
+      const current = (await (await flightStore()).list(account)).find(row => row.local_id === localId);
+      if (active) setScope(account);
       if (active && current) navigation.setParams({ item: current });
     };
     reload().catch(() => {});
@@ -108,6 +112,9 @@ function FlightDetailScreen({ route, navigation }) {
           onDelete={showAlert}
           onUpdate={() => navigation.navigate("FlightUpdate", { item: route.params.item })}
         />
+        <View style={{ marginTop: 8 }}>
+          <RecordSyncIndicator item={route.params.item} scope={scope} />
+        </View>
         </Card>
       </ScrollView>
 

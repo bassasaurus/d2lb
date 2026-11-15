@@ -1,3 +1,4 @@
+import NavigationMenuButton from '../components/NavigationMenuButton';
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
 import { isRunningInExpoGo } from 'expo';
@@ -113,7 +114,7 @@ function DrawerNavigator({ navigation }) {
       <NavigationContainer theme={navigationTheme}>
         <Root.Navigator screenOptions={{ headerShown: false }}>
           <Root.Screen name="MainDrawer">
-            {() => <Drawer.Navigator drawerContent={(props) => <LogoutContent {...props} />}>
+            {() => <Drawer.Navigator screenOptions={{ headerLeft: () => <NavigationMenuButton /> }} drawerContent={(props) => <LogoutContent {...props} />}>
               <Drawer.Screen name="Logbook" component={FlightStackNavigator} options={{ headerShown: false }} />
               <Drawer.Screen name="Aircraft" component={AircraftStackNavigator} options={{ headerShown: false }} />
               <Drawer.Screen name="Totals & Stats" component={StatsScreen} />

@@ -1,6 +1,9 @@
 import * as yup from 'yup';
 
 export const OPERATING_RULES = [['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
+export function selectOperatingRule(values, selected) {
+  return { ...values, ...Object.fromEntries(OPERATING_RULES.map(([key]) => [key, key === selected])) };
+}
 export const tailnumberSchema = yup.object({
   aircraft: yup.string().required('Required'),
   registration: yup.string().required('Required').min(3, 'Use 3–8 characters.').max(8, 'Use 3–8 characters.'),

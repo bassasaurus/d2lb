@@ -1,4 +1,5 @@
 import { FLIGHT_SYNC_LIMIT } from './flightWindow.mjs';
+import { recordSyncActivity } from './recordSyncActivity.mjs';
 
 // Transport-independent worker. Persist the immutable operation before sending it.
 export async function drainFlightQueue({ store, scope, send, uuid, isCurrent, now = () => Date.now(), label = 'flight', operationFilter, onAcknowledged }) {
@@ -7,9 +8,12 @@ export async function drainFlightQueue({ store, scope, send, uuid, isCurrent, no
     if (!await isCurrent()) throw new Error('Account changed during sync.');
     const operation = await store.nextOperation(scope, uuid(), now(), operationFilter);
     if (!operation) return completed;
+    const finishActivity = recordSyncActivity.start(scope, operation.local_id, operation);
+    let outcome = 'failed';
     try {
       const response = await send(JSON.parse(operation.request));
       await store.acknowledge(scope, operation, response);
+      outcome = 'synced';
       completed++;
       // UI feedback must never turn an acknowledged upload into a failed job.
       try { onAcknowledged?.({ scope, operation, flight: response.flight }); } catch { /* Non-critical observer. */ }
@@ -22,6 +26,8 @@ export async function drainFlightQueue({ store, scope, send, uuid, isCurrent, no
         : 'Not synced. Will retry.';
       await store.failOperation(scope, operation, message, blocked, now(), error.response ? { ...(error.response.data || {}), _http_status: status } : null);
       if (!blocked) throw error;
+    } finally {
+      finishActivity(outcome);
     }
   }
   return completed;

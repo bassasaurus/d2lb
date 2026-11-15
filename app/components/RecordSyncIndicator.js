@@ -1,56 +1,65 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, View } from 'react-native';
-import { recordSyncFeedback } from '../api/flightSyncFeedback.mjs';
+import React, { useEffect, useId, useRef, useState } from 'react';
+import { AccessibilityInfo, Animated, Easing, View } from 'react-native';
+import Svg, { Defs, Path, Pattern, Rect } from 'react-native-svg';
+import { recordSyncActivity, recordSyncPresentation } from '../api/recordSyncActivity.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 
-export default function RecordSyncIndicator({ item, scope, syncEvent, animate = true, showDot = true }) {
+export default function RecordSyncIndicator({ item, scope, syncEvent, animate = true }) {
   const { colors } = useAppTheme();
-  const synced = (item.sync_state ?? 'synced') === 'synced';
-  const failed = Boolean(item.sync_error || item.needs_attention);
-  const [recordEvent, setRecordEvent] = useState(null);
-  const event = scope ? recordEvent : syncEvent;
-  const previous = useRef(synced);
-  const lastEvent = useRef(null);
-  const progress = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const [width, setWidth] = useState(0);
+  const localId = item.local_id ?? `server:${item.id}`;
+  const [activity, setActivity] = useState(() => recordSyncActivity.snapshot(scope, localId));
+  const { sending, synced, failed, completionKey, completedAt } = recordSyncPresentation(item, activity);
   const [playing, setPlaying] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [width, setWidth] = useState(0);
+  const lastCompletion = useRef(null);
+  const progress = useRef(new Animated.Value(0)).current;
+  const patternId = `sync-stripes-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+  const event = completionKey || (!activity && synced && !failed ? syncEvent : null);
+  const eventTime = completionKey ? completedAt : syncEvent;
   useEffect(() => {
-    if (!animate || !scope || !synced) return;
-    const row = { ...item, local_id: item.local_id ?? `server:${item.id}`, sync_state: 'synced' };
-    if (recordSyncFeedback.take(scope, [row]).length) setRecordEvent(Date.now());
-  }, [item, scope, synced, animate]);
+    const refresh = () => setActivity(recordSyncActivity.snapshot(scope, localId));
+    refresh();
+    return recordSyncActivity.subscribe((account, record) => {
+      if (account === scope && record === localId) refresh();
+    });
+  }, [scope, localId]);
   useEffect(() => {
-    if (!width) return;
-    const confirmedEvent = event && event !== lastEvent.current && Date.now() - event < 5000;
-    const completed = animate && synced && (confirmedEvent || (!scope && !previous.current));
-    lastEvent.current = event;
-    previous.current = synced;
-    if (!completed) {
-      opacity.setValue(0);
-      setPlaying(false);
-      return;
-    }
-    progress.setValue(0);
-    opacity.setValue(1);
+    let active = true;
+    AccessibilityInfo.isReduceMotionEnabled().then(value => { if (active) setReduceMotion(value); }, () => {});
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
+    return () => { active = false; subscription.remove(); };
+  }, []);
+  useEffect(() => {
+    if (!animate || !event || lastCompletion.current === event || Date.now() - eventTime >= 5000) return;
+    lastCompletion.current = event;
     setPlaying(true);
-    const animation = Animated.sequence([
-      Animated.timing(progress, { toValue: 1, duration: 500, useNativeDriver: true }),
-      Animated.delay(100),
-      Animated.timing(opacity, { toValue: 0, duration: 150, useNativeDriver: true }),
-    ]);
-    animation.start(({ finished }) => { if (finished) setPlaying(false); });
+    const timer = setTimeout(() => setPlaying(false), 1500);
+    return () => { clearTimeout(timer); setPlaying(false); };
+  }, [event, eventTime, animate]);
+  const working = animate && (sending || (playing && !failed));
+  useEffect(() => {
+    progress.setValue(0);
+    if (!working || reduceMotion) return;
+    const animation = Animated.loop(Animated.timing(progress, {
+      toValue: 1, duration: 750, easing: Easing.linear, useNativeDriver: true,
+    }));
+    animation.start();
     return () => animation.stop();
-  }, [synced, event, scope, width, progress, opacity, animate]);
-  const label = synced ? 'Synced' : failed ? 'Sync failed' : 'Pending sync';
-  const dotColor = synced ? colors.success : failed ? colors.danger : colors.syncPending;
-  return <View accessible={showDot || playing} accessibilityLabel={showDot || playing ? label : undefined}
-    onLayout={event => setWidth(event.nativeEvent.layout.width)}
-    style={{ height: 7, width: '100%', overflow: 'hidden', borderRadius: 3.5 }}>
-    {showDot && <View style={{ height: 7, width: 7, borderRadius: 3.5,
-      backgroundColor: dotColor, opacity: playing ? 0 : 1 }} />}
-    <Animated.View testID={playing ? "record-sync-animation" : undefined} pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0,
-      width: '100%', height: 7, borderRadius: 3.5, backgroundColor: colors.success, opacity,
-      transform: [{ translateX: progress.interpolate({ inputRange: [0, 1], outputRange: [-width, 0] }) }] }} />
+  }, [working, reduceMotion, progress]);
+  const label = sending ? 'Sync in progress' : failed ? 'Sync failed' : synced ? 'Synced' : 'Pending sync';
+  const color = sending ? colors.success : failed ? colors.danger : synced ? colors.success : colors.syncPending;
+  return <View accessible accessibilityLabel={label} onLayout={event => setWidth(event.nativeEvent.layout.width)}
+    style={{ height: 5, width: '100%', overflow: 'hidden', borderRadius: 2.5, backgroundColor: color }}>
+    {working && width > 0 && <Animated.View testID="record-sync-animation" pointerEvents="none"
+      style={{ position: 'absolute', top: 0, left: -20, width: width + 40, height: 5,
+        transform: [{ translateX: progress.interpolate({ inputRange: [0, 1], outputRange: [0, 20] }) }] }}>
+      <Svg width="100%" height={5}>
+        <Defs><Pattern id={patternId} width={20} height={5} patternUnits="userSpaceOnUse">
+          <Path d="M-5 5L0 0H8L3 5ZM15 5L20 0H28L23 5Z" fill="#ffffff" opacity={0.35} />
+        </Pattern></Defs>
+        <Rect width="100%" height={5} fill={`url(#${patternId})`} />
+      </Svg>
+    </Animated.View>}
   </View>;
 }
