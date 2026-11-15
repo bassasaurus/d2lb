@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.1](https://github.com/bassasaurus/d2lb/compare/v0.9.0...v0.9.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* enforce one default aircraft and friendly save feedback ([#96](https://github.com/bassasaurus/d2lb/issues/96)) ([f6c9342](https://github.com/bassasaurus/d2lb/commit/f6c9342cd22e2436f6bee24ab8d6181a5db98aee))
+
 ## [0.9.0](https://github.com/bassasaurus/d2lb/compare/v0.8.1...v0.9.0) (2026-11-15)
 
 
