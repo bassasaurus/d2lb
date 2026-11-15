@@ -1,0 +1,5 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {"modules": ["TailnumberOcrModule"]},
+  "android": {"modules": ["expo.modules.tailnumberocr.TailnumberOcrModule"]}
+}

@@ -1,5 +1,6 @@
+import { flightReturnTarget } from '../ocr/registrationCandidates.mjs';
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import TailnumberForm from '../components/TailnumberForm';
 import { saveLocalTailnumber } from '../storage/tailnumbers';
 
@@ -8,7 +9,7 @@ function TailnumberCreateScreen({ route }) {
   const aircraftType = route.params?.aircraft_type || '';
   const initialValues = {
     aircraft: aircraftType,
-    registration: "",
+    registration: route.params?.registration || '',
     is_91: false,
     is_135: false,
     is_121: false,
@@ -20,7 +21,15 @@ function TailnumberCreateScreen({ route }) {
     <TailnumberForm
       key={`new:${aircraftType}`}
       method={create}
-      onSaved={item => navigation.replace('TailnumberDetail', { item })}
+      onSaved={item => {
+        const destination = flightReturnTarget(route.params?.returnToFlight, navigation.getState());
+        if (destination) {
+          navigation.dispatch({ ...CommonActions.setParams({ createdTailnumber: {
+            registration: item.registration, aircraft: item.aircraft,
+          } }), source: destination.key, target: destination.stackKey });
+          navigation.goBack();
+        } else navigation.replace('TailnumberDetail', { item });
+      }}
       initialValues={initialValues}
       aircraft_type={aircraftType}
       allowAircraftChange={!aircraftType}

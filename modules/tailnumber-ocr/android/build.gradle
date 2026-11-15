@@ -1,0 +1,13 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+group = 'expo.modules.tailnumberocr'
+version = '1.0.0'
+android {
+  namespace 'expo.modules.tailnumberocr'
+}
+dependencies {
+  // Bundled Latin OCR: available on the first launch without a model download.
+  implementation 'com.google.mlkit:text-recognition:16.0.1'
+}

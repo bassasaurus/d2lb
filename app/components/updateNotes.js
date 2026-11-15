@@ -1,9 +1,9 @@
 // Give each user-facing release a new ID and replace these highlights.
 export const updateNotes = {
-  id: 'keyboard-and-release-notes',
+  id: 'offline-tailnumber-camera-ocr',
   highlights: [
-    'Form fields stay visible while typing, including when adding or editing reminders.',
-    'Tap the version at the bottom of the menu to read these update notes again.',
-    'Aircraft Detail keeps its sync animation without the status dot.',
+    'Scan a registration with the camera beside Tailnumber on the flight form, even offline.',
+    'Review and correct the scanned registration before selecting a saved tailnumber or adding a new one.',
+    'After adding a tailnumber, return to your unfinished flight with it selected.',
   ],
 };
