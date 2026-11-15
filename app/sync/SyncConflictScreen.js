@@ -37,13 +37,13 @@ export default function SyncConflictScreen({ route, navigation }) {
           return;
         }
         if (active) setItem(local);
-        if (!local.id) { if (active) setMessage('Fix the record details before syncing.'); return; }
+        if (!local.id) { if (active) setMessage('Saved on this device. Fix the record details to sync.'); return; }
         try {
           const compared = await access.refresh(localId, local.generation, local.id);
           await access.assertCurrent();
           if (active) {
             setItem(compared); setFresh(true);
-            setMessage(isValidationIssue(compared.response) ? 'Fix the record details before syncing.'
+            setMessage(isValidationIssue(compared.response) ? 'Saved on this device. Fix the record details to sync.'
               : compared.server_record ? 'This record changed in two places. Select the version to keep.'
               : 'This record was deleted online. Choose whether to keep that deletion or save your device version as a new record.');
           }

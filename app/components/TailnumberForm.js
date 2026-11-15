@@ -1,3 +1,4 @@
+import { formFeedback } from '../forms/errorFeedback.mjs';
 import FormKeyboardAvoidingView from './FormKeyboardAvoidingView';
 import PrimaryActionButton from './PrimaryActionButton';
 import ScrollableFormCard from './ScrollableFormCard';
@@ -5,7 +6,7 @@ import DraftForm from '../drafts/DraftForm';
 import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
 import React, { useContext, useRef } from 'react';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Text from './AppText';
 import { OPERATING_RULES as rules, tailnumberSchema as schema, selectOperatingRule } from '../forms/tailnumberValidation.mjs';
 import AircraftPicker from './AircraftPicker';
@@ -45,18 +46,16 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           helpers.resetForm({ values });
           onSaved?.(result);
         } catch (error) {
-          const details = error.response?.data;
-          const message = details ? Object.entries(details).map(([field, text]) => `${field}: ${Array.isArray(text) ? text.join(' ') : String(text)}`).join('\n')
-            : error.response ? 'The server could not save your changes. Please try again.'
-            : !error.request ? error.message
-            : 'Check your connection and try again. Your changes remain in this form.';
-          Alert.alert('Tailnumber not saved', message);
+          const feedback = formFeedback(error, 'tailnumber');
+          helpers.setErrors(feedback.fields);
+          helpers.setStatus(feedback.status);
         } finally {
           helpers.setSubmitting(false);
           context.setActivityVisible(false);
         }
       }}>
-        {({ values, errors, setFieldValue, setValues }) => <>
+        {({ values, errors, status, setFieldValue, setValues }) => <>
+          {status && <Text accessibilityLiveRegion="polite" style={styles.error}>{status}</Text>}
           {!allowAircraftChange && <OriginAircraft aircraft={aircraft_type} />}
           <Text style={styles.heading}>{allowAircraftChange ? 'Aircraft' : aircraft_type}</Text>
           {allowAircraftChange && <AircraftPicker initialValue={values.aircraft} fieldName="aircraft" setFieldValue={setFieldValue} isValid={!errors.aircraft} />}

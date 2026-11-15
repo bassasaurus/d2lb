@@ -9,7 +9,7 @@ import Card from '../components/Card';
 import Text from '../components/AppText';
 import { useFocusEffect } from '@react-navigation/native';
 import { listAircraft, aircraftScope, saveDefaultAircraft } from '../storage/aircraft';
-import { selectedDefaultType } from '../storage/flightDefaults.mjs';
+import { selectedDefaultType, aircraftWithDefault } from '../storage/flightDefaults.mjs';
 import { flightScope, flightStore } from '../storage/flights';
 import syncFlightData from '../api/syncFlightData';
 import { useAppTheme } from '../theme/ThemeProvider';
@@ -102,7 +102,7 @@ export default function AircraftListScreen({ navigation }) {
       <Text>{item.aircraft_type} · Deletion requested</Text>
       <RecordIssue item={item} kind="aircraft" navigation={navigation} />
     </Card>)}
-    <FlatList data={rows} keyExtractor={item => item.local_id} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); refresh.current?.(); }} />}
+    <FlatList data={aircraftWithDefault(rows, defaultType)} keyExtractor={item => item.local_id} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); refresh.current?.(); }} />}
       ListEmptyComponent={<Text>No aircraft saved yet. Add an aircraft or pull down while connected.</Text>}
       extraData={[defaultType, defaultScope, savingDefault]}
       renderItem={({ item }) => <Card compact style={{ flexDirection: 'row', alignItems: 'center', gap: 12,
@@ -119,7 +119,7 @@ export default function AircraftListScreen({ navigation }) {
         <View style={{ alignItems: 'center' }}>
           <Text size={12} style={{ color: STYLES.muted }}>Default</Text>
           <Switch trackColor={{ false: STYLES.grey, true: STYLES.blue }} ios_backgroundColor={STYLES.grey} accessibilityLabel={`Use ${item.aircraft_type} by default for new flights`}
-            value={defaultType === item.aircraft_type} disabled={!defaultScope || savingDefault}
+            value={Boolean(item.is_default)} disabled={!defaultScope || savingDefault}
             onValueChange={enabled => changeDefault(item, enabled)} />
         </View>
       </Card>} />

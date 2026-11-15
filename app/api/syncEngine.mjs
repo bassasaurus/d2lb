@@ -1,3 +1,4 @@
+import { syncErrorResponse } from '../forms/errorFeedback.mjs';
 import { FLIGHT_SYNC_LIMIT } from './flightWindow.mjs';
 import { recordSyncActivity } from './recordSyncActivity.mjs';
 
@@ -24,7 +25,7 @@ export async function drainFlightQueue({ store, scope, send, uuid, isCurrent, no
         : status === 400 || status === 422 ? `Check ${label} details.`
         : status === 401 || status === 403 ? 'Sign in again to sync.'
         : 'Not synced. Will retry.';
-      await store.failOperation(scope, operation, message, blocked, now(), error.response ? { ...(error.response.data || {}), _http_status: status } : null);
+      await store.failOperation(scope, operation, message, blocked, now(), syncErrorResponse(error.response));
       if (!blocked) throw error;
     } finally {
       finishActivity(outcome);

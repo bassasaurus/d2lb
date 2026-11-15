@@ -1,3 +1,4 @@
+import { formFeedback } from '../forms/errorFeedback.mjs';
 import FormKeyboardAvoidingView from '../components/FormKeyboardAvoidingView';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet } from 'react-native';
@@ -120,7 +121,7 @@ export default function ReminderEditScreen({ navigation, route }) {
     } catch (requestError) {
       const response = requestError.response;
       setError(response?.status === 400 && response.data
-        ? Object.values(response.data).flat().join('\n')
+        ? Object.values(formFeedback(requestError, 'reminder').fields).join('\n') || formFeedback(requestError, 'reminder').status
         : response?.status === 404 && reminder
           ? 'This reminder is no longer available. Go back to refresh the list.'
           : 'Couldn’t save the reminder. Check your connection and try again.');

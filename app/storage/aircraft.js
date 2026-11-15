@@ -1,5 +1,5 @@
 import * as Crypto from 'expo-crypto';
-import { selectedDefaultType } from './flightDefaults.mjs';
+import { aircraftWithDefault } from './flightDefaults.mjs';
 import { flightStore, flightScope } from './flights';
 
 // Reuse the durable record/outbox repository in a distinct account namespace.
@@ -7,8 +7,7 @@ import { flightStore, flightScope } from './flights';
 export const aircraftScope = scope => `${scope}:aircraft`;
 export async function listAircraft(scope) {
   const rows = await (await flightStore()).list(aircraftScope(scope ?? await flightScope()));
-  const defaultType = selectedDefaultType(rows);
-  return rows.filter(row => !row._default_preference).map(row => ({ ...row, is_default: row.aircraft_type === defaultType })).sort((a, b) => a.aircraft_type.localeCompare(b.aircraft_type, 'en', { sensitivity: 'base' }));
+  return aircraftWithDefault(rows).sort((a, b) => a.aircraft_type.localeCompare(b.aircraft_type, 'en', { sensitivity: 'base' }));
 }
 export async function saveAircraft(record) {
   const store = await flightStore();
