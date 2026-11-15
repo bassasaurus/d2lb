@@ -59,6 +59,21 @@ export default function ManageRemindersScreen({ navigation }) {
     ]);
   }
 
+  async function restore(reminder) {
+    if (removalInProgress.current) return;
+    removalInProgress.current = true;
+    setRemoving(true);
+    try {
+      const { data } = await api.post(`${remindersUrl}${reminder.id}/restore/`);
+      setReminders(previous => previous.map(item => item.id === reminder.id ? data : item));
+    } catch {
+      Alert.alert('Could not restore reminder', 'Check your connection and try again.');
+    } finally {
+      removalInProgress.current = false;
+      setRemoving(false);
+    }
+  }
+
   const ready = !loading && !loadFailed;
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollView contentContainerStyle={styles.content}>
@@ -76,6 +91,9 @@ export default function ManageRemindersScreen({ navigation }) {
           {reminderDateLabel(reminder.company_start_date)} – {reminder.company_end_date ? reminderDateLabel(reminder.company_end_date) : 'Present'}
         </Text>}
         <View style={styles.actions}>
+          {reminder.dismissed === true && <View style={{ marginRight: 'auto' }}><PlatformActionButton title="Restore" variant="text" disabled={removing}
+            accessibilityLabel={`Restore ${reminder.kind === 'expiration' ? reminder.title : reminder.progress_label ?? reminder.goal_label}`}
+            onPress={() => restore(reminder)} /></View>}
           <PlatformActionButton title="Edit" variant="text" disabled={removing}
             accessibilityLabel={`Edit ${reminder.kind === 'expiration' ? reminder.title : reminder.progress_label ?? reminder.goal_label ?? reminder.title}`}
             onPress={() => navigation.navigate('EditReminder', { reminder })} />
