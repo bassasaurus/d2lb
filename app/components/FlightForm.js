@@ -52,7 +52,6 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
   const [defaultSuggestionDismissed, setDefaultSuggestionDismissed] = useState(false);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [formCount, setFormCount] = useState(() => Math.max(0, ...initialValues.approaches.map((item, index) => item.approach_type || item.number ? index : 0)));
-  const [scrollEnabled, setScrollEnabled] = useState(true);
   const [tailnumbers, setTailnumbers] = useState([]);
   const [scanningTailnumber, setScanningTailnumber] = useState(false);
   useFocusEffect(React.useCallback(() => {
@@ -127,7 +126,6 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
   return (
     <FormKeyboardAvoidingView
       style={{ flex: 1 }}
-      enabled={scrollEnabled}
     >
       <PickerOverlayHost>
           <DraftForm kind="flight" recordKey={initialValues.local_id || initialValues.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={values => setFormCount(Math.max(0, ...values.approaches.map((item, index) => item.approach_type || item.number ? index : 0)))}
@@ -292,9 +290,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                       autoCorrect={false}
                       keyboardType={"numeric"}
                       clearButtonMode={"while-editing"}
-                      onFocus={() => setScrollEnabled(false)}
                       onBlur={() => {
-                        setScrollEnabled(true);
                         handleBlur("duration");
                       }}
                     ></AppTextInput>
@@ -322,8 +318,6 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                       placeholder={"XX.X"}
                       keyboardType={"numeric"}
                       onChangeText={(val) => setAddedDuration(val)}
-                      onFocus={() => setScrollEnabled(false)}
-                      onBlur={() => setScrollEnabled(true)}
                     ></AppTextInput>
                     <AppText color={STYLES.black}>Next leg</AppText>
                   </View>

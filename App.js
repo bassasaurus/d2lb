@@ -1,3 +1,4 @@
+import { KeyboardProvider } from './app/components/keyboardController';
 import PlatformActionButton from './app/components/PlatformActionButton';
 import useAutoSync from './app/api/useAutoSync';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -78,6 +79,7 @@ export default function App() {
     <ThemeProvider>
     <AppAppearance>
     <SafeAreaProvider>
+    <KeyboardProvider preload={false}>
       <AppContext.Provider value={appSettings}>
         {!auth.ready || startupVisible ? <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           {sessionError ? <><AppText>Could not unlock your saved session.</AppText><PlatformActionButton variant="text" title="Try again" onPress={restoreSession} /></> : <ThemedStartupArtwork onNameVisible={finishStartup} />}
@@ -86,6 +88,7 @@ export default function App() {
           <WhatsNew />
         </>}
       </AppContext.Provider>
+    </KeyboardProvider>
     </SafeAreaProvider>
     </AppAppearance>
     </ThemeProvider>

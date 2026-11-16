@@ -60,11 +60,12 @@
         }
       ],
       [
-        "expo-image-picker",
+        "expo-camera",
         {
-          "cameraPermission": "Allow Direct2Logbook to photograph an aircraft registration for offline text recognition.",
+          "cameraPermission": "Allow Direct2Logbook to scan aircraft registrations offline.",
           "microphonePermission": false,
-          "photosPermission": false
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": false
         }
       ]
     ],
