@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.0](https://github.com/bassasaurus/d2lb/compare/v0.11.0...v0.12.0) (2026-11-17)
+
+
+### Features
+
+* add mobile Sentry diagnostics and error-triggered replay ([#104](https://github.com/bassasaurus/d2lb/issues/104)) ([e5cc4e0](https://github.com/bassasaurus/d2lb/commit/e5cc4e015fa3a84d2aa3a67eb465cf4f1ee76449))
+
 ## [0.11.0](https://github.com/bassasaurus/d2lb/compare/v0.10.1...v0.11.0) (2026-11-17)
 
 
