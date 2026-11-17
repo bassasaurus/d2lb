@@ -1,3 +1,4 @@
+import { recordScreen } from '../monitoring';
 import NavigationMenuButton from '../components/NavigationMenuButton';
 import Constants from 'expo-constants';
 import * as Application from 'expo-application';
@@ -111,7 +112,7 @@ function DrawerNavigator({ navigation }) {
 
   if (Context.isSignedInValue) {
     return (
-      <NavigationContainer theme={navigationTheme}>
+      <NavigationContainer theme={navigationTheme} onStateChange={recordScreen}>
         <Root.Navigator screenOptions={{ headerShown: false }}>
           <Root.Screen name="MainDrawer">
             {() => <Drawer.Navigator screenOptions={{ headerLeft: () => <NavigationMenuButton /> }} drawerContent={(props) => <LogoutContent {...props} />}>

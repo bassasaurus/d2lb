@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set +x
+set -euo pipefail
+repo="$(cd "$(dirname "$0")/.." && pwd)"
+if [[ -f "$repo/.local-node-path" ]]; then
+  export PATH="$(cat "$repo/.local-node-path"):$PATH"
+fi
+exec node "$repo/scripts/with-sentry.mjs" "$@"

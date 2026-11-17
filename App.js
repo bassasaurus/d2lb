@@ -1,3 +1,4 @@
+import { initializeMonitoring, monitoring } from './app/monitoring';
 import { KeyboardProvider } from './app/components/keyboardController';
 import PlatformActionButton from './app/components/PlatformActionButton';
 import useAutoSync from './app/api/useAutoSync';
@@ -18,14 +19,10 @@ import { ThemeProvider, useAppTheme } from "./app/theme/ThemeProvider";
 import fetchTailnumbers from "./app/api/fetchTailnumbers";
 
 
-Sentry.init({
-  dsn: "https://45a431f2fa3541a09ba6320ae658b609@o369988.ingest.sentry.io/6397150",
-  enabled: !__DEV__,
-  debug: false, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
-});
+initializeMonitoring();
 
 
-export default function App() {
+function App() {
   const formGuards = useRef(new Map());
   useEffect(() => { ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch(() => {}); }, []);
   const [auth, setAuth] = useState(session.snapshot());
@@ -61,6 +58,7 @@ export default function App() {
 
   useEffect(() => {
     const unsubscribe = session.subscribe(value => {
+      monitoring.reset();
       setAuth(value);
       setFlightList([]);
       setOfflineFlights([]);
@@ -107,3 +105,5 @@ function AppAppearance({ children }) {
     {children}
   </GestureHandlerRootView>;
 }
+
+export default Sentry.wrap(App);

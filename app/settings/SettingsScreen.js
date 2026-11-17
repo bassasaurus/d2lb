@@ -1,3 +1,4 @@
+import { verificationAvailable, verifySentryException } from '../monitoring';
 import { ScrollView } from '../components/OverflowLists';
 import React from 'react';
 import { Alert, Platform, Pressable, View } from 'react-native';
@@ -30,9 +31,23 @@ export default function SettingsScreen({ navigation }) {
       })}
     </View>
     <SyncSettings navigation={navigation} />
+    {verificationAvailable && <Card compact style={{ marginBottom: 4 }}>
+      <PlatformActionButton title="Send Test Exception" variant="text" onPress={() =>
+        Alert.alert('Verify Sentry?', 'This sends a deliberate test exception and its replay. Your logbook is unchanged.', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Send Test', onPress: async () => {
+            try {
+              const result = await verifySentryException();
+              if (result) Alert.alert(result.flushed ? 'Test exception submitted' : 'Test exception queued', `Diagnostic reference: ${result.eventId}`);
+            } catch { Alert.alert('Test could not complete', 'Please try again when connected.'); }
+          } },
+        ])} />
+    </Card>}
+
     <View style={{ marginTop: 'auto', paddingTop: 8 }}>
       <Card compact style={{ marginBottom: 4, paddingVertical: 4 }}>
         <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />
+        <Text size={12} style={{ color: colors.muted, textAlign: 'center', paddingHorizontal: 8, paddingBottom: 4 }}>Opens email with app details and a diagnostic reference.</Text>
       </Card>
       <Card compact style={{ paddingVertical: 4 }}>
         <PlatformActionButton title="Privacy Policy" variant="text" onPress={() =>

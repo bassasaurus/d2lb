@@ -1,3 +1,4 @@
+import { observeSyncEvent } from '../monitoring';
 import { recordSyncFeedback } from './flightSyncFeedback.mjs';
 import { completeReferenceRows } from './referenceRows.mjs';
 import { session } from '../auth/session';
@@ -12,7 +13,7 @@ export async function syncAircraft(scope, partition, enabled, defaultEnabled = f
   const localScope = aircraftScope(scope);
   if (enabled) {
     await drainFlightQueue({
-      store, scope: localScope, label: 'aircraft', operationFilter: 'aircraft-records', uuid: () => Crypto.randomUUID(),
+      store, scope: localScope, onSyncEvent: observeSyncEvent, label: 'aircraft', operationFilter: 'aircraft-records', uuid: () => Crypto.randomUUID(),
       onAcknowledged: ({ scope, operation, flight }) => recordSyncFeedback.record(scope, operation, flight),
       isCurrent: async () => await tokenPartition() === partition,
       send: async request => {
@@ -27,7 +28,7 @@ export async function syncAircraft(scope, partition, enabled, defaultEnabled = f
   }
   if (defaultEnabled) {
     await drainFlightQueue({
-      store, scope: localScope, label: 'default aircraft', operationFilter: 'aircraft-default',
+      store, scope: localScope, onSyncEvent: observeSyncEvent, label: 'default aircraft', operationFilter: 'aircraft-default',
       uuid: () => Crypto.randomUUID(), isCurrent: async () => await tokenPartition() === partition,
       send: async request => {
         const token = await session.getToken();

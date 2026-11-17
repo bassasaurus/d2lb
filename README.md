@@ -161,6 +161,92 @@ Git history. Development error reporting is disabled to keep test errors out of
 production Sentry. Source-map upload and native Sentry are not verified by a
 JavaScript export or an Expo Go launch.
 
+### Local signed builds with source-map uploads
+
+Keep the build-only credential outside this repository in
+`~/.config/direct2logbook/sentry-build.env`, owned by your user with permissions
+`600` (and its directory `700`). It contains one assignment:
+
+```sh
+export SENTRY_AUTH_TOKEN='your-new-build-token'
+```
+
+The wrapper parses this file as data; it never sources shell code, prints the
+token, writes it to app configuration, or prefixes it with `EXPO_PUBLIC_`.
+It enables Sentry automatic uploads and makes upload failures fail the build.
+The organization/project remain `direct2logbook` / `d2lb_mobile`.
+
+```sh
+./scripts/mobile build:local --platform android --profile beta --output /path/to/beta.apk
+./scripts/mobile build:local --platform ios --profile testflight --output /path/to/testflight.ipa
+```
+
+To wrap another local native build command, use
+`./scripts/with-sentry <command> [arguments]`. Development launches and normal
+JavaScript exports do not need credentials. The existing Expo Sentry plugin
+installs native upload hooks during prebuild, and Metro now uses Sentry's Expo
+configuration to attach debug IDs to bundles and source maps. Old generated
+native projects must be regenerated before expecting these changes.
+
+The Mac's `Documents/Codex/ios-beta/signed-ios-beta.sh build` and
+`build-update-testflight.sh` helpers use this wrapper, as does
+`Documents/Codex/android-beta/build-update-android.sh`. These machine-local
+helpers are outside Git. The old unsigned prototype and cloud-build helper are
+not release paths for this local setup; cloud builds need a separate EAS secret
+and the cloud helper still disables uploads. A local private file is not sent
+to cloud builds automatically.
+
+Authentication and JS export checks are not proof of a successful native upload.
+On the next signed build, confirm upload success in the build log, then verify
+a controlled error resolves to the original JS source in Sentry. The upload
+token is independent of the runtime DSN used for live crash reporting.
+
+### Mobile diagnostics and Contact Support
+
+Installed release builds capture unexpected JS/native crashes and handled SQLite,
+draft-storage, and sync failures. Development and Expo Go do not send reports.
+Native release/dist metadata stays aligned with the upload tooling; events also
+carry app version/build, platform, build channel when available, and API
+environment. Source-map and native crash delivery still need verification in a
+signed build.
+
+Diagnostic breadcrumbs record screen names (never navigation parameters), local
+flight saves, connectivity changes, and upload outcomes. Sync records include
+the server record PK or local identifier, attempt count, resource/action, and
+HTTP status. The account PK is set only after the sync-session response belongs
+to the current authenticated session, and cleared on session changes.
+
+Offline/network errors, cancellations, timeouts, validation responses, conflicts,
+sign-in-required responses, throttling, and known dependency/server-upgrade
+conditions do not create error events. Duplicate handled failures for the same
+record are limited to once per minute. Storage and sync observers cannot change
+the save, retry, or conflict-resolution behavior if diagnostics itself fails.
+
+Contact Support still opens the device's mail app. It now creates an
+informational Sentry event and adds its reference, app/build version, and OS to
+the draft email. The user writes their description and sends the email; the app
+does not send email automatically. If offline, the SDK may queue the diagnostic
+event, so a reference is not proof Sentry has already received it. In development
+the email says diagnostics are unavailable.
+
+Configure Sentry issue alerts for error/fatal events and exclude
+`feature:support` if using a broader issue rule. The support event is deliberately
+informational. Standalone SDK screenshots, view hierarchies, tracing, and logs are
+disabled. Installed release builds buffer Session Replay and upload it only for
+eligible exceptions (`replaysSessionSampleRate: 0`, `replaysOnErrorSampleRate: 1`).
+Text, image, and vector masking are explicitly disabled as requested; replay
+visuals can therefore include on-screen content. Network body/header capture is
+not enabled, and SurfaceViews (such as native camera/map surfaces) are not opted
+in. Normal offline/validation/conflict conditions and informational support
+requests do not trigger a replay upload. Error events retain their replay IDs. Event filtering retains code
+locations, build metadata, selected device/OS fields, safe diagnostic IDs and
+breadcrumbs; it removes raw request/response payloads, automatic interaction/HTTP
+breadcrumbs, user email, arbitrary error text, and extra context. Tokens, SQL
+arguments, signatures and OCR images are not attached to exception payloads. The unmasked
+replay is separate from those payloads and may show content displayed on screen.
+Verify replay appearance and error linking on a signed device build; an Expo Go
+launch or JavaScript export does not verify native recording.
+
 ## Mobile Wishlist work
 
 See [MOBILE_WISHLIST.md](MOBILE_WISHLIST.md) for the separate mobile roadmap and
@@ -175,3 +261,10 @@ queue is retained separately for review.
 Sentry build tooling (glob and minimatch), and no high/critical findings. Its
 suggested forced fix would downgrade Expo; do not run `npm audit fix --force`.
 Review upstream patches before release.
+
+For a deliberate end-to-end verification build, set
+`EXPO_PUBLIC_SENTRY_DIAGNOSTICS=true` only for that local build. Installed builds
+with that flag show **Send Test Exception** in Settings, with confirmation; it
+captures a nonfatal test exception and displays its event ID. Ordinary builds
+omit this action. A source-map upload, received exception, and visible replay
+must each be verified before claiming end-to-end diagnostics are working.

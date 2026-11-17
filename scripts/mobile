@@ -22,6 +22,7 @@ case "$1" in
   emulator) shift; exec "$ANDROID_HOME/emulator/emulator" -avd Pixel_10_API_36 -gpu swiftshader -no-snapshot-load "$@" ;;
   doctor) shift; exec npx expo-doctor "$@" ;;
   install) shift; exec npm ci "$@" ;;
+  build:local) shift; exec ./scripts/with-sentry npx --yes eas-cli@27.5.0 build --local "$@" ;;
   test) shift; exec npm test "$@" ;;
   *) exec npm "$@" ;;
 esac

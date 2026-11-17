@@ -7,11 +7,14 @@ export function draftKey(scope, kind, record) {
   if (!scope || !['flight', 'aircraft', 'tailnumber', 'profile-account', 'profile-medical', 'profile-signature'].includes(kind)) throw new Error('Unknown draft account or form.');
   return `form-draft:v1:${encodeURIComponent(scope)}:${kind}:${encodeURIComponent(record)}`;
 }
-export function createDraftStore(storage, now = () => new Date().toISOString()) {
+export function createDraftStore(storage, now = () => new Date().toISOString(), onFailure = () => {}) {
   // All writes/removals are ordered, so a slow autosave cannot recreate a discarded draft.
   let queue = Promise.resolve();
-  function serial(work) {
-    const result = queue.then(work);
+  function serial(work, action) {
+    const result = queue.then(work).catch(error => {
+      try { onFailure(error, { resource: 'draft', action }); } catch { /* Diagnostics cannot change draft recovery. */ }
+      throw error;
+    });
     queue = result.catch(() => {});
     return result;
   }
@@ -25,13 +28,13 @@ export function createDraftStore(storage, now = () => new Date().toISOString()) 
         throw new Error('Saved draft could not be read.');
       }
       return draft;
-    }); },
+    }, 'read'); },
     save(key, baseline, values) {
       // Snapshot synchronously: later Formik changes must not mutate an already queued write.
       const draft = { version: 1, baseline: fingerprint(baseline), values: JSON.parse(JSON.stringify(values)), updatedAt: now() };
-      return serial(async () => { await storage.setItem(key, JSON.stringify(draft)); return draft; });
+      return serial(async () => { await storage.setItem(key, JSON.stringify(draft)); return draft; }, 'write');
     },
-    remove(key) { return serial(() => storage.removeItem(key)); },
+    remove(key) { return serial(() => storage.removeItem(key), 'remove'); },
   };
 }
 

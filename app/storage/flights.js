@@ -1,3 +1,5 @@
+import { monitoring } from '../monitoring';
+import { monitoredStorage } from '../monitoring/core.mjs';
 import { session } from '../auth/session';
 import * as SQLite from 'expo-sqlite';
 import * as Crypto from 'expo-crypto';
@@ -9,7 +11,8 @@ import { downloadFlightWindow } from '../api/flightWindow.mjs';
 let storePromise;
 export function flightStore() {
   if (!storePromise) {
-    storePromise = SQLite.openDatabaseAsync('logbook-offline.db').then(createFlightStore).catch(error => {
+    storePromise = SQLite.openDatabaseAsync('logbook-offline.db').then(db => createFlightStore(monitoredStorage(db, monitoring.report))).catch(error => {
+      monitoring.report(error, { resource: 'database', action: 'open' });
       storePromise = undefined;
       throw error;
     });
@@ -35,6 +38,7 @@ export async function saveLocalFlight(flight) {
   const localId = flight.local_id || (flight.id ? `server:${flight.id}` : Crypto.randomUUID());
   const store = await flightStore();
   const sync_generation = await store.save(scope, localId, flight);
+  monitoring.breadcrumb({ resource: 'flight', action: flight.id ? 'update' : 'create', phase: 'saved', record_id: flight.id, local_id: localId });
   return { ...flight, sync_generation, local_id: localId, sync_state: flight.id ? 'pending_update' : 'pending_create' };
 }
 

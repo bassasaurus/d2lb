@@ -2,15 +2,14 @@ import PlatformActionButton from '../components/PlatformActionButton';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, AppState, View } from 'react-native';
 import { Formik, useFormikContext } from 'formik';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { flightScope } from '../storage/flights';
 import { session } from '../auth/session';
 import { useAppTheme } from '../theme/ThemeProvider';
 import Text from '../components/AppText';
 import UnsavedFormGuard from '../components/UnsavedFormGuard';
-import { createDraftStore, draftKey, fingerprint } from './draftStore.mjs';
+import { draftKey, fingerprint } from './draftStore.mjs';
+import { localDraftStore as store } from './localDraftStore';
 
-const store = createDraftStore(AsyncStorage);
 
 export default function DraftForm({ kind, recordKey = 'new', draftHandle, savedNavigation, onResume, contentStyle, renderLayout, children, ...props }) {
   return <Formik {...props}>{formik => <DraftBoundary kind={kind} recordKey={recordKey}
@@ -48,7 +47,7 @@ function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume
       if (dirty) await store.save(key.current, initial.current, values);
       else await store.remove(key.current);
       if (thisGeneration === generation.current) update({ message: dirty ? 'Draft saved on this device' : null, error: null });
-    } catch {
+    } catch (error) {
       update({ message: null, error: 'Draft could not be saved. Keep this form open and retry.' });
       throw new Error('Could not save your draft.');
     }
@@ -63,7 +62,7 @@ function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume
       if (!sameSession()) return;
       enabled.current = !pending;
       update({ loading: false, pending, blocked: false });
-    } catch {
+    } catch (error) {
       update({ loading: false, blocked: true, error: 'Could not read your saved draft. Retry or discard it before editing.' });
     }
   }
