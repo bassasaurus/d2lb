@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.11.0](https://github.com/bassasaurus/d2lb/compare/v0.10.1...v0.11.0) (2026-11-17)
+
+
+### Features
+
+* save incomplete flights as visible local drafts ([#102](https://github.com/bassasaurus/d2lb/issues/102)) ([3713398](https://github.com/bassasaurus/d2lb/commit/37133986d01de97c85db8f10a4b6c8d8ae41171f))
+
 ## [0.10.1](https://github.com/bassasaurus/d2lb/compare/v0.10.0...v0.10.1) (2026-11-16)
 
 
