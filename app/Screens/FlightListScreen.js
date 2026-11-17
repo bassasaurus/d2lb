@@ -1,3 +1,4 @@
+import { createDraftStore, draftKey, flightDraftRow } from '../drafts/draftStore.mjs';
 import { reviewRecord } from '../components/RecordIssue';
 import { canAttemptApiSync, subscribeAutoSync } from '../api/autoSync.mjs';
 import api from '../api/axiosConfig';
@@ -109,8 +110,11 @@ const FlightListScreen = ({ navigation, route }) => {
         }
         let scope = await flightScope();
         const store = await flightStore();
-        const readRows = async account => [...await store.list(account),
-          ...(await store.deletedRecords(account)).filter(row => row.needs_attention)];
+        const readRows = async account => {
+          const draft = flightDraftRow(await createDraftStore(AsyncStorage).load(draftKey(account, 'flight', 'new')));
+          return [...(draft ? [draft] : []), ...await store.list(account),
+            ...(await store.deletedRecords(account)).filter(row => row.needs_attention)];
+        };
         const local = await readRows(scope);
         if (active) { setData(local); setRecordScope(scope); }
         const beforePending = await logbookPendingCount(store, [scope, aircraftScope(scope), tailnumberScope(scope)]);
@@ -285,7 +289,7 @@ function FlightRow({ item, navigation, style, syncEvent, removalProgress, scope 
         activeOpacity={0.7}
         disabled={removing}
         style={style}
-        onPress={() => item.needs_attention
+        onPress={() => item.is_draft ? navigation.navigate("FlightCreate") : item.needs_attention
           ? reviewRecord(navigation, "flight", item)
           : navigation.navigate("FlightDetail", { item })}
       >
@@ -296,7 +300,7 @@ function FlightRow({ item, navigation, style, syncEvent, removalProgress, scope 
           type={item.aircraft_type}
           reg={item.registration}
           dur={item.duration}
-          crew={item.second_in_command ? "SIC" : "PIC"}
+          crew={item.is_draft ? "Draft" : item.second_in_command ? "SIC" : "PIC"}
           dayL={item.landings_day ? item.landings_day : 0}
           nitL={item.landings_night ? item.landings_night : 0}
         />

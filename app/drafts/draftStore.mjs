@@ -34,3 +34,10 @@ export function createDraftStore(storage, now = () => new Date().toISOString()) 
     remove(key) { return serial(() => storage.removeItem(key)); },
   };
 }
+
+// Draft rows are presentation only: never insert them into the upload queue.
+export function flightDraftRow(draft) {
+  if (!draft) return null;
+  return { ...draft.values, local_id: 'draft:new-flight', is_draft: true,
+    date: draft.values.date || 'No date', route: draft.values.route || 'Unfinished flight' };
+}

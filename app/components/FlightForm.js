@@ -1,3 +1,4 @@
+import { flightFormAction } from '../drafts/flightFormAction.mjs';
 import { formFeedback } from '../forms/errorFeedback.mjs';
 import FormKeyboardAvoidingView from './FormKeyboardAvoidingView';
 import PlatformActionButton from './PlatformActionButton';
@@ -39,7 +40,7 @@ function NightPairWarning({ values }) {
   return message ? <AppText color={colors.danger} accessibilityLiveRegion="polite" style={{ marginTop: 4 }}>{message}</AppText> : null;
 }
 
-function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false, onChooseDefault, commitDateOnSelection = false }) {
+function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAircraft = false, onChooseDefault, commitDateOnSelection = false }) {
   const { styles: STYLES, isDark } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const { width: windowWidth, fontScale } = useWindowDimensions();
@@ -47,6 +48,23 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
   const roleColumns = Math.max(1, Math.min(7, Math.floor((roleWidth || windowWidth - 52) / (100 * fontScale))));
   const savedNavigation = useRef(false);
   const draftHandle = useRef(null);
+  const draftSaving = useRef(false);
+  const [savingDraft, setSavingDraft] = useState(false);
+  async function saveDraft() {
+    if (draftSaving.current) return;
+    draftSaving.current = true;
+    setSavingDraft(true);
+    try {
+      await draftHandle.current.flush();
+      savedNavigation.current = true;
+      onDraftSaved();
+    } catch {
+      Alert.alert("Could not save draft", "Keep this form open and try again.");
+    } finally {
+      draftSaving.current = false;
+      setSavingDraft(false);
+    }
+  }
   const airportCheck = useRef(null);
   const [calVisible, setCalVisible] = useState(false);
   const [defaultSuggestionDismissed, setDefaultSuggestionDismissed] = useState(false);
@@ -129,10 +147,15 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
     >
       <PickerOverlayHost>
           <DraftForm kind="flight" recordKey={initialValues.local_id || initialValues.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={values => setFormCount(Math.max(0, ...values.approaches.map((item, index) => item.approach_type || item.number ? index : 0)))}
-            renderLayout={({ content, form: { values, isValid, isSubmitting, handleSubmit }, draftBlocked }) => (
+            renderLayout={({ content, form: { values, isValid, isSubmitting, handleSubmit }, draftBlocked }) => {
+              const valid = isValid && hasRequiredFlightRole(values) && hasRequiredSoloLandings(values);
+              const action = flightFormAction({ valid, date: values.date, allowDraft: Boolean(onDraftSaved) });
+              return (
               <ScrollableFormCard cardStyle={styles.container} keyboardDismissMode="on-drag"
-                footer={<PrimaryActionButton testID="flight-save" title="Save" onPress={handleSubmit}
-                  disabled={draftBlocked || scanningTailnumber || !isValid || isSubmitting || !hasRequiredFlightRole(values) || !hasRequiredSoloLandings(values)} />}>
+                footer={<PrimaryActionButton testID="flight-save"
+                  title={savingDraft ? "Saving Draft…" : !valid && onDraftSaved ? "Save Draft" : "Save"}
+                  onPress={action === 'draft' ? saveDraft : handleSubmit}
+                  disabled={draftBlocked || scanningTailnumber || action === 'disabled' || isSubmitting || savingDraft} />}>
                 {noDefaultAircraft && !defaultSuggestionDismissed && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
                   <Pressable accessibilityRole="link" onPress={async () => {
                     try {
@@ -152,7 +175,7 @@ function FlightForm({ initialValues, method, onSaved, noDefaultAircraft = false,
                 </View>}
                 {content}
               </ScrollableFormCard>
-            )}
+            ); }}
             validateOnMount={true}
             initialValues={initialValues}
             validationSchema={flightSchema}
