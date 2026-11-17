@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.1](https://github.com/bassasaurus/d2lb/compare/v0.10.0...v0.10.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* improve offline tailnumber scanning and keyboard visibility ([#100](https://github.com/bassasaurus/d2lb/issues/100)) ([c9a26d5](https://github.com/bassasaurus/d2lb/commit/c9a26d5381f03402ffc9602b96ef9b5cfa7e0084))
+
 ## [0.10.0](https://github.com/bassasaurus/d2lb/compare/v0.9.1...v0.10.0) (2026-11-15)
 
 
