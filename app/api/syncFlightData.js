@@ -1,3 +1,4 @@
+import { monitoring, observeSyncEvent } from '../monitoring';
 import { recordSyncFeedback } from './flightSyncFeedback.mjs';
 import { syncTailnumbers } from './syncTailnumbers';
 import { tailnumberScope } from '../storage/tailnumbers';
@@ -17,6 +18,7 @@ async function synchronize(partition, retry) {
   const capabilities = (await api.get('/api/mobile/session/')).data;
   if (capabilities.sync_protocol !== 1 || !Number.isInteger(capabilities.account_id)) throw new Error('Server sync upgrade is required.');
   if (await tokenPartition() !== partition) throw new Error('Account changed during sync.');
+  monitoring.account(capabilities.account_id);
   const scope = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, `${api.defaults.baseURL}|account:${capabilities.account_id}`);
   const store = await flightStore();
   const previousScope = await flightScope();
@@ -29,7 +31,7 @@ async function synchronize(partition, retry) {
   await syncAircraft(scope, partition, capabilities.aircraft_sync === true, capabilities.default_aircraft_sync === true);
   await syncTailnumbers(scope, partition, capabilities.tailnumber_sync === true);
   await drainFlightQueue({
-    store, scope,
+    store, scope, onSyncEvent: observeSyncEvent,
     onAcknowledged: ({ scope: account, operation, flight }) => recordSyncFeedback.record(account, operation, flight),
     uuid: () => Crypto.randomUUID(),
     isCurrent: async () => await tokenPartition() === partition,
@@ -63,7 +65,7 @@ export default async function syncFlightData({ retry = false } = {}) {
     if (await tokenPartition() !== partition) throw new Error('Account changed during sync.');
   }
   if (!running.has(partition)) {
-    running.set(partition, synchronize(partition, retry).finally(() => { running.delete(partition); }));
+    running.set(partition, synchronize(partition, retry).catch(error => { monitoring.report(error, { resource: 'flight', action: 'sync' }); throw error; }).finally(() => { running.delete(partition); }));
   }
   return running.get(partition);
 }

@@ -1,3 +1,4 @@
+import { recordApiEnvironment } from '../monitoring';
 import axios from "axios";
 import * as Device from "expo-device";
 import { session } from "../auth/session";
@@ -17,5 +18,6 @@ const api = axios.create({
 });
 
 installSessionAuth(api, session);
+recordApiEnvironment(api.defaults.baseURL);
 
 export default api;

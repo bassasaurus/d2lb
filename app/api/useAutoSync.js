@@ -1,3 +1,4 @@
+import { monitoring } from '../monitoring';
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
@@ -27,7 +28,13 @@ export default function useAutoSync(auth) {
       onComplete: () => notifyAutoSync('completed'),
       onError: () => notifyAutoSync('failed'),
     });
-    const unsubscribe = NetInfo.addEventListener(state => worker.network(state));
+    let previousOnline;
+    const unsubscribe = NetInfo.addEventListener(state => {
+      const online = canAttemptApiSync(state, api.defaults.baseURL);
+      if (online !== previousOnline) monitoring.breadcrumb({ resource: 'flight', action: 'sync', phase: online ? 'connected' : 'offline' });
+      previousOnline = online;
+      worker.network(state);
+    });
     const check = () => NetInfo.refresh().then(state => worker.network(state, true)).catch(() => {});
     const stopLocalChanges = localChanges.subscribe(check);
     const subscription = AppState.addEventListener('change', state => {

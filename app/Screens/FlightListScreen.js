@@ -1,4 +1,5 @@
-import { createDraftStore, draftKey, flightDraftRow } from '../drafts/draftStore.mjs';
+import { localDraftStore } from '../drafts/localDraftStore';
+import { draftKey, flightDraftRow } from '../drafts/draftStore.mjs';
 import { reviewRecord } from '../components/RecordIssue';
 import { canAttemptApiSync, subscribeAutoSync } from '../api/autoSync.mjs';
 import api from '../api/axiosConfig';
@@ -111,7 +112,7 @@ const FlightListScreen = ({ navigation, route }) => {
         let scope = await flightScope();
         const store = await flightStore();
         const readRows = async account => {
-          const draft = flightDraftRow(await createDraftStore(AsyncStorage).load(draftKey(account, 'flight', 'new')));
+          const draft = flightDraftRow(await localDraftStore.load(draftKey(account, 'flight', 'new')));
           return [...(draft ? [draft] : []), ...await store.list(account),
             ...(await store.deletedRecords(account)).filter(row => row.needs_attention)];
         };
