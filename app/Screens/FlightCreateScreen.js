@@ -60,6 +60,7 @@ function FlightCreateScreen() {
 
   return (
     <FlightForm commitDateOnSelection method={create} initialValues={initialValues} noDefaultAircraft={!defaults}
+      onDraftSaved={() => navigation.popTo("FlightList")}
       onChooseDefault={() => navigation.navigate("Aircraft", { screen: "AircraftList", initial: false })} onSaved={() => navigation.popTo("FlightList")}></FlightForm>
   );
 }

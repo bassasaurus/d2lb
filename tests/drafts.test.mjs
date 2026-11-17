@@ -86,3 +86,31 @@ test('signature drawing draft retains normalized strokes and revision across res
   assert.deepEqual((await createDraftStore(storage).load(key)).values, values);
   assert.equal(await createDraftStore(storage).load(draftKey('instructor', 'profile-signature', 'signature')), null);
 });
+
+test('unfinished flight appears as a local draft without an upload state or server identity', async () => {
+  const { flightDraftRow } = await import('../app/drafts/draftStore.mjs');
+  const storage = memory();
+  const store = createDraftStore(storage);
+  const key = draftKey('owner', 'flight', 'new');
+  assert.equal(flightDraftRow(await store.load(key)), null);
+  await store.save(key, {}, { aircraft_type: 'A320', route: '', duration: '' });
+  const row = flightDraftRow(await store.load(key));
+  assert.equal(row.is_draft, true);
+  assert.equal(row.aircraft_type, 'A320');
+  assert.equal(row.date, 'No date');
+  assert.equal(row.route, 'Unfinished flight');
+  assert.equal(row.sync_state, undefined);
+  assert.equal(row.id, undefined);
+  assert.equal(await store.load(draftKey('other-owner', 'flight', 'new')), null);
+  await store.remove(key);
+  assert.equal(flightDraftRow(await store.load(key)), null);
+});
+
+test('Save Draft requires a selected date and is limited to incomplete new flights', async () => {
+  const { flightFormAction } = await import('../app/drafts/flightFormAction.mjs');
+  assert.equal(flightFormAction({ valid: false, date: '', allowDraft: true }), 'disabled');
+  assert.equal(flightFormAction({ valid: false, date: '  ', allowDraft: true }), 'disabled');
+  assert.equal(flightFormAction({ valid: false, date: '11/16/2026', allowDraft: true }), 'draft');
+  assert.equal(flightFormAction({ valid: true, date: '11/16/2026', allowDraft: true }), 'save');
+  assert.equal(flightFormAction({ valid: false, date: '11/16/2026', allowDraft: false }), 'disabled');
+});
