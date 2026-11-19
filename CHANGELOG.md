@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.1](https://github.com/bassasaurus/d2lb/compare/v0.12.0...v0.12.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* prevent Android OCR capture crash and recover native reports ([#106](https://github.com/bassasaurus/d2lb/issues/106)) ([0ed7637](https://github.com/bassasaurus/d2lb/commit/0ed7637a2b9462f1490c554a682d146f152e6015))
+
 ## [0.12.0](https://github.com/bassasaurus/d2lb/compare/v0.11.0...v0.12.0) (2026-11-17)
 
 
