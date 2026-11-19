@@ -6,7 +6,10 @@ group = 'expo.modules.tailnumberocr'
 version = '1.0.0'
 android {
   namespace 'expo.modules.tailnumberocr'
-  defaultConfig { testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' }
+  defaultConfig {
+    testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    consumerProguardFiles 'consumer-rules.pro'
+  }
 }
 dependencies {
   androidTestImplementation 'androidx.test.ext:junit:1.2.1'
