@@ -1,3 +1,4 @@
+import { nativeCrashConfiguration } from './nativeCrash.mjs';
 import { replayConfiguration } from './replay.mjs';
 import * as Sentry from '@sentry/react-native';
 import Constants from 'expo-constants';
@@ -18,6 +19,7 @@ export function initializeMonitoring() {
     attachScreenshot: false, attachViewHierarchy: false,
     enableLogs: false, tracesSampleRate: 0,
     ...replayConfiguration(Sentry, monitoringEnabled),
+    ...nativeCrashConfiguration(Platform.OS, monitoringEnabled),
     maxBreadcrumbs: 40, beforeSend: safeEvent, beforeBreadcrumb: safeBreadcrumb,
   });
   // Leave release/dist to the native SDK so they match the build's upload hooks.
