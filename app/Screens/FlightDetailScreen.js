@@ -1,6 +1,7 @@
 import RecordIssue from '../components/RecordIssue';
 import RecordSyncIndicator from '../components/RecordSyncIndicator';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Card from '../components/Card';
 import { ScrollView } from '../components/OverflowLists';
 import { routeFitCoordinates, routeMapPadding, validCoordinate } from '../maps/routeBounds.mjs';
@@ -28,6 +29,7 @@ import * as Device from "expo-device";
 
 
 function FlightDetailScreen({ route, navigation }) {
+  const insets = useSafeAreaInsets();
   const { styles: STYLES, colors, isDark } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const mapRef = useRef(null);
@@ -95,7 +97,7 @@ function FlightDetailScreen({ route, navigation }) {
     ]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
       <ScrollView style={{ maxHeight: hasMap ? '55%' : undefined, flexGrow: hasMap ? 0 : 1, margin: 12 }}>
         <Card>
         <RecordIssue item={route.params.item} kind="flight" navigation={navigation} />

@@ -236,3 +236,14 @@ test('adjusted scans never fall back to pixels outside the selected quadrilatera
   assert.equal(await recognizeRegistrationImage({ enhanced: async () => primary, legacy, corners }), primary);
   await assert.rejects(recognizeRegistrationImage({ enhanced: async () => { throw new Error('Adjusted scan failed'); }, legacy, corners }), /Adjusted scan failed/);
 });
+
+test('look-alike repair keeps legitimate L suffixes when O is misread in the numeric prefix', async () => {
+  const { possibleNNumber, registrationScanReview } = await import('../app/ocr/registrationCandidates.mjs');
+  assert.equal(possibleNNumber('N6OOLR'), 'N600LR');
+  assert.equal(possibleNNumber('N60OLR'), 'N600LR');
+  assert.equal(possibleNNumber('NL287P'), 'N1287P');
+  assert.equal(possibleNNumber('N600LR'), null);
+  assert.deepEqual(registrationScanReview([['N6OOLR', 'N60OLR']]), {
+    candidates: ['N600LR'], needsVerification: true,
+  });
+});
