@@ -115,3 +115,96 @@ for adjusted perspective crops, since the original recognizer cannot apply their
 quadrilateral. It must never expand a selected crop silently. Fallback results
 are marked for review. Direct-image benchmark results must be graded through
 this full selection/fallback path, not just the scene model's raw output.
+
+## Repeatable photo benchmark
+
+`scripts/ocr-benchmark-android.py` builds a dedicated Android instrumentation app
+using the **current** bundled detector, recognizer and model files. It installs
+only `com.direct2logbook.ocrbenchmark` and its test package, reads local fixture
+images, then removes those two packages. Direct2Logbook's installed app and user
+data are untouched. Specify a device serial explicitly; Android is used here
+because this tests the Pixel's native engine, rather than a cross-platform screen.
+
+Prepare a local JSON array of objects containing `case`, `file`, `expected` and
+optionally `split` and `source`. Image file names are relative to the manifest.
+Keep copyright-restricted reference photos outside Git. The November 20 fixtures
+and source URLs are saved locally under `Documents/Codex/ocr-benchmark`; they are
+not bundled into the production app.
+
+Example (substitute the Gradle executable installed on your machine):
+
+```sh
+python3 scripts/ocr-benchmark-android.py \
+  --cases "$HOME/Documents/Codex/ocr-benchmark/fixtures/cases.json" \
+  --serial YOUR_DEVICE_SERIAL \
+  --gradle /path/to/gradle-9.4.1/bin/gradle \
+  --output "$HOME/Documents/Codex/ocr-benchmark/results.json"
+```
+
+Use the project's Node runtime on PATH. The runner needs the Android SDK 37,
+Java (Android Studio's bundled JBR is used when JAVA_HOME is unset), Gradle 9.4.1,
+and ADB. Its default ADB port is 5038, adjustable with `--adb-port`. It writes
+build/instrumentation logs, raw native results, and a `.report.json` containing
+scores from the same shared JavaScript selection and fallback logic used by the
+app. An instrumentation pass means the benchmark **ran**, not that every
+registration was recognized. Exceptions and empty readings remain misses.
+
+Report full scenes separately from guide-framed crops, and keep newly selected
+holdout images separate from examples used to tune recognition. A correct answer
+must match the whole registration; a plausible but wrong value is a miss. Two
+views/crops of the same image are not independent samples. These are direct-image
+measurements, not camera-through-an-LCD, lighting, motion-blur, iOS, or field
+accuracy estimates. Testing a screen photo needs an actual photo of that display;
+a JPEG displayed directly to the recognizer does not test LCD interference.
+
+The capture guide now spans 16% of preview height (previously 28%), centered at
+the same position and using the identical geometry for the on-screen frame and
+photo crop. Look-alike repair retains a legitimate trailing L when an O was read
+in an N-number's numeric prefix; it still never inserts missing characters or
+changes an already valid registration. The proposed value remains user-reviewed.
+
+### November 20 results (Pixel 10)
+
+| Set | Before suffix fix | After suffix fix |
+| --- | ---: | ---: |
+| Original six photos, split into 11 registration cases | 8/11 (72.7%) | 8/11 (72.7%) |
+| Eight new web photos, whole scenes | 4/8 (50%) | 5/8 (62.5%) |
+| Same eight photos, guide-style crops | 4/8 (50%) | 5/8 (62.5%) |
+| Four additional photos selected after freezing the change | 4/4 (100%) | 4/4 (100%) |
+
+The new-photo total is **9/12 (75%)**, counting each web photo once. Do not add
+scene and crop rows together as independent images. Four holdout successes do
+not establish a 100% population success rate. The original sheet also contains
+two views of the same registration. An 80–90% real-world first-capture target has
+**not** been demonstrated.
+
+All 27 scene/crop baseline cases and all four holdout cases ran through the
+bundled Android OCR models on the physical Pixel, followed by the app's shared
+fallback and result-selection logic. Model/network access is not part of this
+recognition path. These runs passed as benchmark executions even where OCR
+answers were incorrect.
+
+The shared suffix fix corrects `N6OOLR`/`N60OLR` to the disclosed possible reading
+`N600LR`, instead of incorrectly changing the legal `L` to `1`. Original misses
+remain F-WTSA (blank), N59LW (read N59LN), and N12345 (blank). Experimental native
+padding and prefix changes were evaluated separately and rejected; they are not
+in the app branch. Only the shorter shared crop guide, suffix fix, regression
+test and benchmark tooling are retained.
+
+Local evidence is under `$HOME/Documents/Codex/ocr-benchmark/`:
+
+- `pixel-nov20-baseline-report.json`: old selection logic on baseline native output.
+- `pixel-nov20-final.json` and `.report.json`: 27-case native rerun and current app grading.
+- `pixel-nov20-holdout.json` and `.report.json`: four previously untuned image cases.
+- `web-cases/sources.json` and `holdout/cases.json`: source pages, image URLs, labels and crop metadata.
+- `fixtures/cases.json`: reusable local 27-case input manifest and image hashes.
+
+All expected labels were visually checked. The new sources include aircraft
+photographs from [Its Nice That](https://www.itsnicethat.com/articles/david-rothenberg-landing-lights-park-photography-080219),
+[SEMET Aviation](https://semetaviation.co.uk/ppl),
+[GB Helicopters via Aviapages](https://aviapages.com/company/gb-helicopters/),
+[CF-FHB reference photos](https://www.dhc-2.com/CF-FHB_Photo%20page.html),
+[Platoon Aviation via Aviapages](https://aviapages.com/company/platoon-aviation/),
+and [F-GITD via Aéro-Design](https://www.aerodesignart.com/product-page/casquette-air-france-747-f-gitd-collector).
+The manifests retain the full source list. Local benchmark use does not grant
+permission to redistribute those images; they are excluded from Git.

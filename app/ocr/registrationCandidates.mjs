@@ -76,7 +76,9 @@ export function possibleNNumber(line) {
   if (typeof line !== 'string') return null;
   const raw = normalizeRegistration(line);
   if (plausibleRegistration(raw) || !/^N[A-Z0-9|!]{2,5}$/.test(raw)) return null;
-  const interpreted = 'N' + raw.slice(1).replace(/[IL|!]/g, '1').replace(/O/g, '0')
+  // L is legal in an N-number suffix. Only treat it as 1 before a digit;
+  // repairing an O in the numeric prefix must not turn a valid trailing L into 1.
+  const interpreted = 'N' + raw.slice(1).replace(/O/g, '0').replace(/[I|!]/g, '1').replace(/L(?=[0-9])/g, '1')
     .replace(/B(?=[0-9])/g, '8');
   return interpreted !== raw && plausibleRegistration(interpreted) ? interpreted : null;
 }

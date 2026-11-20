@@ -20,7 +20,7 @@ const rows = await Promise.all(cases.map(async row => {
   const review = registrationScanReview(result.passes);
   const displayed = registrationReview(review.candidates);
   return {
-    case: row.case, source: row.source, expected: row.expected, displayed,
+    case: row.case, source: row.source, split: row.split, milliseconds: row.milliseconds, expected: row.expected, displayed,
     correct: normalizeRegistration(displayed) === normalizeRegistration(row.expected),
     interpretedDigits: review.needsVerification,
     lowConfidence: Boolean(result.lowConfidence), usedFallback,
@@ -31,6 +31,12 @@ const correct = rows.filter(row => row.correct).length;
 console.log(JSON.stringify({
   description: 'Direct-image displayed-result accuracy; not physical-camera first-scan accuracy or a holdout estimate.',
   total: rows.length, correct, accuracyPercent: Math.round(correct / rows.length * 1000) / 10,
+  groups: Object.fromEntries([...new Set(rows.map(row => row.split || 'unspecified'))].map(split => {
+    const group = rows.filter(row => (row.split || 'unspecified') === split);
+    const correct = group.filter(row => row.correct).length;
+    return [split, { total: group.length, correct, accuracyPercent: Math.round(correct / group.length * 1000) / 10,
+      blank: group.filter(row => !row.displayed).length, incorrect: group.filter(row => row.displayed && !row.correct).length }];
+  })),
   blank: rows.filter(row => !row.displayed).length,
   incorrect: rows.filter(row => row.displayed && !row.correct).length,
   correctWithDigitInterpretation: rows.filter(row => row.correct && row.interpretedDigits).length,

@@ -1,0 +1,12 @@
+plugins { id 'com.android.application' }
+android {
+ namespace 'com.direct2logbook.ocrbenchmark'
+ compileSdk 37
+ defaultConfig { applicationId 'com.direct2logbook.ocrbenchmark'; minSdk 26; targetSdk 37; versionCode 1; versionName '1'; testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' }
+}
+dependencies {
+ implementation 'com.google.mlkit:text-recognition:16.0.1'
+ implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.23.2'
+ androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+ androidTestImplementation 'androidx.test:runner:1.6.2'
+}

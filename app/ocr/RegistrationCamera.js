@@ -27,7 +27,7 @@ export default function RegistrationCamera({ onCapture, onCancel, onError }) {
   }
   return <>
     <Text weight="600" style={{ fontSize: 21, color: colors.text }}>Scan Tailnumber</Text>
-    <Text style={{ color: colors.muted, marginTop: 8, marginBottom: 12 }}>Keep the registration inside the box. Avoid glare.</Text>
+    <Text style={{ color: colors.muted, marginTop: 8, marginBottom: 12 }}>Frame one registration inside the box. Avoid glare.</Text>
     <View onLayout={event => setPreview(event.nativeEvent.layout)} style={{ height: Math.min(420, height * 0.48), borderRadius: 8, overflow: 'hidden', backgroundColor: '#000' }}>
       <CameraView ref={camera} style={{ flex: 1 }} facing="back" mode="picture" autofocus="on"
         onCameraReady={() => setReady(true)} onMountError={onError} />

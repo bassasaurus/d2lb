@@ -1,6 +1,6 @@
 // Shared by the visible overlay and the photo crop. CameraView uses centered
 // aspect-fill previews (no `ratio` prop); processed photos are orientation-correct.
-export const REGISTRATION_GUIDE = Object.freeze({ x: 0.08, y: 0.36, width: 0.84, height: 0.28 });
+export const REGISTRATION_GUIDE = Object.freeze({ x: 0.08, y: 0.42, width: 0.84, height: 0.16 });
 export function guidePhotoCrop(photo, preview) {
   if (![photo?.width, photo?.height, preview?.width, preview?.height].every(value => Number.isFinite(value) && value > 0))
     throw new Error('Camera dimensions are unavailable.');
