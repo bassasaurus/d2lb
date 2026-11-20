@@ -4,19 +4,15 @@ import Svg, { Defs, Path, Pattern, Rect } from 'react-native-svg';
 import { recordSyncActivity, recordSyncPresentation } from '../api/recordSyncActivity.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 
-export default function RecordSyncIndicator({ item, scope, syncEvent, animate = true }) {
+export default function RecordSyncIndicator({ item, scope, animate = true }) {
   const { colors } = useAppTheme();
   const localId = item.local_id ?? `server:${item.id}`;
   const [activity, setActivity] = useState(() => recordSyncActivity.snapshot(scope, localId));
-  const { sending, synced, failed, completionKey, completedAt } = recordSyncPresentation(item, activity);
-  const [playing, setPlaying] = useState(false);
+  const { sending, synced, failed } = recordSyncPresentation(item, activity);
   const [reduceMotion, setReduceMotion] = useState(false);
   const [width, setWidth] = useState(0);
-  const lastCompletion = useRef(null);
   const progress = useRef(new Animated.Value(0)).current;
   const patternId = `sync-stripes-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
-  const event = completionKey || (!activity && synced && !failed ? syncEvent : null);
-  const eventTime = completionKey ? completedAt : syncEvent;
   useEffect(() => {
     const refresh = () => setActivity(recordSyncActivity.snapshot(scope, localId));
     refresh();
@@ -30,20 +26,13 @@ export default function RecordSyncIndicator({ item, scope, syncEvent, animate = 
     const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
     return () => { active = false; subscription.remove(); };
   }, []);
-  useEffect(() => {
-    if (!animate || !event || lastCompletion.current === event || Date.now() - eventTime >= 5000) return;
-    lastCompletion.current = event;
-    setPlaying(true);
-    const timer = setTimeout(() => setPlaying(false), 1500);
-    return () => { clearTimeout(timer); setPlaying(false); };
-  }, [event, eventTime, animate]);
   const draft = Boolean(item.is_draft);
-  const working = !draft && animate && (sending || (playing && !failed));
+  const working = !draft && animate && sending;
   useEffect(() => {
     progress.setValue(0);
     if (!working || reduceMotion) return;
     const animation = Animated.loop(Animated.timing(progress, {
-      toValue: 1, duration: 750, easing: Easing.linear, useNativeDriver: true,
+      toValue: 1, duration: 500, easing: Easing.linear, useNativeDriver: true,
     }));
     animation.start();
     return () => animation.stop();
