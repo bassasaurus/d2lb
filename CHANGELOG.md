@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.2](https://github.com/bassasaurus/d2lb/compare/v0.12.1...v0.12.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* run sync stripes every half second until upload completes ([#108](https://github.com/bassasaurus/d2lb/issues/108)) ([bd5e84c](https://github.com/bassasaurus/d2lb/commit/bd5e84c16bcdb8b91df529e06e956d1f569019cb))
+* tighten OCR framing and improve registration review ([#109](https://github.com/bassasaurus/d2lb/issues/109)) ([46bbaa0](https://github.com/bassasaurus/d2lb/commit/46bbaa0323ecfcf2b5a8785c61adaf9de47e8c1c))
+
 ## [0.12.1](https://github.com/bassasaurus/d2lb/compare/v0.12.0...v0.12.1) (2026-11-19)
 
 
