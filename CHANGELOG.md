@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.12.3](https://github.com/bassasaurus/d2lb/compare/v0.12.2...v0.12.3) (2026-11-21)
+
+
+### Bug Fixes
+
+* remove redundant flight sync spinner ([#111](https://github.com/bassasaurus/d2lb/issues/111)) ([557f8e2](https://github.com/bassasaurus/d2lb/commit/557f8e2a13aab33df650c1d5c1ae9219dbe77c04))
+
 ## [0.12.2](https://github.com/bassasaurus/d2lb/compare/v0.12.1...v0.12.2) (2026-11-20)
 
 
