@@ -34,7 +34,6 @@ const FlightListScreen = ({ navigation, route }) => {
 
   // removeAsyncData('offlineFlights')
 
-  const [refreshing, setRefreshing] = useState(false);
   const [reminderRefresh, setReminderRefresh] = useState(0);
   const [data, setData] = useState([]);
   const deletedFlightId = route.params?.deletedFlightId;
@@ -172,7 +171,6 @@ const FlightListScreen = ({ navigation, route }) => {
         running = false;
         if (active) {
           setLoadingFlights(false);
-          setRefreshing(false);
         }
       }
     };
@@ -229,7 +227,6 @@ const FlightListScreen = ({ navigation, route }) => {
 
   const onRefresh = React.useCallback(() => {
     if (!refreshRef.current) return;
-    setRefreshing(true);
     refreshRef.current(true);
   }, []);
 
@@ -260,7 +257,8 @@ const FlightListScreen = ({ navigation, route }) => {
         keyExtractor={item => item.local_id}
         contentContainerStyle={styles.flightListContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={false} onRefresh={onRefresh}
+            tintColor="transparent" colors={['transparent']} progressBackgroundColor="transparent" />
         }
       />
       <BottomCreateButton title="New Flight" onPress={() => navigation.navigate("FlightCreate")} />
