@@ -122,23 +122,26 @@ export default function RecencyScreen() {
           sections={[
             { id: 'vfr', title: 'VFR', visible: snapshot.categories.length > 0,
               render: handle => <LandingSection title="VFR" rows={snapshot.categories} handle={handle} /> },
-            { id: 'ifr', title: 'IFR', visible: snapshot.instrument.applicable !== false, render: handle => <RecencySection title="IFR" handle={handle}>
-        <View style={{ paddingVertical: 8 }}>
-          {!!snapshot.instrument.ipc_completed_date && <Text>
-            Last IPC: {snapshot.instrument.ipc_completed_date}{'\n'}Review IFR by {snapshot.instrument.review_date || '—'}
+            { id: 'ifr', title: 'IFR', visible: (snapshot.instrument_categories ?? [snapshot.instrument]).some(item => item.applicable !== false), render: handle => <RecencySection title="IFR" handle={handle}>
+        {(snapshot.instrument_categories ?? [snapshot.instrument]).filter(item => item.applicable !== false).map(instrument => (
+        <View key={instrument.category || 'unknown'} style={{ paddingVertical: 8 }}>
+          {!!instrument.category_label && <Text weight="600">{instrument.category_label}</Text>}
+          {!!instrument.ipc_completed_date && <Text>
+            Last IPC: {instrument.ipc_completed_date}{'\n'}Review IFR by {instrument.review_date || '—'}
           </Text>}
-          {!!snapshot.instrument.status_message && <Text color={snapshot.instrument.current ? colors.success : colors.danger}>{snapshot.instrument.status_message}</Text>}
-          {!!snapshot.instrument.holding_warning && <Text color={colors.danger}>{snapshot.instrument.holding_warning}</Text>}
-          {!!snapshot.instrument.next_requirement?.message && <Text>{snapshot.instrument.next_requirement.message}</Text>}
-          <Status label="Approaches" value={snapshot.instrument.approaches}
-            message={snapshot.instrument.approaches.current
-              ? `${snapshot.instrument.approaches.count}/6 - Logged window through ${snapshot.instrument.approaches.until || '—'}`
-              : `${snapshot.instrument.approaches.count}/6 - Log ${snapshot.instrument.approaches.still_needed} more`} />
-          <Status label="Holding" value={snapshot.instrument.holding}
-            message={snapshot.instrument.holding.current
-              ? `${snapshot.instrument.holding.count}/1 - Last hold on ${snapshot.instrument.holding.last_date || '—'}`
+          {!!instrument.status_message && <Text color={instrument.current ? colors.success : colors.danger}>{instrument.status_message}</Text>}
+          {!!instrument.holding_warning && <Text color={colors.danger}>{instrument.holding_warning}</Text>}
+          {!!instrument.next_requirement?.message && <Text>{instrument.next_requirement.message}</Text>}
+          <Status label="Approaches" value={instrument.approaches}
+            message={instrument.approaches.current
+              ? `${instrument.approaches.count}/6 - Logged window through ${instrument.approaches.until || '—'}`
+              : `${instrument.approaches.count}/6 - Log ${instrument.approaches.still_needed} more`} />
+          <Status label="Holding" value={instrument.holding}
+            message={instrument.holding.current
+              ? `${instrument.holding.count}/1 - Last hold on ${instrument.holding.last_date || '—'}`
               : 'None in last 6 months'} />
         </View>
+        ))}
             </RecencySection> },
             { id: 'type', title: 'Type', visible: snapshot.types.length > 0,
               render: handle => <LandingSection title="Type" rows={snapshot.types} handle={handle} /> },

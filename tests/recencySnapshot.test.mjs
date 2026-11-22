@@ -15,3 +15,13 @@ test('rejects malformed snapshots and missing flags before cache replacement', (
     assert.throws(() => validateRecency(invalid));
   }
 });
+
+test('keeps separate server-provided instrument categories without pooling counts', () => {
+  const data = { ...snapshot, instrument_categories: [
+    { category: 'A', category_label: 'Airplane', approaches: { ...status, count: 3, required: 6 }, holding: { ...status, count: 1, required: 1, current: true } },
+    { category: 'R', category_label: 'Helicopter', approaches: { ...status, count: 3, required: 6 }, holding: { ...status, required: 1 } },
+  ] };
+  assert.equal(validateRecency(data), data);
+  assert.deepEqual(data.instrument_categories.map(row => row.approaches.count), [3, 3]);
+  assert.throws(() => validateRecency({ ...data, instrument_categories: [{ category: 'R', category_label: 'Helicopter' }] }));
+});

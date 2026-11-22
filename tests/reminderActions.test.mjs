@@ -33,3 +33,7 @@ test('Undo returns the affected alert without restoring unrelated hidden alerts'
   assert.deepEqual(logbookAlerts([caution], dismissed, 1000), []);
   assert.deepEqual(logbookAlerts([caution], clearResourcePreferences(dismissed, 12), 1000), [caution]);
 });
+
+test('category IFR alerts open Manage Reminders', () => {
+  for (const category of ['A', 'R']) assert.deepEqual(reminderDestination({ id: `instrument-currency-${category}` }), { name: 'ManageReminders' });
+});
