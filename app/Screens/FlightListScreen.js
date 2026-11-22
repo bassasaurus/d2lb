@@ -259,6 +259,10 @@ const FlightListScreen = ({ navigation, route }) => {
     <SafeAreaView edges={["left", "right", "bottom"]} style={styles.container}>
       <FlatList
         testID="flight-list"
+        // The reminder header changes height as cards expand, hide and restore.
+        // Android's native subview clipping can cut off its measured contents.
+        removeClippedSubviews={false}
+        ListHeaderComponentStyle={styles.listHeader}
         ListHeaderComponent={<>
       <Animated.View pointerEvents="none" accessibilityElementsHidden={!windowNotice}
         importantForAccessibility={windowNotice ? 'auto' : 'no-hide-descendants'}
@@ -342,9 +346,14 @@ const createStyles = STYLES => StyleSheet.create({
     flex: 1,
     backgroundColor: STYLES.itemBackground,
   },
+  listHeader: {
+    overflow: 'visible',
+  },
   reminderList: {
     flexGrow: 0,
-    marginBottom: 4,
+    flexShrink: 0,
+    overflow: 'visible',
+    paddingBottom: 8,
   },
   flightListContent: {
     flexGrow: 1,
