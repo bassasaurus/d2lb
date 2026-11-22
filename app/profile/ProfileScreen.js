@@ -1,22 +1,16 @@
-import React, { useCallback, useState } from 'react';
+import React from 'react';
+import useProfile from './useProfile';
+import { profileDate } from './profileDate.mjs';
 import { Image, RefreshControl, View } from 'react-native';
 import Svg, { Defs, Filter, FeColorMatrix, Image as SvgImage } from 'react-native-svg';
-import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from '../components/OverflowLists';
 import Card from '../components/Card';
 import Text from '../components/AppText';
 import PlatformActionButton from '../components/PlatformActionButton';
 import { useAppTheme } from '../theme/ThemeProvider';
-import api from '../api/axiosConfig';
-import { flightScope, flightStore, tokenPartition } from '../storage/flights';
 import { openContactEmail } from '../settings/contactEmail';
 
-export function profileDate(value) {
-  if (!value) return 'Not recorded';
-  const [year, month, day] = value.slice(0, 10).split('-');
-  return `${month}/${day}/${year}`;
-}
 function Detail({ label, value }) {
   const { colors } = useAppTheme();
   return <View style={{ flexDirection: 'row', gap: 16, paddingVertical: 5 }}>
@@ -26,41 +20,13 @@ function Detail({ label, value }) {
 }
 export default function ProfileScreen({ navigation }) {
   const { colors, isDark } = useAppTheme();
-  const [profile, setProfile] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
-  const [message, setMessage] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
-  useFocusEffect(useCallback(() => {
-    let active = true;
-    const controller = new AbortController();
-    (async () => {
-      setRefreshing(true);
-      try {
-        const partition = await tokenPartition();
-        const current = async () => active && await tokenPartition() === partition;
-        const scope = await flightScope();
-        const store = await flightStore();
-        const cached = (await store.reference(scope, 'profile'))[0];
-        if (await current()) setProfile(cached || null);
-        const { data } = await api.get('/api/mobile/profile/', { signal: controller.signal });
-        if (!await current()) return;
-        await store.cacheReference(scope, 'profile', [data]);
-        if (await current()) { setProfile(data); setMessage(''); }
-      } catch (error) {
-        if (active) setMessage(error.response?.status === 404
-          ? 'Profile needs the matching Django API update.'
-          : 'Could not refresh profile. Saved information may be out of date. Pull down to retry.');
-      } finally { if (active) setRefreshing(false); }
-    })();
-    return () => { active = false; controller.abort(); };
-  }, [refreshKey]));
+  const { profile, refreshing, message, refresh } = useProfile();
   const account = profile?.account;
-  const medical = profile?.medical;
   const subscription = profile?.subscription;
   const freeAccess = subscription?.status === 'Free access';
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollView contentContainerStyle={{ padding: 12 }} refreshControl={<RefreshControl refreshing={refreshing}
-      onRefresh={() => setRefreshKey(value => value + 1)} />}>
+      onRefresh={refresh} />}>
       {profile && <Text color={colors.muted} style={{ textAlign: 'center', marginBottom: 12 }}>Downloaded {new Date(profile.downloaded_at).toLocaleString()}</Text>}
       {message ? <Text color={colors.danger} style={{ textAlign: 'center', marginBottom: 12 }} accessibilityLiveRegion="polite">{message}</Text> : null}
       {profile && <>
@@ -79,14 +45,6 @@ export default function ProfileScreen({ navigation }) {
           {subscription.plan && <Detail label="Plan" value={subscription.plan} />}
           {freeAccess && <Detail label="Access ends" value="Never" />}
           {!freeAccess && subscription.end_date && <Detail label={['Free trial', 'Expiring soon'].includes(subscription.status) ? 'Trial ends' : subscription.status === 'Active' ? 'Next billing date' : 'Access ends'} value={profileDate(subscription.end_date)} />}
-        </Card>
-        <Card compact style={{ marginBottom: 8 }}>
-          <Text size={18} weight="600">Medical Certificate</Text>
-          <Detail label="Issued" value={profileDate(medical.medical_issue_date)} />
-          <Detail label="Class" value={medical.first_class ? 'First Class' : medical.second_class ? 'Second Class' : medical.third_class ? 'Third Class' : 'Not recorded'} />
-          <Detail label="Over 40" value={medical.over_40 ? 'Yes' : 'No'} />
-          <Detail label="Due Date" value={profileDate(profile.medical_due_date)} />
-          <PlatformActionButton title="Update Medical" variant="text" onPress={() => navigation.navigate('ProfileEdit', { section: 'medical', values: medical })} />
         </Card>
         <Card compact style={{ marginBottom: 8 }}>
           <Text size={18} weight="600">Signature</Text>

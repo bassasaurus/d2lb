@@ -1,7 +1,8 @@
+import { resetReminderPreferences } from '../settings/reminderStorage';
 import FormKeyboardAvoidingView from '../components/FormKeyboardAvoidingView';
 import PrimaryActionButton from '../components/PrimaryActionButton';
 import React, { useRef, useState } from 'react';
-import { Platform, Pressable, Switch, View } from 'react-native';
+import { Alert, Platform, Pressable, Switch, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as yup from 'yup';
 import ScrollableFormCard from '../components/ScrollableFormCard';
@@ -11,7 +12,7 @@ import PlatformActionButton from '../components/PlatformActionButton';
 import DraftForm from '../drafts/DraftForm';
 import { useAppTheme } from '../theme/ThemeProvider';
 import api from '../api/axiosConfig';
-import { profileDate } from './ProfileScreen';
+import { profileDate } from './profileDate.mjs';
 
 export default function ProfileEditScreen({ route, navigation }) {
   const { section, values: initialValues } = route.params;
@@ -33,6 +34,10 @@ export default function ProfileEditScreen({ route, navigation }) {
       onSubmit={async (values, helpers) => {
           try {
             await api.patch('/api/mobile/profile/', { [section]: values });
+            if (section === 'medical') {
+              try { await resetReminderPreferences('medical'); }
+              catch { Alert.alert('Medical information saved', 'Could not reset its alert preferences. Use Show Now in Reminders.'); }
+            }
             await draftHandle.current.complete();
             savedNavigation.current = true;
             helpers.resetForm({ values });
@@ -60,7 +65,7 @@ export default function ProfileEditScreen({ route, navigation }) {
               <Text>{label}</Text><Text color={colors.primary}>{(key ? values[key] : !values.first_class && !values.second_class && !values.third_class) ? '✓' : ''}</Text>
             </Pressable>)}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 12 }}>
-              <Text>Over 40</Text><Switch accessibilityLabel="Over 40" value={values.over_40} onValueChange={value => setFieldValue('over_40', value)} />
+              <Text>Age 40+ at exam</Text><Switch accessibilityLabel="Age 40+ at exam" value={values.over_40} onValueChange={value => setFieldValue('over_40', value)} />
             </View>
           </> : [['first_name', 'First name'], ['last_name', 'Last name'], ['company', 'Company']].map(([key, label]) => <View key={key} style={{ marginBottom: 12 }}>
             <Text>{label}</Text><AppTextInput accessibilityLabel={label} placeholder={label} value={values[key]} isValid={!errors[key]}
@@ -68,7 +73,7 @@ export default function ProfileEditScreen({ route, navigation }) {
           </View>)}
           {Object.values(errors).map((error, index) => <Text key={index} color={colors.danger}>{error}</Text>)}
           {status && <Text color={colors.danger} accessibilityLiveRegion="polite" style={{ marginVertical: 12 }}>{status}</Text>}
-          <Text color={colors.muted} style={{ marginTop: 12 }}>An internet connection is required to save profile changes.</Text>
+          <Text color={colors.muted} style={{ marginTop: 12 }}>{medical ? 'An internet connection is required to save medical changes.' : 'An internet connection is required to save profile changes.'}</Text>
         </>}
     </DraftForm>
   </FormKeyboardAvoidingView>;

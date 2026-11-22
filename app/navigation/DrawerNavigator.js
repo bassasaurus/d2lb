@@ -1,3 +1,4 @@
+import ProfileEditScreen from '../profile/ProfileEditScreen';
 import { recordScreen } from '../monitoring';
 import NavigationMenuButton from '../components/NavigationMenuButton';
 import Constants from 'expo-constants';
@@ -121,7 +122,8 @@ function DrawerNavigator({ navigation }) {
               <Drawer.Screen name="Totals & Stats" component={StatsScreen} />
               <Drawer.Screen name="Recency" component={RecencyScreen} />
               <Drawer.Screen name="Profile" component={ProfileStackNavigator} options={{ headerShown: false }} />
-              <Drawer.Screen name="ManageReminders" component={ManageRemindersScreen} options={{ title: 'Manage Reminders' }} />
+              <Drawer.Screen name="ManageReminders" component={ManageRemindersScreen} initialParams={{ group: 'regulatory' }} options={{ title: 'Reminders' }} />
+              <Drawer.Screen name="ManageMilestones" component={ManageRemindersScreen} initialParams={{ group: 'milestones' }} options={{ title: 'Milestones' }} />
               <Drawer.Screen name="Settings" component={SettingsScreen} />
             </Drawer.Navigator>}
           </Root.Screen>
@@ -129,6 +131,8 @@ function DrawerNavigator({ navigation }) {
           <Root.Screen name="EditReminder" component={ReminderEditScreen}
             options={({ route }) => ({ headerShown: true, title: route.params?.reminder ? 'Edit Reminder' : 'Add Reminder',
               headerBackButtonDisplayMode: 'minimal' })} />
+          <Root.Screen name="MedicalEdit" component={ProfileEditScreen}
+            options={{ headerShown: true, title: 'Update Medical', headerBackButtonDisplayMode: 'minimal' }} />
           <Root.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen}
             options={{ headerShown: true, title: 'Privacy Policy', headerBackButtonDisplayMode: 'minimal' }} />
         </Root.Navigator>

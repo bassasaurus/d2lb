@@ -1,3 +1,4 @@
+import ReminderFeedback from '../components/ReminderFeedback';
 import { localDraftStore } from '../drafts/localDraftStore';
 import { draftKey, flightDraftRow } from '../drafts/draftStore.mjs';
 import { reviewRecord } from '../components/RecordIssue';
@@ -34,6 +35,11 @@ const FlightListScreen = ({ navigation, route }) => {
 
   // removeAsyncData('offlineFlights')
 
+  const [reminderFeedback, setReminderFeedback] = useState(null);
+  const [manualRefreshing, setManualRefreshing] = useState(false);
+  const manualRefreshRunning = React.useRef(false);
+  const mounted = React.useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const [reminderRefresh, setReminderRefresh] = useState(0);
   const [data, setData] = useState([]);
   const deletedFlightId = route.params?.deletedFlightId;
@@ -93,7 +99,7 @@ const FlightListScreen = ({ navigation, route }) => {
     if (deletedFlightId) return;
     let active = true;
     let running = false;
-    const load = async (force = false) => {
+    const performLoad = async (force = false) => {
       if (running) return;
       running = true;
       if (active) {
@@ -174,6 +180,12 @@ const FlightListScreen = ({ navigation, route }) => {
         }
       }
     };
+    let currentLoad = null;
+    const load = (force = false) => {
+      if (currentLoad) return currentLoad;
+      currentLoad = performLoad(force).finally(() => { currentLoad = null; });
+      return currentLoad;
+    };
     load();
     refreshRef.current = load;
     const retryTimer = setInterval(async () => {
@@ -225,9 +237,16 @@ const FlightListScreen = ({ navigation, route }) => {
   }, [deletedFlightId]));
   const refreshRef = React.useRef(null);
 
-  const onRefresh = React.useCallback(() => {
-    if (!refreshRef.current) return;
-    refreshRef.current(true);
+  const onRefresh = React.useCallback(async () => {
+    if (!refreshRef.current || manualRefreshRunning.current) return;
+    manualRefreshRunning.current = true;
+    setManualRefreshing(true);
+    try {
+      await refreshRef.current(true);
+    } finally {
+      manualRefreshRunning.current = false;
+      if (mounted.current) setManualRefreshing(false);
+    }
   }, []);
 
   const renderItem = ({ item }) => (
@@ -238,6 +257,9 @@ const FlightListScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView edges={["left", "right", "bottom"]} style={styles.container}>
+      <FlatList
+        testID="flight-list"
+        ListHeaderComponent={<>
       <Animated.View pointerEvents="none" accessibilityElementsHidden={!windowNotice}
         importantForAccessibility={windowNotice ? 'auto' : 'no-hide-descendants'}
         style={{ overflow: 'hidden', opacity: noticeProgress,
@@ -248,19 +270,20 @@ const FlightListScreen = ({ navigation, route }) => {
         </Text>
       </Animated.View>
       {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
-      <LogbookReminders refreshVersion={reminderRefresh} style={styles.reminderList} />
-      <FlatList
-        testID="flight-list"
+      <LogbookReminders onFeedback={setReminderFeedback} refreshVersion={reminderRefresh} style={styles.reminderList} scrollable={false} />
+        </>}
+        alwaysBounceVertical
         data={data}
         extraData={syncEvents}
         renderItem={renderItem}
         keyExtractor={item => item.local_id}
         contentContainerStyle={styles.flightListContent}
         refreshControl={
-          <RefreshControl refreshing={false} onRefresh={onRefresh}
-            tintColor="transparent" colors={['transparent']} progressBackgroundColor="transparent" />
+          <RefreshControl refreshing={manualRefreshing} onRefresh={onRefresh}
+            tintColor={STYLES.blue} colors={[STYLES.blue]} progressBackgroundColor={STYLES.itemBackground} />
         }
       />
+      <ReminderFeedback feedback={reminderFeedback} onClose={setReminderFeedback} />
       <BottomCreateButton title="New Flight" onPress={() => navigation.navigate("FlightCreate")} />
     </SafeAreaView>
   );
@@ -321,10 +344,10 @@ const createStyles = STYLES => StyleSheet.create({
   },
   reminderList: {
     flexGrow: 0,
-    maxHeight: '30%',
-    marginHorizontal: LOGBOOK_INSET,
+    marginBottom: 4,
   },
   flightListContent: {
+    flexGrow: 1,
     padding: LOGBOOK_INSET,
   },
   syncNoticeText: {

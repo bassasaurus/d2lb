@@ -1,3 +1,4 @@
+import { resetReminderPreferences } from './reminderStorage';
 import { formFeedback } from '../forms/errorFeedback.mjs';
 import FormKeyboardAvoidingView from '../components/FormKeyboardAvoidingView';
 import React, { useEffect, useRef, useState } from 'react';
@@ -12,7 +13,7 @@ import PlatformActionButton from '../components/PlatformActionButton';
 import PrimaryActionButton from '../components/PrimaryActionButton';
 import ScrollableFormCard from '../components/ScrollableFormCard';
 import { useAppTheme } from '../theme/ThemeProvider';
-import { crewPositions, reminderDateLabel, reminderKinds, remindersUrl } from './reminders';
+import { crewPositions, flightConditions, flightReviewTypes, reminderDateLabel, reminderKinds, remindersUrl } from './reminders';
 
 function localDateValue(date) {
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -24,8 +25,18 @@ export default function ReminderEditScreen({ navigation, route }) {
   const { colors } = useAppTheme();
   const reminder = route.params?.reminder;
   const initialKind = reminder?.kind ?? route.params?.kind ?? 'expiration';
+  const regulatory = ['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(initialKind);
+  const kindChoices = reminderKinds.filter(([value]) => ['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(value) === regulatory);
+  const [condition, setCondition] = useState(reminder?.condition ?? '');
+  const [instructorStart, setInstructorStart] = useState(reminder?.instructor_period_start ?? '');
+  const [ipcDate, setIpcDate] = useState(reminder?.ipc_completed_date ?? '');
   const [title, setTitle] = useState(reminder?.title ?? '');
   const [kind, setKind] = useState(initialKind);
+  useEffect(() => {
+    navigation.setOptions({ title: reminderKinds.find(([key]) => key === kind)?.[1] || 'Reminder' });
+  }, [navigation, kind]);
+  const [lastDate, setLastDate] = useState(reminder?.last_qualifying_date ?? '');
+  const [completionType, setCompletionType] = useState(reminder?.completion_type ?? '');
   const [dueDate, setDueDate] = useState(reminder?.due_date ?? '');
   const [targetHours, setTargetHours] = useState(reminder?.target_hours ?? '');
   const [aircraft, setAircraft] = useState(reminder?.aircraft ?? null);
@@ -45,6 +56,10 @@ export default function ReminderEditScreen({ navigation, route }) {
   const saved = useRef(false);
 
   const expiration = kind === 'expiration';
+  const flightReview = kind === 'flight_review';
+  const instructorRenewal = kind === 'instructor_renewal';
+  const ipc = kind === 'ipc';
+  const dated = expiration || flightReview || instructorRenewal || ipc;
   const crewMilestone = kind === 'crew_in_type';
   const typeMilestone = crewMilestone || kind === 'time_in_type';
   const companyMilestone = kind === 'company_time';
@@ -52,7 +67,8 @@ export default function ReminderEditScreen({ navigation, route }) {
   const company = companyInput ?? initialCompany;
   const invalidPeriod = Boolean(startDate && endDate && endDate < startDate);
   const selectedAircraft = aircraftChoices?.find(row => row.id === aircraft);
-  const dirty = (expiration && title !== (reminder?.title ?? '')) || kind !== initialKind ||
+  const dirty = (instructorRenewal && instructorStart !== (reminder?.instructor_period_start ?? '')) ||
+    (ipc && ipcDate !== (reminder?.ipc_completed_date ?? '')) || (kind === 'flight_condition' && condition !== (reminder?.condition ?? '')) || (flightReview && (lastDate !== (reminder?.last_qualifying_date ?? '') || completionType !== (reminder?.completion_type ?? ''))) || (expiration && title !== (reminder?.title ?? '')) || kind !== initialKind ||
     (expiration ? dueDate !== (reminder?.due_date ?? '') : targetHours !== (reminder?.target_hours ?? '')) ||
     (typeMilestone && aircraft !== (reminder?.aircraft ?? null)) ||
     (crewMilestone && crewPosition !== (reminder?.crew_position ?? '')) ||
@@ -105,8 +121,13 @@ export default function ReminderEditScreen({ navigation, route }) {
     const values = {
       title: expiration ? title.trim() : '',
       kind,
+      instructor_period_start: instructorRenewal ? instructorStart : null,
+      ipc_completed_date: ipc ? ipcDate : null,
+      condition: kind === 'flight_condition' ? condition : '',
       due_date: expiration ? dueDate : null,
-      target_hours: expiration ? null : targetHours.trim().replace(',', '.'),
+      last_qualifying_date: flightReview ? lastDate : null,
+      completion_type: flightReview ? completionType : '',
+      target_hours: dated ? null : targetHours.trim().replace(',', '.'),
       aircraft: typeMilestone ? aircraft : null,
       crew_position: crewMilestone ? crewPosition : '',
       company: companyMilestone ? company.trim() : '',
@@ -116,6 +137,10 @@ export default function ReminderEditScreen({ navigation, route }) {
     try {
       if (reminder) await api.put(`${remindersUrl}${reminder.id}/`, values);
       else await api.post(remindersUrl, values);
+      try {
+        if (reminder) await resetReminderPreferences(reminder.id);
+        if (ipc || reminder?.kind === 'ipc') await resetReminderPreferences('instrument-currency');
+      } catch { Alert.alert('Reminder saved', 'Could not reset its alert preferences. Use Show Now in Manage Reminders.'); }
       saved.current = true;
       navigation.goBack();
     } catch (requestError) {
@@ -156,16 +181,11 @@ export default function ReminderEditScreen({ navigation, route }) {
 
   return <FormKeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollableFormCard footer={<PrimaryActionButton title={saving ? 'Saving…' : 'Save'} onPress={save}
-      disabled={saving || (expiration ? !title.trim() || !dueDate : !targetHours.trim()) ||
+      disabled={saving || (kind === 'flight_condition' && !condition) || (instructorRenewal ? !instructorStart : ipc ? !ipcDate : flightReview ? !lastDate || !completionType : expiration ? !title.trim() || !dueDate : !targetHours.trim()) ||
         (typeMilestone && (!selectedAircraft || aircraftLoadFailed)) || (crewMilestone && !crewPosition) ||
         (companyMilestone && (!company.trim() || !startDate || invalidPeriod))} />}>
-      {expiration && <>
-        <Text weight="600">Title</Text>
-        <AppTextInput accessibilityLabel="Title" placeholder="BFR, IPC, etc." maxLength={80} autoCapitalize="sentences"
-          value={title} onChangeText={setTitle} isValid editable={!saving} />
-      </>}
-      <Text weight="600" style={styles.heading}>Reminder Type</Text>
-      {reminderKinds.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" disabled={saving}
+      <Text weight="600" style={styles.heading}>{regulatory ? 'Reminder Type' : 'Milestone Type'}</Text>
+      {kindChoices.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" disabled={saving}
         accessibilityState={{ checked: kind === key, disabled: saving }}
         style={[styles.choice, { borderColor: kind === key ? colors.primary : colors.border,
           backgroundColor: kind === key ? colors.selected : colors.surface }]}
@@ -173,7 +193,39 @@ export default function ReminderEditScreen({ navigation, route }) {
         <Text>{label}</Text>
         {kind === key && <Text color={colors.primary} accessible={false}>✓</Text>}
       </Pressable>)}
-      {expiration ? dateInput('Due Date', dueDate, setDueDate) : <>
+      {expiration && <>
+        <Text weight="600">Title</Text>
+        <AppTextInput accessibilityLabel="Title" placeholder="Reminder title" maxLength={80} autoCapitalize="sentences"
+          value={title} onChangeText={setTitle} isValid editable={!saving} />
+      </>}
+      {kind === 'flight_condition' && <>
+        <Text weight="600" style={styles.heading}>Flight Condition</Text>
+        {flightConditions.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" disabled={saving}
+          accessibilityState={{ checked: condition === key, disabled: saving }}
+          style={[styles.choice, { borderColor: condition === key ? colors.primary : colors.border,
+            backgroundColor: condition === key ? colors.selected : colors.surface }]}
+          onPress={() => setCondition(key)}>
+          <Text>{label}</Text>{condition === key && <Text color={colors.primary} accessible={false}>✓</Text>}
+        </Pressable>)}
+      </>}
+      {instructorRenewal ? <>
+        {dateInput('Recent Experience Period Start Date', instructorStart, setInstructorStart)}
+        <Text color={colors.muted}>Use the start month shown on your recent-experience record, including the retained month after early renewal. Review scheduled at month-end, 24 months later.</Text>
+      </> : ipc ? <>
+        {dateInput('IPC Completion Date', ipcDate, setIpcDate)}
+        <Text color={colors.muted}>Dates are based on your logged approaches, holding, and IPC entries. Update any missing records.</Text>
+      </> : flightReview ? <>
+        {dateInput('Last Qualifying Date', lastDate, setLastDate)}
+        <Text weight="600" style={styles.heading}>Completion Type</Text>
+        {flightReviewTypes.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" disabled={saving}
+          accessibilityState={{ checked: completionType === key, disabled: saving }}
+          style={[styles.choice, { borderColor: completionType === key ? colors.primary : colors.border,
+            backgroundColor: completionType === key ? colors.selected : colors.surface }]}
+          onPress={() => setCompletionType(key)}>
+          <Text>{label}</Text>{completionType === key && <Text color={colors.primary} accessible={false}>✓</Text>}
+        </Pressable>)}
+        <Text color={colors.muted} style={styles.heading}>Use a qualifying event under 14 CFR 61.56. WINGS requires a completed phase. Review scheduled at month-end, 24 months after completion.</Text>
+      </> : expiration ? dateInput('Due Date', dueDate, setDueDate) : <>
         {typeMilestone && <>
           <Text weight="600" style={styles.heading}>Aircraft Type</Text>
           {aircraftLoadFailed ? <>
