@@ -98,3 +98,19 @@ test('dismissed cautions return when red, then support an expiring snooze', asyn
     assert.deepEqual(logbookAlerts([red], saved, 2000), [red]);
   }
 });
+
+
+test('IFR dismissal persists across dates and severity changes without hiding other categories', async () => {
+  const { ifrDismissalKey, ifrDismissed, logbookAlerts } = await import('../app/settings/reminderPresentation.mjs');
+  const airplane = { id: 'instrument-currency-A', kind: 'ipc', category: 'A', severity: 'warning', due_date: '2026-07-31' };
+  const saved = { [ifrDismissalKey(airplane)]: true };
+  const expired = { ...airplane, severity: 'danger', due_date: '2026-12-31' };
+  const helicopter = { ...expired, id: 'instrument-currency-R', category: 'R' };
+  assert.equal(ifrDismissed(expired, saved), true);
+  assert.equal(ifrDismissed(helicopter, saved), false);
+  assert.deepEqual(logbookAlerts([expired, helicopter], saved), [helicopter]);
+  const restored = { ...saved };
+  delete restored[ifrDismissalKey(expired)];
+  assert.deepEqual(logbookAlerts([expired], restored), [expired]);
+  assert.equal(ifrDismissed({ id: 42, kind: 'ipc', ipc_category: 'A' }, saved), true);
+});

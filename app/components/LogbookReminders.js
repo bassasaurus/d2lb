@@ -85,7 +85,10 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
     setDismissing(true);
     const request = ++revision.current;
     try {
-      if (reminder.severity === 'warning' && !isMilestone(reminder)) {
+      if (reminder.kind === 'ipc') {
+        await snoozes.dismissIFR(reminder, animateChange);
+        feedback({ message: 'IFR reminder dismissed.', undo: () => snoozes.showNow(reminder, animateChange) });
+      } else if (reminder.severity === 'warning' && !isMilestone(reminder)) {
         await snoozes.dismissCaution(reminder, animateChange);
         feedback({ message: reminderConfirmation('caution'), durationMs: 3000, undo: () => snoozes.showNow(reminder, animateChange) });
       } else {
@@ -160,10 +163,10 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
             accessibilityLabel="Update medical certificate" disabled={openingMedical} onPress={updateMedical} />}
           {reminder.severity !== 'warning' && <PlatformActionButton title="Snooze" variant="text" style={styles.dismiss}
             accessibilityLabel={`Snooze ${reminder.title}`} disabled={!snoozes.ready} onPress={() => setSnoozing(reminder)} />}
-          {((isMilestone(reminder) && reminder.key) || reminder.severity === 'warning') && <PlatformActionButton title="Dismiss" variant="text" style={styles.dismiss}
+          {(reminder.kind === 'ipc' || (isMilestone(reminder) && reminder.key) || reminder.severity === 'warning') && <PlatformActionButton title="Dismiss" variant="text" style={styles.dismiss}
             accessibilityLabel={`Dismiss ${showTitle ? reminder.title : reminder.message}`}
             disabled={dismissing || !snoozes.ready} onPress={() => dismiss(reminder)} />}
-          {reminder.severity === 'warning' && <AppText color={color} style={{ width: '100%', fontSize: 12 }}>Dismiss to hide until this reminder turns red.</AppText>}
+          {reminder.severity === 'warning' && reminder.kind !== 'ipc' && <AppText color={color} style={{ width: '100%', fontSize: 12 }}>Dismiss to hide until this reminder turns red.</AppText>}
         </ReminderBanner>
       );
     }} />)}

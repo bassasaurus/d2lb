@@ -58,9 +58,18 @@ export function cautionDismissed(row, saved) {
   return row.severity === 'warning' && saved[cautionDismissalKey(row)] === true;
 }
 
+export function ifrDismissalKey(row) {
+  return `dismissed-ifr:${row.category ?? row.ipc_category ?? ''}`;
+}
+
+export function ifrDismissed(row, saved) {
+  return row.kind === 'ipc' && saved[ifrDismissalKey(row)] === true;
+}
+
 export function logbookAlerts(rows, snoozed = {}, now = Date.now()) {
   return orderedReminders(rows.filter(row =>
     (isMilestone(row) ? row.severity === 'success' : ['danger', 'warning'].includes(row.severity))
+    && !ifrDismissed(row, snoozed)
     && !cautionDismissed(row, snoozed)
     && !(Number(snoozed[snoozeKey(row)]) > now)));
 }
