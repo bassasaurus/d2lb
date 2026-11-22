@@ -103,11 +103,11 @@ export default function ManageRemindersScreen({ navigation, route }) {
         <Text>Couldn’t load reminders. Check your connection and try again.</Text>
         <PlatformActionButton title="Try Again" variant="text" onPress={manageState.refresh} />
       </Card>}
-      {!choosingKind && activeGroup === 'regulatory' && (snoozes.until(alerts.instrument_alert) || snoozes.dismissed(alerts.instrument_alert)) && <Card>
-        <Text weight="600">IFR</Text>
-        <Text>{alerts.instrument_alert.message}</Text>
-        <SnoozeStatus reminder={alerts.instrument_alert} snoozes={snoozes} />
-      </Card>}
+      {!choosingKind && activeGroup === 'regulatory' && (alerts.instrument_alerts ?? (alerts.instrument_alert ? [alerts.instrument_alert] : [])).filter(item => snoozes.until(item) || snoozes.dismissed(item)).map(item => <Card key={item.id}>
+        <Text weight="600">{item.title || 'IFR'}</Text>
+        <Text>{item.message}</Text>
+        <SnoozeStatus reminder={item} snoozes={snoozes} />
+      </Card>)}
       {ready && !choosingKind && activeGroup === 'milestones' && reminderGroups(reminders)[1].rows.length === 0 && <Card><Text color={colors.muted}>No milestones yet.</Text></Card>}
       {!choosingKind && reminderGroups(cards).filter(group => group.key === activeGroup).map(group => <ReminderSection showAll key={group.key} group={group} renderRow={reminder => <AnimatedRemoval key={reminder.id}
         removing={pendingRemoval?.id === reminder.id && pendingRemoval.ready}
@@ -141,7 +141,7 @@ export default function ManageRemindersScreen({ navigation, route }) {
       {ready && choosingKind && reminderKinds.filter(([kind]) => ['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(kind) === (choosingKind === 'regulatory')).map(([kind, label]) =>
         <Pressable key={kind} accessibilityRole="button" onPress={() => {
           setChoosingKind(false);
-          const existing = ['flight_review', 'instructor_renewal', 'ipc'].includes(kind) ? reminders.find(item => item.kind === kind) : null;
+          const existing = ['flight_review', 'instructor_renewal'].includes(kind) ? reminders.find(item => item.kind === kind) : null;
           navigation.navigate('EditReminder', existing ? { reminder: existing } : { kind });
         }}>
           <Card style={styles.kindCard}><Text weight="600">{label}</Text></Card>

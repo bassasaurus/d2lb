@@ -14,5 +14,10 @@ export function validateRecency(data) {
       throw new Error('Invalid landing recency');
     }
   }
+  if (data.instrument_categories !== undefined) {
+    if (!Array.isArray(data.instrument_categories) || data.instrument_categories.some(row =>
+      !['A', 'R', ''].includes(row?.category) || typeof row.category_label !== 'string'
+      || !validStatus(row.approaches) || !validStatus(row.holding))) throw new Error('Invalid instrument categories');
+  }
   return data;
 }

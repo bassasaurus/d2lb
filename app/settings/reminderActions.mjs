@@ -1,5 +1,5 @@
 export function reminderDestination(row, saved = []) {
-  if (row.medical || row.id === 'instrument-currency') return { name: 'ManageReminders' };
+  if (row.medical || (typeof row.id === 'string' && row.id.startsWith('instrument-currency'))) return { name: 'ManageReminders' };
   const reminder = saved.find(item => item.id === row.id);
   return reminder ? { name: 'EditReminder', params: { reminder } } : null;
 }

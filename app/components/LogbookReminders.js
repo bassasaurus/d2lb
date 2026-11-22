@@ -24,7 +24,7 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
   const snoozes = useReminderSnoozes();
   const reminderState = useReminderData('alerts', refreshVersion);
   const reminders = reminderState.data?.reminders || [];
-  const instrumentAlert = reminderState.data?.instrument_alert;
+  const instrumentAlerts = reminderState.data?.instrument_alerts ?? (reminderState.data?.instrument_alert ? [reminderState.data.instrument_alert] : []);
   const medicalAlert = reminderState.data?.medical_alert;
   const [dismissing, setDismissing] = useState(false);
   const [openingMedical, setOpeningMedical] = useState(false);
@@ -115,10 +115,10 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
     }
   }
 
-  if (!medicalAlert && !instrumentAlert && reminders.length === 0) return reminderState.data ? null : <ReminderFreshness state={reminderState} />;
+  if (!medicalAlert && !instrumentAlerts.length && reminders.length === 0) return reminderState.data ? null : <ReminderFreshness state={reminderState} />;
 
   const rows = logbookAlerts([...(medicalAlert ? [{ ...medicalAlert, medical: true }] : []),
-    ...(instrumentAlert ? [instrumentAlert] : []), ...reminders], snoozes.saved, snoozes.now);
+    ...instrumentAlerts, ...reminders], snoozes.saved, snoozes.now);
   if (!rows.length) return null;
   const Container = scrollable ? ScrollView : View;
   return <Container style={style}>

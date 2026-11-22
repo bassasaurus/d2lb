@@ -29,6 +29,7 @@ export default function ReminderEditScreen({ navigation, route }) {
   const kindChoices = reminderKinds.filter(([value]) => ['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(value) === regulatory);
   const [condition, setCondition] = useState(reminder?.condition ?? '');
   const [instructorStart, setInstructorStart] = useState(reminder?.instructor_period_start ?? '');
+  const [ipcCategory, setIpcCategory] = useState(reminder?.ipc_category ?? '');
   const [ipcDate, setIpcDate] = useState(reminder?.ipc_completed_date ?? '');
   const [title, setTitle] = useState(reminder?.title ?? '');
   const [kind, setKind] = useState(initialKind);
@@ -68,7 +69,7 @@ export default function ReminderEditScreen({ navigation, route }) {
   const invalidPeriod = Boolean(startDate && endDate && endDate < startDate);
   const selectedAircraft = aircraftChoices?.find(row => row.id === aircraft);
   const dirty = (instructorRenewal && instructorStart !== (reminder?.instructor_period_start ?? '')) ||
-    (ipc && ipcDate !== (reminder?.ipc_completed_date ?? '')) || (kind === 'flight_condition' && condition !== (reminder?.condition ?? '')) || (flightReview && (lastDate !== (reminder?.last_qualifying_date ?? '') || completionType !== (reminder?.completion_type ?? ''))) || (expiration && title !== (reminder?.title ?? '')) || kind !== initialKind ||
+    (ipc && (ipcDate !== (reminder?.ipc_completed_date ?? '') || ipcCategory !== (reminder?.ipc_category ?? ''))) || (kind === 'flight_condition' && condition !== (reminder?.condition ?? '')) || (flightReview && (lastDate !== (reminder?.last_qualifying_date ?? '') || completionType !== (reminder?.completion_type ?? ''))) || (expiration && title !== (reminder?.title ?? '')) || kind !== initialKind ||
     (expiration ? dueDate !== (reminder?.due_date ?? '') : targetHours !== (reminder?.target_hours ?? '')) ||
     (typeMilestone && aircraft !== (reminder?.aircraft ?? null)) ||
     (crewMilestone && crewPosition !== (reminder?.crew_position ?? '')) ||
@@ -123,6 +124,7 @@ export default function ReminderEditScreen({ navigation, route }) {
       kind,
       instructor_period_start: instructorRenewal ? instructorStart : null,
       ipc_completed_date: ipc ? ipcDate : null,
+      ipc_category: ipc ? ipcCategory : '',
       condition: kind === 'flight_condition' ? condition : '',
       due_date: expiration ? dueDate : null,
       last_qualifying_date: flightReview ? lastDate : null,
@@ -139,7 +141,9 @@ export default function ReminderEditScreen({ navigation, route }) {
       else await api.post(remindersUrl, values);
       try {
         if (reminder) await resetReminderPreferences(reminder.id);
-        if (ipc || reminder?.kind === 'ipc') await resetReminderPreferences('instrument-currency');
+        if (ipc || reminder?.kind === 'ipc') {
+          for (const id of ['instrument-currency', 'instrument-currency-A', 'instrument-currency-R']) await resetReminderPreferences(id);
+        }
       } catch { Alert.alert('Reminder saved', 'Could not reset its alert preferences. Use Show Now in Manage Reminders.'); }
       saved.current = true;
       navigation.goBack();
@@ -181,7 +185,7 @@ export default function ReminderEditScreen({ navigation, route }) {
 
   return <FormKeyboardAvoidingView style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollableFormCard footer={<PrimaryActionButton title={saving ? 'Saving…' : 'Save'} onPress={save}
-      disabled={saving || (kind === 'flight_condition' && !condition) || (instructorRenewal ? !instructorStart : ipc ? !ipcDate : flightReview ? !lastDate || !completionType : expiration ? !title.trim() || !dueDate : !targetHours.trim()) ||
+      disabled={saving || (kind === 'flight_condition' && !condition) || (instructorRenewal ? !instructorStart : ipc ? !ipcDate || !ipcCategory : flightReview ? !lastDate || !completionType : expiration ? !title.trim() || !dueDate : !targetHours.trim()) ||
         (typeMilestone && (!selectedAircraft || aircraftLoadFailed)) || (crewMilestone && !crewPosition) ||
         (companyMilestone && (!company.trim() || !startDate || invalidPeriod))} />}>
       <Text weight="600" style={styles.heading}>{regulatory ? 'Reminder Type' : 'Milestone Type'}</Text>
@@ -212,6 +216,14 @@ export default function ReminderEditScreen({ navigation, route }) {
         {dateInput('Recent Experience Period Start Date', instructorStart, setInstructorStart)}
         <Text color={colors.muted}>Use the start month shown on your recent-experience record, including the retained month after early renewal. Review scheduled at month-end, 24 months later.</Text>
       </> : ipc ? <>
+        <Text weight="600" style={styles.heading}>Aircraft Category</Text>
+        {[['A', 'Airplane'], ['R', 'Helicopter']].map(([key, label]) => <Pressable key={key}
+          accessibilityRole="radio" accessibilityState={{ checked: ipcCategory === key, disabled: saving }} disabled={saving}
+          style={[styles.choice, { borderColor: ipcCategory === key ? colors.primary : colors.border,
+            backgroundColor: ipcCategory === key ? colors.selected : colors.surface }]}
+          onPress={() => setIpcCategory(key)}>
+          <Text>{label}</Text>{ipcCategory === key && <Text color={colors.primary} accessible={false}>✓</Text>}
+        </Pressable>)}
         {dateInput('IPC Completion Date', ipcDate, setIpcDate)}
         <Text color={colors.muted}>Dates are based on your logged approaches, holding, and IPC entries. Update any missing records.</Text>
       </> : flightReview ? <>
