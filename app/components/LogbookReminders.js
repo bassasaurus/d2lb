@@ -87,7 +87,7 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
     try {
       if (reminder.severity === 'warning' && !isMilestone(reminder)) {
         await snoozes.dismissCaution(reminder, animateChange);
-        feedback({ message: reminderConfirmation('caution'), undo: () => snoozes.showNow(reminder, animateChange) });
+        feedback({ message: reminderConfirmation('caution'), durationMs: 3000, undo: () => snoozes.showNow(reminder, animateChange) });
       } else {
         const { data } = await api.post(`/api/mobile/reminders/${reminder.id}/dismiss/`, { key: reminder.key });
         if (revision.current === request) {
