@@ -14,7 +14,7 @@ export function ShowNowAction({ reminder, snoozes, style }) {
     catch { Alert.alert('Could not show reminder', 'Please try again.'); }
     finally { setSaving(false); }
   }
-  return <PlatformActionButton title="Show Now" variant="text" style={style} disabled={saving || !snoozes.ready}
+  return <PlatformActionButton title="Show Now" variant="text" style={[{ paddingLeft: 0, justifyContent: 'flex-start' }, style]} disabled={saving || !snoozes.ready}
     accessibilityLabel={`Show ${reminder.title || 'reminder'} now`} onPress={showNow} />;
 }
 
