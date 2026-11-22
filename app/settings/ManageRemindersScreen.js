@@ -1,3 +1,4 @@
+import AnimatedRemoval from '../components/AnimatedRemoval';
 import { resetReminderPreferences, reminderCache } from './reminderStorage';
 import { flightScope } from '../storage/flights';
 import useReminderData from './useReminderData';
@@ -29,7 +30,8 @@ export default function ManageRemindersScreen({ navigation, route }) {
   const alertState = useReminderData('alerts');
   const alerts = alertState.data || {};
   const activeGroup = route.params?.group === 'milestones' ? 'milestones' : 'regulatory';
-  const reminders = manageState.data?.reminders || [];
+  const [pendingRemoval, setPendingRemoval] = useState(null);
+  const reminders = pendingRemoval?.rows || manageState.data?.reminders || [];
   const loading = manageState.loading && !manageState.data;
   const loadFailed = manageState.offline && !manageState.data;
   const [removing, setRemoving] = useState(false);
@@ -43,19 +45,27 @@ export default function ManageRemindersScreen({ navigation, route }) {
         if (removalInProgress.current) return;
         removalInProgress.current = true;
         setRemoving(true);
+        let animating = false;
         try {
           await api.delete(`${remindersUrl}${reminder.id}/`);
+          const pending = { id: reminder.id, rows: reminders, ready: false };
+          setPendingRemoval(pending);
           await manageState.replace({ reminders: reminders.filter(item => item.id !== reminder.id) });
+          animating = true;
+          setPendingRemoval({ ...pending, ready: true });
           alertState.refresh();
         } catch (error) {
+          setPendingRemoval(null);
           if (error.response?.status === 404) {
             manageState.refresh();
           } else {
             Alert.alert('Could not remove reminder', 'Check your connection and try again.');
           }
         } finally {
-          removalInProgress.current = false;
-          setRemoving(false);
+          if (!animating) {
+            removalInProgress.current = false;
+            setRemoving(false);
+          }
         }
       } },
     ]);
@@ -99,7 +109,10 @@ export default function ManageRemindersScreen({ navigation, route }) {
         <SnoozeStatus reminder={alerts.instrument_alert} snoozes={snoozes} />
       </Card>}
       {ready && !choosingKind && activeGroup === 'milestones' && reminderGroups(reminders)[1].rows.length === 0 && <Card><Text color={colors.muted}>No milestones yet.</Text></Card>}
-      {!choosingKind && reminderGroups(cards).filter(group => group.key === activeGroup).map(group => <ReminderSection showAll key={group.key} group={group} renderRow={reminder => <ReminderBanner compact severity={reminder.severity} key={reminder.id}>
+      {!choosingKind && reminderGroups(cards).filter(group => group.key === activeGroup).map(group => <ReminderSection showAll key={group.key} group={group} renderRow={reminder => <AnimatedRemoval key={reminder.id}
+        removing={pendingRemoval?.id === reminder.id && pendingRemoval.ready}
+        onRemoved={() => { setPendingRemoval(null); removalInProgress.current = false; setRemoving(false); }}>
+        <ReminderBanner compact severity={reminder.severity}>
         {['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) && <Text color={reminderTone(reminder.severity, isDark, colors).text} weight="600">{reminder.title}</Text>}
         <Text color={reminderTone(reminder.severity, isDark, colors).text}>{reminder.status_message || (['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? `${reminder.kind === 'ipc' ? 'Review IFR by' : 'Review by'} ${reminderDateLabel(reminder.due_date)}`
           : reminder.progress_label ?? reminder.goal_label ?? `${reminder.target_hours} total flight hours`)}</Text>
@@ -124,7 +137,7 @@ export default function ManageRemindersScreen({ navigation, route }) {
             accessibilityLabel={`Remove ${['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? reminder.title : reminder.progress_label ?? reminder.goal_label ?? reminder.title}`}
             onPress={() => remove(reminder)} />
         </View>
-      </ReminderBanner>} />)}
+      </ReminderBanner></AnimatedRemoval>} />)}
       {ready && choosingKind && reminderKinds.filter(([kind]) => ['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(kind) === (choosingKind === 'regulatory')).map(([kind, label]) =>
         <Pressable key={kind} accessibilityRole="button" onPress={() => {
           setChoosingKind(false);
