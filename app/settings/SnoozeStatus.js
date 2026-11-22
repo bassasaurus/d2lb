@@ -24,7 +24,7 @@ export default function SnoozeStatus({ reminder, snoozes, showAction = true }) {
   const dismissed = snoozes.dismissed(reminder);
   if (!until && !dismissed) return null;
   return <View style={{ paddingTop: 2, alignItems: 'flex-start' }}>
-    <Text color={colors.muted}>{dismissed ? 'Dismissed until this reminder turns red' : `Snoozed until ${new Date(until).toLocaleString(undefined, {
+    <Text color={colors.muted}>{dismissed ? (reminder.kind === 'ipc' ? 'Dismissed' : 'Dismissed until this reminder turns red') : `Snoozed until ${new Date(until).toLocaleString(undefined, {
       month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
     })}`}</Text>
     {showAction && <ShowNowAction reminder={reminder} snoozes={snoozes} />}

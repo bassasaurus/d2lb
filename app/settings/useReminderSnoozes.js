@@ -5,7 +5,7 @@ import { updateReminderPreferences } from './reminderStorage';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { flightScope } from '../storage/flights';
-import { cautionDismissalKey, cautionDismissed, snoozeKey } from './reminderPresentation.mjs';
+import { cautionDismissalKey, cautionDismissed, ifrDismissalKey, ifrDismissed, snoozeKey } from './reminderPresentation.mjs';
 import { activeSnooze, parseSnoozes, withoutSnooze } from './reminderSnoozes.mjs';
 
 export default function useReminderSnoozes() {
@@ -64,13 +64,15 @@ export default function useReminderSnoozes() {
   }
   return {
     saved, now, ready: !!storageKey,
-    dismissed: row => row ? cautionDismissed(row, saved) : false,
+    dismissed: row => row ? ifrDismissed(row, saved) || cautionDismissed(row, saved) : false,
+    dismissIFR: (row, beforeChange) => persist(previous => ({ ...previous, [ifrDismissalKey(row)]: true }), beforeChange),
     dismissCaution: (row, beforeChange) => persist(previous => ({ ...previous, [cautionDismissalKey(row)]: true }), beforeChange),
     until: row => row ? activeSnooze(row, saved, now) : null,
     snooze: (row, days, beforeChange) => persist(previous => ({ ...previous, [snoozeKey(row)]: Date.now() + days * 86400000 }), beforeChange),
     showNow: (row, beforeChange) => persist(previous => {
       const next = withoutSnooze(row, previous);
       delete next[cautionDismissalKey(row)];
+      if (row.kind === 'ipc') delete next[ifrDismissalKey(row)];
       return next;
     }, beforeChange),
   };
