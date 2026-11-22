@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.13.0](https://github.com/bassasaurus/d2lb/compare/v0.12.3...v0.13.0) (2026-11-22)
+
+
+### Features
+
+* improve reminder management and offline alerts ([#114](https://github.com/bassasaurus/d2lb/issues/114)) ([5af26c8](https://github.com/bassasaurus/d2lb/commit/5af26c8c5571ca13977f45c1d62daef79f317e57))
+
 ## [0.12.3](https://github.com/bassasaurus/d2lb/compare/v0.12.2...v0.12.3) (2026-11-21)
 
 
