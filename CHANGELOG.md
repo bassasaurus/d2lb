@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.2](https://github.com/bassasaurus/d2lb/compare/v0.14.1...v0.14.2) (2026-11-22)
+
+
+### Bug Fixes
+
+* show category-specific IFR recency and reminders ([#120](https://github.com/bassasaurus/d2lb/issues/120)) ([dfc3de2](https://github.com/bassasaurus/d2lb/commit/dfc3de2c1061b68444a20603240d3fd4c1a3d212))
+
 ## [0.14.1](https://github.com/bassasaurus/d2lb/compare/v0.14.0...v0.14.1) (2026-11-22)
 
 
