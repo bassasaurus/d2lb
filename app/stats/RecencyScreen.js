@@ -122,12 +122,18 @@ export default function RecencyScreen() {
           sections={[
             { id: 'vfr', title: 'VFR', visible: snapshot.categories.length > 0,
               render: handle => <LandingSection title="VFR" rows={snapshot.categories} handle={handle} /> },
-            { id: 'ifr', title: 'IFR', render: handle => <RecencySection title="IFR" handle={handle}>
+            { id: 'ifr', title: 'IFR', visible: snapshot.instrument.applicable !== false, render: handle => <RecencySection title="IFR" handle={handle}>
         <View style={{ paddingVertical: 8 }}>
+          {!!snapshot.instrument.ipc_completed_date && <Text>
+            Last IPC: {snapshot.instrument.ipc_completed_date}{'\n'}Review IFR by {snapshot.instrument.review_date || '—'}
+          </Text>}
+          {!!snapshot.instrument.status_message && <Text color={snapshot.instrument.current ? colors.success : colors.danger}>{snapshot.instrument.status_message}</Text>}
+          {!!snapshot.instrument.holding_warning && <Text color={colors.danger}>{snapshot.instrument.holding_warning}</Text>}
+          {!!snapshot.instrument.next_requirement?.message && <Text>{snapshot.instrument.next_requirement.message}</Text>}
           <Status label="Approaches" value={snapshot.instrument.approaches}
             message={snapshot.instrument.approaches.current
-              ? `${snapshot.instrument.approaches.count}/6 - Current until ${snapshot.instrument.approaches.until || '—'}`
-              : `${snapshot.instrument.approaches.count}/6 - ${snapshot.instrument.approaches.still_needed} Still needed${snapshot.instrument.approaches.until ? ` by ${snapshot.instrument.approaches.until}` : ''}`} />
+              ? `${snapshot.instrument.approaches.count}/6 - Logged window through ${snapshot.instrument.approaches.until || '—'}`
+              : `${snapshot.instrument.approaches.count}/6 - Log ${snapshot.instrument.approaches.still_needed} more`} />
           <Status label="Holding" value={snapshot.instrument.holding}
             message={snapshot.instrument.holding.current
               ? `${snapshot.instrument.holding.count}/1 - Last hold on ${snapshot.instrument.holding.last_date || '—'}`

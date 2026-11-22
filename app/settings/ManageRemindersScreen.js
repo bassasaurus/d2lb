@@ -1,6 +1,16 @@
-import React, { useCallback, useRef, useState } from 'react';
+import { resetReminderPreferences, reminderCache } from './reminderStorage';
+import { flightScope } from '../storage/flights';
+import useReminderData from './useReminderData';
+import ReminderFreshness from './ReminderFreshness';
+import useReminderSnoozes from './useReminderSnoozes';
+import SnoozeStatus, { ShowNowAction } from './SnoozeStatus';
+import ReminderSection from '../components/ReminderSection';
+import useProfile from '../profile/useProfile';
+import ReminderBanner from '../components/ReminderBanner';
+import { orderedReminders, reminderTone, reminderGroups } from './reminderPresentation.mjs';
+import MedicalCertificateCard from './MedicalCertificateCard';
+import React, { useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../api/axiosConfig';
 import Text from '../components/AppText';
@@ -11,32 +21,23 @@ import PrimaryActionButton from '../components/PrimaryActionButton';
 import { useAppTheme } from '../theme/ThemeProvider';
 import { reminderDateLabel, reminderKinds, remindersUrl } from './reminders';
 
-export default function ManageRemindersScreen({ navigation }) {
-  const { colors } = useAppTheme();
-  const [reminders, setReminders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [loadFailed, setLoadFailed] = useState(false);
-  const [retry, setRetry] = useState(0);
+export default function ManageRemindersScreen({ navigation, route }) {
+  const { colors, isDark } = useAppTheme();
+  const profileState = useProfile();
+  const snoozes = useReminderSnoozes();
+  const manageState = useReminderData('manage');
+  const alertState = useReminderData('alerts');
+  const alerts = alertState.data || {};
+  const activeGroup = route.params?.group === 'milestones' ? 'milestones' : 'regulatory';
+  const reminders = manageState.data?.reminders || [];
+  const loading = manageState.loading && !manageState.data;
+  const loadFailed = manageState.offline && !manageState.data;
   const [removing, setRemoving] = useState(false);
-  const [choosingKind, setChoosingKind] = useState(false);
+  const [choosingKind, setChoosingKind] = useState(null);
   const removalInProgress = useRef(false);
 
-  useFocusEffect(useCallback(() => {
-    let active = true;
-    setLoading(true);
-    setLoadFailed(false);
-    api.get(remindersUrl).then(({ data }) => {
-      if (active) setReminders(data.reminders);
-    }).catch(() => {
-      if (active) setLoadFailed(true);
-    }).finally(() => {
-      if (active) setLoading(false);
-    });
-    return () => { active = false; };
-  }, [retry]));
-
   function remove(reminder) {
-    Alert.alert('Remove reminder?', reminder.kind === 'expiration' ? reminder.title : reminder.progress_label ?? reminder.goal_label, [
+    Alert.alert('Remove reminder?', ['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? reminder.title : reminder.progress_label ?? reminder.goal_label, [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Remove', style: 'destructive', onPress: async () => {
         if (removalInProgress.current) return;
@@ -44,10 +45,11 @@ export default function ManageRemindersScreen({ navigation }) {
         setRemoving(true);
         try {
           await api.delete(`${remindersUrl}${reminder.id}/`);
-          setReminders(previous => previous.filter(item => item.id !== reminder.id));
+          await manageState.replace({ reminders: reminders.filter(item => item.id !== reminder.id) });
+          alertState.refresh();
         } catch (error) {
           if (error.response?.status === 404) {
-            setRetry(previous => previous + 1);
+            manageState.refresh();
           } else {
             Alert.alert('Could not remove reminder', 'Check your connection and try again.');
           }
@@ -64,8 +66,14 @@ export default function ManageRemindersScreen({ navigation }) {
     removalInProgress.current = true;
     setRemoving(true);
     try {
+      const scope = await flightScope();
       const { data } = await api.post(`${remindersUrl}${reminder.id}/restore/`);
-      setReminders(previous => previous.map(item => item.id === reminder.id ? data : item));
+      await resetReminderPreferences(reminder.id);
+      const { data: freshAlerts } = await api.get('/api/mobile/reminders/');
+      if (await flightScope() !== scope) return;
+      await reminderCache.write(scope, 'alerts', freshAlerts);
+      await manageState.replace({ reminders: reminders.map(item => item.id === reminder.id ? data : item) });
+      alertState.refresh();
     } catch {
       Alert.alert('Could not restore reminder', 'Check your connection and try again.');
     } finally {
@@ -75,44 +83,62 @@ export default function ManageRemindersScreen({ navigation }) {
   }
 
   const ready = !loading && !loadFailed;
+  const cards = orderedReminders(ready ? reminders : []);
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollView contentContainerStyle={styles.content}>
+      <ReminderFreshness state={manageState.offline || manageState.cached ? manageState : alertState} />
+      {!choosingKind && activeGroup === 'regulatory' && <MedicalCertificateCard navigation={navigation} profileState={profileState} snoozes={snoozes} medicalAlert={alerts.medical_alert} />}
       {loading && <ActivityIndicator color={colors.primary} accessibilityLabel="Loading reminders" />}
       {loadFailed && <Card>
         <Text>Couldn’t load reminders. Check your connection and try again.</Text>
-        <PlatformActionButton title="Try Again" variant="text" onPress={() => setRetry(previous => previous + 1)} />
+        <PlatformActionButton title="Try Again" variant="text" onPress={manageState.refresh} />
       </Card>}
-      {ready && !choosingKind && reminders.length === 0 && <Card><Text color={colors.muted}>No saved reminders yet.</Text></Card>}
-      {ready && !choosingKind && reminders.map(reminder => <Card compact key={reminder.id}>
-        {reminder.kind === 'expiration' && <Text weight="600">{reminder.title}</Text>}
-        <Text color={colors.muted}>{reminder.kind === 'expiration' ? `Due ${reminderDateLabel(reminder.due_date)}`
-          : reminder.progress_label ?? reminder.goal_label ?? `${reminder.target_hours} total flight hours`}</Text>
+      {!choosingKind && activeGroup === 'regulatory' && (snoozes.until(alerts.instrument_alert) || snoozes.dismissed(alerts.instrument_alert)) && <Card>
+        <Text weight="600">IFR</Text>
+        <Text>{alerts.instrument_alert.message}</Text>
+        <SnoozeStatus reminder={alerts.instrument_alert} snoozes={snoozes} />
+      </Card>}
+      {ready && !choosingKind && activeGroup === 'milestones' && reminderGroups(reminders)[1].rows.length === 0 && <Card><Text color={colors.muted}>No milestones yet.</Text></Card>}
+      {!choosingKind && reminderGroups(cards).filter(group => group.key === activeGroup).map(group => <ReminderSection showAll key={group.key} group={group} renderRow={reminder => <ReminderBanner compact severity={reminder.severity} key={reminder.id}>
+        {['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) && <Text color={reminderTone(reminder.severity, isDark, colors).text} weight="600">{reminder.title}</Text>}
+        <Text color={reminderTone(reminder.severity, isDark, colors).text}>{reminder.status_message || (['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? `${reminder.kind === 'ipc' ? 'Review IFR by' : 'Review by'} ${reminderDateLabel(reminder.due_date)}`
+          : reminder.progress_label ?? reminder.goal_label ?? `${reminder.target_hours} total flight hours`)}</Text>
+        {!!reminder.holding_warning && <Text color={colors.danger}>{reminder.holding_warning}</Text>}
+        {reminder.kind === 'flight_review' && <Text color={colors.muted}>
+          {reminderDateLabel(reminder.last_qualifying_date)} — {reminder.completion_type_label}
+        </Text>}
         {reminder.kind === 'company_time' && reminder.company_start_date && <Text color={colors.muted}>
           {reminderDateLabel(reminder.company_start_date)} – {reminder.company_end_date ? reminderDateLabel(reminder.company_end_date) : 'Present'}
         </Text>}
+        <SnoozeStatus reminder={alerts.reminders?.find(alert => alert.id === reminder.id)} snoozes={snoozes} showAction={false} />
         <View style={styles.actions}>
+          <ShowNowAction reminder={alerts.reminders?.find(alert => alert.id === reminder.id)} snoozes={snoozes}
+            style={{ marginRight: 'auto', paddingLeft: 0 }} />
           {reminder.dismissed === true && <View style={{ marginRight: 'auto' }}><PlatformActionButton title="Restore" variant="text" disabled={removing}
-            accessibilityLabel={`Restore ${reminder.kind === 'expiration' ? reminder.title : reminder.progress_label ?? reminder.goal_label}`}
+            accessibilityLabel={`Restore ${['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? reminder.title : reminder.progress_label ?? reminder.goal_label}`}
             onPress={() => restore(reminder)} /></View>}
           <PlatformActionButton title="Edit" variant="text" disabled={removing}
-            accessibilityLabel={`Edit ${reminder.kind === 'expiration' ? reminder.title : reminder.progress_label ?? reminder.goal_label ?? reminder.title}`}
+            accessibilityLabel={`Edit ${['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? reminder.title : reminder.progress_label ?? reminder.goal_label ?? reminder.title}`}
             onPress={() => navigation.navigate('EditReminder', { reminder })} />
           <PlatformActionButton title="Remove" variant="text" destructive disabled={removing}
-            accessibilityLabel={`Remove ${reminder.kind === 'expiration' ? reminder.title : reminder.progress_label ?? reminder.goal_label ?? reminder.title}`}
+            accessibilityLabel={`Remove ${['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? reminder.title : reminder.progress_label ?? reminder.goal_label ?? reminder.title}`}
             onPress={() => remove(reminder)} />
         </View>
-      </Card>)}
-      {ready && choosingKind && reminderKinds.map(([kind, label]) =>
+      </ReminderBanner>} />)}
+      {ready && choosingKind && reminderKinds.filter(([kind]) => ['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(kind) === (choosingKind === 'regulatory')).map(([kind, label]) =>
         <Pressable key={kind} accessibilityRole="button" onPress={() => {
           setChoosingKind(false);
-          navigation.navigate('EditReminder', { kind });
+          const existing = ['flight_review', 'instructor_renewal', 'ipc'].includes(kind) ? reminders.find(item => item.kind === kind) : null;
+          navigation.navigate('EditReminder', existing ? { reminder: existing } : { kind });
         }}>
           <Card style={styles.kindCard}><Text weight="600">{label}</Text></Card>
         </Pressable>)}
     </ScrollView>
     {ready && <View style={[styles.footer, { borderColor: colors.border }]}>
-      <PrimaryActionButton title={choosingKind ? 'Cancel' : 'Add Reminder'} disabled={removing}
-        onPress={() => setChoosingKind(previous => !previous)} />
+{choosingKind ? <PrimaryActionButton title="Cancel" onPress={() => setChoosingKind(null)} /> : <>
+        <PrimaryActionButton title={activeGroup === 'regulatory' ? 'Add Reminder' : 'Add Milestone'}
+          disabled={removing} onPress={() => setChoosingKind(activeGroup)} />
+      </>}
     </View>}
   </SafeAreaView>;
 }
@@ -121,5 +147,5 @@ const styles = StyleSheet.create({
   content: { padding: 12, gap: 8 },
   kindCard: { minHeight: 48, justifyContent: 'center' },
   actions: { flexDirection: 'row', justifyContent: 'flex-end', flexWrap: 'wrap' },
-  footer: { paddingHorizontal: 12, paddingVertical: 8, borderTopWidth: 1 },
+  footer: { gap: 8, paddingHorizontal: 12, paddingVertical: 8, borderTopWidth: 1 },
 });
