@@ -1,3 +1,4 @@
+import { formatDate } from '../formatting/dates.mjs';
 export const remindersUrl = '/api/mobile/reminders/manage/';
 
 export const reminderKinds = [
@@ -19,11 +20,7 @@ export const crewPositions = [
   ['dual', 'Dual'],
 ];
 
-export function reminderDateLabel(value) {
-  return new Date(`${value}T12:00:00`).toLocaleDateString(undefined, {
-    year: 'numeric', month: 'short', day: 'numeric',
-  });
-}
+export const reminderDateLabel = formatDate;
 
 export const flightReviewTypes = [
   ['flight_review', 'Flight Review'],
@@ -42,3 +39,9 @@ export const flightConditions = [
   ['simulator', 'Sim'],
   ['cross_country', 'Cross-country'],
 ];
+
+export const reminderTypeDescriptions = {
+  flight_review: 'Biennial Flight Review',
+  instructor_renewal: 'Flight Instructor Refresher Course',
+  ipc: 'Instrument Proficiency Check',
+};

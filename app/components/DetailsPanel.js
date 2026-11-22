@@ -11,21 +11,6 @@ function DetailsPanel({ route }) {
   const approaches = route.params.item.approaches;
   return (
     <View>
-      <View style={styles.rowContainer}>
-        <View style={styles.firstColumn}>
-          <AppText size={16} color={STYLES.black}>
-            {route.params.item.route}
-          </AppText>
-        </View>
-        <View style={styles.thirdColumn}>
-          <AppText size={16} color={STYLES.black}>
-            {route.params.item.pilot_in_command ? "PIC" : ""}
-            {route.params.item.second_in_command ? "SIC" : ""}
-            {route.params.item.solo ? "Solo" : ""}
-            {route.params.item.dual ? "Dual" : ""}
-          </AppText>
-        </View>
-      </View>
       {/* third row */}
       <View style={styles.rowContainer}>
         <View style={styles.firstColumn}>

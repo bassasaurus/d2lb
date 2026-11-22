@@ -14,6 +14,14 @@ export function createReminderCache(storage, onChange = () => {}) {
       onChange({ type: 'data', scope, kind, snapshot: saved, source });
       return saved;
     },
+    async remove(scope, id) {
+      for (const kind of ['alerts', 'manage']) {
+        const saved = await this.read(scope, kind);
+        if (saved) await this.write(scope, kind, {
+          ...saved.data, reminders: saved.data.reminders.filter(row => row.id !== id),
+        }, saved.updatedAt);
+      }
+    },
     async invalidate(scope) {
       for (const kind of ['alerts', 'manage']) {
         try {

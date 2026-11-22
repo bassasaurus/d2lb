@@ -1,3 +1,5 @@
+import MedicalCertificateCard from '../settings/MedicalCertificateCard';
+import { medicalVisible } from '../settings/medicalPreferences.mjs';
 import { reminderConfirmation, reminderDestination } from '../settings/reminderActions.mjs';
 import { reminderCache } from '../settings/reminderStorage';
 import { flightScope } from '../storage/flights';
@@ -23,9 +25,12 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
   const [snoozing, setSnoozing] = useState(null);
   const snoozes = useReminderSnoozes();
   const reminderState = useReminderData('alerts', refreshVersion);
-  const reminders = reminderState.data?.reminders || [];
-  const instrumentAlerts = reminderState.data?.instrument_alerts ?? (reminderState.data?.instrument_alert ? [reminderState.data.instrument_alert] : []);
-  const medicalAlert = reminderState.data?.medical_alert;
+  const reminders = reminderState.data?.regulatory_alerts
+    ? [...reminderState.data.regulatory_alerts, ...(reminderState.data.reminders || []).filter(isMilestone)]
+    : reminderState.data?.reminders || [];
+  const instrumentAlerts = reminderState.data?.regulatory_alerts ? [] : reminderState.data?.instrument_alerts ?? (reminderState.data?.instrument_alert ? [reminderState.data.instrument_alert] : []);
+  const medicalProfile = reminderState.data?.medical_card;
+  const medicalAlert = medicalProfile ?? reminderState.data?.medical_alert;
   const [dismissing, setDismissing] = useState(false);
   const [openingMedical, setOpeningMedical] = useState(false);
   const revision = useRef(0);
@@ -85,9 +90,9 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
     setDismissing(true);
     const request = ++revision.current;
     try {
-      if (reminder.kind === 'ipc') {
+      if (!reminder.medical && !isMilestone(reminder)) {
         await snoozes.dismissIFR(reminder, animateChange);
-        feedback({ message: 'IFR reminder dismissed.', undo: () => snoozes.showNow(reminder, animateChange) });
+        feedback({ message: reminder.severity === 'warning' ? 'Hidden until red.' : 'Hidden for 30 days.', undo: () => snoozes.showNow(reminder, animateChange) });
       } else if (reminder.severity === 'warning' && !isMilestone(reminder)) {
         await snoozes.dismissCaution(reminder, animateChange);
         feedback({ message: reminderConfirmation('caution'), durationMs: 3000, undo: () => snoozes.showNow(reminder, animateChange) });
@@ -120,9 +125,8 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
 
   if (!medicalAlert && !instrumentAlerts.length && reminders.length === 0) return reminderState.data ? null : <ReminderFreshness state={reminderState} />;
 
-  const rows = logbookAlerts([...(medicalAlert ? [{ ...medicalAlert, medical: true }] : []),
-    ...instrumentAlerts, ...reminders], snoozes.saved, snoozes.now);
-  if (!rows.length) return null;
+  const rows = logbookAlerts([...instrumentAlerts, ...reminders], {}, snoozes.now).filter(row => isMilestone(row) || !snoozes.hidden(row));
+  const medicalOpen = snoozes.medical.ready && medicalVisible(medicalAlert, snoozes.medical.preferenceFor(medicalAlert), snoozes.now);
   const Container = scrollable ? ScrollView : View;
   return <Container style={style}>
     <ReminderFreshness state={reminderState} />
@@ -130,12 +134,22 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
       <View style={styles.modalBackdrop}>
         <View style={[styles.snoozeCard, { backgroundColor: colors.surface }]}>
           <AppText weight="600">Snooze for</AppText>
-          {[1, 3, 7, 14].map(days => <PlatformActionButton key={days} title={`${days} ${days === 1 ? 'day' : 'days'}`}
+          {(snoozing?.medical ? [1, 3, 7, 14, 30] : [1, 3, 7, 14]).map(days => <PlatformActionButton key={days} title={`${days} ${days === 1 ? 'day' : 'days'}`}
             variant="text" onPress={() => snooze(days)} />)}
           <PlatformActionButton title="Cancel" variant="text" onPress={() => setSnoozing(null)} />
         </View>
       </View>
     </Modal>
+    {medicalAlert && <>
+      {medicalOpen && <>
+        <MedicalCertificateCard navigation={navigation} profileState={{ profile: medicalProfile, refreshing: reminderState.loading, refresh: reminderState.refresh }}
+          medicalAlert={medicalAlert} snoozes={snoozes}
+          onSnooze={() => setSnoozing({ ...medicalAlert, medical: true })}
+          onStageSnooze={() => snoozes.snoozeMedicalStage({ ...medicalAlert, medical: true }).catch(() => Alert.alert('Could not snooze medical certificate', 'Please try again.'))}
+          onDismiss={() => dismiss({ ...medicalAlert, medical: true })} />
+      </>}
+    </>}
+    {!!rows.length && <>
     <Pressable accessibilityRole="button" accessibilityLabel={`Reminders and milestones, ${rows.length} items`}
       accessibilityHint="Show or hide caution reminders, red reminders and completed milestones." accessibilityState={{ expanded }}
       onPress={() => setExpanded(value => !value)} style={styles.toggle}>
@@ -144,11 +158,11 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
     </Pressable>
     {reminderGroups(expanded ? rows : []).map(group =>
       <ReminderSection showAll key={group.key} group={group} renderRow={reminder => {
-      const plain = reminder.medical && reminder.banner === false;
-      const color = reminderTone(reminder.severity, isDark, colors, plain).text;
+      const plain = reminder.banner === false;
+      const color = reminderTone(reminder.severity, isDark, colors, plain, reminder.milestone_state).text;
       const showTitle = !reminder.kind || ['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind);
       return (
-        <ReminderBanner key={reminder.id ?? 'medical'} severity={reminder.severity} plain={plain} style={styles.row}>
+        <ReminderBanner key={reminder.id ?? 'medical'} severity={reminder.severity} milestoneState={reminder.milestone_state} plain={plain} style={styles.row}>
           <Pressable style={styles.message} accessibilityRole="button" disabled={openingRecord}
             accessibilityLabel={`Open ${showTitle ? reminder.title : reminder.progress_label || 'milestone'}`}
             onPress={() => openReminder(reminder)}>
@@ -161,15 +175,16 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
           </Pressable>
           {reminder.medical && <PlatformActionButton title="Update" variant="text" style={styles.dismiss}
             accessibilityLabel="Update medical certificate" disabled={openingMedical} onPress={updateMedical} />}
-          {reminder.severity !== 'warning' && <PlatformActionButton title="Snooze" variant="text" style={styles.dismiss}
+          {!isMilestone(reminder) && <PlatformActionButton title="Snooze" variant="text" style={styles.dismiss}
             accessibilityLabel={`Snooze ${reminder.title}`} disabled={!snoozes.ready} onPress={() => setSnoozing(reminder)} />}
-          {(reminder.kind === 'ipc' || (isMilestone(reminder) && reminder.key) || reminder.severity === 'warning') && <PlatformActionButton title="Dismiss" variant="text" style={styles.dismiss}
+          {(!isMilestone(reminder) || reminder.key) && <PlatformActionButton title="Dismiss" variant="text" style={styles.dismiss}
             accessibilityLabel={`Dismiss ${showTitle ? reminder.title : reminder.message}`}
             disabled={dismissing || !snoozes.ready} onPress={() => dismiss(reminder)} />}
-          {reminder.severity === 'warning' && reminder.kind !== 'ipc' && <AppText color={color} style={{ width: '100%', fontSize: 12 }}>Dismiss to hide until this reminder turns red.</AppText>}
+          {reminder.severity === 'warning' && <AppText color={color} style={{ width: '100%', fontSize: 12 }}>Dismiss to hide until this reminder turns red.</AppText>}
         </ReminderBanner>
       );
     }} />)}
+    </>}
   </Container>;
 }
 

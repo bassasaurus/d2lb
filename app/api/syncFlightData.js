@@ -1,3 +1,5 @@
+import { regulatoryPreferences } from '../settings/regulatoryPreferenceStorage';
+import { medicalPreferences } from '../settings/medicalPreferenceStorage';
 import { monitoring, observeSyncEvent } from '../monitoring';
 import { recordSyncFeedback } from './flightSyncFeedback.mjs';
 import { syncTailnumbers } from './syncTailnumbers';
@@ -26,6 +28,9 @@ async function synchronize(partition, retry) {
   await store.moveScope(aircraftScope(previousScope), aircraftScope(scope));
   await store.moveScope(tailnumberScope(previousScope), tailnumberScope(scope));
   await AsyncStorage.setItem(`flight-scope:${partition}`, scope);
+  // Reminder preferences are independent of flight uploads; keep them queued if unavailable.
+  medicalPreferences.sync(scope).catch(() => {});
+  regulatoryPreferences.sync(scope).catch(() => {});
   const scopes = [scope, aircraftScope(scope), tailnumberScope(scope)];
   if (retry) await store.retryPendingOperations(scopes);
   await syncAircraft(scope, partition, capabilities.aircraft_sync === true, capabilities.default_aircraft_sync === true);

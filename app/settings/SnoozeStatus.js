@@ -1,3 +1,4 @@
+import { formatDate } from '../formatting/dates.mjs';
 import React, { useState } from 'react';
 import { Alert, View } from 'react-native';
 import Text from '../components/AppText';
@@ -6,7 +7,7 @@ import { useAppTheme } from '../theme/ThemeProvider';
 
 export function ShowNowAction({ reminder, snoozes, style }) {
   const [saving, setSaving] = useState(false);
-  if (!snoozes.until(reminder) && !snoozes.dismissed(reminder)) return null;
+  if (reminder?.medical || (!snoozes.until(reminder) && !snoozes.dismissed(reminder))) return null;
   async function showNow() {
     if (saving) return;
     setSaving(true);
@@ -14,8 +15,8 @@ export function ShowNowAction({ reminder, snoozes, style }) {
     catch { Alert.alert('Could not show reminder', 'Please try again.'); }
     finally { setSaving(false); }
   }
-  return <PlatformActionButton title="Show Now" variant="text" style={[{ paddingLeft: 0, justifyContent: 'flex-start' }, style]} disabled={saving || !snoozes.ready}
-    accessibilityLabel={`Show ${reminder.title || 'reminder'} now`} onPress={showNow} />;
+  return <PlatformActionButton title="Restore" variant="text" style={[{ paddingLeft: 0, justifyContent: 'flex-start' }, style]} disabled={saving || !snoozes.ready}
+    accessibilityLabel={`Restore ${reminder.title || 'reminder'}`} onPress={showNow} />;
 }
 
 export default function SnoozeStatus({ reminder, snoozes, showAction = true }) {
@@ -24,9 +25,7 @@ export default function SnoozeStatus({ reminder, snoozes, showAction = true }) {
   const dismissed = snoozes.dismissed(reminder);
   if (!until && !dismissed) return null;
   return <View style={{ paddingTop: 2, alignItems: 'flex-start' }}>
-    <Text color={colors.muted}>{dismissed ? (reminder.kind === 'ipc' ? 'Dismissed' : 'Dismissed until this reminder turns red') : `Snoozed until ${new Date(until).toLocaleString(undefined, {
-      month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
-    })}`}</Text>
+    <Text color={colors.muted}>{dismissed ? 'Hidden until red' : `Hidden until ${formatDate(new Date(until).toISOString().slice(0, 10))}`}</Text>
     {showAction && <ShowNowAction reminder={reminder} snoozes={snoozes} />}
   </View>;
 }

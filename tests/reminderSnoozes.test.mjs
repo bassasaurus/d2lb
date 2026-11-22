@@ -7,7 +7,6 @@ for (const row of [
   { medical: true, title: 'Medical Certificate', severity: 'danger', message: 'Review overdue' },
   { id: 'instrument-currency', kind: 'ipc', severity: 'danger', message: 'Review IFR' },
   { id: 12, kind: 'expiration', severity: 'danger', key: 'date:2026-11-01:expired' },
-  { id: 13, kind: 'flight_time', severity: 'success', key: 'hours:100.0' },
 ]) {
   test(`Show Now restores ${row.title || row.kind} and preserves other snoozes`, () => {
     const saved = { [snoozeKey(row)]: 5000, unrelated: 6000 };

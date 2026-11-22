@@ -1,3 +1,4 @@
+import { formatDate } from '../formatting/dates.mjs';
 import { flightFormAction } from '../drafts/flightFormAction.mjs';
 import { formFeedback } from '../forms/errorFeedback.mjs';
 import FormKeyboardAvoidingView from './FormKeyboardAvoidingView';
@@ -219,7 +220,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                   <View pointerEvents='none'>
                     <AppTextInput
                       isValid={errors.date ? false : true}
-                      value={values.date.toString()}
+                      value={formatDate(values.date, '')}
                       onChangeText={handleChange("date")}
                       placeholder='Date'
                       onBlur={handleBlur("date")}

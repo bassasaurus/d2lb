@@ -1,3 +1,4 @@
+import { formatDateTime } from '../formatting/dates.mjs';
 import React, { useCallback, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -70,7 +71,7 @@ export default function SyncSettings({ navigation }) {
     }
   }
 
-  const lastSync = status?.lastSync ? new Date(status.lastSync).toLocaleString() : 'Not recorded';
+  const lastSync = status?.lastSync ? formatDateTime(status.lastSync) : 'Not recorded';
   const issues = statusError ? [] : status?.issues || [];
   const reviewLabel = issues.length === 1 ? 'Review sync issue' : `Review ${issues.length} sync issues`;
   const syncStatus = statusError ? <Text color={colors.danger}>Couldn’t read sync status.</Text> : status ? <>

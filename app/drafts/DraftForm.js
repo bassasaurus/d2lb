@@ -1,3 +1,4 @@
+import { formatDateTime } from '../formatting/dates.mjs';
 import PlatformActionButton from '../components/PlatformActionButton';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, AppState, View } from 'react-native';
@@ -127,7 +128,7 @@ function DraftBoundary({ kind, recordKey, draftHandle, savedNavigation, onResume
     <UnsavedFormGuard savedNavigation={savedNavigation} draftHandle={draftHandle} />
     {state.loading ? <Text style={{ color: colors.muted, marginVertical: 8 }}>Checking for an unfinished draft…</Text>
       : pending || state.blocked ? <View style={{ padding: 12, marginVertical: 10, borderWidth: 1, borderColor: colors.border, borderRadius: 6, backgroundColor: colors.selected }}>
-        <Text style={{ fontWeight: '600' }}>{pending ? `Unfinished ${kind} saved · ${new Date(pending.updatedAt).toLocaleString()}` : 'Draft recovery unavailable'}</Text>
+        <Text style={{ fontWeight: '600' }}>{pending ? `Unfinished ${kind} saved · ${formatDateTime(pending.updatedAt)}` : 'Draft recovery unavailable'}</Text>
         {stale && <Text>This record changed since the draft was saved. Discard this older draft to edit the current record.</Text>}
         {state.error && <Text style={{ color: colors.danger }}>{state.error}</Text>}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>

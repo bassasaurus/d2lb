@@ -1,3 +1,4 @@
+import { formatDate } from '../formatting/dates.mjs';
 const flightFields = [
   ['date', 'Date'], ['aircraft_type', 'Aircraft'], ['registration', 'Registration'],
   ['route', 'Route'], ['duration', 'Duration'], ['pilot_in_command', 'PIC'],
@@ -16,6 +17,7 @@ const aircraftFields = [
 ];
 const tailnumberFields = [['registration', 'Registration'], ['aircraft', 'Aircraft'], ['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
 function format(value, key) {
+  if (key === 'date') return formatDate(value, '—');
   if (key === 'approaches') return (Array.isArray(value) ? value : [])
     .filter(row => row.approach_type && row.number !== '' && row.number != null)
     .map(row => `${row.approach_type} × ${row.number}`).join(', ') || 'None';
@@ -32,5 +34,5 @@ export function compareVersions(kind, local, server) {
 }
 export function recordTitle(kind, record) {
   if (record._default_preference) return `Default aircraft: ${record.aircraft_type || 'None'}`;
-  return kind === 'aircraft' ? record.aircraft_type : kind === 'tailnumber' ? record.registration : `${record.date || ''} ${record.route || 'Flight'}`.trim();
+  return kind === 'aircraft' ? record.aircraft_type : kind === 'tailnumber' ? record.registration : `${formatDate(record.date, '')} ${record.route || 'Flight'}`.trim();
 }

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { orderedReminders, reminderTone } from '../app/settings/reminderPresentation.mjs';
+import { orderedReminders, reminderTone, logbookAlerts, snoozeKey } from '../app/settings/reminderPresentation.mjs';
 
 test('urgent then approaching then current/reached then unreached milestones, without mutating records', () => {
   const rows = [{ id: 1, severity: 'neutral' }, { id: 2, severity: 'success' },
@@ -113,4 +113,33 @@ test('IFR dismissal persists across dates and severity changes without hiding ot
   delete restored[ifrDismissalKey(expired)];
   assert.deepEqual(logbookAlerts([expired], restored), [expired]);
   assert.equal(ifrDismissed({ id: 42, kind: 'ipc', ipc_category: 'A' }, saved), true);
+});
+
+
+test('medical is hidden when green, caution dismissal ends at red, and red can be snoozed', async () => {
+  const { logbookAlerts, cautionDismissalKey, snoozeKey } = await import('../app/settings/reminderPresentation.mjs');
+  const medical = { medical: true, title: 'Medical Certificate', message: 'Due by Nov 30, 2026.', severity: 'success' };
+  assert.deepEqual(logbookAlerts([medical]), []);
+  const warning = { ...medical, severity: 'warning' };
+  assert.deepEqual(logbookAlerts([warning]), [warning]);
+  const saved = { [cautionDismissalKey(warning)]: true };
+  assert.deepEqual(logbookAlerts([warning], saved), []);
+  const red = { ...medical, severity: 'danger' };
+  assert.deepEqual(logbookAlerts([red], saved), [red]);
+  const now = Date.UTC(2026, 10, 1);
+  const snoozed = { ...saved, [snoozeKey(red)]: now + 3 * 86400000 };
+  assert.deepEqual(logbookAlerts([red], snoozed, now), []);
+  assert.deepEqual(logbookAlerts([red], snoozed, now + 3 * 86400000), [red]);
+});
+
+
+test('milestones show approaching and completed, ignore legacy snoozes, and sort by stage then hours remaining', () => {
+  const completed = { id: 1, kind: 'flight_time', severity: 'success', milestone_state: 'completed', hours_remaining: '0', completion_percent: '100' };
+  const near = { id: 2, kind: 'company_time', severity: 'success', milestone_state: 'approaching', banner: false, hours_remaining: '2', completion_percent: '50' };
+  const far = { id: 3, kind: 'time_in_type', severity: 'success', milestone_state: 'approaching', banner: false, hours_remaining: '9', completion_percent: '99' };
+  assert.deepEqual(logbookAlerts([far, near, completed], { [snoozeKey(near)]: 9999 }, 1000).map(row => row.id), [1, 2, 3]);
+  const colors = { surface: '#000', text: '#fff' };
+  assert.equal(reminderTone('success', true, colors, true, 'approaching').background, colors.surface);
+  assert.equal(reminderTone('success', true, colors, false, 'completed').text, '#111111');
+  assert.equal(reminderTone('success', true, colors, false, 'completed').background, '#e5f4e9');
 });

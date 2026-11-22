@@ -104,7 +104,9 @@ function FlightDetailScreen({ route, navigation }) {
         {/* first row */}
 
         <FlightHeader date={route.params.item.date} type={route.params.item.aircraft_type}
-          reg={route.params.item.registration} dur={route.params.item.duration} />
+          reg={route.params.item.registration} dur={route.params.item.duration} route={route.params.item.route}
+          crew={[["pilot_in_command", "PIC"], ["second_in_command", "SIC"], ["solo", "Solo"], ["dual", "Dual"]]
+            .filter(([field]) => route.params.item[field]).map(([, label]) => label).join(' ')} />
         {/* second row */}
         <Separator />
         <DetailsPanel route={route}></DetailsPanel>
