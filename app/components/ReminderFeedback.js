@@ -15,7 +15,7 @@ export default function ReminderFeedback({ feedback, onClose }) {
     if (!feedback) return;
     opacity.setValue(1);
     const animation = Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true });
-    const timer = setTimeout(() => animation.start(({ finished }) => { if (finished) onClose(null); }), feedback.durationMs ?? 10000);
+    const timer = setTimeout(() => animation.start(({ finished }) => { if (finished) onClose(null); }), feedback.durationMs ?? 3000);
     return () => { clearTimeout(timer); animation.stop(); };
   }, [feedback, onClose, opacity]);
   if (!feedback) return null;
