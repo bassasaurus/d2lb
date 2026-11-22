@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.1](https://github.com/bassasaurus/d2lb/compare/v0.14.0...v0.14.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* align reminder actions and prevent Android clipping ([#118](https://github.com/bassasaurus/d2lb/issues/118)) ([bdc5814](https://github.com/bassasaurus/d2lb/commit/bdc58140684427c6170ff9c77708adcd9d85d1d5))
+
 ## [0.14.0](https://github.com/bassasaurus/d2lb/compare/v0.13.0...v0.14.0) (2026-11-22)
 
 
