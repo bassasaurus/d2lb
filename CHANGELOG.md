@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.3](https://github.com/bassasaurus/d2lb/compare/v0.14.2...v0.14.3) (2026-11-22)
+
+
+### Bug Fixes
+
+* allow persistent IFR reminder dismissal on mobile ([#122](https://github.com/bassasaurus/d2lb/issues/122)) ([9748087](https://github.com/bassasaurus/d2lb/commit/974808791023763b7010d39114b7822993a55e75))
+
 ## [0.14.2](https://github.com/bassasaurus/d2lb/compare/v0.14.1...v0.14.2) (2026-11-22)
 
 
