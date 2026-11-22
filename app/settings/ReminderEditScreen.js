@@ -13,7 +13,7 @@ import PlatformActionButton from '../components/PlatformActionButton';
 import PrimaryActionButton from '../components/PrimaryActionButton';
 import ScrollableFormCard from '../components/ScrollableFormCard';
 import { useAppTheme } from '../theme/ThemeProvider';
-import { crewPositions, flightConditions, flightReviewTypes, reminderDateLabel, reminderKinds, remindersUrl } from './reminders';
+import { crewPositions, flightConditions, flightReviewTypes, reminderDateLabel, reminderKinds, reminderTypeDescriptions, remindersUrl } from './reminders';
 
 function localDateValue(date) {
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -194,7 +194,7 @@ export default function ReminderEditScreen({ navigation, route }) {
         style={[styles.choice, { borderColor: kind === key ? colors.primary : colors.border,
           backgroundColor: kind === key ? colors.selected : colors.surface }]}
         onPress={() => { setKind(key); setDatePicker(null); }}>
-        <Text>{label}</Text>
+        <View style={{ flex: 1 }}><Text>{label}</Text>{reminderTypeDescriptions[key] && <Text color={colors.muted}>{reminderTypeDescriptions[key]}</Text>}</View>
         {kind === key && <Text color={colors.primary} accessible={false}>✓</Text>}
       </Pressable>)}
       {expiration && <>

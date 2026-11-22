@@ -96,3 +96,23 @@ test('a failed preference write preserves saved data and does not block retry', 
   fail = false;
   assert.deepEqual(await prefs.update('one', saved => ({ ...saved, retry: 6000 })), { prior: 4000, retry: 6000 });
 });
+
+
+test('removal clears alert and management snapshots and publishes updates without touching medical or another account', async () => {
+  const changes = [];
+  const cache = createReminderCache(storage(), event => changes.push(event));
+  for (const kind of ['alerts', 'manage']) {
+    await cache.write('owner', kind, { reminders: [{ id: 12 }, { id: 13 }], medical_card: { medical_due_date: '2027-03-31' } }, 1000);
+    await cache.write('other', kind, { reminders: [{ id: 12 }] }, 2000);
+  }
+  changes.length = 0;
+  await cache.remove('owner', 12);
+  for (const kind of ['alerts', 'manage']) {
+    const result = await cache.read('owner', kind);
+    assert.deepEqual(result.data.reminders, [{ id: 13 }]);
+    assert.equal(result.data.medical_card.medical_due_date, '2027-03-31');
+    assert.equal(result.updatedAt, 1000);
+    assert.deepEqual((await cache.read('other', kind)).data.reminders, [{ id: 12 }]);
+  }
+  assert.deepEqual(changes.map(event => event.kind), ['alerts', 'manage']);
+});

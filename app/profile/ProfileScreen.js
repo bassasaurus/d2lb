@@ -1,3 +1,4 @@
+import { formatDateTime } from '../formatting/dates.mjs';
 import React from 'react';
 import useProfile from './useProfile';
 import { profileDate } from './profileDate.mjs';
@@ -27,7 +28,7 @@ export default function ProfileScreen({ navigation }) {
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollView contentContainerStyle={{ padding: 12 }} refreshControl={<RefreshControl refreshing={refreshing}
       onRefresh={refresh} />}>
-      {profile && <Text color={colors.muted} style={{ textAlign: 'center', marginBottom: 12 }}>Downloaded {new Date(profile.downloaded_at).toLocaleString()}</Text>}
+      {profile && <Text color={colors.muted} style={{ textAlign: 'center', marginBottom: 12 }}>Downloaded {formatDateTime(profile.downloaded_at)}</Text>}
       {message ? <Text color={colors.danger} style={{ textAlign: 'center', marginBottom: 12 }} accessibilityLiveRegion="polite">{message}</Text> : null}
       {profile && <>
         <Card compact style={{ marginBottom: 8 }}>

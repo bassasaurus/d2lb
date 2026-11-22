@@ -1,3 +1,4 @@
+import { formatDate, formatDateTime } from '../formatting/dates.mjs';
 import React, { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -116,7 +117,7 @@ export default function RecencyScreen() {
       {refreshing && !snapshot && <ActivityIndicator color={colors.primary} />}
       {error ? <Text accessibilityLiveRegion="polite" style={{ color: colors.danger, marginBottom: 12 }}>{error}</Text> : null}
       {snapshot && <>
-        <Text style={{ color: colors.muted, marginBottom: 16, textAlign: 'center' }}>Downloaded {new Date(snapshot.downloaded_at).toLocaleString()}</Text>
+        <Text style={{ color: colors.muted, marginBottom: 16, textAlign: 'center' }}>Downloaded {formatDateTime(snapshot.downloaded_at)}</Text>
         {pending > 0 && <Text style={{ color: colors.danger, marginBottom: 16 }}>{pending} pending change(s) may not yet be included. Sync your logbook, then refresh.</Text>}
         {orderReady && <ReorderableSections order={order} onChange={saveOrder} onDragChange={setDragging}
           sections={[
@@ -127,18 +128,18 @@ export default function RecencyScreen() {
         <View key={instrument.category || 'unknown'} style={{ paddingVertical: 8 }}>
           {!!instrument.category_label && <Text weight="600">{instrument.category_label}</Text>}
           {!!instrument.ipc_completed_date && <Text>
-            Last IPC: {instrument.ipc_completed_date}{'\n'}Review IFR by {instrument.review_date || '—'}
+            Last IPC: {formatDate(instrument.ipc_completed_date)}{'\n'}Review IFR by {formatDate(instrument.review_date, '—')}
           </Text>}
           {!!instrument.status_message && <Text color={instrument.current ? colors.success : colors.danger}>{instrument.status_message}</Text>}
           {!!instrument.holding_warning && <Text color={colors.danger}>{instrument.holding_warning}</Text>}
           {!!instrument.next_requirement?.message && <Text>{instrument.next_requirement.message}</Text>}
           <Status label="Approaches" value={instrument.approaches}
             message={instrument.approaches.current
-              ? `${instrument.approaches.count}/6 - Logged window through ${instrument.approaches.until || '—'}`
+              ? `${instrument.approaches.count}/6 - Logged window through ${formatDate(instrument.approaches.until, '—')}`
               : `${instrument.approaches.count}/6 - Log ${instrument.approaches.still_needed} more`} />
           <Status label="Holding" value={instrument.holding}
             message={instrument.holding.current
-              ? `${instrument.holding.count}/1 - Last hold on ${instrument.holding.last_date || '—'}`
+              ? `${instrument.holding.count}/1 - Last hold on ${formatDate(instrument.holding.last_date, '—')}`
               : 'None in last 6 months'} />
         </View>
         ))}

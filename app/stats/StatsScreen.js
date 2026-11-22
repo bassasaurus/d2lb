@@ -1,3 +1,4 @@
+import { formatDateTime } from '../formatting/dates.mjs';
 import React, { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -108,7 +109,7 @@ export default function StatsScreen() {
       <SyncStatusNotice visible={notice.visible} message={notice.message} error={notice.error} />
       {snapshot && <>
         {note ? <Text style={{ color: colors.muted, marginBottom: 6, textAlign: 'center' }}>{note}</Text> : null}
-        <Text style={{ color: colors.muted, marginBottom: 16, textAlign: 'center' }}>Downloaded {new Date(snapshot.downloaded_at).toLocaleString()}</Text>
+        <Text style={{ color: colors.muted, marginBottom: 16, textAlign: 'center' }}>Downloaded {formatDateTime(snapshot.downloaded_at)}</Text>
 
         {all ? <Breakdown row={all} title="Total" primary previewFields={METRICS.slice(1, 4)} />
           : <Text style={{ marginBottom: 16 }}>No overall total available yet.</Text>}
