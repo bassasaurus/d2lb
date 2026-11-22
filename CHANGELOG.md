@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.15.0](https://github.com/bassasaurus/d2lb/compare/v0.14.3...v0.15.0) (2026-11-22)
+
+
+### Features
+
+* align reminder actions, milestones, and date displays ([#124](https://github.com/bassasaurus/d2lb/issues/124)) ([c43dd78](https://github.com/bassasaurus/d2lb/commit/c43dd784851b1dfbfbc751752c13005ae8761747))
+
 ## [0.14.3](https://github.com/bassasaurus/d2lb/compare/v0.14.2...v0.14.3) (2026-11-22)
 
 
