@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.14.0](https://github.com/bassasaurus/d2lb/compare/v0.13.0...v0.14.0) (2026-11-22)
+
+
+### Features
+
+* animate reminder removal and shorten confirmations ([#116](https://github.com/bassasaurus/d2lb/issues/116)) ([bbfed91](https://github.com/bassasaurus/d2lb/commit/bbfed91b2d82df0a9469416474f4d267cba8395b))
+
 ## [0.13.0](https://github.com/bassasaurus/d2lb/compare/v0.12.3...v0.13.0) (2026-11-22)
 
 
