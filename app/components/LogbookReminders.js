@@ -123,13 +123,13 @@ export default function LogbookReminders({ refreshVersion, style, scrollable = t
     }
   }
 
-  if (!medicalAlert && !instrumentAlerts.length && reminders.length === 0) return reminderState.data ? null : <ReminderFreshness state={reminderState} />;
+  if (!medicalAlert && !instrumentAlerts.length && reminders.length === 0) return reminderState.data ? null : <ReminderFreshness state={reminderState} showCached={false} />;
 
   const rows = logbookAlerts([...instrumentAlerts, ...reminders], {}, snoozes.now).filter(row => isMilestone(row) || !snoozes.hidden(row));
   const medicalOpen = snoozes.medical.ready && medicalVisible(medicalAlert, snoozes.medical.preferenceFor(medicalAlert), snoozes.now);
   const Container = scrollable ? ScrollView : View;
   return <Container style={style}>
-    <ReminderFreshness state={reminderState} />
+    <ReminderFreshness state={reminderState} showCached={false} />
     <Modal visible={!!snoozing} transparent animationType="fade" onRequestClose={() => setSnoozing(null)}>
       <View style={styles.modalBackdrop}>
         <View style={[styles.snoozeCard, { backgroundColor: colors.surface }]}>

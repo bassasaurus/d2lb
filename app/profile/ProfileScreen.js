@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native';
 import { formatDateTime } from '../formatting/dates.mjs';
 import React from 'react';
 import useProfile from './useProfile';
@@ -49,7 +50,7 @@ export default function ProfileScreen({ navigation }) {
         </Card>
         <Card compact style={{ marginBottom: 8 }}>
           <Text size={18} weight="600">Signature</Text>
-          {profile.signature?.startsWith('data:image/png;base64,') ? <View style={{ backgroundColor: isDark ? '#000' : '#fff', borderRadius: 6, marginTop: 12 }}>
+          {profile.signature?.startsWith('data:image/png;base64,') ? <Sentry.Mask style={{ backgroundColor: isDark ? '#000' : '#fff', borderRadius: 6, marginTop: 12 }}>
             {isDark ? <Svg accessibilityLabel="Your signature" height={120} width="100%" viewBox="0 0 900 300">
               <Defs>
                 <Filter id="signature-dark">
@@ -60,7 +61,7 @@ export default function ProfileScreen({ navigation }) {
                 preserveAspectRatio="xMidYMid meet" filter="url(#signature-dark)" />
             </Svg> : <Image accessibilityLabel="Your signature" source={{ uri: profile.signature }}
               resizeMode="contain" style={{ height: 120, width: '100%' }} />}
-          </View> : <Text color={colors.muted} style={{ marginTop: 8 }}>{profile.signature ? 'Signature saved.' : 'No signature saved.'}</Text>}
+          </Sentry.Mask> : <Text color={colors.muted} style={{ marginTop: 8 }}>{profile.signature ? 'Signature saved.' : 'No signature saved.'}</Text>}
           <PlatformActionButton title="Update Signature" variant="text"
             onPress={() => navigation.navigate('SignatureEdit', { revision: profile.signature_revision, signature: profile.signature })} />
         </Card>

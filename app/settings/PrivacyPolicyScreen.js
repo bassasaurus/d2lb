@@ -12,7 +12,7 @@ const policyBaseURL = __DEV__ ? api.defaults.baseURL : 'https://direct2logbook.c
 
 export default function PrivacyPolicyScreen() {
   const { colors, isDark } = useAppTheme();
-  const policyURL = `${policyBaseURL}/privacy/${isDark ? '?appearance=dark' : ''}`;
+  const policyURL = `${policyBaseURL}/privacy/mobile/${isDark ? '?appearance=dark' : ''}`;
   const [failed, setFailed] = useState(false);
 
   function allowNavigation(request) {

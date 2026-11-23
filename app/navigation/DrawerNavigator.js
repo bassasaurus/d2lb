@@ -97,7 +97,9 @@ function DrawerNavigator({ navigation }) {
                 target: props.state.key,
               });
             };
-            if (!rules) return <DrawerItem key={route.key} label={title} focused={focused} onPress={onPress} />;
+            if (!rules) return <DrawerItem key={route.key} label={title} focused={focused} onPress={onPress}
+              activeBackgroundColor={colors.drawerSelected} activeTintColor={colors.drawerSelectedText}
+              inactiveTintColor={colors.muted} />;
             return <PlatformPressable key={route.key} onPress={onPress}
               onLongPress={() => Alert.alert(`${title} Rules`, rules)}
               accessibilityRole="button" accessibilityLabel={title}
@@ -108,8 +110,8 @@ function DrawerNavigator({ navigation }) {
               }}
               testID={`drawer-${route.name}-rules`}
               style={{ borderRadius: 56, paddingVertical: 15, paddingLeft: 16, paddingRight: 24,
-                backgroundColor: focused ? navigationTheme.colors.primary + '1f' : 'transparent' }}>
-              <Text weight="500" style={{ lineHeight: 24 }} color={focused ? navigationTheme.colors.primary : colors.muted}>{title}</Text>
+                backgroundColor: focused ? colors.drawerSelected : 'transparent' }}>
+              <Text weight="500" style={{ lineHeight: 24 }} color={focused ? colors.drawerSelectedText : colors.muted}>{title}</Text>
             </PlatformPressable>;
           })}
         </OverflowDrawerContentScrollView>
@@ -150,6 +152,13 @@ function DrawerNavigator({ navigation }) {
               }
             }}
           />
+          <View style={{ borderTopWidth: 1, borderTopColor: colors.border }}>
+          <DrawerItem label="Privacy Policy" testID="drawer-privacy-policy"
+            onPress={() => {
+              props.navigation.closeDrawer();
+              props.navigation.navigate('PrivacyPolicy');
+            }} />
+          </View>
         </View>
         <SafeAreaView edges={['bottom', 'left', 'right']} style={[styles.footer, { borderTopColor: colors.border }]}>
           <Pressable testID="drawer-release-notes" accessibilityRole="button"
