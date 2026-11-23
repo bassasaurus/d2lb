@@ -5,6 +5,7 @@ export const PALETTES = {
     danger: '#ba1a2c', success: '#18743b', warning: '#805600', syncPending: '#b45309', placeholder: '#687281',
     actionBlue: '#0000cd', actionDanger: '#b42332', actionGreen: '#008000',
     onAction: '#ffffff', shadow: '#000000',
+    drawerSelected: '#dfe7f0', drawerSelectedText: '#243d57',
   },
   dark: {
     background: '#0f131a', surface: '#191f29', text: '#edf1f7', muted: '#b1bbca',
@@ -12,6 +13,7 @@ export const PALETTES = {
     danger: '#ffb1b8', success: '#85d6a1', warning: '#ffca63', syncPending: '#ffad66', placeholder: '#a0acbd',
     actionBlue: '#234ba5', actionDanger: '#a42636', actionGreen: '#176b37',
     onAction: '#ffffff', shadow: '#000000',
+    drawerSelected: '#dfe7f0', drawerSelectedText: '#243d57',
   },
 };
 export function effectiveScheme(preference, systemScheme) {
