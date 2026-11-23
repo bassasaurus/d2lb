@@ -26,7 +26,7 @@ export default function useAutoSync(auth) {
       sync: syncFlightData,
       onStart: () => notifyAutoSync('started'),
       onComplete: () => notifyAutoSync('completed'),
-      onError: () => notifyAutoSync('failed'),
+      onError: error => notifyAutoSync('failed', error),
     });
     let previousOnline;
     const unsubscribe = NetInfo.addEventListener(state => {

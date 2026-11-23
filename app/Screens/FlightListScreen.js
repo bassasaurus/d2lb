@@ -1,3 +1,4 @@
+import { connectionNotice, syncConnectionFailure } from '../api/connectionNotice.mjs';
 import ReminderFeedback from '../components/ReminderFeedback';
 import { localDraftStore } from '../drafts/localDraftStore';
 import { draftKey, flightDraftRow } from '../drafts/draftStore.mjs';
@@ -22,6 +23,8 @@ import BottomCreateButton from "../components/BottomCreateButton";
 import AppContext from "../components/AppContext";
 import { Text, AppState } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
+import * as Network from 'expo-network';
+import { Platform } from 'react-native';
 import fetchTailnumbers from "../api/fetchTailnumbers";
 import { flightStore, flightScope, tokenPartition, refreshFlightCache } from "../storage/flights";
 import { aircraftScope } from "../storage/aircraft";
@@ -78,12 +81,11 @@ const FlightListScreen = ({ navigation, route }) => {
   const [syncEvents, setSyncEvents] = useState({});
   const [recordScope, setRecordScope] = useState(null);
   const feedbackPartition = React.useRef(null);
-  const [windowNotice, setWindowNotice] = useState(true);
-  const [loadingFlights, setLoadingFlights] = useState(false);
-  const [noticeMessage, setNoticeMessage] = useState("Loading saved flights…");
+  const [windowNotice, setWindowNotice] = useState(false);
+  const [noticeMessage, setNoticeMessage] = useState("");
   const [noticeError, setNoticeError] = useState("");
   const [noticeHeight, setNoticeHeight] = useState(38);
-  const noticeProgress = React.useRef(new Animated.Value(1)).current;
+  const noticeProgress = React.useRef(new Animated.Value(0)).current;
   useEffect(() => {
     const animation = Animated.timing(noticeProgress, {
       toValue: windowNotice ? 1 : 0, duration: 250, useNativeDriver: false,
@@ -99,15 +101,28 @@ const FlightListScreen = ({ navigation, route }) => {
     if (deletedFlightId) return;
     let active = true;
     let running = false;
+    let noticeSequence = 0;
+    function showConnection(connected, error = '', airplaneMode = false) {
+      if (!active) return;
+      noticeSequence += 1;
+      const notice = connectionNotice(connected, error, airplaneMode);
+      clearTimeout(noticeTimer.current);
+      setNoticeMessage(notice.message);
+      setNoticeError(notice.error ? notice.message : '');
+      setWindowNotice(true);
+      if (notice.durationMs) noticeTimer.current = setTimeout(() => { if (active) setWindowNotice(false); }, notice.durationMs);
+    }
+    async function showOffline() {
+      const sequence = ++noticeSequence;
+      let airplaneMode = false;
+      if (Platform.OS === 'android') {
+        try { airplaneMode = await Network.isAirplaneModeEnabledAsync(); } catch { /* Fall back to Not Connected. */ }
+      }
+      if (active && sequence === noticeSequence) showConnection(false, '', airplaneMode);
+    }
     const performLoad = async (force = false) => {
       if (running) return;
       running = true;
-      if (active) {
-        clearTimeout(noticeTimer.current);
-        setLoadingFlights(false);
-        setNoticeMessage("Loading saved flights…");
-        setWindowNotice(true);
-      }
       try {
         const partition = await tokenPartition();
         if (feedbackPartition.current !== partition) {
@@ -126,29 +141,31 @@ const FlightListScreen = ({ navigation, route }) => {
         const beforePending = await logbookPendingCount(store, [scope, aircraftScope(scope), tailnumberScope(scope)]);
         const snapshot = await store.reference(scope, 'flight-window-sync');
         const needsRefresh = shouldRefreshLogbook({ force, pending: beforePending, hasSnapshot: Boolean(snapshot[0]?.downloaded_at) });
-        let downloaded = true;
-        let serverUpgradeNeeded = false;
-        if (needsRefresh) {
-          if (active) setLoadingFlights(true);
-          try {
-            const network = await NetInfo.fetch();
-            if (!canAttemptApiSync(network, api.defaults.baseURL)) throw new Error('Offline');
-            try {
+        let downloaded = false;
+        let connected = false;
+        let syncError = '';
+        try {
+          const network = await NetInfo.fetch();
+          if (canAttemptApiSync(network, api.defaults.baseURL)) {
+            if (needsRefresh) {
               scope = await syncFlightData();
-            } catch (error) {
-              if (error.response?.status !== 404) throw error;
-              serverUpgradeNeeded = true;
+              await refreshFlightCache(scope);
+              await fetchTailnumbers();
+              downloaded = true;
+            } else {
+              // Verify the app server, rather than treating Wi-Fi as proof of connection.
+              await api.get('/api/mobile/session/', { timeout: 5000 });
             }
-            await refreshFlightCache(scope);
-            await fetchTailnumbers();
-          } catch (error) {
-            downloaded = false;
+            connected = true;
           }
+        } catch (error) {
+          const result = syncConnectionFailure(error);
+          connected = result.connected;
+          syncError = result.error;
         }
         if (await tokenPartition() !== partition) return;
         scope = await flightScope();
         const rows = await readRows(scope);
-        const pending = await logbookPendingCount(store, [scope, aircraftScope(scope), tailnumberScope(scope)]);
         const legacy = await AsyncStorage.getItem('offlineFlights');
         const legacyCount = legacy ? JSON.parse(legacy).length : 0;
         if (active) {
@@ -160,24 +177,17 @@ const FlightListScreen = ({ navigation, route }) => {
           setData(rows);
           setRecordScope(scope);
           if (needsRefresh && downloaded) setReminderRefresh(previous => previous + 1);
-          setNoticeMessage(pending ? "Saved on this device." : !downloaded ? "Showing saved flights." : needsRefresh ? "Synced last 100 entries" : "No sync required.");
-          clearTimeout(noticeTimer.current);
-          setNoticeError(serverUpgradeNeeded ? 'App update required.' : '');
-          setWindowNotice(true);
-          noticeTimer.current = setTimeout(() => setWindowNotice(false), needsRefresh ? 3000 : 1000);
+          if (!connected && !syncError) await showOffline();
+          else showConnection(connected, syncError);
           setStatus(`${legacyCount ? 'Older flights need review.' : ''}`);
         }
       } catch (error) {
         if (active) {
-          setWindowNotice(true);
-          setNoticeError('Could not open logbook.\nPull down to retry.');
+          showConnection(false, 'Could not open logbook.\nPull down to retry.');
           setStatus('');
         }
       } finally {
         running = false;
-        if (active) {
-          setLoadingFlights(false);
-        }
       }
     };
     let currentLoad = null;
@@ -199,29 +209,22 @@ const FlightListScreen = ({ navigation, route }) => {
     const foreground = AppState.addEventListener('change', state => {
       if (state === 'active') load();
     });
-    const stopAutoSync = subscribeAutoSync(event => {
+    const stopAutoSync = subscribeAutoSync((event, error) => {
       if (!active) return;
-      if (event === 'started') {
-        setNoticeError('');
-        setLoadingFlights(true);
-        setWindowNotice(true);
-      } else if (event === 'completed') {
+      if (event === 'completed') {
         setReminderRefresh(previous => previous + 1);
         load();
-      }
-      else if (event === 'failed') {
-        setLoadingFlights(false);
-        setNoticeError('');
-        setNoticeMessage('Saved on this device.');
-        clearTimeout(noticeTimer.current);
-        noticeTimer.current = setTimeout(() => setWindowNotice(false), 1500);
-        setWindowNotice(true);
+      } else if (event === 'failed') {
+        const result = syncConnectionFailure(error);
+        if (!result.connected && !result.error) showOffline();
+        else showConnection(result.connected, result.error);
       }
     });
     let wasConnected;
     const unsubscribe = NetInfo.addEventListener(state => {
       const online = canAttemptApiSync(state, api.defaults.baseURL);
       if (wasConnected === false && online) load();
+      if (!online && wasConnected !== false) showOffline();
       wasConnected = online;
     });
     return () => {
@@ -270,10 +273,10 @@ const FlightListScreen = ({ navigation, route }) => {
           height: noticeProgress.interpolate({ inputRange: [0, 1], outputRange: [0, noticeHeight] }) }}>
         <Text onLayout={event => setNoticeHeight(event.nativeEvent.layout.height)}
           style={[styles.syncNoticeText, { color: noticeError ? STYLES.danger : STYLES.muted }]} accessibilityLiveRegion="polite">
-          {noticeError || (loadingFlights ? "Sync in Progress" : noticeMessage)}
+          {noticeError || noticeMessage}
         </Text>
       </Animated.View>
-      {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: STYLES.black }} accessibilityLiveRegion="polite">{status}</Text> : null}
+      {status.trim() ? <Text style={{ paddingHorizontal: 10, paddingVertical: 4, textAlign: 'center', color: STYLES.danger }} accessibilityLiveRegion="polite">{status}</Text> : null}
       <LogbookReminders onFeedback={setReminderFeedback} refreshVersion={reminderRefresh} style={styles.reminderList} scrollable={false} />
         </>}
         alwaysBounceVertical

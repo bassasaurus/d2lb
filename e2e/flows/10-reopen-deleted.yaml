@@ -8,8 +8,5 @@ name: A deleted flight stays absent after restarting offline
 - extendedWaitUntil:
     visible: New Flight
     timeout: 120000
-- extendedWaitUntil:
-    notVisible: Sync in Progress
-    timeout: 30000
 - assertNotVisible: KAUS-KDFW
 - takeScreenshot: deletion-persisted

@@ -7,7 +7,7 @@ import { useAppTheme } from '../theme/ThemeProvider';
 import api from '../api/axiosConfig';
 import { flightScope } from '../storage/flights';
 import { session } from '../auth/session';
-import { applyAirportChoices, createAirportChecker, normalizeRoute, routeErrors } from './routeCheck.mjs';
+import { applyAirportChoices, createAirportChecker, normalizeRoute, resumeRoute, routeErrors } from './routeCheck.mjs';
 
 const check = createAirportChecker({
   get: async route => (await api.get('/api/mobile/route-airport-check/', { params: { route } })).data,
@@ -19,6 +19,7 @@ export default function RouteInput({ onCheck }) {
   const route = normalizeRoute(values.route);
   const [result, setResult] = useState(null);
   const [checking, setChecking] = useState(false);
+  const resume = useRef(null);
   const notify = useRef(onCheck);
   notify.current = onCheck;
   useEffect(() => {
@@ -50,14 +51,21 @@ export default function RouteInput({ onCheck }) {
   return <View>
     <TextInput testID="flight-route" accessibilityLabel="Route" placeholder="Route" placeholderTextColor={colors.placeholder}
       autoCapitalize="characters" autoCorrect={false} keyboardAppearance={isDark ? 'dark' : 'light'}
+      onFocus={() => { resume.current = values.route; }}
       onChangeText={value => {
-        setFieldValue('route', normalizeRoute(value));
+        const last = entries[entries.length - 1];
+        const next = resumeRoute(resume.current, value, last?.status === 'recognized');
+        resume.current = null;
+        setFieldValue('route', normalizeRoute(next, { editing: true }));
         setFieldValue('route_airport_choices', {});
-      }} onBlur={handleBlur('route')} maxLength={50} selectionColor={colors.primary}
+      }} onBlur={() => {
+        setFieldValue('route', normalizeRoute(values.route));
+        handleBlur('route')();
+      }} maxLength={50} selectionColor={colors.primary}
       style={{ height: Platform.OS === 'android' ? undefined : 40, minHeight: 40,
         paddingVertical: Platform.OS === 'android' ? 8 : undefined, textAlignVertical: 'center', marginTop: 10, borderWidth: 1, borderRadius: 5, paddingHorizontal: 10,
         textAlign: 'left', backgroundColor: colors.surface, color: colors.text, borderColor: invalid.size || errors.route ? colors.danger : colors.border }}>
-      <Text>{route.split(/([^A-Z0-9]+)/).map((part, index) => <Text key={index} style={{ color: invalid.has(part) ? colors.danger : colors.text }}>{part}</Text>)}</Text>
+      <Text>{normalizeRoute(values.route, { editing: true }).split(/([^A-Z0-9]+)/).map((part, index) => <Text key={index} style={{ color: invalid.has(part) ? colors.danger : colors.text }}>{part}</Text>)}</Text>
     </TextInput>
     {messages.map((message, index) => <Text key={index} style={{ color: colors.danger, fontSize: 12, marginTop: 4 }}>{message}</Text>)}
     {errors.route && !messages.length && <Text style={{ color: colors.danger, fontSize: 12 }}>{errors.route}</Text>}

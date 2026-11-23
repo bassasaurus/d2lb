@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createAirportChecker, applyAirportChoices, normalizeRoute, routeCodes, routeErrors } from '../app/airports/routeCheck.mjs';
+import { createAirportChecker, applyAirportChoices, normalizeRoute, resumeRoute, routeCodes, routeErrors } from '../app/airports/routeCheck.mjs';
 function fixture() {
   const data = new Map();
   const storage = { async getItem(key) { return data.get(key) || null; }, async setItem(key, value) { data.set(key, value); } };
@@ -43,4 +43,24 @@ test('unknown and ambiguous errors disappear only for a valid choice tied to thi
 test('old-server or malformed responses remain pending rather than inventing validation', async () => {
   const check = createAirportChecker({ get: async () => ({}), storage: { getItem: async () => null } });
   assert.equal((await check('IAH', 'a')).entries[0].status, 'pending');
+});
+
+test('finished routes remove trailing separators without preventing another leg while typing', () => {
+  assert.equal(normalizeRoute('sea-ord-- '), 'SEA-ORD');
+  assert.equal(normalizeRoute('sea-'), 'SEA');
+  assert.equal(normalizeRoute('sea-', { editing: true }), 'SEA-');
+  assert.equal(normalizeRoute('sea-ord', { editing: true }), 'SEA-ORD');
+  assert.equal(normalizeRoute('---'), '');
+  assert.equal(normalizeRoute('1g3-8fl6-'), '1G3-8FL6');
+});
+
+test('resuming a recognized airport inserts one separator without changing edits or pasted routes', () => {
+  assert.equal(resumeRoute('SEA-ORD', 'SEA-ORDM', true), 'SEA-ORD-M');
+  assert.equal(resumeRoute('SEA-ORD', 'SEA-ORD-', true), 'SEA-ORD-');
+  assert.equal(resumeRoute('SEA-ORD', 'SEA-OR', true), 'SEA-OR');
+  assert.equal(resumeRoute('SEA-ORD', 'SEA-ORX', true), 'SEA-ORX');
+  assert.equal(resumeRoute('SEA-XYZ', 'SEA-XYZM', false), 'SEA-XYZM');
+  assert.equal(resumeRoute(null, 'SEA-ORDM', true), 'SEA-ORDM');
+  assert.equal(resumeRoute('SEA-ORD', 'SEA-ORD-MEM', true), 'SEA-ORD-MEM');
+  assert.equal(resumeRoute('SEA-', 'SEA-O', true), 'SEA-O');
 });

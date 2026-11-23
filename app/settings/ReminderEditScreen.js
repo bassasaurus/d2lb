@@ -2,7 +2,7 @@ import { resetReminderPreferences } from './reminderStorage';
 import { formFeedback } from '../forms/errorFeedback.mjs';
 import FormKeyboardAvoidingView from '../components/FormKeyboardAvoidingView';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Platform, Pressable, StyleSheet } from 'react-native';
+import { Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { usePreventRemove } from '@react-navigation/native';
 import api from '../api/axiosConfig';

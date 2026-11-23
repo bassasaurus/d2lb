@@ -5,13 +5,12 @@ import ScrollableFormCard from './ScrollableFormCard';
 import DraftForm from '../drafts/DraftForm';
 import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Text from './AppText';
 import { OPERATING_RULES as rules, tailnumberSchema as schema, selectOperatingRule } from '../forms/tailnumberValidation.mjs';
 import AircraftPicker from './AircraftPicker';
 import AppTextInput from './AppTextInput';
-import AppContext from './AppContext';
 import { useAppTheme } from '../theme/ThemeProvider';
 
 function OriginAircraft({ aircraft }) {
@@ -27,18 +26,16 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const savedNavigation = useRef(false);
   const draftHandle = useRef(null);
-  const context = useContext(AppContext);
   return <FormKeyboardAvoidingView style={{ flex: 1 }}>
       <DraftForm kind="tailnumber" recordKey={initialValues.local_id || initialValues.id || `new:${initialValues.aircraft || ''}`} draftHandle={draftHandle} savedNavigation={savedNavigation} initialValues={initialValues} validationSchema={schema} validateOnMount
         renderLayout={({ content, form: { values, isSubmitting, isValidating, isValid, handleSubmit }, draftBlocked }) => (
-          <ScrollableFormCard footer={<PrimaryActionButton testID="tailnumber-save" title="Save" onPress={handleSubmit}
+          <ScrollableFormCard footer={<PrimaryActionButton testID="tailnumber-save" title={isSubmitting ? "Saving…" : "Save"} onPress={handleSubmit}
             disabled={draftBlocked || isSubmitting || isValidating || !isValid || !values.aircraft || !values.registration || rules.filter(([key]) => values[key] === true).length !== 1} />}>
             {content}
           </ScrollableFormCard>
         )}
         onSubmit={async (values, helpers) => {
         savedNavigation.current = false;
-        context.setActivityVisible(true);
         try {
           const result = await method(values);
           await draftHandle.current.complete();
@@ -51,7 +48,6 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           helpers.setStatus(feedback.status);
         } finally {
           helpers.setSubmitting(false);
-          context.setActivityVisible(false);
         }
       }}>
         {({ values, errors, status, setFieldValue, setValues }) => <>

@@ -44,7 +44,7 @@ name: Offline flight survives an iPhone restart and syncs exactly once
     end: 50%, 85%
     duration: 600
 - extendedWaitUntil:
-    visible: Synced last 100 entries
+    visible: Synced
     timeout: 30000
 - assertVisible: '.*KAUS-KDFW.*'
 - runScript:
