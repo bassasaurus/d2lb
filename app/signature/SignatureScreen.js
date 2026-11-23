@@ -59,6 +59,7 @@ export default function SignatureScreen({ route, navigation }) {
       {({ values, setFieldValue, handleSubmit, isSubmitting, status }) => <View style={{ flex: 1, gap: 6 }}>
         <SignaturePad style={{ flex: 1, aspectRatio: undefined }} signature={values.showExisting ? route.params.signature : null}
           onBegin={() => setFieldValue('showExisting', false)} strokes={values.strokes} onChange={strokes => setFieldValue('strokes', strokes)} disabled={isSubmitting} />
+        <Text size={12} color={colors.muted} style={{ marginHorizontal: 8 }}>Your signature is stored as encrypted data and only converted to an image when needed for display or PDF exports.</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4 }}>
           <View style={{ flex: 1, alignItems: 'flex-start' }}>
             <PlatformActionButton title="Clear" variant="text" destructive disabled={isSubmitting || (!values.strokes.length && !(values.showExisting && route.params.signature))}

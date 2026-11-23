@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native';
 import React, { useRef, useState } from 'react';
 import { Image, View } from 'react-native';
 import Svg, { Circle, Polyline } from 'react-native-svg';
@@ -16,7 +17,7 @@ export default function SignaturePad({ strokes, onChange, disabled = false, styl
     setDrawing([]);
   };
   const visible = [...strokes, ...(drawing.length ? [drawing] : [])];
-  return <View accessible accessibilityLabel="Signature drawing area. Draw with your finger."
+  return <Sentry.Mask style={[{ width: '100%', aspectRatio: 3 }, style]}><View accessible accessibilityLabel="Signature drawing area. Draw with your finger."
     onLayout={event => { size.current = event.nativeEvent.layout; }}
     onStartShouldSetResponder={() => !disabled}
     onMoveShouldSetResponder={() => !disabled}
@@ -27,7 +28,7 @@ export default function SignaturePad({ strokes, onChange, disabled = false, styl
       current.current = [...current.current, point(event)];
       setDrawing(current.current);
     }} onResponderRelease={finish} onResponderTerminate={finish}
-    style={[{ width: '100%', aspectRatio: 3, backgroundColor: '#fff', borderRadius: 10, overflow: 'hidden' }, style]}>
+    style={{ flex: 1, width: '100%', backgroundColor: '#fff', borderRadius: 10, overflow: 'hidden' }}>
     {signature && !visible.length && <Image pointerEvents="none" source={{ uri: signature }} resizeMode="contain"
       accessibilityLabel="Current signature" style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }} />}
     <Svg pointerEvents="none" width="100%" height="100%" viewBox="0 0 900 300" preserveAspectRatio="none">
@@ -39,5 +40,5 @@ export default function SignaturePad({ strokes, onChange, disabled = false, styl
     {!visible.length && !signature && <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: '45%', alignItems: 'center' }}>
       <Text color="#666">Sign here</Text>
     </View>}
-  </View>;
+  </View></Sentry.Mask>;
 }

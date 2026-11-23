@@ -150,6 +150,11 @@ function DrawerNavigator({ navigation }) {
               }
             }}
           />
+          <DrawerItem label="Privacy Policy" testID="drawer-privacy-policy"
+            onPress={() => {
+              props.navigation.closeDrawer();
+              props.navigation.navigate('PrivacyPolicy');
+            }} />
         </View>
         <SafeAreaView edges={['bottom', 'left', 'right']} style={[styles.footer, { borderTopColor: colors.border }]}>
           <Pressable testID="drawer-release-notes" accessibilityRole="button"
