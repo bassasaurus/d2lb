@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.15.1](https://github.com/bassasaurus/d2lb/compare/v0.15.0...v0.15.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* clarify reminders, connection status and offline form saves ([#126](https://github.com/bassasaurus/d2lb/issues/126)) ([a773533](https://github.com/bassasaurus/d2lb/commit/a77353329a9671eb2a12a90e74321d033e4f9111))
+
 ## [0.15.0](https://github.com/bassasaurus/d2lb/compare/v0.14.3...v0.15.0) (2026-11-22)
 
 
