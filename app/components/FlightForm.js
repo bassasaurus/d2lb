@@ -102,7 +102,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
 
   let flightSchema = yup.object().shape({
     date: yup.string().required(required),
-    route: yup.string().min(3).max(50).required(required).test('known-airports', 'Check the route airports.', function(value) {
+    route: yup.string().transform(value => normalizeRoute(value)).min(3).max(50).required(required).test('known-airports', 'Check the route airports.', function(value) {
       const current = airportCheck.current;
       const messages = current?.route === normalizeRoute(value) ? routeErrors(current.entries) : [];
       return messages.length ? this.createError({ message: messages.join(' ') }) : true;

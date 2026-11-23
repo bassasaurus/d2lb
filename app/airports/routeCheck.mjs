@@ -1,4 +1,13 @@
-export const normalizeRoute = value => String(value || '').toUpperCase().replace(/\s/g, '-');
+export const normalizeRoute = (value, { editing = false } = {}) => {
+  const route = String(value || '').toUpperCase().replace(/\s/g, '-');
+  return editing ? route : route.replace(/-+$/, '');
+};
+// Only resume a finished airport on a new focus; never split a code mid-entry.
+export function resumeRoute(previous, next, recognized) {
+  return recognized && previous && /[A-Z0-9]$/i.test(previous)
+    && next.startsWith(previous) && next.length === previous.length + 1 && /[A-Z0-9]$/i.test(next)
+    && next.length < 50 ? `${previous}-${next.slice(-1)}` : next;
+}
 export const routeCodes = route => normalizeRoute(route).split(/[^A-Z0-9]+/).filter(Boolean);
 export function applyAirportChoices(route, entries, choices) {
   return entries.map(entry => {

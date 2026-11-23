@@ -76,3 +76,12 @@ test('overlapping network events share one upload and failures remain retryable'
   await retry.request();
   assert.equal(attempts, 2);
 });
+
+test('the screen receives the original sync failure so offline and action-required errors stay distinct', async () => {
+  const failure = { response: { status: 500 } };
+  let received;
+  const worker = createAutoSync({ isActive: () => true, hasPending: async () => true,
+    sync: async () => { throw failure; }, onError: error => { received = error; } });
+  await worker.network(online);
+  assert.equal(received, failure);
+});

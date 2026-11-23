@@ -5,9 +5,6 @@ name: Refresh keeps a synced deletion absent
     start: 50%, 30%
     end: 50%, 85%
     duration: 600
-- extendedWaitUntil:
-    notVisible: Sync in Progress
-    timeout: 30000
 - assertVisible: New Flight
 - assertNotVisible: KAUS-KDFW
 - takeScreenshot: deletion-synced

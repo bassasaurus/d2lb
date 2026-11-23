@@ -31,7 +31,7 @@ export function createAutoSync({ isActive, hasPending, sync, isOnline = internet
         onStart();
         await sync();
         if (!disposed && isActive()) onComplete();
-      } catch { if (!disposed && isActive()) onError(); }
+      } catch (error) { if (!disposed && isActive()) onError(error); }
     })().finally(() => {
       running = null;
       if (rerun) { rerun = false; return request(); }
@@ -52,8 +52,8 @@ export function createAutoSync({ isActive, hasPending, sync, isOnline = internet
 
 const listeners = new Set();
 export function subscribeAutoSync(listener) { listeners.add(listener); return () => listeners.delete(listener); }
-export function notifyAutoSync(event) {
+export function notifyAutoSync(event, error) {
   for (const listener of listeners) {
-    try { listener(event); } catch { /* A screen cannot interrupt the sync worker. */ }
+    try { listener(event, error); } catch { /* A screen cannot interrupt the sync worker. */ }
   }
 }

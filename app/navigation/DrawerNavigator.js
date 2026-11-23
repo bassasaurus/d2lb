@@ -18,10 +18,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
-  DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, CommonActions, DrawerActions } from "@react-navigation/native";
+import { PlatformPressable } from '@react-navigation/elements';
 import { createStackNavigator } from "@react-navigation/stack";
 import RecencyScreen from '../stats/RecencyScreen';
 import StatsScreen from '../stats/StatsScreen';
@@ -37,6 +37,32 @@ import FlightStackNavigator from "./FlightStackNavigator";
 import AppContext from "../components/AppContext";
 
 const OverflowDrawerContentScrollView = withScrollOverflow(DrawerContentScrollView);
+
+
+const drawerRules = {
+  ManageReminders: [
+    'Medical: yellow within 45 days of expiry; red from the first day of the due month. Missing expiry is red. Logbook Snooze hides it until the next alert stage; red uses a timed snooze.',
+    'BFR / Flight Review: due at month-end, 24 months after qualifying completion. Yellow with fewer than 30 days left; red at 14 days or fewer, including overdue.',
+    'FIRC / Instructor Renewal: recorded renewal period plus 24 calendar months. Same yellow/red thresholds as BFR.',
+    'IPC / IFR: based on logged recency by aircraft category. Yellow for missing requirements or approaching loss of currency; red after the calculated review date.',
+    'Custom: uses your due date. Yellow with fewer than 30 days left; red at 14 days or fewer, including overdue.',
+    'Only yellow/red alerts appear above the Logbook. All items remain in Reminders.',
+    'Except Medical: dismiss yellow until red. Snooze 1/3/7/14 days; red overrides a yellow snooze. Dismiss red for 30 days. Timed hiding ends at 0000Z.',
+    'Restore or edit to show hidden items. Choices save offline and sync through your account.',
+    'Based on logged information. Verify your records.',
+  ].join('\n\n'),
+  ManageMilestones: [
+    'Total Flight Time: all logged flight hours.',
+    'Time in Type: hours in the selected aircraft type.',
+    'Crew Position in Type: selected crew-position hours in that type.',
+    'Time at Company: all flight hours in the selected date range, regardless of crew position. Company is the label.',
+    'Flight Condition: selected PIC, SIC, Solo, Dual, CFI, Sim or XC hours.',
+    'All types: more than 10 hours remaining appears only in Milestones. At 10 hours remaining, green text appears above the Logbook. At or above target, a green card with black text appears.',
+    'Completed first, then closest to target.',
+    'Dismiss until edited or restored; no timed snooze. Dismissed items remain in Milestones with Restore.',
+    'Choices save offline and sync through your account.',
+  ].join('\n\n'),
+};
 
 const Drawer = createDrawerNavigator();
 const Root = createStackNavigator();
@@ -59,7 +85,33 @@ function DrawerNavigator({ navigation }) {
     return (
       <View style={styles.container}>
         <OverflowDrawerContentScrollView {...props} style={styles.container}>
-          <DrawerItemList {...props} />
+          {props.state.routes.map((route, index) => {
+            const focused = index === props.state.index;
+            const options = props.descriptors[route.key].options;
+            const title = options.title || route.name;
+            const rules = drawerRules[route.name];
+            const onPress = () => {
+              const event = props.navigation.emit({ type: 'drawerItemPress', target: route.key, canPreventDefault: true });
+              if (!event.defaultPrevented) props.navigation.dispatch({
+                ...(focused ? DrawerActions.closeDrawer() : CommonActions.navigate(route.name, route.params)),
+                target: props.state.key,
+              });
+            };
+            if (!rules) return <DrawerItem key={route.key} label={title} focused={focused} onPress={onPress} />;
+            return <PlatformPressable key={route.key} onPress={onPress}
+              onLongPress={() => Alert.alert(`${title} Rules`, rules)}
+              accessibilityRole="button" accessibilityLabel={title}
+              accessibilityState={{ selected: focused }} accessibilityHint="Long press to view display rules"
+              accessibilityActions={[{ name: 'longpress', label: 'Show display rules' }]}
+              onAccessibilityAction={({ nativeEvent }) => {
+                if (nativeEvent.actionName === 'longpress') Alert.alert(`${title} Rules`, rules);
+              }}
+              testID={`drawer-${route.name}-rules`}
+              style={{ borderRadius: 56, paddingVertical: 15, paddingLeft: 16, paddingRight: 24,
+                backgroundColor: focused ? navigationTheme.colors.primary + '1f' : 'transparent' }}>
+              <Text weight="500" style={{ lineHeight: 24 }} color={focused ? navigationTheme.colors.primary : colors.muted}>{title}</Text>
+            </PlatformPressable>;
+          })}
         </OverflowDrawerContentScrollView>
         <View style={{ borderTopWidth: 1, borderTopColor: colors.border, paddingHorizontal: 12 }}>
           <DrawerItem

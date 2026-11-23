@@ -104,7 +104,10 @@ export default function ManageRemindersScreen({ navigation, route }) {
   }
 
   const ready = !loading && !loadFailed;
-  const cards = orderedReminders(ready ? reminders : []);
+  const hiddenDerived = activeGroup === 'regulatory' ? regulatoryRows
+    .filter(item => typeof item.id === 'string' && (snoozes.until(item) || snoozes.dismissed(item)))
+    .map(item => ({ ...item, derived: true, status_message: item.message })) : [];
+  const cards = orderedReminders([...(ready ? reminders : []), ...hiddenDerived]);
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollView contentContainerStyle={styles.content}>
       <ReminderFreshness state={manageState.offline || manageState.cached ? manageState : alertState} />
@@ -114,18 +117,13 @@ export default function ManageRemindersScreen({ navigation, route }) {
         <Text>Couldn’t load reminders. Check your connection and try again.</Text>
         <PlatformActionButton title="Try Again" variant="text" onPress={manageState.refresh} />
       </Card>}
-      {!choosingKind && activeGroup === 'regulatory' && (alerts.regulatory_alerts ? alerts.regulatory_alerts.filter(item => typeof item.id === 'string') : alerts.instrument_alerts ?? (alerts.instrument_alert ? [alerts.instrument_alert] : [])).filter(item => snoozes.until(item) || snoozes.dismissed(item)).map(item => <Card key={item.id}>
-        <Text weight="600">{item.title || 'IFR'}</Text>
-        <Text>{item.message}</Text>
-        <SnoozeStatus reminder={item} snoozes={snoozes} />
-      </Card>)}
       {ready && !choosingKind && activeGroup === 'milestones' && reminderGroups(reminders)[1].rows.length === 0 && <Card><Text color={colors.muted}>No milestones yet.</Text></Card>}
       {!choosingKind && reminderGroups(cards).filter(group => group.key === activeGroup).map(group => <ReminderSection showAll key={group.key} group={group} renderRow={reminder => <AnimatedRemoval key={reminder.id}
         removing={pendingRemoval?.id === reminder.id && pendingRemoval.ready}
         onRemoved={() => { setPendingRemoval(null); removalInProgress.current = false; setRemoving(false); }}>
         <ReminderBanner compact severity={reminder.severity} milestoneState={reminder.milestone_state} plain={reminder.banner === false}>
         {['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) && <Text color={reminderTone(reminder.severity, isDark, colors, reminder.banner === false, reminder.milestone_state).text} weight="600">{reminder.title}</Text>}
-        <Text color={reminderTone(reminder.severity, isDark, colors, reminder.banner === false, reminder.milestone_state).text}>{reminder.status_message || (['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? `${reminder.kind === 'ipc' ? 'Review IFR by' : 'Review by'} ${reminderDateLabel(reminder.due_date)}`
+        <Text color={reminderTone(reminder.severity, isDark, colors, reminder.banner === false, reminder.milestone_state).text}>{reminder.status_message || (['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? `${reminder.kind === 'ipc' ? 'Review IFR by' : 'Due'} ${reminderDateLabel(reminder.due_date)}`
           : reminder.progress_label ?? reminder.goal_label ?? `${reminder.target_hours} total flight hours`)}</Text>
         {!!reminder.holding_warning && <Text color={colors.danger}>{reminder.holding_warning}</Text>}
         {reminder.kind === 'flight_review' && <Text color={colors.muted}>
@@ -142,12 +140,12 @@ export default function ManageRemindersScreen({ navigation, route }) {
           {isMilestone(reminder) && reminder.dismissed === true && <View style={{ marginRight: 'auto' }}><PlatformActionButton title="Restore" variant="text" disabled={removing}
             accessibilityLabel={`Restore ${['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? reminder.title : reminder.progress_label ?? reminder.goal_label}`}
             onPress={() => restore(reminder)} /></View>}
-          <PlatformActionButton title="Edit" variant="text" disabled={removing}
+          {!reminder.derived && <PlatformActionButton title="Edit" variant="text" disabled={removing}
             accessibilityLabel={`Edit ${['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? reminder.title : reminder.progress_label ?? reminder.goal_label ?? reminder.title}`}
-            onPress={() => navigation.navigate('EditReminder', { reminder })} />
-          <PlatformActionButton title="Remove" variant="text" destructive disabled={removing}
+            onPress={() => navigation.navigate('EditReminder', { reminder })} />}
+          {!reminder.derived && <PlatformActionButton title="Remove" variant="text" destructive disabled={removing}
             accessibilityLabel={`Remove ${['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? reminder.title : reminder.progress_label ?? reminder.goal_label ?? reminder.title}`}
-            onPress={() => remove(reminder)} />
+            onPress={() => remove(reminder)} />}
         </View>
       </ReminderBanner></AnimatedRemoval>} />)}
       {ready && choosingKind && reminderKinds.filter(([kind]) => ['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(kind) === (choosingKind === 'regulatory')).map(([kind, label]) =>
@@ -171,6 +169,6 @@ export default function ManageRemindersScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   content: { padding: 12, gap: 8 },
   kindCard: { minHeight: 48, justifyContent: 'center' },
-  actions: { flexDirection: 'row', justifyContent: 'flex-end', flexWrap: 'wrap' },
+  actions: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap' },
   footer: { gap: 8, paddingHorizontal: 12, paddingVertical: 8, borderTopWidth: 1 },
 });

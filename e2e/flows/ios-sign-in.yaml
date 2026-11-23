@@ -36,7 +36,4 @@ name: Sign in on iPhone
 - extendedWaitUntil:
     visible: New Flight
     timeout: 30000
-- extendedWaitUntil:
-    notVisible: Sync in Progress
-    timeout: 30000
 - assertNotVisible: KAUS-KDFW

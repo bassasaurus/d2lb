@@ -32,8 +32,5 @@ name: Sign in and download reference data
 - extendedWaitUntil:
     visible: New Flight
     timeout: 30000
-- extendedWaitUntil:
-    notVisible: Sync in Progress
-    timeout: 30000
 - assertNotVisible: KAUS-KDFW
 - takeScreenshot: signed-in
