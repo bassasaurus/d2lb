@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.15.2](https://github.com/bassasaurus/d2lb/compare/v0.15.1...v0.15.2) (2026-11-23)
+
+
+### Bug Fixes
+
+* protect signature replays and clarify privacy ([#128](https://github.com/bassasaurus/d2lb/issues/128)) ([5eb9b50](https://github.com/bassasaurus/d2lb/commit/5eb9b5041d32d9c524a55c86e012656a6aafe0e0))
+
 ## [0.15.1](https://github.com/bassasaurus/d2lb/compare/v0.15.0...v0.15.1) (2026-11-23)
 
 
