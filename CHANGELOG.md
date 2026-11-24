@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.16.0](https://github.com/bassasaurus/d2lb/compare/v0.15.2...v0.16.0) (2026-11-24)
+
+
+### Features
+
+* log training devices and AIM approach types ([#131](https://github.com/bassasaurus/d2lb/issues/131)) ([f5c9fe5](https://github.com/bassasaurus/d2lb/commit/f5c9fe5fc354cdca995d63d60c727c9e68c33f6f))
+
 ## [0.15.2](https://github.com/bassasaurus/d2lb/compare/v0.15.1...v0.15.2) (2026-11-23)
 
 
