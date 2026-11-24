@@ -64,7 +64,7 @@ export default function RouteInput({ onCheck }) {
       }} maxLength={50} selectionColor={colors.primary}
       style={{ height: Platform.OS === 'android' ? undefined : 40, minHeight: 40,
         paddingVertical: Platform.OS === 'android' ? 8 : undefined, textAlignVertical: 'center', marginTop: 10, borderWidth: 1, borderRadius: 5, paddingHorizontal: 10,
-        textAlign: 'left', backgroundColor: colors.surface, color: colors.text, borderColor: invalid.size || errors.route ? colors.danger : colors.border }}>
+        textAlign: 'left', backgroundColor: invalid.size || errors.route ? `${colors.danger}14` : colors.surface, color: colors.text, borderColor: invalid.size || errors.route ? colors.danger : colors.border }}>
       <Text>{normalizeRoute(values.route, { editing: true }).split(/([^A-Z0-9]+)/).map((part, index) => <Text key={index} style={{ color: invalid.has(part) ? colors.danger : colors.text }}>{part}</Text>)}</Text>
     </TextInput>
     {messages.map((message, index) => <Text key={index} style={{ color: colors.danger, fontSize: 12, marginTop: 4 }}>{message}</Text>)}
