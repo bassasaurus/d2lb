@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.17.0](https://github.com/bassasaurus/d2lb/compare/v0.16.1...v0.17.0) (2026-11-24)
+
+
+### Features
+
+* support expanded aircraft categories and glider launches ([#135](https://github.com/bassasaurus/d2lb/issues/135)) ([107beaa](https://github.com/bassasaurus/d2lb/commit/107beaa3830755b8a3a95ce8c5e5d14cb6113c70))
+
 ## [0.16.1](https://github.com/bassasaurus/d2lb/compare/v0.16.0...v0.16.1) (2026-11-24)
 
 
