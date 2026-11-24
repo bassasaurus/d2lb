@@ -165,9 +165,9 @@ export default function ReminderEditScreen({ navigation, route }) {
     const pickerDate = value ? new Date(`${value}T12:00:00`) : new Date();
     return <>
       <Text weight="600" style={styles.heading}>{label}</Text>
-      <PlatformActionButton title={value ? reminderDateLabel(value) : 'Select Date'}
+      <View style={{ borderWidth: !optional && !value ? 1 : 0, borderColor: colors.danger, borderRadius: 5 }}><PlatformActionButton title={value ? reminderDateLabel(value) : 'Select Date'}
         accessibilityLabel={value ? `${label}, ${reminderDateLabel(value)}` : `Select ${label}`}
-        variant="text" disabled={saving} onPress={() => setDatePicker(label)} />
+        variant="text" disabled={saving} onPress={() => setDatePicker(label)} /></View>
       {optional && value !== '' && <PlatformActionButton title="Clear End Date" variant="text" disabled={saving}
         onPress={() => { setValue(''); setDatePicker(null); }} />}
       {open && <DateTimePicker mode="date" display={Platform.OS === 'ios' ? 'inline' : 'default'}
@@ -200,13 +200,13 @@ export default function ReminderEditScreen({ navigation, route }) {
       {expiration && <>
         <Text weight="600">Title</Text>
         <AppTextInput accessibilityLabel="Title" placeholder="Reminder title" maxLength={80} autoCapitalize="sentences"
-          value={title} onChangeText={setTitle} isValid editable={!saving} />
+          value={title} onChangeText={setTitle} isValid={Boolean(title.trim())} editable={!saving} />
       </>}
       {kind === 'flight_condition' && <>
         <Text weight="600" style={styles.heading}>Flight Condition</Text>
         {flightConditions.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" disabled={saving}
           accessibilityState={{ checked: condition === key, disabled: saving }}
-          style={[styles.choice, { borderColor: condition === key ? colors.primary : colors.border,
+          style={[styles.choice, { borderColor: condition === key ? colors.primary : !condition ? colors.danger : colors.border,
             backgroundColor: condition === key ? colors.selected : colors.surface }]}
           onPress={() => setCondition(key)}>
           <Text>{label}</Text>{condition === key && <Text color={colors.primary} accessible={false}>✓</Text>}
@@ -219,7 +219,7 @@ export default function ReminderEditScreen({ navigation, route }) {
         <Text weight="600" style={styles.heading}>Aircraft Category</Text>
         {[['A', 'Airplane'], ['R', 'Helicopter']].map(([key, label]) => <Pressable key={key}
           accessibilityRole="radio" accessibilityState={{ checked: ipcCategory === key, disabled: saving }} disabled={saving}
-          style={[styles.choice, { borderColor: ipcCategory === key ? colors.primary : colors.border,
+          style={[styles.choice, { borderColor: ipcCategory === key ? colors.primary : !ipcCategory ? colors.danger : colors.border,
             backgroundColor: ipcCategory === key ? colors.selected : colors.surface }]}
           onPress={() => setIpcCategory(key)}>
           <Text>{label}</Text>{ipcCategory === key && <Text color={colors.primary} accessible={false}>✓</Text>}
@@ -231,7 +231,7 @@ export default function ReminderEditScreen({ navigation, route }) {
         <Text weight="600" style={styles.heading}>Completion Type</Text>
         {flightReviewTypes.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" disabled={saving}
           accessibilityState={{ checked: completionType === key, disabled: saving }}
-          style={[styles.choice, { borderColor: completionType === key ? colors.primary : colors.border,
+          style={[styles.choice, { borderColor: completionType === key ? colors.primary : !completionType ? colors.danger : colors.border,
             backgroundColor: completionType === key ? colors.selected : colors.surface }]}
           onPress={() => setCompletionType(key)}>
           <Text>{label}</Text>{completionType === key && <Text color={colors.primary} accessible={false}>✓</Text>}
@@ -256,7 +256,7 @@ export default function ReminderEditScreen({ navigation, route }) {
           <Text weight="600" style={styles.heading}>Crew Position</Text>
           {crewPositions.map(([key, label]) => <Pressable key={key} accessibilityRole="radio" disabled={saving}
             accessibilityState={{ checked: crewPosition === key, disabled: saving }}
-            style={[styles.choice, { borderColor: crewPosition === key ? colors.primary : colors.border,
+            style={[styles.choice, { borderColor: crewPosition === key ? colors.primary : !crewPosition ? colors.danger : colors.border,
               backgroundColor: crewPosition === key ? colors.selected : colors.surface }]}
             onPress={() => setCrewPosition(key)}>
             <Text>{label}</Text>
@@ -266,7 +266,7 @@ export default function ReminderEditScreen({ navigation, route }) {
         {companyMilestone && <>
           <Text weight="600" style={styles.heading}>Company</Text>
           <AppTextInput accessibilityLabel="Company" placeholder="Enter company name"
-            maxLength={50} autoCapitalize="words" value={company} onChangeText={setCompanyInput} isValid editable={!saving} />
+            maxLength={50} autoCapitalize="words" value={company} onChangeText={setCompanyInput} isValid={Boolean(company.trim())} editable={!saving} />
           {profileCompany === '' && <Text color={colors.muted}>Add a company in your profile to prefill future milestones.</Text>}
           {dateInput('Start Date', startDate, setStartDate)}
           {dateInput('End Date (optional)', endDate, setEndDate, true)}
@@ -274,8 +274,8 @@ export default function ReminderEditScreen({ navigation, route }) {
           {invalidPeriod && <Text color={colors.danger}>End date must be on or after the start date.</Text>}
         </>}
         <Text weight="600" style={styles.heading}>Target Hours</Text>
-        <AppTextInput accessibilityLabel="Target Hours" placeholder="500.0" keyboardType="decimal-pad"
-          value={targetHours} onChangeText={setTargetHours} isValid editable={!saving} />
+        <AppTextInput accessibilityLabel="Target Hours" placeholder="##.#" keyboardType="decimal-pad"
+          value={targetHours} onChangeText={setTargetHours} isValid={Number(targetHours) > 0} editable={!saving} />
       </>}
       {error !== '' && <Text color={colors.danger} style={styles.heading} accessibilityLiveRegion="polite">{error}</Text>}
     </ScrollableFormCard>

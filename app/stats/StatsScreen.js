@@ -1,3 +1,4 @@
+import IacraSummary, {LaunchCounts} from './IacraSummary';
 import { formatDateTime } from '../formatting/dates.mjs';
 import React, { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, View } from 'react-native';
@@ -25,7 +26,7 @@ function Values({ row, fields }) {
     <Text style={{ fontVariant: ['tabular-nums'] }}>{metricValue(key, row[key])}</Text>
   </View>);
 }
-function Breakdown({ row, title, previewFields = [], primary = false }) {
+function Breakdown({ row, title, previewFields = [], primary = false, launches }) {
   const [expanded, setExpanded] = useState(false);
   const { colors } = useAppTheme();
   return <Card style={{ marginBottom: primary ? 20 : 8, paddingVertical: 0 }}>
@@ -44,6 +45,7 @@ function Breakdown({ row, title, previewFields = [], primary = false }) {
     </View>}
     {expanded && <View style={{ paddingBottom: 12 }}>
       <Values row={row} fields={METRICS.slice(1).filter(([key]) => !previewFields.some(([previewKey]) => previewKey === key))} />
+      {launches && <LaunchCounts row={launches} />}
       <Text weight="600" style={{ marginTop: 12, marginBottom: 4 }}>Recency</Text>
       <Values row={row} fields={RECENCY} />
     </View>}
@@ -126,7 +128,7 @@ export default function StatsScreen() {
     return () => { active = false; clearTimeout(noteTimer); clearTimeout(noticeTimer); controller.abort(); refreshRef.current = null; };
   }, [refreshKey]));
   const all = snapshot?.totals.find(row => row.total.trim().toLowerCase() === 'all');
-  const categories = snapshot?.totals.filter(row => row !== all && Number(row.total_time) > 0) || [];
+  const categories = snapshot?.totals.filter(row => row !== all && (Number(row.total_time) > 0 || Number(row.simulator) > 0)) || [];
   return <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: colors.background }}>
     <ScrollView contentContainerStyle={{ padding: 16 }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { if (!refreshing) refreshRef.current?.(); }} />}>
@@ -139,9 +141,10 @@ export default function StatsScreen() {
         {all ? <Breakdown row={all} title="Total" primary previewFields={METRICS.slice(1, 4)} />
           : <Text style={{ marginBottom: 16 }}>No overall total available yet.</Text>}
         {categories.length > 0 && <Text size={18} weight="600" style={{ marginBottom: 10 }}>By Category and Class</Text>}
-        {categories.map((row, index) => <Breakdown key={`${row.total}:${index}`} row={row} title={row.total} previewFields={METRICS.slice(1, 4).filter(([key]) => Number(row[key]) > 0)} />)}
+        {categories.map((row, index) => <Breakdown key={`${row.total}:${index}`} row={row} title={row.display_name || row.total} launches={row.total === 'GL' ? snapshot.iacra?.launches.find(item => item.code === 'GL') : undefined} previewFields={METRICS.slice(1, 4).filter(([key]) => Number(row[key]) > 0)} />)}
         {snapshot.aircraft.length > 0 && <Text size={18} weight="600" style={{ marginTop: 16, marginBottom: 10 }}>By Type</Text>}
         {snapshot.aircraft.map((row, index) => <Breakdown key={`${row.aircraft_type}:${index}`} row={row} title={row.aircraft_type} />)}
+        {snapshot.iacra && <IacraSummary report={snapshot.iacra} />}
         {snapshot.instrument_device_credit && <InstrumentCredit report={snapshot.instrument_device_credit} />}
       </>}
       {!snapshot && !refreshing && !notice.error && <Text>No summary available yet.</Text>}

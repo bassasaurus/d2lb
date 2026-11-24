@@ -49,7 +49,7 @@ export default function RouteInput({ onCheck }) {
   const invalid = new Set(entries.filter(entry => ['unknown', 'ambiguous'].includes(entry.status)).map(entry => entry.code));
   const messages = routeErrors(entries);
   return <View>
-    <TextInput testID="flight-route" accessibilityLabel="Route" placeholder="Route" placeholderTextColor={colors.placeholder}
+    <TextInput testID="flight-route" accessibilityLabel="Route" placeholder="e.g. IAH-LAX" placeholderTextColor={colors.placeholder}
       autoCapitalize="characters" autoCorrect={false} keyboardAppearance={isDark ? 'dark' : 'light'}
       onFocus={() => { resume.current = values.route; }}
       onChangeText={value => {
@@ -58,9 +58,9 @@ export default function RouteInput({ onCheck }) {
         resume.current = null;
         setFieldValue('route', normalizeRoute(next, { editing: true }));
         setFieldValue('route_airport_choices', {});
-      }} onBlur={() => {
+      }} onBlur={event => {
         setFieldValue('route', normalizeRoute(values.route));
-        handleBlur('route')();
+        handleBlur('route')(event);
       }} maxLength={50} selectionColor={colors.primary}
       style={{ height: Platform.OS === 'android' ? undefined : 40, minHeight: 40,
         paddingVertical: Platform.OS === 'android' ? 8 : undefined, textAlignVertical: 'center', marginTop: 10, borderWidth: 1, borderRadius: 5, paddingHorizontal: 10,

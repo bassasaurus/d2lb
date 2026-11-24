@@ -29,7 +29,7 @@ AVD = 'D2LB_Screen_Tests'
 IOS_SIMULATOR = 'D2LB_iOS_Screen_Tests'
 IOS_EXPO_ID = 'host.exp.Exponent'
 IOS_SCENARIOS = (
-    'ios-flight-smoke', 'ios-offline-flight', 'ios-sync-lost-response', 'ios-simulator-device',
+    'ios-aircraft-categories', 'ios-flight-smoke', 'ios-offline-flight', 'ios-sync-lost-response', 'ios-simulator-device',
     'ios-keep-server-conflict', 'ios-keep-device-conflict',
 )
 
@@ -228,6 +228,7 @@ def run_scenario(args, scenario):
                  '--test-output-dir', output, '--debug-output', output,
                  '--format', 'junit', '--output', output / 'screens.xml',
                  '-e', f'EXPO_URL={expo_url}',
+                 '-e', f'IOS_PASSWORD_SHEET_FALLBACK={1 if scenario == "ios-aircraft-categories" else 0}',
                  '-e', f'CHECKPOINT_URL=http://127.0.0.1:{checkpoints.server_port}/{run_id}',
                  ROOT / f'e2e/{scenario}.yaml'], timeout=1200)
 
@@ -271,7 +272,7 @@ def run_scenario(args, scenario):
                 try:
                     result = backend(expected, capture_output=True, text=True, timeout=10)
                 except subprocess.CalledProcessError as error:
-                    if step in ('delete-synced', 'ios-synced', 'conflict-flight-synced', 'kept-device', 'tailnumber-synced', 'device-synced', 'device-edited', 'device-refreshed') and 'AssertionError' in error.stderr:
+                    if step in ('delete-synced', 'ios-synced', 'conflict-flight-synced', 'kept-device', 'tailnumber-synced', 'device-synced', 'device-edited', 'device-refreshed', 'categories-synced', 'categories-refreshed') and 'AssertionError' in error.stderr:
                         self.retry_later(error.stderr)
                         return
                     raise
@@ -332,7 +333,7 @@ def run_scenario(args, scenario):
         print(f'Created disposable PostgreSQL database: {database}', flush=True)
         with (output / 'migrations.log').open('w') as log:
             command([sys.executable, args.django / 'manage.py', 'migrate', '--noinput'], stdout=log, stderr=subprocess.STDOUT, timeout=180)
-        backend('seed-validation' if scenario == 'flight-validation' else 'seed')
+        backend('categories-seed' if scenario == 'ios-aircraft-categories' else 'seed-validation' if scenario == 'flight-validation' else 'seed')
         api = start_api('django.log')
         metro = start([ROOT / 'node_modules/.bin/expo', 'start', '--go', '--localhost', '--port', args.metro_port], 'metro.log')
         wait_for('Metro', lambda: http_ready(args.metro_port, '/status'), process=metro)

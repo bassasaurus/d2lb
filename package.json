@@ -19,7 +19,8 @@
     "test:screens:ios:retry": "sh scripts/screen-tests --scenario ios-sync-lost-response",
     "test:screens:ios:conflict": "sh scripts/screen-tests --scenario ios-keep-server-conflict",
     "test:screens:ios:conflict:device": "sh scripts/screen-tests --scenario ios-keep-device-conflict",
-    "test:screens:ios:device": "sh scripts/screen-tests --scenario ios-simulator-device"
+    "test:screens:ios:device": "sh scripts/screen-tests --scenario ios-simulator-device",
+    "test:screens:ios:categories": "sh scripts/screen-tests --scenario ios-aircraft-categories"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

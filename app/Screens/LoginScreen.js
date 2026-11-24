@@ -97,7 +97,7 @@ function LoginScreen() {
                     <AppTextInput
                       style={styles.input}
                       testID="login-email"
-                      placeholder='email'
+                      placeholder='Email'
                       autoCorrect={false}
                       autoCapitalize={"none"}
                       keyboardType={"default"}
@@ -114,7 +114,7 @@ function LoginScreen() {
                       <AppTextInput
                         style={[styles.input, styles.passwordInput]}
                         testID="login-password"
-                        placeholder="password"
+                        placeholder="Password"
                         autoCorrect={false}
                         autoCapitalize="none"
                         onChangeText={handleChange("password")}
@@ -137,7 +137,7 @@ function LoginScreen() {
                     </View>
                     {errors.password && <AppText style={styles.errors}>{errors.password}</AppText>}
                     <View style={styles.submit}>
-                      <PrimaryActionButton testID="login-submit" title={isSubmitting ? 'Signing in…' : 'Sign in'}
+                      <PrimaryActionButton testID="login-submit" title={isSubmitting ? 'Signing in…' : 'Sign In'}
                         disabled={!isValid || isSubmitting || !values.username || !values.password}
                         onPress={handleSubmit} />
                     </View>
@@ -162,7 +162,7 @@ const createStyles = STYLES => StyleSheet.create({
     marginBottom: 8,
     ...Platform.select({ android: { paddingBottom: 6 } }),
   },
-  submit: { marginTop: Platform.OS === 'android' ? 8 : 4 },
+  submit: { marginTop: 8 },
   input: { marginTop: 0 },
   passwordField: { marginTop: 8 },
   passwordInput: { paddingRight: 46 },

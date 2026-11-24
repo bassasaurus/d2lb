@@ -16,6 +16,11 @@ from flights.models import Aircraft, Flight, MapData, TailNumber, Total, Stat  #
 EMAIL = 'screen-test@example.invalid'
 PASSWORD = 'Disposable-screen-test-42'
 
+if sys.argv[1].startswith('categories-'):
+    from category_samples import run
+    run(sys.argv[1])
+    sys.exit(0)
+
 stage_conflict = sys.argv[1] == 'stage-server-conflict'
 state = 'original' if stage_conflict else sys.argv[1]
 if state in ['seed', 'seed-validation']:

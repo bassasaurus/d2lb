@@ -1,7 +1,8 @@
 import { formatDate } from '../formatting/dates.mjs';
+import { launchLabel } from '../forms/launchMethods.mjs';
 const flightFields = [
   ['date', 'Date'], ['aircraft_type', 'Aircraft'], ['registration', 'Registration'],
-  ['route', 'Route'], ['duration', 'Duration'], ['pilot_in_command', 'PIC'],
+  ['route', 'Route'], ['duration', 'Duration'], ['launch_method', 'Launch Method'], ['pilot_in_command', 'PIC'],
   ['second_in_command', 'SIC'], ['solo', 'Solo'], ['dual', 'Dual'],
   ['instructor', 'Instructor'], ['simulator', 'Simulator'], ['cross_country', 'Cross-country'],
   ['landings_day', 'Day landings'], ['landings_night', 'Night landings'], ['night', 'Night time'],
@@ -10,13 +11,15 @@ const flightFields = [
 ];
 const aircraftFields = [
   ['aircraft_type', 'Aircraft type'], ['aircraft_category', 'Category'], ['aircraft_class', 'Class'],
-  ['piston', 'Piston'], ['turbine', 'Turbine'], ['requires_type', 'Type rating required'],
+  ['piston', 'Piston'], ['turbine', 'Turbine'], ['electric', 'Electric'], ['self_launch_capable', 'Self-launch capable'], ['requires_type', 'Type rating required'],
   ['tailwheel', 'Tailwheel'], ['compleks', 'Complex'], ['high_performance', 'High performance'],
   ['simple', 'Simple'], ['superr', 'Super'], ['heavy', 'Heavy'], ['large', 'Large'],
-  ['medium', 'Medium'], ['small', 'Small'], ['light_sport', 'Light sport'],
+  ['small', 'Small'],
 ];
 const tailnumberFields = [['registration', 'Registration'], ['aircraft', 'Aircraft'], ['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
 function format(value, key) {
+  if (key === 'launch_method') return value ? launchLabel(value) : '—';
+  if (['electric', 'self_launch_capable'].includes(key)) value = Boolean(value);
   if (key === 'date') return formatDate(value, '—');
   if (key === 'approaches') return (Array.isArray(value) ? value : [])
     .filter(row => row.approach_type && row.number !== '' && row.number != null)

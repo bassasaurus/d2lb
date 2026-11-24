@@ -9,14 +9,12 @@ import { ScrollView } from '../components/OverflowLists';
 import { routeFitCoordinates, routeMapPadding, validCoordinate } from '../maps/routeBounds.mjs';
 import FlightHeader from '../components/FlightHeader';
 import { useMemo } from 'react';
-import React, { useRef, useContext, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { StyleSheet, View, Alert, TouchableOpacity } from "react-native";
 
 import { useAppTheme } from '../theme/ThemeProvider';
-import ActivityModal from "../components/ActivityModal";
 import { flightStore, flightScope } from "../storage/flights";
-import AppContext from "../components/AppContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AppText from "../components/AppText";
 import Separator from "../components/Separator";
@@ -35,7 +33,7 @@ function FlightDetailScreen({ route, navigation }) {
   const { styles: STYLES, colors, isDark } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const mapRef = useRef(null);
-  const Context = useContext(AppContext);
+  const deleting = useRef(false);
   const localId = route.params.item.local_id;
   const [scope, setScope] = useState(null);
   useFocusEffect(React.useCallback(() => {
@@ -75,13 +73,15 @@ function FlightDetailScreen({ route, navigation }) {
   }, [mapReady, mapSize.width, mapSize.height, fitKey]);
 
   const deleteItem = async () => {
+    if (deleting.current) return;
+    deleting.current = true;
     try {
       await (await flightStore()).remove(await flightScope(), localId);
       navigation.popTo("FlightList", { deletedFlightId: localId });
     } catch (error) {
       Alert.alert("Flight not deleted", "Please try again.");
     } finally {
-      Context.setActivityVisible(false);
+      deleting.current = false;
     }
   };
 
@@ -90,10 +90,7 @@ function FlightDetailScreen({ route, navigation }) {
       {
         text: "Delete",
         style: "destructive",
-        onPress: () => {
-          Context.setActivityVisible(true);
-          deleteItem();
-        },
+        onPress: deleteItem,
       },
       { text: "Cancel", style: "cancel" },
     ]);
@@ -164,7 +161,6 @@ function FlightDetailScreen({ route, navigation }) {
       </View>
 
       }
-      <ActivityModal visible={Context.activityVisibleValue}></ActivityModal>
     </View>
   );
 }

@@ -33,7 +33,12 @@ name: Sign in on iPhone
     timeout: 10000
 - tapOn:
     id: login-submit
+- runFlow: ios-dismiss-save-login.yaml
 - extendedWaitUntil:
     visible: New Flight
     timeout: 30000
+- runFlow:
+    when:
+      visible: "(?i)^(not now|don['’]t save)$"
+    file: ios-dismiss-save-login.yaml
 - assertNotVisible: KAUS-KDFW
