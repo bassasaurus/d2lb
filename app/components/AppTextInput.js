@@ -9,7 +9,7 @@ function AppTextInput({ title, placeholder, isValid, onBlur, style, ...props }) 
   return (
     <View>
       <TextInput
-        style={[styles.input, style, isValid === false && { backgroundColor: `${STYLES.red}14` }, String(props.value ?? props.defaultValue ?? '').length === 0 && { textAlign: 'left' }]}
+        style={[styles.input, style, String(props.value ?? props.defaultValue ?? '').length === 0 && { textAlign: 'left' }]}
         placeholderTextColor={STYLES.placeholder}
         selectionColor={STYLES.blue}
         keyboardAppearance={isDark ? 'dark' : 'light'}
