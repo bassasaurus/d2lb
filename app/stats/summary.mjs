@@ -31,5 +31,15 @@ export function validateSummary(data) {
       }
     }
   }
+  const credit = data.instrument_device_credit;
+  if (credit) {
+    if (!Array.isArray(credit.rows) || typeof credit.basis !== 'string' || typeof credit.note !== 'string'
+      || ![credit.device_credit, credit.combined_limit].every(value => value !== null && Number.isFinite(Number(value))))
+      throw new Error('Invalid instrument credit response');
+    for (const row of credit.rows) {
+      if (!row || typeof row.type !== 'string' || ![row.logged, row.eligible, row.limit].every(value => value !== null && Number.isFinite(Number(value))))
+        throw new Error('Invalid instrument credit row');
+    }
+  }
   return data;
 }

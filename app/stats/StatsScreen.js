@@ -49,6 +49,31 @@ function Breakdown({ row, title, previewFields = [], primary = false }) {
     </View>}
   </Card>;
 }
+function InstrumentCredit({ report }) {
+  const [expanded, setExpanded] = useState(false);
+  const { colors } = useAppTheme();
+  return <Card style={{ marginTop: 12, marginBottom: 8 }}>
+    <Pressable accessibilityRole="button" accessibilityState={{ expanded }}
+      accessibilityLabel="Instrument–Airplane device credit" onPress={() => setExpanded(value => !value)}
+      style={{ minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+      <Text weight="600" style={{ flex: 1 }}>Instrument–Airplane Device Credit</Text>
+      <MaterialCommunityIcons name={expanded ? 'chevron-up' : 'chevron-down'} size={22} color={colors.muted} />
+      <Text weight="600">{metricValue('hours', report.device_credit)}</Text>
+    </Pressable>
+    {expanded && <View>
+      <Text style={{ color: colors.muted, marginBottom: 8 }}>{report.basis}</Text>
+      {report.rows.map(row => <View key={row.type} style={{ marginBottom: 8 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12 }}>
+          <Text weight="600">{row.type}</Text>
+          <Text>{metricValue('hours', row.eligible)} / {metricValue('hours', row.limit)}</Text>
+        </View>
+        <Text style={{ color: colors.muted }}>Logged instrument: {metricValue('hours', row.logged)}</Text>
+      </View>)}
+      <Text weight="600" style={{ marginBottom: 8 }}>Estimated device credit: {metricValue('hours', report.device_credit)} / {metricValue('hours', report.combined_limit)} hours</Text>
+      <Text style={{ color: colors.muted }}>{report.note}</Text>
+    </View>}
+  </Card>;
+}
 export default function StatsScreen() {
   const { colors } = useAppTheme();
   const [snapshot, setSnapshot] = useState(null);
@@ -117,6 +142,7 @@ export default function StatsScreen() {
         {categories.map((row, index) => <Breakdown key={`${row.total}:${index}`} row={row} title={row.total} previewFields={METRICS.slice(1, 4).filter(([key]) => Number(row[key]) > 0)} />)}
         {snapshot.aircraft.length > 0 && <Text size={18} weight="600" style={{ marginTop: 16, marginBottom: 10 }}>By Type</Text>}
         {snapshot.aircraft.map((row, index) => <Breakdown key={`${row.aircraft_type}:${index}`} row={row} title={row.aircraft_type} />)}
+        {snapshot.instrument_device_credit && <InstrumentCredit report={snapshot.instrument_device_credit} />}
       </>}
       {!snapshot && !refreshing && !notice.error && <Text>No summary available yet.</Text>}
     </ScrollView>

@@ -1,3 +1,5 @@
+import { flightCrewLabel } from '../forms/flightRoles.mjs';
+import { sessionIdentifier } from '../forms/simulatorEntry.mjs';
 import RecordIssue from '../components/RecordIssue';
 import RecordSyncIndicator from '../components/RecordSyncIndicator';
 import { useFocusEffect } from '@react-navigation/native';
@@ -55,7 +57,7 @@ function FlightDetailScreen({ route, navigation }) {
   const polylines = (route.params.item.app_polylines?.coordinates || []).filter(validCoordinate);
   const fitCoordinates = routeFitCoordinates(polylines, markers);
   const fitKey = JSON.stringify(fitCoordinates);
-  const hasMap = fitCoordinates.length > 0;
+  const hasMap = !route.params.item.simulator && fitCoordinates.length > 0;
   useEffect(() => {
     if (!mapReady || !mapSize.width || !mapSize.height || !hasMap) return;
     let active = true;
@@ -97,16 +99,15 @@ function FlightDetailScreen({ route, navigation }) {
     ]);
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+    <View testID="flight-detail" style={[styles.container, { paddingBottom: insets.bottom }]}>
       <ScrollView style={{ maxHeight: hasMap ? '55%' : undefined, flexGrow: hasMap ? 0 : 1, margin: 12 }}>
         <Card>
         <RecordIssue item={route.params.item} kind="flight" navigation={navigation} />
         {/* first row */}
 
         <FlightHeader date={route.params.item.date} type={route.params.item.aircraft_type}
-          reg={route.params.item.registration} dur={route.params.item.duration} route={route.params.item.route}
-          crew={[["pilot_in_command", "PIC"], ["second_in_command", "SIC"], ["solo", "Solo"], ["dual", "Dual"]]
-            .filter(([field]) => route.params.item[field]).map(([, label]) => label).join(' ')} />
+          reg={sessionIdentifier(route.params.item)} dur={route.params.item.duration} route={route.params.item.route}
+          crew={flightCrewLabel(route.params.item)} />
         {/* second row */}
         <Separator />
         <DetailsPanel route={route}></DetailsPanel>

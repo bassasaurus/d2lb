@@ -1,11 +1,11 @@
 // Give each user-facing release a new ID and replace these highlights.
 export const updateNotes = {
-  id: 'clearer-reminder-cards-and-local-save-feedback',
+  id: 'training-devices-and-aim-approaches',
   highlights: [
-    'Reminder cards keep hidden status and Restore together. Long-press Reminders or Milestones in the drawer to view their rules.',
-    'Connection notices close quickly during normal offline use. Record stripes still show pending changes and sync issues.',
-    'Routes remove unfinished trailing dashes and add a separator when you resume a recognized airport.',
-    'New tailnumbers save without a full-screen loading interruption and return selected on your unfinished flight, including offline.',
-    'Fixed a crash when opening reminder and milestone forms.',
+    'Log FFS, FTD, and ATD sessions with a Device ID, including BATD and AATD. Save offline and sync when connected.',
+    'Simulator hours are shown separately from aircraft flight totals, with an estimate of standard Part 61 Instrument–Airplane device credit.',
+    'Approach choices now identify RNAV minima and include GLS, PAR, ASR, and RNP AR. ILS CAT II and CAT III remain available.',
+    'Flight forms have clearer required fields and grouped Role and Approaches sections. Crew labels reflect the roles you logged.',
+    'Your default aircraft selection is shared with the website.',
   ],
 };

@@ -1,3 +1,4 @@
+import { sessionIdentifier } from '../forms/simulatorEntry.mjs';
 import RecordIssue from './RecordIssue';
 import RecordSyncIndicator from './RecordSyncIndicator';
 import Card from './Card';
@@ -11,7 +12,7 @@ function FlightItem({ date, route, type, reg, dur, crew, syncEvent, item, naviga
   const { styles: STYLES } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   return <Card compact style={styles.itemContainer}>
-    <FlightHeader date={date} type={type} reg={reg} dur={dur} route={route} crew={crew} />
+    <FlightHeader date={date} type={type} reg={sessionIdentifier(item)} dur={dur} route={route} crew={crew} />
     <RecordIssue item={item} kind="flight" navigation={navigation} />
     <RecordSyncIndicator item={item} syncEvent={syncEvent} scope={scope} />
   </Card>;

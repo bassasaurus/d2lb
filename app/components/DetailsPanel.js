@@ -11,6 +11,11 @@ function DetailsPanel({ route }) {
   const approaches = route.params.item.approaches;
   return (
     <View>
+      {route.params.item.simulator && <View style={{ marginBottom: 8 }}>
+        <AppText weight="600">Aircraft Represented: {route.params.item.aircraft_type}</AppText>
+        <AppText>{route.params.item.device_type || 'Sim (device type not recorded)'}{route.params.item.device_id ? ` · ${route.params.item.device_id}` : ''}</AppText>
+        <AppText>Simulator time — excluded from aircraft flight totals.</AppText>
+      </View>}
       {/* third row */}
       <View style={styles.rowContainer}>
         <View style={styles.firstColumn}>
@@ -95,7 +100,7 @@ function DetailsPanel({ route }) {
           <AppText size={16}>Remarks: {route.params.item.remarks}</AppText>
         </View>
       </View>
-      <Mileage flight={route.params.item} />
+      {!route.params.item.simulator && <Mileage flight={route.params.item} />}
     </View>
   );
 }

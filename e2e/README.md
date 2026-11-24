@@ -218,3 +218,11 @@ signature capture, and aircraft/tailnumber screen tests are separate follow-ups.
 
 Keep selectors on stable `testID`/accessibility labels. Avoid fixed tap coordinates
 for form controls and fixed sleeps; wait for observable UI or database conditions.
+
+### Training-device scenario
+
+Use `./scripts/mobile run test:screens:ios:device -- --ios-simulator "$D2LB_SIM_UDID" --maestro /path/to/maestro --expo-app /path/to/Expo-Go.app`.
+The `ios-simulator-device` scenario saves an AATD session offline, restarts the app,
+reconnects, edits Device ID, and refreshes. Server checkpoints require one flight
+with a stable primary key, no new tailnumber, exactly one create and one update
+receipt, zero aircraft flight hours, and 1.2 simulator hours.

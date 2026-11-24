@@ -22,6 +22,14 @@ ANDROID_SYNC_RECOVERY = (
 )
 
 SCENARIOS = {
+    'ios-simulator-device': [
+        ('offline', 'empty', False),
+        ('device-saved-offline', 'empty', None),
+        ('device-reconnect', 'empty', True),
+        ('device-synced', 'device-original', None),
+        ('device-edited', 'device-updated', None),
+        ('device-refreshed', 'device-updated', None),
+    ],
     'android-tailnumber-create': [
         ('offline', 'empty', False),
         ('tailnumber-saved-offline', 'empty', True),

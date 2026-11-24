@@ -1,3 +1,4 @@
+import { flightCrewLabel } from '../forms/flightRoles.mjs';
 import { connectionNotice, syncConnectionFailure } from '../api/connectionNotice.mjs';
 import ReminderFeedback from '../components/ReminderFeedback';
 import { localDraftStore } from '../drafts/localDraftStore';
@@ -315,6 +316,7 @@ function FlightRow({ item, navigation, style, syncEvent, removalProgress, scope 
       } : undefined}
     >
       <TouchableOpacity
+        testID={`flight-row-${item.local_id ?? item.id}`}
         activeOpacity={0.7}
         disabled={removing}
         style={style}
@@ -329,7 +331,7 @@ function FlightRow({ item, navigation, style, syncEvent, removalProgress, scope 
           type={item.aircraft_type}
           reg={item.registration}
           dur={item.duration}
-          crew={item.is_draft ? "Draft" : item.second_in_command ? "SIC" : "PIC"}
+          crew={flightCrewLabel(item)}
           dayL={item.landings_day ? item.landings_day : 0}
           nitL={item.landings_night ? item.landings_night : 0}
         />
