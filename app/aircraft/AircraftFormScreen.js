@@ -20,7 +20,7 @@ function Choices({ title, choices, selected, onSelect, error, first = false }) {
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   return <View style={[styles.group, first && { marginTop: 0 }]}><Text style={styles.label}>{title}</Text><View style={styles.options}>
     {choices.map(([key, label]) => <Pressable key={key} testID={`aircraft-${title.toLowerCase().replaceAll(" ", "-")}-${key}`} accessibilityRole="radio" accessibilityState={{ checked: selected === key }}
-      onPress={() => onSelect(key)} style={[styles.option, error && { borderColor: STYLES.danger }, selected === key && styles.selected]}>
+      onPress={() => onSelect(key)} style={[styles.option, (error || !selected) && { borderColor: STYLES.danger }, selected === key && styles.selected]}>
       <Text style={{ color: selected === key ? STYLES.blue : STYLES.black }}>{label}</Text>
     </Pressable>)}
   </View>{error && <Text style={styles.error}>{error}</Text>}</View>;

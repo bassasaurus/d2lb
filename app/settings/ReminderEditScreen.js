@@ -200,7 +200,7 @@ export default function ReminderEditScreen({ navigation, route }) {
       {expiration && <>
         <Text weight="600">Title</Text>
         <AppTextInput accessibilityLabel="Title" placeholder="Reminder title" maxLength={80} autoCapitalize="sentences"
-          value={title} onChangeText={setTitle} isValid editable={!saving} />
+          value={title} onChangeText={setTitle} isValid={Boolean(title.trim())} editable={!saving} />
       </>}
       {kind === 'flight_condition' && <>
         <Text weight="600" style={styles.heading}>Flight Condition</Text>
@@ -266,7 +266,7 @@ export default function ReminderEditScreen({ navigation, route }) {
         {companyMilestone && <>
           <Text weight="600" style={styles.heading}>Company</Text>
           <AppTextInput accessibilityLabel="Company" placeholder="Enter company name"
-            maxLength={50} autoCapitalize="words" value={company} onChangeText={setCompanyInput} isValid editable={!saving} />
+            maxLength={50} autoCapitalize="words" value={company} onChangeText={setCompanyInput} isValid={Boolean(company.trim())} editable={!saving} />
           {profileCompany === '' && <Text color={colors.muted}>Add a company in your profile to prefill future milestones.</Text>}
           {dateInput('Start Date', startDate, setStartDate)}
           {dateInput('End Date (optional)', endDate, setEndDate, true)}
@@ -275,7 +275,7 @@ export default function ReminderEditScreen({ navigation, route }) {
         </>}
         <Text weight="600" style={styles.heading}>Target Hours</Text>
         <AppTextInput accessibilityLabel="Target Hours" placeholder="##.#" keyboardType="decimal-pad"
-          value={targetHours} onChangeText={setTargetHours} isValid editable={!saving} />
+          value={targetHours} onChangeText={setTargetHours} isValid={Number(targetHours) > 0} editable={!saving} />
       </>}
       {error !== '' && <Text color={colors.danger} style={styles.heading} accessibilityLiveRegion="polite">{error}</Text>}
     </ScrollableFormCard>

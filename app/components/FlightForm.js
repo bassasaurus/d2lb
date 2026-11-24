@@ -237,10 +237,10 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                 >
                   <View pointerEvents='none'>
                     <AppTextInput
-                      isValid={errors.date ? false : true}
+                      isValid={Boolean(values.date) && !errors.date}
                       value={formatDate(values.date, '')}
                       onChangeText={handleChange("date")}
-                      placeholder='Date'
+                      placeholder='Select date'
                       onBlur={handleBlur("date")}
                     />
                   </View>
@@ -259,8 +259,8 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                   <View style={{ flex: 1 }}>
-                    <AircraftPicker placeholder={values.simulator ? "Aircraft Represented *" : "Aircraft Type *"}
-                      initialValue={values.aircraft_type} isValid={!errors.aircraft_type}
+                    <AircraftPicker placeholder={values.simulator ? "Aircraft Represented" : "Aircraft Type"}
+                      initialValue={values.aircraft_type} isValid={Boolean(values.aircraft_type) && !errors.aircraft_type}
                       fieldName="aircraft_type" setFieldValue={(name, value) => name === 'aircraft_type'
                         ? setValues(changeFlightAircraft(values, value, aircraftRecords.find(row => row.aircraft_type === value)))
                         : setFieldValue(name, value)} onBlur={handleBlur('aircraft_type')} />
@@ -278,12 +278,12 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                 </View> : null}
                 </View>
                 {isGliderFlight(values, selectedAircraft(values)) && <View style={{marginTop: 16, marginBottom: 8}}>
-                  <AppText weight="600">Launch Method *</AppText>
+                  <AppText weight="600">Launch Method</AppText>
                   <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6}}>
                     {launchChoices(selectedAircraft(values)).map(([key, label]) => <Pressable key={key} testID={`launch-${key.toLowerCase()}`}
                       accessibilityRole="radio" accessibilityState={{checked: values.launch_method === key}}
                       onPress={() => setFieldValue('launch_method', key)}
-                      style={{padding: 10, borderRadius: 5, borderWidth: 1, borderColor: values.launch_method === key ? STYLES.blue : STYLES.grey}}>
+                      style={{padding: 10, borderRadius: 5, borderWidth: 1, borderColor: values.launch_method === key ? STYLES.blue : !values.launch_method ? STYLES.danger : STYLES.grey}}>
                       <AppText color={values.launch_method === key ? STYLES.blue : STYLES.black}>{label}</AppText>
                     </Pressable>)}
                   </View>
@@ -294,29 +294,29 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                 {values.simulator && <View style={styles.approachesSection}>
                   <AppText weight="600">Training Device</AppText>
                   <AppText>Aircraft Type is the aircraft represented. Simulator time is separate from flight totals.</AppText>
-                  <AppText style={{ marginTop: 8 }}>Device Type *</AppText>
+                  <AppText style={{ marginTop: 8 }}>Device Type</AppText>
                   <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
                     {DEVICE_TYPES.map(([type, name]) => <Pressable key={type} testID={`device-type-${type}`}
                       accessibilityRole="radio" accessibilityLabel={`${type} — ${name}`}
                       accessibilityState={{ checked: values.device_type === type }}
                       onPress={() => setFieldValue('device_type', type)}
                       style={{ flex: 1, alignItems: 'center', padding: 10, borderRadius: 8, borderWidth: 1,
-                        borderColor: values.device_type === type ? STYLES.blue : STYLES.grey }}>
+                        borderColor: values.device_type === type ? STYLES.blue : !values.device_type ? STYLES.danger : STYLES.grey }}>
                       <AppText color={values.device_type === type ? STYLES.blue : STYLES.black} weight="600">{type}</AppText>
                     </Pressable>)}
                   </View>
                   {!!values.device_type && <AppText>{DEVICE_TYPES.find(([type]) => type === values.device_type)?.[1]}</AppText>}
                   {!!errors.device_type && <Text style={styles.errors}>{errors.device_type}</Text>}
-                  <AppTextInput testID="flight-device-id" value={values.device_id || ''} isValid={!errors.device_id}
-                    placeholder="Device ID *" maxLength={100} autoCorrect={false}
+                  <AppTextInput testID="flight-device-id" value={values.device_id || ''} isValid={Boolean(values.device_id) && !errors.device_id}
+                    placeholder="Device ID" maxLength={100} autoCorrect={false}
                     onChangeText={handleChange('device_id')} onBlur={handleBlur('device_id')} />
                   {!!errors.device_id && <Text style={styles.errors}>{errors.device_id}</Text>}
                   {values.device_type === 'ATD' && <View style={{ marginVertical: 8 }}>
-                    <AppText>ATD Classification *</AppText>
+                    <AppText>ATD Classification</AppText>
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                       {['BATD', 'AATD'].map(type => <Pressable key={type} accessibilityRole="radio"
                         accessibilityState={{ checked: values.atd_type === type }} accessibilityLabel={type}
-                        style={{ minHeight: 44, padding: 10 }} onPress={() => setFieldValue('atd_type', type)}>
+                        style={{ minHeight: 44, padding: 10, borderWidth: 1, borderRadius: 5, borderColor: !values.atd_type ? STYLES.danger : STYLES.grey }} onPress={() => setFieldValue('atd_type', type)}>
                         <AppText color={values.atd_type === type ? STYLES.blue : STYLES.black}>{values.atd_type === type ? '● ' : '○ '}{type}</AppText>
                       </Pressable>)}
                     </View>
@@ -441,7 +441,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                     onLayout={event => setRoleWidth(event.nativeEvent.layout.width)}>
                     {FLIGHT_ROLES.filter(([field]) => PRIMARY_FLIGHT_ROLES.includes(field)).map(([field, label]) => <View key={field}
                       style={[styles.checkboxContainer, { width: `${100 / (roleColumns >= 4 ? 4 : Math.min(2, roleColumns))}%` }]}>
-                      <Checkbox label={field === 'dual' && values.simulator && values.instrument_credit_eligible ? 'Dual *' : label} isChecked={!isFlightRoleDisabled(values, field) && values[field]} disabled={isFlightRoleDisabled(values, field)}
+                      <Checkbox label={field === 'dual' && values.simulator && values.instrument_credit_eligible ? 'Dual' : label} isChecked={!isFlightRoleDisabled(values, field) && values[field]} disabled={isFlightRoleDisabled(values, field)}
                         onPress={() => setValues(current => toggleFlightRole(current, field))} />
                     </View>)}
                   </View>
@@ -450,7 +450,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                 <View style={styles.roleGrid}>
                   {FLIGHT_ROLES.filter(([field]) => field !== 'simulator' && !PRIMARY_FLIGHT_ROLES.includes(field)).map(([field, label]) => <View key={field}
                     style={[styles.checkboxContainer, { width: `${100 / Math.min(3, roleColumns)}%` }]}>
-                    <Checkbox label={field === 'dual' && values.simulator && values.instrument_credit_eligible ? 'Dual *' : label} isChecked={!isFlightRoleDisabled(values, field) && values[field]} disabled={isFlightRoleDisabled(values, field)}
+                    <Checkbox label={field === 'dual' && values.simulator && values.instrument_credit_eligible ? 'Dual' : label} isChecked={!isFlightRoleDisabled(values, field) && values[field]} disabled={isFlightRoleDisabled(values, field)}
                       onPress={() => setValues(current => toggleFlightRole(current, field))} />
                   </View>)}
                 </View>
@@ -572,7 +572,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                         </Text>
                       ) : (
                         <View>
-                          <AppText>{values.simulator && values.instrument_credit_eligible ? 'Simulated Instrument *' : 'Simulated Instrument'}</AppText>
+                          <AppText>{values.simulator && values.instrument_credit_eligible ? 'Simulated Instrument' : 'Simulated Instrument'}</AppText>
                         </View>
                       )}
                     </View>
