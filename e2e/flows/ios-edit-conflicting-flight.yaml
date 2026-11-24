@@ -17,7 +17,7 @@ name: Change the flight duration offline
 - assertVisible:
     id: flight-duration
     text: '^2\.3$'
-- tapOn: '^Flight role$'
+- tapOn: '^Role$'
 - tapOn:
     id: flight-save
 - extendedWaitUntil:

@@ -1,3 +1,4 @@
+import { approachLabel, approachOptions } from '../forms/approachChoices.mjs';
 import { FlatList } from './OverflowLists';
 import { useMemo } from 'react';
 import React, { useState } from "react";
@@ -21,63 +22,8 @@ function ApproachPicker({
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState("");
 
-  const approachChoices = [
-    {
-      id: 0,
-      approach: "ILS",
-    },
-    {
-      id: 2,
-      approach: "CAT II",
-    },
-    {
-      id: 3,
-      approach: "CAT III",
-    },
-    {
-      id: 4,
-      approach: "GPS",
-    },
-    {
-      id: 5,
-      approach: "RNAV",
-    },
-    {
-      id: 6,
-      approach: "LOC",
-    },
-    {
-      id: 7,
-      approach: "VOR",
-    },
-    {
-      id: 8,
-      approach: "NDB",
-    },
-    {
-      id: 9,
-      approach: "LOC BC",
-    },
-    {
-      id: 10,
-      approach: "SDF",
-    },
-    {
-      id: 11,
-      approach: "LDA",
-    },
-    {
-      id: 12,
-      approach: "TACAN",
-    },
-    {
-      id: 13,
-      approach: "MLS",
-    },
-  ];
-
   const fetchData = () => {
-    setData(approachChoices);
+    setData(approachOptions(approachValue));
   };
 
   const renderItem = ({ item }) => (
@@ -85,10 +31,10 @@ function ApproachPicker({
       <TouchableOpacity
         onPress={() => {
           setVisible(false);
-          setFieldValue(approachKey, item.approach);
+          setFieldValue(approachKey, item.value);
         }}
       >
-        <Text style={styles.listItem}>{item.approach}</Text>
+        <Text style={styles.listItem}>{item.label}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -106,7 +52,7 @@ function ApproachPicker({
             <View pointerEvents={"none"}>
               <AppTextInput
                 isValid={true}
-                value={approachValue}
+                value={approachLabel(approachValue)}
                 placeholder={"Approach Type"}
               ></AppTextInput>
             </View>

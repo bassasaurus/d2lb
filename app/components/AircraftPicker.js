@@ -15,7 +15,7 @@ import { Alert } from "react-native";
 import { useAppTheme } from '../theme/ThemeProvider';
 import FlatListItemSeparator from "./FlatListItemSeparator";
 
-function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
+function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue, placeholder = "Aircraft" }) {
   const { styles: STYLES } = useAppTheme();
   const styles = useMemo(() => createStyles(STYLES), [STYLES]);
   const navigation = useNavigation();
@@ -58,7 +58,7 @@ function AircraftPicker({ setFieldValue, fieldName, isValid, initialValue }) {
           <AppTextInput
             isValid={isValid}
             value={initialValue || ""}
-            placeholder={"Aircraft"}
+            placeholder={placeholder}
           ></AppTextInput>
         </View>
       </Pressable>

@@ -37,7 +37,7 @@ name: Save a flight on iPhone
     id: tailnumber-input
     text: '^N1234$'
 # The numeric keypad has no dismiss key. Tap a noninteractive form label.
-- tapOn: '^Flight role$'
+- tapOn: '^Role$'
 - scrollUntilVisible:
     element: PIC
     direction: DOWN

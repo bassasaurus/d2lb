@@ -1,3 +1,4 @@
+import { DEVICE_TYPES, simulatorEntryErrors, prepareFlightEntry } from '../forms/simulatorEntry.mjs';
 import { formatDate } from '../formatting/dates.mjs';
 import { flightFormAction } from '../drafts/flightFormAction.mjs';
 import { formFeedback } from '../forms/errorFeedback.mjs';
@@ -6,7 +7,7 @@ import PlatformActionButton from './PlatformActionButton';
 import PrimaryActionButton from './PrimaryActionButton';
 import { hasRequiredSoloLandings } from '../forms/landingRequirements.mjs';
 import { nightPairWarnings } from '../forms/nightWarning.mjs';
-import { FLIGHT_ROLES, PRIMARY_FLIGHT_ROLES, hasRequiredFlightRole, toggleFlightRole } from '../forms/flightRoles.mjs';
+import { FLIGHT_ROLES, PRIMARY_FLIGHT_ROLES, hasRequiredFlightRole, toggleFlightRole, isFlightRoleDisabled } from '../forms/flightRoles.mjs';
 import ScrollableFormCard from './ScrollableFormCard';
 import { listTailnumbers } from '../storage/tailnumbers';
 import RouteInput from '../airports/RouteInput';
@@ -102,13 +103,16 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
 
   let flightSchema = yup.object().shape({
     date: yup.string().required(required),
-    route: yup.string().transform(value => normalizeRoute(value)).min(3).max(50).required(required).test('known-airports', 'Check the route airports.', function(value) {
+    route: yup.string().transform(value => normalizeRoute(value)).max(50).when('simulator', { is: true, then: schema => schema, otherwise: schema => schema.min(3).required(required) }).test('known-airports', 'Check the route airports.', function(value) {
+      if (this.parent.simulator) return true;
       const current = airportCheck.current;
       const messages = current?.route === normalizeRoute(value) ? routeErrors(current.entries) : [];
       return messages.length ? this.createError({ message: messages.join(' ') }) : true;
     }),
     aircraft_type: yup.string().required(required),
-    registration: yup.string().required(required),
+    registration: yup.string().nullable().when('simulator', { is: true, then: schema => schema, otherwise: schema => schema.required(required) }),
+    device_type: yup.string().nullable(),
+    device_id: yup.string().nullable().max(100, '100 Character Maximum'),
     duration: yup
       .number()
       .typeError(number)
@@ -136,6 +140,10 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
       .moreThan(0, ({ value }) => value < 0 ? "Hours cannot be negative." : "Leave blank for 0"),
     remarks: yup.string().max(256, "256 Character Maximum"),
     number: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
+  }).test('simulator-device', 'Check the training device.', function(values) {
+    const errors = simulatorEntryErrors(values);
+    if (!Object.keys(errors).length) return true;
+    return new yup.ValidationError(Object.entries(errors).map(([path, message]) => this.createError({ path, message })));
   }).test('flight-role', 'Required', function(values) {
     return hasRequiredFlightRole(values) || this.createError({ path: 'flight_role', message: 'Required' });
   }).test('solo-landings', 'Enter Day or Night landings for Solo.', function(values) {
@@ -149,7 +157,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
       <PickerOverlayHost>
           <DraftForm kind="flight" recordKey={initialValues.local_id || initialValues.id || 'new'} draftHandle={draftHandle} savedNavigation={savedNavigation} onResume={values => setFormCount(Math.max(0, ...values.approaches.map((item, index) => item.approach_type || item.number ? index : 0)))}
             renderLayout={({ content, form: { values, isValid, isSubmitting, handleSubmit }, draftBlocked }) => {
-              const valid = isValid && hasRequiredFlightRole(values) && hasRequiredSoloLandings(values);
+              const valid = isValid && !Object.keys(simulatorEntryErrors(values)).length && hasRequiredFlightRole(values) && hasRequiredSoloLandings(values);
               const action = flightFormAction({ valid, date: values.date, allowDraft: Boolean(onDraftSaved) });
               return (
               <ScrollableFormCard cardStyle={styles.container} keyboardDismissMode="on-drag"
@@ -183,7 +191,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
             onSubmit={async (values, helpers) => {
               try {
                 savedNavigation.current = false;
-                const result = await method({ ...values, route: normalizeRoute(values.route), validate_airports: true });
+                const result = await method({ ...prepareFlightEntry(values), route: normalizeRoute(values.route), validate_airports: true });
                 await draftHandle.current.complete();
                 savedNavigation.current = true;
                 helpers.resetForm({ values });
@@ -209,6 +217,8 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
             }) => (
               <>
                 {status && <Text accessibilityLiveRegion="polite" style={styles.errors}>{status}</Text>}
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                  <View style={{ flex: 1 }}>
                 <Pressable
                   testID="flight-date"
                   onPress={() => {
@@ -227,6 +237,11 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                     />
                   </View>
                 </Pressable>
+
+                  </View>
+                  <View style={{ paddingTop: 10 }}><Checkbox label="Sim" isChecked={Boolean(values.simulator)}
+                    onPress={() => setValues(toggleFlightRole(values, 'simulator'))} /></View>
+                </View>
                 <View>
                   {errors.date ? (
                     <Text style={styles.errors}>{errors.date}</Text>
@@ -234,75 +249,71 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                     <View></View>
                   )}
                 </View>
-                <RouteInput onCheck={result => { airportCheck.current = result; }} />
-                <View style={{ flexDirection: "row" }}>
-                  <View style={{ flex: 0.5, marginRight: 10 }}>
-                    <AircraftPicker
-                      initialValue={values.aircraft_type}
-                      isValid={errors.aircraft_type ? false : true}
-                      style={{ flex: 0.5 }}
-                      fieldName={"aircraft_type"}
-                      setFieldValue={setFieldValue}
-                      onBlur={handleBlur("aircraft_type")}
-                    ></AircraftPicker>
-                    <View>
-                      {errors.aircraft_type ? (
-                        <Text style={styles.errors}>
-                          {errors.aircraft_type}
-                        </Text>
-                      ) : (
-                        <View></View>
-                      )}
-                    </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                  <View style={{ flex: 1 }}>
+                    <AircraftPicker placeholder={values.simulator ? "Aircraft Represented *" : "Aircraft Type *"}
+                      initialValue={values.aircraft_type} isValid={!errors.aircraft_type}
+                      fieldName="aircraft_type" setFieldValue={setFieldValue} onBlur={handleBlur('aircraft_type')} />
+                    {!!errors.aircraft_type && <Text style={styles.errors}>{errors.aircraft_type}</Text>}
                   </View>
 
-                  <View style={{ flex: 0.5 }}>
-                    {values.aircraft_type ? (
-                      <>
-                        <TailnumberPicker
-                          initialValue={values.registration}
-                          isValid={errors.registration ? false : true}
-                          setFieldValue={setFieldValue}
-                          filterBy={values.aircraft_type}
-                          aircraftId={values.aircraft_type}
-                          onBlur={handleBlur("registration")}
-                          aircraft_type={values.aircraft_type}
-                          beforeCreate={() => draftHandle.current?.flush()}
-                          onScanBusyChange={setScanningTailnumber}
-                        ></TailnumberPicker>
-                        <View>
-                          {errors.registration ? (
-                            <Text style={styles.errors}>
-                              {errors.registration}
-                            </Text>
-                          ) : (
-                            <View></View>
-                          )}
-                        </View>
-                        <View>
-                          {values.registration && tailnumbers.some(tail =>
-                            tail.registration === values.registration && tail.aircraft !== values.aircraft_type
-                          ) ? (
-                            <Text style={styles.errors}>
-                              Registration mismatch
-                            </Text>
-                          ) : (
-                            <View></View>
-                          )}
-                        </View>
-                      </>
-                    ) : (
-                      <View></View>
-                    )}
-                  </View>
+{!values.simulator && values.aircraft_type ? <View style={{ flex: 1 }}>
+                  <TailnumberPicker initialValue={values.registration} isValid={!errors.registration}
+                    setFieldValue={setFieldValue} filterBy={values.aircraft_type} aircraftId={values.aircraft_type}
+                    onBlur={handleBlur('registration')} aircraft_type={values.aircraft_type}
+                    beforeCreate={() => draftHandle.current?.flush()} onScanBusyChange={setScanningTailnumber} />
+                  {!!errors.registration && <Text style={styles.errors}>{errors.registration}</Text>}
+                  {values.registration && tailnumbers.some(tail => tail.registration === values.registration && tail.aircraft !== values.aircraft_type)
+                    ? <Text style={styles.errors}>Registration mismatch</Text> : null}
+                </View> : null}
                 </View>
+                {values.simulator && <View style={styles.approachesSection}>
+                  <AppText weight="600">Training Device</AppText>
+                  <AppText>Aircraft Type is the aircraft represented. Simulator time is separate from flight totals.</AppText>
+                  <AppText style={{ marginTop: 8 }}>Device Type *</AppText>
+                  <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
+                    {DEVICE_TYPES.map(([type, name]) => <Pressable key={type} testID={`device-type-${type}`}
+                      accessibilityRole="radio" accessibilityLabel={`${type} — ${name}`}
+                      accessibilityState={{ checked: values.device_type === type }}
+                      onPress={() => setFieldValue('device_type', type)}
+                      style={{ flex: 1, alignItems: 'center', padding: 10, borderRadius: 8, borderWidth: 1,
+                        borderColor: values.device_type === type ? STYLES.blue : STYLES.grey }}>
+                      <AppText color={values.device_type === type ? STYLES.blue : STYLES.black} weight="600">{type}</AppText>
+                    </Pressable>)}
+                  </View>
+                  {!!values.device_type && <AppText>{DEVICE_TYPES.find(([type]) => type === values.device_type)?.[1]}</AppText>}
+                  {!!errors.device_type && <Text style={styles.errors}>{errors.device_type}</Text>}
+                  <AppTextInput testID="flight-device-id" value={values.device_id || ''} isValid={!errors.device_id}
+                    placeholder="Device ID *" maxLength={100} autoCorrect={false}
+                    onChangeText={handleChange('device_id')} onBlur={handleBlur('device_id')} />
+                  {!!errors.device_id && <Text style={styles.errors}>{errors.device_id}</Text>}
+                  {values.device_type === 'ATD' && <View style={{ marginVertical: 8 }}>
+                    <AppText>ATD Classification *</AppText>
+                    <View style={{ flexDirection: 'row', gap: 12 }}>
+                      {['BATD', 'AATD'].map(type => <Pressable key={type} accessibilityRole="radio"
+                        accessibilityState={{ checked: values.atd_type === type }} accessibilityLabel={type}
+                        style={{ minHeight: 44, padding: 10 }} onPress={() => setFieldValue('atd_type', type)}>
+                        <AppText color={values.atd_type === type ? STYLES.blue : STYLES.black}>{values.atd_type === type ? '● ' : '○ '}{type}</AppText>
+                      </Pressable>)}
+                    </View>
+                    {!!errors.atd_type && <Text style={styles.errors}>{errors.atd_type}</Text>}
+                  </View>}
+                  <View style={{ marginTop: 8 }}><Checkbox label="Eligible Instrument–Airplane training"
+                    isChecked={values.instrument_credit_eligible}
+                    onPress={() => setFieldValue('instrument_credit_eligible', !values.instrument_credit_eligible)} /></View>
+                  <AppText>Approved instrument training with an authorized instructor. Select Dual and enter the instrument portion below.</AppText>
+                  {!!errors.instrument_credit_eligible && <Text style={styles.errors}>{errors.instrument_credit_eligible}</Text>}
+                  {!!errors.dual && <Text style={styles.errors}>{errors.dual}</Text>}
+                  {Boolean(initialValues.id) && !initialValues.device_type && !values.device_type &&
+                    <AppText>Choose the device type for this existing Sim entry.</AppText>}
+                </View>}
                 {/* duration row */}
                 <View
                   style={{
                     flexDirection: "row",
                   }}
                 >
-                  <View style={{ flexDirection: "column", flex: 0.7 }}>
+                  <View style={{ flexDirection: "column", flex: values.simulator ? 1 : 0.7 }}>
                     <AppTextInput
                       testID="flight-duration"
                       isValid={errors.duration ? false : true}
@@ -328,6 +339,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                       )}
                     </View>
                   </View>
+                  {!values.simulator && <>
                   <MaterialCommunityIcons
                     style={{ paddingTop: 15 }}
                     name='plus'
@@ -391,25 +403,28 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                       />
                     </TouchableOpacity>
                   )}
+                  </>}
                 </View>
 
                 {/* end duration row */}
-                <View style={[styles.approachesSection, !hasRequiredFlightRole(values) && { borderColor: STYLES.danger }]}>
-                  <AppText weight="600">Flight role</AppText>
+                {!values.simulator && <RouteInput onCheck={result => { airportCheck.current = result; }} />}
+
+                <View style={[styles.approachesSection, styles.legendSection, { paddingTop: 14 * fontScale }, !hasRequiredFlightRole(values) && { borderColor: STYLES.danger }]}>
+                  <AppText size={14} weight="600" style={[styles.sectionLegend, { top: -10 * fontScale }]}>Role</AppText>
                   <View style={[styles.roleGrid, { marginTop: 0 }]}
                     onLayout={event => setRoleWidth(event.nativeEvent.layout.width)}>
                     {FLIGHT_ROLES.filter(([field]) => PRIMARY_FLIGHT_ROLES.includes(field)).map(([field, label]) => <View key={field}
                       style={[styles.checkboxContainer, { width: `${100 / (roleColumns >= 4 ? 4 : Math.min(2, roleColumns))}%` }]}>
-                      <Checkbox label={label} isChecked={values[field]}
+                      <Checkbox label={field === 'dual' && values.simulator && values.instrument_credit_eligible ? 'Dual *' : label} isChecked={!isFlightRoleDisabled(values, field) && values[field]} disabled={isFlightRoleDisabled(values, field)}
                         onPress={() => setValues(current => toggleFlightRole(current, field))} />
                     </View>)}
                   </View>
                   {!hasRequiredFlightRole(values) && <Text style={styles.errors}>Required</Text>}
                 </View>
                 <View style={styles.roleGrid}>
-                  {FLIGHT_ROLES.filter(([field]) => !PRIMARY_FLIGHT_ROLES.includes(field)).map(([field, label]) => <View key={field}
+                  {FLIGHT_ROLES.filter(([field]) => field !== 'simulator' && !PRIMARY_FLIGHT_ROLES.includes(field)).map(([field, label]) => <View key={field}
                     style={[styles.checkboxContainer, { width: `${100 / Math.min(3, roleColumns)}%` }]}>
-                    <Checkbox label={label} isChecked={values[field]}
+                    <Checkbox label={field === 'dual' && values.simulator && values.instrument_credit_eligible ? 'Dual *' : label} isChecked={!isFlightRoleDisabled(values, field) && values[field]} disabled={isFlightRoleDisabled(values, field)}
                       onPress={() => setValues(current => toggleFlightRole(current, field))} />
                   </View>)}
                 </View>
@@ -501,7 +516,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                         <Text style={styles.errors}>{errors.instrument}</Text>
                       ) : (
                         <View>
-                          <AppText>IFR</AppText>
+                          <AppText>Actual Instrument</AppText>
                         </View>
                       )}
                     </View>
@@ -527,7 +542,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                         </Text>
                       ) : (
                         <View>
-                          <AppText>Hood</AppText>
+                          <AppText>{values.simulator && values.instrument_credit_eligible ? 'Simulated Instrument *' : 'Simulated Instrument'}</AppText>
                         </View>
                       )}
                     </View>
@@ -565,8 +580,8 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                     <NightPairWarning values={values} />
                   </View>
                 </View>
-                <View style={styles.approachesSection}>
-                  <AppText weight="600" style={{ marginBottom: 4 }}>Approaches</AppText>
+                <View style={[styles.approachesSection, styles.legendSection, { paddingTop: 14 * fontScale }]}>
+                  <AppText size={14} weight="600" style={[styles.sectionLegend, { top: -10 * fontScale }]}>Approaches</AppText>
                 <View style={styles.approachRow}>
                   <View style={{ flex: 1, minWidth: 0 }}><ApproachPicker
                     isValid={errors.number ? false : true}
@@ -846,6 +861,14 @@ const createStyles = STYLES => StyleSheet.create({
     padding: 10,
     marginTop: 14,
     marginBottom: 4,
+  },
+  legendSection: { marginTop: 18 },
+  sectionLegend: {
+    position: 'absolute',
+    left: 12,
+    paddingHorizontal: 6,
+    lineHeight: 20,
+    backgroundColor: STYLES.white,
   },
   approachRow: { flexDirection: 'row', alignItems: 'center' },
   clearApproachType: {

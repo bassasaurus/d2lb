@@ -1,0 +1,129 @@
+appId: host.exp.Exponent
+name: Save a training device offline, sync once, and edit the same session
+---
+- runFlow: flows/ios-sign-in.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: offline
+# iOS can present this after the Logbook has become visible.
+- tapOn:
+    text: '^Not Now$'
+    optional: true
+- tapOn: New Flight
+- tapOn:
+    id: flight-date
+- tapOn: Done
+- tapOn: '^Sim$'
+- assertNotVisible:
+    id: tailnumber-input
+- assertNotVisible:
+    id: flight-route
+- tapOn:
+    id: device-type-ATD
+- assertVisible: Select BATD or AATD.
+- tapOn: '^AATD$'
+- tapOn:
+    id: flight-device-id
+- inputText: E2E-ATD
+- swipe:
+    start: 50%, 45%
+    end: 50%, 30%
+    duration: 500
+- scrollUntilVisible:
+    element:
+      id: flight-duration
+    direction: DOWN
+- tapOn:
+    id: flight-duration
+- inputText: '1.2'
+- assertVisible:
+    id: flight-duration
+    text: '^1\.2$'
+# Scrolling dismisses the keypad without tapping near the fixed Save Draft action.
+- swipe:
+    start: 50%, 45%
+    end: 50%, 30%
+    duration: 500
+- assertVisible:
+    id: flight-save
+- scrollUntilVisible:
+    element: '^Dual$'
+    direction: DOWN
+- tapOn: '^Dual$'
+- assertVisible:
+    id: flight-save
+    enabled: true
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible:
+      id: flight-list
+    timeout: 30000
+- assertVisible: '.*E2E-ATD.*'
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: device-saved-offline
+- stopApp
+- launchApp:
+    clearState: false
+- openLink: ${EXPO_URL}
+- runFlow:
+    when:
+      visible: '^Open$'
+    commands:
+      - tapOn: Open
+- extendedWaitUntil:
+    visible: '.*E2E-ATD.*'
+    timeout: 120000
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: device-reconnect
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: device-synced
+# Server commit precedes the phone applying its acknowledgment.
+- extendedWaitUntil:
+    visible: '.*E2E-ATD.*Synced.*'
+    timeout: 30000
+- tapOn:
+    id: 'flight-row-.*'
+- extendedWaitUntil:
+    visible:
+      id: flight-detail
+    timeout: 10000
+- scrollUntilVisible:
+    element: Update flight
+    direction: DOWN
+- tapOn: Update flight
+- scrollUntilVisible:
+    element:
+      id: flight-device-id
+    direction: UP
+- tapOn:
+    id: flight-device-id
+- eraseText
+- inputText: E2E-ATD-EDIT
+- swipe:
+    start: 50%, 45%
+    end: 50%, 30%
+    duration: 500
+- tapOn:
+    id: flight-save
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: device-edited
+- tapOn: '^Back to Logbook$'
+- swipe:
+    start: 50%, 30%
+    end: 50%, 85%
+    duration: 600
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: device-refreshed
+- takeScreenshot: ios-simulator-device-synced

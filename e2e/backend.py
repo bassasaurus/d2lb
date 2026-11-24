@@ -11,7 +11,7 @@ django.setup()
 
 from django.contrib.auth import get_user_model  # noqa: E402
 from api.models import MobileSyncReceipt  # noqa: E402
-from flights.models import Aircraft, Flight, MapData, TailNumber  # noqa: E402
+from flights.models import Aircraft, Flight, MapData, TailNumber, Total, Stat  # noqa: E402
 
 EMAIL = 'screen-test@example.invalid'
 PASSWORD = 'Disposable-screen-test-42'
@@ -42,6 +42,23 @@ elif state == 'tailnumber-created':
     assert tail.is_91 and not tail.is_135 and not tail.is_121
     assert TailNumber.objects.count() == 2
     print('PASS: one new N5678 tailnumber saved for C172, with Part 91 rules.')
+elif state in ('device-original', 'device-updated'):
+    user = get_user_model().objects.get(username=EMAIL)
+    assert Flight.objects.count() == 1, 'Waiting for one synced device session.'
+    flight = Flight.objects.get(user=user)
+    receipts = list(MobileSyncReceipt.objects.filter(user=user).order_by('created_at', 'pk'))
+    assert len(receipts) == (1 if state == 'device-original' else 2)
+    assert all(item.response['flight']['id'] == flight.pk for item in receipts)
+    assert flight.aircraft_type.aircraft_type == 'C172'
+    assert flight.registration_id is None and flight.route == ''
+    assert flight.simulator and flight.device_type == 'ATD' and flight.atd_type == 'AATD'
+    assert flight.device_id == ('E2E-ATD' if state == 'device-original' else 'E2E-ATD-EDIT')
+    assert flight.duration == Decimal('1.2') and flight.dual and not flight.cross_country
+    assert TailNumber.objects.count() == 1  # Only the pre-existing N1234 fixture.
+    for summary in [Total.objects.get(user=user, total='All'), Stat.objects.get(user=user, aircraft_type='C172')]:
+        assert summary.total_time == Decimal('0')
+        assert summary.simulator == Decimal('1.2')
+    print(f'PASS: {state}; one device session, stable ID, no new tailnumber, separate aircraft/device totals.')
 else:
     expected, expected_receipts = {
         'empty': (0, 0), 'original': (1, 1), 'updated': (1, 2),
