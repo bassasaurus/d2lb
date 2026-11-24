@@ -57,7 +57,7 @@ export default function TailnumberForm({ initialValues, method, onSaved, aircraf
           {allowAircraftChange && <AircraftPicker initialValue={values.aircraft} fieldName="aircraft" setFieldValue={setFieldValue} isValid={!errors.aircraft} />}
           {errors.aircraft && <Text style={styles.error}>{errors.aircraft}</Text>}
           <Text style={styles.label}>Registration</Text>
-          <AppTextInput value={values.registration} placeholder="Registration" maxLength={8}
+          <AppTextInput testID="tailnumber-registration" value={values.registration} placeholder="e.g. N12345" maxLength={8}
             onChangeText={value => setFieldValue('registration', value.toUpperCase().replace(/\s/g, ''))}
             isValid={Boolean(values.registration) && !errors.registration} autoCorrect={false} autoCapitalize="characters" />
           {(errors.registration || !values.registration) && <Text style={styles.error}>{errors.registration || 'Required'}</Text>}

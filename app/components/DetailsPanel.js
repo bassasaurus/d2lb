@@ -3,6 +3,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import AppText from "./AppText";
 import Mileage from './Mileage';
+import { launchLabel } from '../forms/launchMethods.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 
 function DetailsPanel({ route }) {
@@ -11,6 +12,7 @@ function DetailsPanel({ route }) {
   const approaches = route.params.item.approaches;
   return (
     <View>
+      {!!route.params.item.launch_method && <AppText style={{marginBottom: 8}}>Launch Method: {launchLabel(route.params.item.launch_method)}</AppText>}
       {route.params.item.simulator && <View style={{ marginBottom: 8 }}>
         <AppText weight="600">Aircraft Represented: {route.params.item.aircraft_type}</AppText>
         <AppText>{route.params.item.device_type || 'Sim (device type not recorded)'}{route.params.item.device_id ? ` · ${route.params.item.device_id}` : ''}</AppText>

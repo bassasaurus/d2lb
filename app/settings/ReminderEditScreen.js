@@ -274,7 +274,7 @@ export default function ReminderEditScreen({ navigation, route }) {
           {invalidPeriod && <Text color={colors.danger}>End date must be on or after the start date.</Text>}
         </>}
         <Text weight="600" style={styles.heading}>Target Hours</Text>
-        <AppTextInput accessibilityLabel="Target Hours" placeholder="500.0" keyboardType="decimal-pad"
+        <AppTextInput accessibilityLabel="Target Hours" placeholder="##.#" keyboardType="decimal-pad"
           value={targetHours} onChangeText={setTargetHours} isValid editable={!saving} />
       </>}
       {error !== '' && <Text color={colors.danger} style={styles.heading} accessibilityLiveRegion="polite">{error}</Text>}

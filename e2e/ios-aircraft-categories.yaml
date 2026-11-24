@@ -1,0 +1,265 @@
+appId: host.exp.Exponent
+name: Categories, offline glider dependency sync, and shared IACRA summaries
+---
+- runFlow: flows/ios-category-sign-in.yaml
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: categories-offline
+- runFlow:
+    when:
+      visible: "(?i)^(not now|don['’]t save)$"
+    file: flows/ios-dismiss-save-login.yaml
+- tapOn:
+    text: '^Open navigation menu$'
+- tapOn: '^Aircraft$'
+- tapOn: New Aircraft
+- assertVisible:
+    id: aircraft-save
+    enabled: false
+# Review each category's class and engine controls before creating the glider.
+- tapOn:
+    id: aircraft-category-A
+- assertVisible:
+    id: aircraft-class-SEL
+- assertVisible:
+    id: aircraft-class-MEL
+- assertVisible:
+    id: aircraft-class-SES
+- assertVisible:
+    id: aircraft-class-MES
+- tapOn:
+    id: aircraft-class-SEL
+- tapOn:
+    id: aircraft-category-R
+- assertVisible:
+    id: aircraft-class-HELO
+- assertVisible:
+    id: aircraft-class-GYRO
+- tapOn:
+    id: aircraft-class-GYRO
+- tapOn:
+    id: aircraft-category-LTA
+- tapOn:
+    id: aircraft-class-BALLOON
+- assertNotVisible:
+    id: aircraft-engine-piston
+- tapOn:
+    id: aircraft-class-AIRSHIP
+- assertVisible:
+    id: aircraft-engine-piston
+- tapOn:
+    id: aircraft-category-PL
+- assertNotVisible:
+    id: aircraft-class-AIRSHIP
+- assertVisible:
+    id: aircraft-engine-electric
+- tapOn:
+    id: aircraft-category-GL
+- assertNotVisible:
+    id: aircraft-engine-piston
+- assertNotVisible:
+    id: aircraft-class-SEL
+- assertNotVisible: '^Type rating required$'
+- assertNotVisible: '^Complex$'
+- assertNotVisible: '^High performance$'
+- tapOn:
+    id: aircraft-type
+- inputText: GLT1
+# Switches keep the keyboard open; dismiss it before scrolling to wake choices.
+- tapOn: '^Aircraft Type$'
+- swipe:
+    start: 50%, 45%
+    end: 50%, 30%
+    duration: 500
+- scrollUntilVisible:
+    element:
+      id: aircraft-self-launch
+    direction: DOWN
+- tapOn:
+    id: aircraft-self-launch
+- scrollUntilVisible:
+    element:
+      id: aircraft-wake-category-small
+    direction: DOWN
+- tapOn:
+    id: aircraft-wake-category-small
+- assertVisible:
+    id: aircraft-save
+    enabled: true
+- tapOn:
+    id: aircraft-save
+- extendedWaitUntil:
+    visible: 'Category: Glider'
+    timeout: 15000
+- assertVisible: Self-launch capable
+- assertVisible: 'Class: Not applicable'
+- tapOn: New Tailnumber
+- tapOn:
+    id: tailnumber-registration
+- inputText: NGT1
+- tapOn: '^Part 91$'
+- tapOn:
+    id: tailnumber-save
+- extendedWaitUntil:
+    visible: '.*NGT1.*'
+    timeout: 15000
+- tapOn: '^Back to Aircraft$'
+- tapOn:
+    text: '^Open navigation menu$'
+- tapOn: '^Logbook$'
+- tapOn: New Flight
+- tapOn:
+    id: flight-date
+- tapOn: Done
+- tapOn:
+    id: aircraft-picker
+- scrollUntilVisible:
+    element: '^GLT1$'
+    direction: DOWN
+- tapOn: '^GLT1$'
+- assertVisible:
+    id: launch-self
+- assertVisible: Choose a launch method.
+- tapOn:
+    id: launch-self
+- tapOn:
+    id: tailnumber-input
+- inputText: NGT1
+- tapOn: Select NGT1
+- tapOn:
+    id: flight-route
+- inputText: KAUS-KDFW
+- swipe:
+    start: 50%, 45%
+    end: 50%, 30%
+    duration: 500
+- scrollUntilVisible:
+    element:
+      id: flight-duration
+    direction: DOWN
+- tapOn:
+    id: flight-duration
+- inputText: '1.2'
+- swipe:
+    start: 50%, 45%
+    end: 50%, 30%
+    duration: 500
+- scrollUntilVisible:
+    element: '^PIC$'
+    direction: DOWN
+- tapOn: '^PIC$'
+- assertVisible:
+    id: flight-save
+    text: '^Save$'
+    enabled: true
+- tapOn:
+    id: flight-save
+- extendedWaitUntil:
+    visible:
+      id: flight-list
+    timeout: 30000
+- assertVisible: '.*GLT1.*NGT1.*'
+- takeScreenshot: categories-glider-saved-offline
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: categories-saved-offline
+# A cold app restart must retain all three dependent offline records.
+- stopApp
+- launchApp:
+    clearState: false
+- openLink: ${EXPO_URL}
+- runFlow:
+    when:
+      visible: '^Open$'
+    commands:
+      - tapOn: Open
+- extendedWaitUntil:
+    visible: '.*GLT1.*NGT1.*'
+    timeout: 120000
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: categories-reconnect
+- swipe:
+    start: 50%, 30%
+    end: 50%, 85%
+    duration: 600
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: categories-synced
+- extendedWaitUntil:
+    visible: '.*GLT1.*NGT1.*Synced.*'
+    timeout: 30000
+- tapOn:
+    text: '.*GLT1.*NGT1.*Synced.*'
+- extendedWaitUntil:
+    visible:
+      id: flight-detail
+    timeout: 15000
+- assertVisible: 'Launch Method: Self-launch'
+- takeScreenshot: categories-glider-detail
+- tapOn: '^Back to Logbook$'
+- tapOn:
+    text: '^Open navigation menu$'
+- tapOn: '^Totals & Stats$'
+- extendedWaitUntil:
+    visible: By Category and Class
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: iacra-toggle
+    direction: DOWN
+- tapOn:
+    id: iacra-toggle
+- scrollUntilVisible:
+    element:
+      id: iacra-category-GL
+    direction: DOWN
+- assertVisible:
+    id: iacra-category-GL
+    text: 'Gliders, 4.8'
+- tapOn:
+    id: iacra-category-GL
+- scrollUntilVisible:
+    element:
+      id: launch-GL-flights
+    direction: DOWN
+- assertVisible:
+    id: launch-GL-flights
+    text: '4'
+- scrollUntilVisible:
+    element:
+      id: launch-GL-self_launch
+    direction: DOWN
+- assertVisible:
+    id: launch-GL-aerotow
+    text: '1'
+- assertVisible:
+    id: launch-GL-ground
+    text: '1'
+- assertVisible:
+    id: launch-GL-self_launch
+    text: '2'
+- takeScreenshot: categories-glider-iacra
+- scrollUntilVisible:
+    element:
+      id: iacra-category-FFS
+    direction: DOWN
+- assertVisible:
+    id: iacra-category-FFS
+    text: 'FFS, 2.4'
+- tapOn:
+    text: '^Open navigation menu$'
+- tapOn: '^Logbook$'
+- swipe:
+    start: 50%, 30%
+    end: 50%, 85%
+    duration: 600
+- runScript:
+    file: checkpoint.js
+    env:
+      STEP: categories-refreshed
+- takeScreenshot: categories-final-logbook

@@ -39,6 +39,7 @@ function FlightCreateScreen() {
     instructor: false,
     simulator: false,
     device_type: "",
+    launch_method: "",
     device_id: "",
     atd_type: "",
     instrument_credit_eligible: false,

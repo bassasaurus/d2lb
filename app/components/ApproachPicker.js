@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import React, { useState } from "react";
 import { View, StyleSheet, Modal, Pressable, TouchableOpacity } from 'react-native';
 import Text from './AppText';
+import PlatformActionButton from './PlatformActionButton';
 
 import AppTextInput from "./AppTextInput";
 
@@ -78,8 +79,9 @@ function ApproachPicker({
         </View>
       </View>
       <View style={styles.centeredView}>
-        <Modal animationType='slide' transparent={true} visible={visible}>
+        <Modal animationType='slide' transparent={true} visible={visible} onRequestClose={() => setVisible(false)}>
           <View style={styles.modalView}>
+            <PlatformActionButton variant="text" title="Cancel" onPress={() => setVisible(false)} />
             <FlatList
               data={data}
               renderItem={renderItem}

@@ -7,9 +7,10 @@ name: Save a training device offline, sync once, and edit the same session
     env:
       STEP: offline
 # iOS can present this after the Logbook has become visible.
-- tapOn:
-    text: '^Not Now$'
-    optional: true
+- runFlow:
+    when:
+      visible: "(?i)^(not now|don['’]t save)$"
+    file: flows/ios-dismiss-save-login.yaml
 - tapOn: New Flight
 - tapOn:
     id: flight-date

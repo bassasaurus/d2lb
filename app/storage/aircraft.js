@@ -1,6 +1,7 @@
 import * as Crypto from 'expo-crypto';
 import { aircraftWithDefault } from './flightDefaults.mjs';
 import { flightStore, flightScope } from './flights';
+import { normalizeCharacteristics } from '../aircraft/characteristics.mjs';
 
 // Reuse the durable record/outbox repository in a distinct account namespace.
 // Aircraft and flights never share records, UUIDs or cache replacement operations.
@@ -10,6 +11,7 @@ export async function listAircraft(scope) {
   return aircraftWithDefault(rows).sort((a, b) => a.aircraft_type.localeCompare(b.aircraft_type, 'en', { sensitivity: 'base' }));
 }
 export async function saveAircraft(record) {
+  record = normalizeCharacteristics(record);
   const store = await flightStore();
   const scope = aircraftScope(await flightScope());
   const records = (await store.list(scope)).filter(row => !row._default_preference);

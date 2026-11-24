@@ -22,6 +22,13 @@ ANDROID_SYNC_RECOVERY = (
 )
 
 SCENARIOS = {
+    'ios-aircraft-categories': [
+        ('categories-offline', 'categories-baseline', False),
+        ('categories-saved-offline', 'categories-baseline', None),
+        ('categories-reconnect', 'categories-baseline', True),
+        ('categories-synced', 'categories-synced', None),
+        ('categories-refreshed', 'categories-synced', None),
+    ],
     'ios-simulator-device': [
         ('offline', 'empty', False),
         ('device-saved-offline', 'empty', None),

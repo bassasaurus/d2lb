@@ -1,0 +1,38 @@
+appId: host.exp.Exponent
+name: Decline saving the disposable test login in iOS Passwords
+---
+# The system sheet can appear after sign-in while Logbook is already underneath.
+# These test credentials must not be saved to the simulator's Passwords store.
+- tapOn:
+    text: "(?i)^(not now|don['’]t save)$"
+    optional: true
+# Some iOS versions offer No rather than Not Now. Only use No inside a
+# recognized password/login-saving prompt, never for an unrelated dialog.
+- runFlow:
+    when:
+      visible: '(?i).*(save|remember).*(password|login|sign.in).*'
+    commands:
+      - tapOn:
+          text: '(?i)^no$'
+          optional: true
+
+# iOS 27.2's Passwords sheet has no accessible controls in XCTest. Only the
+# dedicated categories scenario opts into this captured iPhone 17 location.
+- runFlow:
+    when:
+      true: ${typeof IOS_PASSWORD_SHEET_FALLBACK !== 'undefined' && IOS_PASSWORD_SHEET_FALLBACK === '1'}
+    commands:
+      - runFlow:
+          when:
+            notVisible:
+              id: login-submit
+          commands:
+            - runFlow:
+                when:
+                  notVisible: New Flight
+                commands:
+                  - tapOn:
+                      point: 31%, 63%
+                  - extendedWaitUntil:
+                      visible: New Flight
+                      timeout: 10000

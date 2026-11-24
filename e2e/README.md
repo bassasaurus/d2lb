@@ -226,3 +226,34 @@ The `ios-simulator-device` scenario saves an AATD session offline, restarts the 
 reconnects, edits Device ID, and refreshes. Server checkpoints require one flight
 with a stable primary key, no new tailnumber, exactly one create and one update
 receipt, zero aircraft flight hours, and 1.2 simulator hours.
+
+
+## Categories/classes and offline glider dependency sync (iOS)
+
+Run `./scripts/mobile run test:screens:ios:categories -- --ios-simulator <UDID>
+--maestro <path> --expo-app <path>` on the dedicated `D2LB_iOS_Screen_Tests`
+simulator. The same runner safety checks and disposable database apply.
+
+The scenario seeds all ten category/class combinations, all three glider launch
+methods and a separate FFS session. It reviews conditional category/class/engine
+controls, creates a self-launch-capable glider and tailnumber offline, saves a
+flight offline, cold-restarts Expo Go, reconnects, and checks that Aircraft →
+Tailnumber → Flight writes happen once and in that order. It verifies the web
+IACRA output, saved summary totals, and the mobile IACRA launch counts. Screenshots
+and logs are written to the run's `.screen-tests/<run-id>` directory.
+
+Expected final figures: 15.6 actual aircraft hours, 2.4 simulator hours, 4.8 glider
+hours, four glider flights/launches (one aerotow, one ground launch, two
+self-launches). Imported balances are not used by this scenario.
+
+If the sandbox cannot connect to CoreSimulator, run the command from Mac Terminal;
+a headless fixture/checkpoint pass does not establish that the screen flow passed.
+
+
+On the dedicated iPhone 17 / iOS 27.2 test device, the Passwords save sheet can
+render its buttons without exposing them to XCTest. The categories scenario
+therefore enables `IOS_PASSWORD_SHEET_FALLBACK=1`: after trying accessible
+negative buttons, if both the login form and Logbook are inaccessible, it taps
+the captured Not Now location (31%, 63%) and requires the Logbook to appear.
+This fallback is scoped to this scenario, whose device geometry was inspected;
+other screen scenarios do not enable it. Login/autofill settings remain normal.

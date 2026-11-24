@@ -13,7 +13,9 @@ import Card from '../components/Card';
 import Text from '../components/AppText';
 import { aircraftScope, listAircraft } from '../storage/aircraft';
 import { flightScope, flightStore } from '../storage/flights';
-import { CATEGORY_CHOICES, CLASS_CHOICES, ENGINE_CHOICES, FLAGS, WEIGHT_CHOICES } from './fields.mjs';
+import { CATEGORY_CHOICES, ENGINE_CHOICES, FLAGS, WEIGHT_CHOICES } from './fields.mjs';
+import { classDisplay } from './classification.mjs';
+import { flagApplicable, engineRequired } from './characteristics.mjs';
 import { useAppTheme } from '../theme/ThemeProvider';
 import RecordActions from '../components/RecordActions';
 import BottomCreateButton from '../components/BottomCreateButton';
@@ -120,9 +122,10 @@ export default function AircraftDetailScreen({ route, navigation }) {
       <Text style={{ fontSize: 24, fontWeight: '600', flexShrink: 1 }}>{item.aircraft_type}</Text>
       <Text style={{ color: STYLES.muted }}>{tailnumbers.length} Tailnumbers</Text>
     </View>
-    <Text>Category: {CATEGORY_CHOICES.find(([key]) => key === item.aircraft_category)?.[1] || 'Not set'}</Text>
-    <Text style={{ marginVertical: 8 }}>Class: {CLASS_CHOICES.find(([key]) => key === item.aircraft_class)?.[1] || 'Not set'}</Text>
-    {[...ENGINE_CHOICES, ...WEIGHT_CHOICES, ...FLAGS].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
+    <Text>Category: {CATEGORY_CHOICES.find(([key]) => key === item.aircraft_category)?.[1] || 'Not recorded'}</Text>
+    <Text style={{ marginVertical: 8 }}>Class: {classDisplay(item.aircraft_category, item.aircraft_class)}</Text>
+    {item.aircraft_category === 'GL' && item.self_launch_capable && <Text style={{ marginVertical: 6 }}>Self-launch capable</Text>}
+    {[...(engineRequired(item) ? ENGINE_CHOICES : []), ...WEIGHT_CHOICES, ...FLAGS.filter(([key]) => flagApplicable(item, key))].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
     <RecordIssue item={item} kind="aircraft" navigation={navigation} />
     <View style={{ marginTop: 2 }}>
       <RecordSyncIndicator item={item} scope={scope ? aircraftScope(scope) : undefined} />
