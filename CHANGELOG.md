@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.16.1](https://github.com/bassasaurus/d2lb/compare/v0.16.0...v0.16.1) (2026-11-24)
+
+
+### Bug Fixes
+
+* align Expo SDK 58 dependencies and native plugins ([#133](https://github.com/bassasaurus/d2lb/issues/133)) ([d373c90](https://github.com/bassasaurus/d2lb/commit/d373c90c22eb01ff7147c51879b4c8385062e920))
+
 ## [0.16.0](https://github.com/bassasaurus/d2lb/compare/v0.15.2...v0.16.0) (2026-11-24)
 
 
