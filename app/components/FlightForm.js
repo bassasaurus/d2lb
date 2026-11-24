@@ -1,3 +1,4 @@
+import { applyAircraftFlightDefaults } from '../forms/aircraftFlightDefaults.mjs';
 import { DEVICE_TYPES, simulatorEntryErrors, prepareFlightEntry } from '../forms/simulatorEntry.mjs';
 import { isGliderFlight, launchChoices, launchMethodErrors, prepareLaunchEntry, changeFlightAircraft } from '../forms/launchMethods.mjs';
 import { listAircraft } from '../storage/aircraft';
@@ -262,7 +263,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                     <AircraftPicker placeholder={values.simulator ? "Aircraft Represented" : "Aircraft Type"}
                       initialValue={values.aircraft_type} isValid={Boolean(values.aircraft_type) && !errors.aircraft_type}
                       fieldName="aircraft_type" setFieldValue={(name, value) => name === 'aircraft_type'
-                        ? setValues(changeFlightAircraft(values, value, aircraftRecords.find(row => row.aircraft_type === value)))
+                        ? setValues(applyAircraftFlightDefaults(changeFlightAircraft(values, value, aircraftRecords.find(row => row.aircraft_type === value)), aircraftRecords.find(row => row.aircraft_type === value), Boolean(initialValues.id || initialValues.local_id)))
                         : setFieldValue(name, value)} onBlur={handleBlur('aircraft_type')} />
                     {!!errors.aircraft_type && <Text style={styles.errors}>{errors.aircraft_type}</Text>}
                   </View>
