@@ -14,10 +14,12 @@ const aircraftFields = [
   ['piston', 'Piston'], ['turbine', 'Turbine'], ['electric', 'Electric'], ['self_launch_capable', 'Self-launch capable'], ['requires_type', 'Type rating required'],
   ['tailwheel', 'Tailwheel'], ['compleks', 'Complex'], ['high_performance', 'High performance'],
   ['simple', 'Simple'], ['superr', 'Super'], ['heavy', 'Heavy'], ['large', 'Large'],
-  ['small', 'Small'],
+  ['small', 'Small'], ['default_crew_role', 'Default role'], ['default_cross_country', 'Default XC'],
 ];
 const tailnumberFields = [['registration', 'Registration'], ['aircraft', 'Aircraft'], ['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
 function format(value, key) {
+  if (key === 'default_crew_role') return value || 'None';
+  if (key === 'default_cross_country') value = Boolean(value);
   if (key === 'launch_method') return value ? launchLabel(value) : '—';
   if (['electric', 'self_launch_capable'].includes(key)) value = Boolean(value);
   if (key === 'date') return formatDate(value, '—');

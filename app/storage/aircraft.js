@@ -1,3 +1,4 @@
+import { toggleAircraftFlightDefault } from '../forms/aircraftFlightDefaults.mjs';
 import * as Crypto from 'expo-crypto';
 import { aircraftWithDefault } from './flightDefaults.mjs';
 import { flightStore, flightScope } from './flights';
@@ -34,4 +35,19 @@ export async function saveDefaultAircraft(aircraftType) {
   const existing = records.find(row => row._default_preference);
   await store.save(scope, 'server:-1', { id: -1, revision: 'dfa61a1cc9252b9445b3f8bf6e6f4bf89acbfafba3266a146d8cf1f67fe62d3b',
     ...existing, _default_preference: true, aircraft_type: aircraftType });
+}
+
+// Save preferences on the latest local aircraft through the same durable outbox.
+export async function saveAircraftFlightDefaults(record, field, account) {
+  if (!account || await flightScope() !== account) throw new Error('Account changed.');
+  const store = await flightStore();
+  const scope = aircraftScope(account);
+  const rows = await store.list(scope);
+  const current = rows.find(row => (record.local_id && row.local_id === record.local_id) || (record.id && row.id === record.id));
+  if (!current || current.sync_state === 'pending_delete') throw new Error('Aircraft is no longer available.');
+  if (current.needs_attention) throw new Error('Review this aircraft before changing defaults.');
+  const next = toggleAircraftFlightDefault(current, field);
+  if (await flightScope() !== account) throw new Error('Account changed.');
+  const sync_generation = await store.save(scope, current.local_id, next);
+  return { ...next, sync_generation, sync_state: current.id ? 'pending_update' : 'pending_create' };
 }

@@ -1,10 +1,10 @@
 // Give each user-facing release a new ID and replace these highlights.
 export const updateNotes = {
-  id: 'aircraft-categories-8710',
+  id: 'aircraft-flight-defaults',
   highlights: [
-    'Expanded aircraft categories, classes, and equipment choices.',
-    'Log glider launch methods and sync aircraft, tailnumbers, and flights offline.',
-    'Updated totals and IACRA summaries, with training-device time kept separate.',
-    'Clearer form hints, improved pickers, and smoother flight deletion.',
+    'Set PIC, SIC, and XC defaults on Aircraft Detail.',
+    'New flights prefill the selected aircraft’s defaults.',
+    'Save defaults offline and sync when connected.',
+    'Existing flights and saved drafts keep their selections.',
   ],
 };

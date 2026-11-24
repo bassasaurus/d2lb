@@ -1,3 +1,4 @@
+import Checkbox from '../components/Checkbox';
 import RecordSyncIndicator from '../components/RecordSyncIndicator';
 import { subscribeAutoSync } from '../api/autoSync.mjs';
 import api from '../api/axiosConfig';
@@ -7,11 +8,11 @@ import RecordIssue, { reviewRecord } from '../components/RecordIssue';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView } from '../components/OverflowLists';
 import { listTailnumbers, tailnumberScope } from '../storage/tailnumbers';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Alert, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import Card from '../components/Card';
 import Text from '../components/AppText';
-import { aircraftScope, listAircraft } from '../storage/aircraft';
+import { aircraftScope, listAircraft, saveAircraftFlightDefaults } from '../storage/aircraft';
 import { flightScope, flightStore } from '../storage/flights';
 import { CATEGORY_CHOICES, ENGINE_CHOICES, FLAGS, WEIGHT_CHOICES } from './fields.mjs';
 import { classDisplay } from './classification.mjs';
@@ -40,6 +41,8 @@ export default function AircraftDetailScreen({ route, navigation }) {
   const { width } = useWindowDimensions();
   const columns = Math.max(2, Math.min(4, Math.floor((width - 32) / 105)));
   const [item, setItem] = useState(route.params.item);
+  const defaultsSaving = useRef(false);
+  const [savingDefaults, setSavingDefaults] = useState(false);
   const [usage, setUsage] = useState(null);
   const [eligibleId, setEligibleId] = useState(null);
   const tailnumbers = usage?.tailnumbers ?? [];
@@ -59,7 +62,7 @@ export default function AircraftDetailScreen({ route, navigation }) {
         const usage = await aircraftUsage(account, aircraftType);
         if (await flightScope() === account && active) {
           setScope(account);
-          if (current) setItem(current);
+          if (current && !defaultsSaving.current) setItem(current);
           setUsage({ ...usage, aircraftType });
         }
       } catch (error) { /* Preserve the last saved detail while unavailable. */ }
@@ -114,6 +117,16 @@ export default function AircraftDetailScreen({ route, navigation }) {
       Alert.alert('Aircraft not deleted', 'Your record is still saved. Please try again.');
     }
   };
+  const changeDefault = async field => {
+    if (defaultsSaving.current || !scope) return;
+    defaultsSaving.current = true;
+    setSavingDefaults(true);
+    try {
+      const saved = await saveAircraftFlightDefaults(item, field, scope);
+      if (await flightScope() === scope) setItem(saved);
+    } catch { Alert.alert('Defaults not saved', 'Please try again. Review any aircraft sync issue first.'); }
+    finally { defaultsSaving.current = false; setSavingDefaults(false); }
+  };
   const update = () => navigation.navigate('AircraftForm', { item });
   return <SafeAreaView edges={['bottom']} style={{ flex: 1, paddingHorizontal: 12, backgroundColor: STYLES.itemBackground }}>
     <ScrollView style={{ flexGrow: 0, maxHeight: '65%', marginTop: 12 }}>
@@ -126,6 +139,15 @@ export default function AircraftDetailScreen({ route, navigation }) {
     <Text style={{ marginVertical: 8 }}>Class: {classDisplay(item.aircraft_category, item.aircraft_class)}</Text>
     {item.aircraft_category === 'GL' && item.self_launch_capable && <Text style={{ marginVertical: 6 }}>Self-launch capable</Text>}
     {[...(engineRequired(item) ? ENGINE_CHOICES : []), ...WEIGHT_CHOICES, ...FLAGS.filter(([key]) => flagApplicable(item, key))].filter(([key]) => item[key]).map(([key, label]) => <Text key={key} style={{ marginVertical: 6 }}>{label}</Text>)}
+    <View style={{ borderTopWidth: 1, borderColor: STYLES.grey, marginTop: 12, paddingTop: 12 }}>
+      <Text weight="600">Flight Defaults</Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 20 }}>
+        <Checkbox label="PIC" isChecked={item.default_crew_role === 'PIC'} disabled={savingDefaults || !scope || item.needs_attention} onPress={() => changeDefault('PIC')} />
+        <Checkbox label="SIC" isChecked={item.default_crew_role === 'SIC'} disabled={savingDefaults || !scope || item.needs_attention} onPress={() => changeDefault('SIC')} />
+        <Checkbox label="XC" isChecked={Boolean(item.default_cross_country)} disabled={savingDefaults || !scope || item.needs_attention} onPress={() => changeDefault('cross_country')} />
+      </View>
+      <Text size={14} color={STYLES.muted}>Prefills new flights.</Text>
+    </View>
     <RecordIssue item={item} kind="aircraft" navigation={navigation} />
     <View style={{ marginTop: 2 }}>
       <RecordSyncIndicator item={item} scope={scope ? aircraftScope(scope) : undefined} />
