@@ -67,7 +67,9 @@
           "recordAudioAndroid": false,
           "barcodeScannerEnabled": false
         }
-      ]
+      ],
+      "expo-sqlite",
+      "expo-status-bar"
     ],
     "userInterfaceStyle": "automatic",
     "extra": {
