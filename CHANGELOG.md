@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.18.0](https://github.com/bassasaurus/d2lb/compare/v0.17.0...v0.18.0) (2026-11-24)
+
+
+### Features
+
+* add aircraft-specific flight defaults ([#137](https://github.com/bassasaurus/d2lb/issues/137)) ([04d77b7](https://github.com/bassasaurus/d2lb/commit/04d77b7cedbf2a4181ebadd383792f4e893f8ac0))
+
 ## [0.17.0](https://github.com/bassasaurus/d2lb/compare/v0.16.1...v0.17.0) (2026-11-24)
 
 
