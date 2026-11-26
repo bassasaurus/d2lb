@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.18.1](https://github.com/bassasaurus/d2lb/compare/v0.18.0...v0.18.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* align Restore actions with reminder card text ([#139](https://github.com/bassasaurus/d2lb/issues/139)) ([47b4723](https://github.com/bassasaurus/d2lb/commit/47b47237ad2b417b8757683d6452eb07ac4cb7dd))
+
 ## [0.18.0](https://github.com/bassasaurus/d2lb/compare/v0.17.0...v0.18.0) (2026-11-24)
 
 
