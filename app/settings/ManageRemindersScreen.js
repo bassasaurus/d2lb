@@ -138,6 +138,7 @@ export default function ManageRemindersScreen({ navigation, route }) {
           {!isMilestone(reminder) && <ShowNowAction reminder={alertFor(reminder)} snoozes={snoozes}
             style={{ marginRight: 'auto', paddingLeft: 0 }} />}
           {isMilestone(reminder) && reminder.dismissed === true && <View style={{ marginRight: 'auto' }}><PlatformActionButton title="Restore" variant="text" disabled={removing}
+            style={{ paddingHorizontal: 0, minWidth: 0, justifyContent: 'flex-start' }}
             accessibilityLabel={`Restore ${['expiration', 'flight_review', 'instructor_renewal', 'ipc'].includes(reminder.kind) ? reminder.title : reminder.progress_label ?? reminder.goal_label}`}
             onPress={() => restore(reminder)} /></View>}
           {!reminder.derived && <PlatformActionButton title="Edit" variant="text" disabled={removing}
