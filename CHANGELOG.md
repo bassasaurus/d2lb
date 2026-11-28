@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.19.0](https://github.com/bassasaurus/d2lb/compare/v0.18.1...v0.19.0) (2026-11-28)
+
+
+### Features
+
+* improve flight entry, currency summaries and simulator programs ([#141](https://github.com/bassasaurus/d2lb/issues/141)) ([8092d03](https://github.com/bassasaurus/d2lb/commit/8092d03aa826562da9292dd0e25bc47de91a673c))
+
 ## [0.18.1](https://github.com/bassasaurus/d2lb/compare/v0.18.0...v0.18.1) (2026-11-26)
 
 
