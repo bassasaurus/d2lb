@@ -7,7 +7,8 @@ const flightFields = [
   ['instructor', 'Instructor'], ['simulator', 'Simulator'], ['cross_country', 'Cross-country'],
   ['landings_day', 'Day landings'], ['landings_night', 'Night landings'], ['night', 'Night time'],
   ['instrument', 'Instrument time'], ['simulated_instrument', 'Simulated instrument time'],
-  ['approaches', 'Approaches'], ['hold', 'Holding'], ['remarks', 'Remarks'],
+  ['approaches', 'Approaches'], ['hold', 'Holding'], ['training_program', 'Training program'], ['intercepting_tracking', 'Intercepting and Tracking'], ['remarks', 'Remarks'],
+  ['night_landings_full_stop','Night landings Full Stop'],
 ];
 const aircraftFields = [
   ['aircraft_type', 'Aircraft type'], ['aircraft_category', 'Category'], ['aircraft_class', 'Class'],
@@ -16,12 +17,14 @@ const aircraftFields = [
   ['simple', 'Simple'], ['superr', 'Super'], ['heavy', 'Heavy'], ['large', 'Large'],
   ['small', 'Small'], ['default_crew_role', 'Default role'], ['default_cross_country', 'Default XC'],
 ];
-const tailnumberFields = [['registration', 'Registration'], ['aircraft', 'Aircraft'], ['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
+const tailnumberFields = [['registration', 'Registration'], ['aircraft', 'Aircraft'], ['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121'], ['is_125', 'Part 125'], ['is_137', 'Part 137']];
 function format(value, key) {
   if (key === 'default_crew_role') return value || 'None';
-  if (key === 'default_cross_country') value = Boolean(value);
+  if (key === 'default_cross_country' || key === 'intercepting_tracking') value = Boolean(value);
+  if (key === 'training_program') return value ? `Part ${value}` : 'Not specified';
   if (key === 'launch_method') return value ? launchLabel(value) : '—';
   if (['electric', 'self_launch_capable'].includes(key)) value = Boolean(value);
+  if (['is_125', 'is_137'].includes(key)) value = Boolean(value);
   if (key === 'date') return formatDate(value, '—');
   if (key === 'approaches') return (Array.isArray(value) ? value : [])
     .filter(row => row.approach_type && row.number !== '' && row.number != null)

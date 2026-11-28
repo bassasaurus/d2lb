@@ -31,6 +31,12 @@ export function validateSummary(data) {
       }
     }
   }
+  if (data.simulator_program_totals !== undefined) {
+    if (!Array.isArray(data.simulator_program_totals) || data.simulator_program_totals.some(row => !row
+      || !['', '141', '142'].includes(row.program) || typeof row.label !== 'string'
+      || !['total', 'ffs', 'ftd', 'atd', 'unclassified'].every(key => row[key] != null && row[key] !== '' && typeof row[key] !== 'boolean' && Number.isFinite(Number(row[key])) && Number(row[key]) >= 0)))
+      throw new Error('Invalid simulator program totals');
+  }
   if (data.iacra !== undefined) validateIacra(data.iacra);
   const credit = data.instrument_device_credit;
   if (credit) {

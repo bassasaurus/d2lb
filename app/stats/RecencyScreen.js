@@ -42,14 +42,65 @@ function RecencySection({ title, handle, children }) {
     {expanded && <View style={{ paddingBottom: 14 }}>{children}</View>}
   </Card>;
 }
+function InstrumentDetails({ instrument }) {
+  const { colors } = useAppTheme();
+  const display = instrument.display || {
+    status: instrument.status_message, tone: instrument.current ? 'success' : 'danger',
+    basis: instrument.source === 'ipc' ? 'IPC' : instrument.source === 'recency' ? 'Logged approaches and holding' : '',
+    approaches: `${instrument.approaches.count}/6${instrument.approaches.still_needed ? ` - Log ${instrument.approaches.still_needed} more` : ''}`,
+    approach_tone: instrument.approaches.current ? 'success' : 'danger',
+    holding: instrument.holding.current ? `Logged ${formatDate(instrument.holding.last_date)}` : 'Not logged',
+    holding_tone: instrument.holding.current ? 'success' : 'muted',
+    next_action: instrument.next_requirement?.message || 'Review logged experience.',
+  };
+  return <View style={{ gap: 8 }}>
+    <Text weight="600" color={colors[display.tone] || colors.text}>{display.status}</Text>
+    {!!display.basis && <Text color={colors.muted}>Based on {display.basis}</Text>}
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12 }}>
+      <Text>Approaches</Text><Text color={colors[display.approach_tone] || colors.text}>{display.approaches}</Text>
+    </View>
+    {!!display.approach_dates?.length && <Text color={colors.muted} style={{ textAlign: 'right', fontSize: 13 }}>{display.approach_dates.join(' · ')}</Text>}
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12 }}>
+      <Text>Holding</Text><Text color={colors[display.holding_tone] || colors.text} style={{ flex: 1, textAlign: 'right' }}>{display.holding}</Text>
+    </View>
+    {!!instrument.ipc_completed_date && !display.ipc_summary && <Text>Last IPC: {formatDate(instrument.ipc_completed_date)}</Text>}
+    {display.ipc_summary ? <View style={{ gap: 4 }}>
+      <Text weight="600">IPC</Text>
+      <Text>Logged {formatDate(display.ipc_summary.logged_date)}</Text>
+      <Text>Expiry {formatDate(display.ipc_summary.expiry_date)}</Text>
+    </View> : <View style={{ gap: 4 }}>
+      <Text weight="600">Next action</Text>
+      <Text>{display.next_action}</Text>
+    </View>}
+    {!!display.ipc_review_from && <Text>IPC review from {formatDate(display.ipc_review_from)}</Text>}
+    <Text color={colors.muted} style={{ fontSize: 12 }}>Based on logged information. Verify your records, including interception and tracking. {display.window_start ? `Counting logged experience since ${formatDate(display.window_start)}.` : ''}</Text>
+  </View>;
+}
+function LandingStatus({ label, value }) {
+  const { colors } = useAppTheme();
+  if (!value.current && value.valid_through) {
+    return <Status label={label} value={value} message="—" />;
+  }
+  return <View>
+    <Status label={label} value={value}
+      message={`${value.count}/3${value.still_needed ? ` · Log ${value.still_needed} more` : ''}`} />
+    {!!value.last_dates?.length && <Text color={colors.muted} style={{ textAlign: 'right', fontSize: 13 }}>
+      {[...value.last_dates].reverse().map(day => formatDate(day).replace(/, \d{4}$/, '')).join(' · ')}
+    </Text>}
+  </View>;
+}
 function LandingSection({ title, rows, handle }) {
   const { colors } = useAppTheme();
   return <RecencySection title={title} handle={handle}>
     {rows.map(row => <View key={row.label} style={{ paddingVertical: 8 }}>
       <Text weight="600" style={{ marginBottom: 4 }}>{row.label}</Text>
-      <Status label="Day landings" value={row.day} />
-      <Status label="Night landings" value={row.night} />
+      <LandingStatus label="Day" value={row.day} />
+      <LandingStatus label="Night full-stop" value={row.night} />
+      <Text weight="600" style={{ marginTop: 8 }}>Currency</Text>
+      {['day', 'night'].map(period => <Status key={period} label={period === 'day' ? 'Day' : 'Night'} value={row[period]}
+        message={row[period].valid_through ? `${row[period].current ? 'Until' : 'Expired'} ${formatDate(row[period].valid_through)}` : 'Not current'} />)}
     </View>)}
+    <Text color={colors.muted} style={{ fontSize: 12, marginTop: 8 }}>Based on logged landings. Verify takeoffs and applicable requirements. Simulator sessions excluded.</Text>
   </RecencySection>;
 }
 export default function RecencyScreen() {
@@ -121,31 +172,18 @@ export default function RecencyScreen() {
         {pending > 0 && <Text style={{ color: colors.danger, marginBottom: 16 }}>{pending} pending change(s) may not yet be included. Sync your logbook, then refresh.</Text>}
         {orderReady && <ReorderableSections order={order} onChange={saveOrder} onDragChange={setDragging}
           sections={[
-            { id: 'vfr', title: 'VFR', visible: snapshot.categories.length > 0,
-              render: handle => <LandingSection title="VFR" rows={snapshot.categories} handle={handle} /> },
+            { id: 'vfr', title: 'Passenger Currency', visible: snapshot.categories.length > 0,
+              render: handle => <LandingSection title="Passenger Currency" rows={snapshot.categories} handle={handle} /> },
             { id: 'ifr', title: 'IFR', visible: (snapshot.instrument_categories ?? [snapshot.instrument]).some(item => item.applicable !== false), render: handle => <RecencySection title="IFR" handle={handle}>
         {(snapshot.instrument_categories ?? [snapshot.instrument]).filter(item => item.applicable !== false).map(instrument => (
         <View key={instrument.category || 'unknown'} style={{ paddingVertical: 8 }}>
           {!!instrument.category_label && <Text weight="600">{instrument.category_label}</Text>}
-          {!!instrument.ipc_completed_date && <Text>
-            Last IPC: {formatDate(instrument.ipc_completed_date)}{'\n'}Review IFR by {formatDate(instrument.review_date, '—')}
-          </Text>}
-          {!!instrument.status_message && <Text color={instrument.current ? colors.success : colors.danger}>{instrument.status_message}</Text>}
-          {!!instrument.holding_warning && <Text color={colors.danger}>{instrument.holding_warning}</Text>}
-          {!!instrument.next_requirement?.message && <Text>{instrument.next_requirement.message}</Text>}
-          <Status label="Approaches" value={instrument.approaches}
-            message={instrument.approaches.current
-              ? `${instrument.approaches.count}/6 - Logged window through ${formatDate(instrument.approaches.until, '—')}`
-              : `${instrument.approaches.count}/6 - Log ${instrument.approaches.still_needed} more`} />
-          <Status label="Holding" value={instrument.holding}
-            message={instrument.holding.current
-              ? `${instrument.holding.count}/1 - Last hold on ${formatDate(instrument.holding.last_date, '—')}`
-              : 'None in last 6 months'} />
+          <InstrumentDetails instrument={instrument} />
         </View>
         ))}
             </RecencySection> },
             { id: 'type', title: 'Type', visible: snapshot.types.length > 0,
-              render: handle => <LandingSection title="Type" rows={snapshot.types} handle={handle} /> },
+              render: handle => <LandingSection title="Passenger Currency by Type" rows={snapshot.types} handle={handle} /> },
           ]} />}
         {!snapshot.categories.length && !snapshot.types.length && <Text style={{ color: colors.muted }}>No applicable landing records yet.</Text>}
       </>}

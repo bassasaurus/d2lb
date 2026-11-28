@@ -41,10 +41,12 @@ function FlightCreateScreen() {
     simulator: false,
     device_type: "",
     launch_method: "",
+    training_program: "",
     device_id: "",
     atd_type: "",
     instrument_credit_eligible: false,
     cross_country: false,
+    night_landings_full_stop: null,
     landings_day: "",
     landings_night: "",
     instrument: "",
@@ -57,6 +59,7 @@ function FlightCreateScreen() {
       { approach_type: "", number: "" },
     ],
     hold: false,
+    intercepting_tracking: false,
     remarks: "",
   }, defaults?.aircraft);
 

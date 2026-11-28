@@ -7,7 +7,7 @@ export const FLIGHT_ROLES = [
 const clears = {
   pilot_in_command: ['second_in_command'],
   second_in_command: ['pilot_in_command', 'solo'],
-  solo: ['pilot_in_command', 'second_in_command', 'dual', 'instructor'],
+  solo: ['second_in_command', 'dual', 'instructor'],
   dual: ['solo', 'second_in_command', 'instructor'],
   instructor: ['dual', 'solo'],
   simulator: ['cross_country'],
@@ -20,7 +20,8 @@ export function isFlightRoleDisabled(values, field) {
 export function toggleFlightRole(values, field) {
   if (!Object.hasOwn(clears, field)) throw new Error('Unknown flight checkbox.');
   if (isFlightRoleDisabled(values, field)) return values;
-  return { ...values, [field]: !values[field], ...Object.fromEntries(clears[field].map(key => [key, false])) };
+  return { ...values, [field]: !values[field], ...Object.fromEntries(clears[field].map(key => [key, false])),
+    ...(field === 'solo' && !values.solo ? {pilot_in_command:true} : {}) };
 }
 
 export const PRIMARY_FLIGHT_ROLES = ['pilot_in_command', 'second_in_command', 'solo', 'dual'];

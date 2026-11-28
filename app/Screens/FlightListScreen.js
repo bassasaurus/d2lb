@@ -291,7 +291,7 @@ const FlightListScreen = ({ navigation, route }) => {
             tintColor={STYLES.blue} colors={[STYLES.blue]} progressBackgroundColor={STYLES.itemBackground} />
         }
       />
-      <ReminderFeedback feedback={reminderFeedback} onClose={setReminderFeedback} />
+      <ReminderFeedback feedback={reminderFeedback} onClose={setReminderFeedback} placement="inline" />
       <BottomCreateButton title="New Flight" onPress={() => navigation.navigate("FlightCreate")} />
     </SafeAreaView>
   );

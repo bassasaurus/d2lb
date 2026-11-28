@@ -25,3 +25,13 @@ test('keeps separate server-provided instrument categories without pooling count
   assert.deepEqual(data.instrument_categories.map(row => row.approaches.count), [3, 3]);
   assert.throws(() => validateRecency({ ...data, instrument_categories: [{ category: 'R', category_label: 'Helicopter' }] }));
 });
+test('accepts server landing dates and expiry while preserving older snapshots', () => {
+  const day = { ...status, count: 3, current: true,
+    last_dates: ['2026-11-01', '2026-11-01', '2026-10-20'], valid_through: '2027-01-18' };
+  const data = { ...snapshot, categories: [{ label: 'ASEL', day, night: status }] };
+  assert.equal(validateRecency(data), data);
+  for (const invalid of [{ ...day, last_dates: ['bad'] }, { ...day, last_dates: Array(4).fill('2026-11-01') },
+    { ...day, valid_through: 'bad' }]) {
+    assert.throws(() => validateRecency({ ...data, categories: [{ label: 'ASEL', day: invalid, night: status }] }));
+  }
+});

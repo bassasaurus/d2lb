@@ -1,3 +1,4 @@
+import { OPERATING_RULES } from '../forms/tailnumberValidation.mjs';
 export const tailnumberScope = scope => `${scope}:tailnumbers`;
 export function mergeTailnumbers(cached, queued) {
   const local = new Map(cached.map(row => [`id:${row.id}`, row]));
@@ -11,7 +12,7 @@ export function mergeTailnumbers(cached, queued) {
 export function prepareLocalTailnumber(values, records, flights, aircraft, references) {
   const registration = String(values.registration || '').trim().toUpperCase().replace(/\s/g, '');
   if (registration.length < 3 || registration.length > 8) throw new Error('Use 3–8 characters for registration.');
-  if (['is_91', 'is_135', 'is_121'].filter(key => values[key] === true).length !== 1) throw new Error('Choose one operating rule.');
+  if (OPERATING_RULES.filter(([key]) => values[key] === true).length !== 1) throw new Error('Choose one operating rule.');
   if (records.some(row => row.registration.toUpperCase() === registration && !(values.local_id && row.local_id === values.local_id))) {
     throw new Error('This registration already exists in your account.');
   }

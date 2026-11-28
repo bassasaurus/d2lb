@@ -6,7 +6,7 @@ import { FLIGHT_ROLES, toggleFlightRole, isFlightRoleDisabled, flightCrewLabel }
 const webClears = {
   pilot_in_command: ['second_in_command'],
   second_in_command: ['pilot_in_command', 'solo'],
-  solo: ['pilot_in_command', 'second_in_command', 'dual', 'instructor'],
+  solo: ['second_in_command', 'dual', 'instructor'],
   dual: ['solo', 'second_in_command', 'instructor'],
   instructor: ['dual', 'solo'], simulator: ['cross_country'], cross_country: ['simulator'],
 };
@@ -63,4 +63,12 @@ test('list and detail crew labels reflect recorded roles without assuming PIC', 
   assert.equal(flightCrewLabel({pilot_in_command: true, dual: true}), 'PIC Dual');
   assert.equal(flightCrewLabel({}), '');
   assert.equal(flightCrewLabel({is_draft: true, dual: true}), 'Draft');
+});
+
+
+test('Solo selects PIC and keeps PIC when Solo is unchecked', () => {
+  const selected = toggleFlightRole({solo:false,pilot_in_command:false}, 'solo');
+  assert.equal(selected.pilot_in_command,true);
+  assert.equal(selected.solo,true);
+  assert.equal(toggleFlightRole(selected, 'solo').pilot_in_command,true);
 });

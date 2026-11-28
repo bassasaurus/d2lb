@@ -16,3 +16,13 @@ test('validates complete snapshots and rejects malformed data before replacing c
     { ...data, aircraft: {} }, { ...data, totals: [{ total: 'All', total_time: 'bad' }] },
     { ...data, totals: [{ total_time: '5' }] }]) assert.throws(() => validateSummary(invalid));
 });
+
+
+test('training program totals validate without requiring them on older cached snapshots', () => {
+  const data = { schema_version: 1, downloaded_at: '2026-11-27T12:00:00Z', totals: [], aircraft: [] };
+  assert.equal(validateSummary(data), data);
+  const row = { program: '141', label: 'Part 141', total: '4.0', ffs: '2.3', ftd: '1.7', atd: '0.0', unclassified: '0.0' };
+  assert.equal(validateSummary({ ...data, simulator_program_totals: [row] }).simulator_program_totals[0], row);
+  for (const bad of [{ ...row, total: 'bad' }, { ...row, ffs: -1 }, { ...row, program: '999' }])
+    assert.throws(() => validateSummary({ ...data, simulator_program_totals: [bad] }));
+});

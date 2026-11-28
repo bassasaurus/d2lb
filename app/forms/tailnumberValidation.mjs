@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export const OPERATING_RULES = [['is_91', 'Part 91'], ['is_135', 'Part 135'], ['is_121', 'Part 121']];
+export const OPERATING_RULES = [['is_91', 'Part 91'], ['is_121', 'Part 121'], ['is_125', 'Part 125'], ['is_135', 'Part 135'], ['is_137', 'Part 137']];
 export function selectOperatingRule(values, selected) {
   return { ...values, ...Object.fromEntries(OPERATING_RULES.map(([key]) => [key, key === selected])) };
 }

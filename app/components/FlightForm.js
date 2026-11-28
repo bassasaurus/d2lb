@@ -10,6 +10,8 @@ import PlatformActionButton from './PlatformActionButton';
 import PrimaryActionButton from './PrimaryActionButton';
 import { hasRequiredSoloLandings } from '../forms/landingRequirements.mjs';
 import { nightPairWarnings } from '../forms/nightWarning.mjs';
+import { nightDurationRule } from '../forms/nightHours.mjs';
+import { nightLandingErrors } from '../forms/nightLandings.mjs';
 import { FLIGHT_ROLES, PRIMARY_FLIGHT_ROLES, hasRequiredFlightRole, toggleFlightRole, isFlightRoleDisabled } from '../forms/flightRoles.mjs';
 import ScrollableFormCard from './ScrollableFormCard';
 import { listTailnumbers } from '../storage/tailnumbers';
@@ -88,7 +90,9 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
   }, []));
   const [submitting, setSubmitting] = useState(false);
   const [addedDuration, setAddedDuration] = useState("");
-  const [undoAdd, setUndoAdd] = useState(false);
+  const [legEntryVisible, setLegEntryVisible] = useState(false);
+  const [legAdditions, setLegAdditions] = useState([]);
+  const lastLegAddition = legAdditions[legAdditions.length - 1];
 
   const Context = useContext(AppContext);
 
@@ -117,6 +121,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
     aircraft_type: yup.string().required(required),
     registration: yup.string().nullable().when('simulator', { is: true, then: schema => schema, otherwise: schema => schema.required(required) }),
     device_type: yup.string().nullable(),
+    training_program: yup.string().nullable().oneOf(['', '141', '142']),
     launch_method: yup.string().nullable(),
     device_id: yup.string().nullable().max(100, '100 Character Maximum'),
     duration: yup
@@ -138,7 +143,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
       .typeError(number)
       .moreThan(0, "Leave blank for 0")
       .integer("Integers only, no decimals."),
-    night: yup.number().typeError(number).moreThan(0, ({ value }) => value < 0 ? "Hours cannot be negative." : "Leave blank for 0"),
+    night: yup.number().typeError(number).moreThan(0, ({ value }) => value < 0 ? "Hours cannot be negative." : "Leave blank for 0").test(nightDurationRule),
     instrument: yup.number().typeError(number).moreThan(0, ({ value }) => value < 0 ? "Hours cannot be negative." : "Leave blank for 0"),
     simulated_instrument: yup
       .number()
@@ -146,6 +151,9 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
       .moreThan(0, ({ value }) => value < 0 ? "Hours cannot be negative." : "Leave blank for 0"),
     remarks: yup.string().max(256, "256 Character Maximum"),
     number: yup.number().typeError(number).moreThan(0, "Leave blank for 0"),
+  }).test('night-full-stop', 'Check Night landings.', function(values) {
+    const error = Object.entries(nightLandingErrors(values))[0];
+    return !error || this.createError({path:error[0],message:error[1]});
   }).test('launch-method', 'Choose a launch method.', function(values) {
     const error = Object.entries(launchMethodErrors(values, selectedAircraft(values)))[0];
     return !error || this.createError({path: error[0], message: error[1]});
@@ -158,6 +166,10 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
   }).test('solo-landings', 'Enter Day or Night landings for Solo.', function(values) {
     return hasRequiredSoloLandings(values) || this.createError({ path: 'solo_landings', message: 'Enter Day or Night landings for Solo.' });
   });
+
+  const canAddLeg = duration => flightSchema.fields.duration.isValidSync(duration)
+    && flightSchema.fields.duration.isValidSync(addedDuration)
+    && Math.round(Number(duration) * 10) + Math.round(Number(addedDuration) * 10) <= 300;
 
   return (
     <FormKeyboardAvoidingView
@@ -204,6 +216,9 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                 await draftHandle.current.complete();
                 savedNavigation.current = true;
                 helpers.resetForm({ values });
+                setLegAdditions([]);
+                setAddedDuration('');
+                setLegEntryVisible(false);
                 onSaved?.(result);
               } catch (error) {
                 const feedback = formFeedback(error, 'flight');
@@ -306,6 +321,16 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                       <AppText color={values.device_type === type ? STYLES.blue : STYLES.black} weight="600">{type}</AppText>
                     </Pressable>)}
                   </View>
+                  <AppText style={{ marginTop: 8 }}>Training Program (optional)</AppText>
+                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginVertical: 4 }}>
+                    {[['', 'Not specified'], ['141', 'Part 141'], ['142', 'Part 142']].map(([program, label]) => <Pressable key={program}
+                      accessibilityRole="radio" accessibilityLabel={label} accessibilityState={{ checked: (values.training_program || '') === program }}
+                      onPress={() => setFieldValue('training_program', program)}
+                      style={{ padding: 10, borderRadius: 8, borderWidth: 1, borderColor: (values.training_program || '') === program ? STYLES.blue : STYLES.grey }}>
+                      <AppText color={(values.training_program || '') === program ? STYLES.blue : STYLES.black}>{label}</AppText>
+                    </Pressable>)}
+                  </View>
+                  {!!errors.training_program && <Text style={styles.errors}>{errors.training_program}</Text>}
                   {!!values.device_type && <AppText>{DEVICE_TYPES.find(([type]) => type === values.device_type)?.[1]}</AppText>}
                   {!!errors.device_type && <Text style={styles.errors}>{errors.device_type}</Text>}
                   <AppTextInput testID="flight-device-id" value={values.device_id || ''} isValid={Boolean(values.device_id) && !errors.device_id}
@@ -345,6 +370,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                       value={values.duration}
                       onChangeText={(val) => {
                         setFieldValue("duration", val);
+                        setLegAdditions([]);
                       }}
                       placeholder='##.#'
                       accessibilityLabel="Duration"
@@ -366,70 +392,56 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                     </View>
                   </View>
                   {!values.simulator && <>
-                  <MaterialCommunityIcons
-                    style={{ paddingTop: 15 }}
-                    name='plus'
-                    size={30}
-                    color={STYLES.black}
-                  />
-
-                  <View style={{ flexDirection: "column", flex: 0.3 }}>
-                    <AppTextInput
-                      value={undoAdd ? "<---" : String(addedDuration)}
-                      isValid={true}
-                      placeholder={"##.#"}
-                      accessibilityLabel="Next Leg Duration"
-                      keyboardType={"numeric"}
-                      onChangeText={(val) => setAddedDuration(val)}
-                    ></AppTextInput>
-                    <AppText color={STYLES.black}>Next leg</AppText>
-                  </View>
-
-                  {!undoAdd ? (
-                    <TouchableOpacity
-                      disabled={addedDuration === "" ? true : false}
-                      onPress={() => {
-                        setUndoAdd(true);
-                        setFieldValue(
-                          "duration",
-                          String(
-                            (
-                              Number(values.duration) + Number(addedDuration)
-                            ).toFixed(1)
-                          )
-                        );
-                      }}
-                    >
-                      <MaterialCommunityIcons
-                        style={{ paddingTop: 15, paddingLeft: 5 }}
-                        name='keyboard-return'
-                        size={30}
-                        color={STYLES.success}
-                      />
+                    <TouchableOpacity accessibilityRole="button"
+                      accessibilityLabel={legEntryVisible ? 'Hide leg duration' : 'Show leg duration'}
+                      accessibilityState={{ expanded: legEntryVisible }}
+                      testID="flight-leg-plus"
+                      style={{ minWidth: 44, minHeight: 44, alignItems: 'center', paddingTop: 15 }}
+                      onPress={() => setLegEntryVisible(visible => !visible)}>
+                      <MaterialCommunityIcons name="plus" size={30}
+                        color={legEntryVisible && canAddLeg(values.duration) ? STYLES.black : STYLES.success} />
                     </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() => {
-                        setUndoAdd(false);
-                        setFieldValue(
-                          "duration",
-                          String(
-                            (
-                              Number(values.duration) - Number(addedDuration)
-                            ).toFixed(1)
-                          )
-                        );
-                        setAddedDuration("");
-                      }}
-                    >
-                      <MaterialCommunityIcons
-                        style={{ paddingTop: 15, paddingLeft: 5 }}
-                        name='undo'
-                        size={30}
-                        color={STYLES.danger}
-                      />
-                    </TouchableOpacity>
-                  )}
+                    <View pointerEvents={legEntryVisible ? 'auto' : 'none'}
+                      accessibilityElementsHidden={!legEntryVisible}
+                      importantForAccessibility={legEntryVisible ? 'auto' : 'no-hide-descendants'}
+                      style={{ flexDirection: 'column', flex: 0.3, opacity: legEntryVisible ? 1 : 0 }}>
+                      <AppTextInput key={legEntryVisible ? 'leg-visible' : 'leg-hidden'} value={addedDuration}
+                        editable={legEntryVisible}
+                        isValid={!addedDuration || canAddLeg(values.duration)}
+                        placeholder="##.#" accessibilityLabel="Next Leg Duration"
+                        testID="flight-leg-duration" keyboardType="decimal-pad"
+                        autoFocus={legEntryVisible} onChangeText={setAddedDuration} />
+                      <AppText>Next leg</AppText>
+                    </View>
+                    <View style={{ width: 44 }}>
+                    {legEntryVisible && canAddLeg(values.duration) &&
+                      <TouchableOpacity accessibilityRole="button" accessibilityLabel="Add leg time to duration"
+                        testID="flight-leg-equals"
+                        style={{ minWidth: 44, minHeight: 44, alignItems: 'center', paddingTop: 15 }}
+                        onPress={() => {
+                        if (!canAddLeg(values.duration)) return;
+                        const total = ((Math.round(Number(values.duration) * 10)
+                          + Math.round(Number(addedDuration) * 10)) / 10).toFixed(1);
+                        setLegAdditions(history => [...history, { before: String(values.duration), total }]);
+                        setFieldValue('duration', total);
+                        setAddedDuration('');
+                        setLegEntryVisible(false);
+                        }}>
+                        <MaterialCommunityIcons name="equal" size={30} color={STYLES.success} />
+                      </TouchableOpacity>}
+                    </View>
+                    <View style={{ width: 44 }}>
+                    {lastLegAddition && String(values.duration) === lastLegAddition.total &&
+                      <TouchableOpacity accessibilityRole="button" accessibilityLabel="Undo added leg time"
+                        testID="flight-leg-undo"
+                        style={{ minWidth: 44, minHeight: 44, alignItems: 'center', paddingTop: 15, marginLeft: 'auto' }}
+                        onPress={() => {
+                          setFieldValue('duration', lastLegAddition.before);
+                          setLegAdditions(history => history.slice(0, -1));
+                        }}>
+                        <MaterialCommunityIcons name="undo" size={30} color={STYLES.danger} />
+                      </TouchableOpacity>}
+                    </View>
                   </>}
                 </View>
 
@@ -495,7 +507,7 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                   </View>
 
                   <View style={{ flexDirection: "column", flex: 0.5 }}>
-                    <AppTextInput
+                    <View style={{flexDirection:"row",flexWrap:"wrap",alignItems:"center",gap:8}}><View style={{flexGrow:1,flexBasis:100,minWidth:70}}><AppTextInput
                       testID="flight-landings-night"
                       accessibilityLabel="Night Landings"
                       isValid={!errors.landings_night && hasRequiredSoloLandings(values)}
@@ -507,7 +519,8 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                       autoCorrect={false}
                       keyboardType={"numeric"}
                       clearButtonMode={"while-editing"}
-                    ></AppTextInput>
+                    ></AppTextInput></View><View style={{flexShrink:0}}><Checkbox label="Full Stop" isChecked={values.night_landings_full_stop === true} onPress={() => setFieldValue("night_landings_full_stop",!values.night_landings_full_stop)} /></View></View>
+                    {errors.night_landings_full_stop && <Text style={styles.errors}>{errors.night_landings_full_stop}</Text>}
                     <View>
                       {errors.landings_night ? (
                         <Text style={styles.errors}>
@@ -740,11 +753,16 @@ function FlightForm({ initialValues, method, onSaved, onDraftSaved, noDefaultAir
                   )}
                 </View>
                 </View>
-                <View style={{ flexDirection: "row", marginTop: 10 }}>
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12, marginTop: 10 }}>
                   <Checkbox
                     label="Holding"
                     onPress={() => setFieldValue("hold", !values.hold)}
                     isChecked={values.hold}
+                  />
+                  <Checkbox
+                    label="Intercepting and Tracking"
+                    onPress={() => setFieldValue("intercepting_tracking", !values.intercepting_tracking)}
+                    isChecked={!!values.intercepting_tracking}
                   />
                 </View>
                 <AppTextInput

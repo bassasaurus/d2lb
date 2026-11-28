@@ -127,7 +127,7 @@ test('resolution history and snapshots survive closing and reopening SQLite', as
     db = new DatabaseSync(filename);
     store = await createFlightStore(adapter(db));
     assert.equal((await store.reviewHistory('a:aircraft')).length, 1);
-    assert.equal(db.prepare('PRAGMA user_version').get().user_version, 4);
+    assert.equal(db.prepare('PRAGMA user_version').get().user_version, 5);
     db.close();
   } finally { rmSync(directory, { recursive: true }); }
 });
@@ -143,7 +143,7 @@ test('upgrading the deployed version-2 database preserves its record and immutab
   const store = await createFlightStore(adapter(db));
   assert.equal((await store.list('a'))[0].route, 'IAH-LAS');
   assert.equal((await store.nextOperation('a', 'must-not-replace')).request, request);
-  assert.equal(db.prepare('PRAGMA user_version').get().user_version, 4);
+  assert.equal(db.prepare('PRAGMA user_version').get().user_version, 5);
   assert.deepEqual(await store.reviewHistory('a'), []);
   db.close();
 });
