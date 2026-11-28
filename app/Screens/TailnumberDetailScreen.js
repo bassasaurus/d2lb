@@ -40,7 +40,7 @@ export default function TailnumberDetailScreen({ route, navigation }) {
     <Card>
     <Text style={{ fontSize: 24, fontWeight: '600', marginBottom: 16 }}>{item.registration}</Text>
     <Text style={{ marginBottom: 12 }}>Aircraft: {item.aircraft}</Text>
-    <Text style={{ marginBottom: 16 }}>Operating rules: {[[item.is_91, 'Part 91'], [item.is_135, 'Part 135'], [item.is_121, 'Part 121']]
+    <Text style={{ marginBottom: 16 }}>Operating rules: {[[item.is_91, 'Part 91'], [item.is_135, 'Part 135'], [item.is_121, 'Part 121'], [item.is_125, 'Part 125'], [item.is_137, 'Part 137']]
       .filter(([enabled]) => enabled).map(([, label]) => label).join(', ') || 'Not set'}</Text>
     <RecordIssue item={item} kind="tailnumber" navigation={navigation} />
     <RecordSyncIndicator item={item} scope={scope ? tailnumberScope(scope) : undefined} />

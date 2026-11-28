@@ -10,6 +10,21 @@ import { adapter } from './helpers/sqlite.mjs';
 
 const flight = { date: '11/04/2026', route: 'IAH-LAS', duration: '3.0', approaches: [] };
 
+test('version-4 flight payload upgrade preserves queued operations and full-duration role selections', async () => {
+  const db=new DatabaseSync(':memory:');
+  const old=await createFlightStore(adapter(db));
+  await old.save('account-a','legacy',{...flight,pilot_in_command:true});
+  const operation=await old.nextOperation('account-a','unchanged-request');
+  db.exec('PRAGMA user_version=4');
+  const upgraded=await createFlightStore(adapter(db));
+  assert.equal((await upgraded.list('account-a'))[0].pilot_in_command,true);
+  assert.equal((await upgraded.list('account-a'))[0].duration,'3.0');
+  assert.equal(Object.hasOwn((await upgraded.list('account-a'))[0], 'pilot_in_command_hours'),false);
+  assert.equal((await upgraded.list('account-a'))[0].night_landings_full_stop,null);
+  assert.equal((await upgraded.nextOperation('account-a','must-not-change')).request,operation.request);
+  db.close();
+});
+
 test('pending flight survives database close and reopen with its stable ID', async () => {
   const directory = mkdtempSync(join(tmpdir(), 'd2lb-sqlite-'));
   try {
@@ -76,9 +91,9 @@ test('editing a new local flight reuses its queue entry; deleting it cancels the
 
 test('newer database schemas are rejected without changing their version', async () => {
   const db = new DatabaseSync(':memory:');
-  db.exec('PRAGMA user_version=5');
+  db.exec('PRAGMA user_version=6');
   await assert.rejects(createFlightStore(adapter(db)), /newer app/);
-  assert.equal(db.prepare('PRAGMA user_version').get().user_version, 5);
+  assert.equal(db.prepare('PRAGMA user_version').get().user_version, 6);
   db.close();
 });
 

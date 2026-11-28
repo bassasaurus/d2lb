@@ -126,3 +126,15 @@ test('saving a simulator session clears stale XC from older records or drafts', 
   assert.equal(values.cross_country, true);
   assert.equal(prepareFlightEntry({ simulator: false, cross_country: true }).cross_country, true);
 });
+
+
+test('training programs are optional, validated, preserved offline, and cleared for aircraft flights', () => {
+  const session = { simulator: true, device_type: 'FFS', device_id: 'SIM-1', duration: '2.0' };
+  for (const training_program of ['', '141', '142']) {
+    assert.deepEqual(simulatorEntryErrors({ ...session, training_program }), {});
+    assert.equal(prepareFlightEntry({ ...session, training_program }).training_program, training_program);
+  }
+  assert.ok(simulatorEntryErrors({ ...session, training_program: '999' }).training_program);
+  assert.equal(prepareFlightEntry({ ...session, simulator: false, training_program: '141' }).training_program, '');
+  assert.equal(prepareFlightEntry(session).training_program, '');
+});

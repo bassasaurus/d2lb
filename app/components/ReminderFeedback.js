@@ -6,7 +6,7 @@ import Card from './Card';
 import PlatformActionButton from './PlatformActionButton';
 import { useAppTheme } from '../theme/ThemeProvider';
 
-export default function ReminderFeedback({ feedback, onClose }) {
+export default function ReminderFeedback({ feedback, onClose, placement = 'overlay' }) {
   const { colors } = useAppTheme();
   const [busy, setBusy] = useState(false);
   const opacity = useRef(new Animated.Value(1)).current;
@@ -26,7 +26,9 @@ export default function ReminderFeedback({ feedback, onClose }) {
     catch { Alert.alert('Could not undo', 'Please try again or restore the alert from Manage.'); }
     finally { setBusy(false); }
   }
-  return <View pointerEvents="box-none" style={{ position: 'absolute', bottom: 76, left: 12, right: 12, zIndex: 20, elevation: 8 }}>
+  return <View pointerEvents="box-none" style={placement === 'inline'
+    ? { marginHorizontal: 12, marginBottom: 8 }
+    : { position: 'absolute', bottom: 76, left: 12, right: 12, zIndex: 20, elevation: 8 }}>
     <Animated.View style={{ opacity }}>
     <Card style={{ borderWidth: 1, borderColor: colors.border, flexDirection: 'row', alignItems: 'center', gap: 8 }} testID="reminder-feedback">
       <AppText style={{ flex: 1 }} accessibilityLiveRegion="polite">{feedback.message}</AppText>

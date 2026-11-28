@@ -3,6 +3,7 @@ export const DEVICE_TYPES = [
 ];
 
 export function simulatorEntryErrors(values) {
+  if (!['', '141', '142'].includes(values.training_program || '')) return { training_program: 'Choose Part 141 or Part 142.' };
   if (!values.simulator) return {};
   if (!DEVICE_TYPES.some(([type]) => type === values.device_type)) return { device_type: 'Select device type.' };
   if (values.device_type === 'ATD' && !['BATD', 'AATD'].includes(values.atd_type)) return { atd_type: 'Select BATD or AATD.' };
@@ -22,6 +23,7 @@ export function prepareFlightEntry(values) {
     ...(values.simulator && (values.device_type || values.device_id) ? { registration: null } : {}),
     atd_type: values.simulator && values.device_type === 'ATD' ? (values.atd_type || '') : '',
     instrument_credit_eligible: Boolean(values.simulator && values.instrument_credit_eligible),
+    training_program: values.simulator ? (values.training_program || '') : '',
     device_type: values.simulator ? (values.device_type || '') : '',
     device_id: values.simulator ? String(values.device_id || '').trim() : '',
   };

@@ -4,7 +4,7 @@ import { localChanges } from './localChanges.mjs';
 // Database-only repository: also exercised against real SQLite in Node tests.
 export async function createFlightStore(db) {
   const version = await db.getFirstAsync('PRAGMA user_version');
-  if (version.user_version > 4) throw new Error('This local database requires a newer app.');
+  if (version.user_version > 5) throw new Error('This local database requires a newer app.');
   await db.execAsync(`
     PRAGMA journal_mode = WAL;
     CREATE TABLE IF NOT EXISTS mobile_flights (
@@ -49,6 +49,18 @@ export async function createFlightStore(db) {
       await tx.execAsync(`CREATE UNIQUE INDEX IF NOT EXISTS mobile_one_default_preference
         ON mobile_flights(scope) WHERE json_extract(payload, '$._default_preference') = 1;
         PRAGMA user_version = 4;`);
+    });
+  }
+  if (version.user_version < 5) {
+    await db.withExclusiveTransactionAsync(async tx => {
+      for (const row of await tx.getAllAsync('SELECT scope,local_id,payload FROM mobile_flights')) {
+        const old = JSON.parse(row.payload);
+        if (!Object.hasOwn(old,'date')) continue;
+        const next = {...old,night_landings_full_stop:old.night_landings_full_stop ?? null};
+        await tx.runAsync('UPDATE mobile_flights SET payload=? WHERE scope=? AND local_id=?',JSON.stringify(next),row.scope,row.local_id);
+      }
+      // Queued operation requests remain immutable, preserving retry receipts.
+      await tx.execAsync('PRAGMA user_version = 5;');
     });
   }
   // Expo opens a separate connection for exclusive transactions. Queue writes

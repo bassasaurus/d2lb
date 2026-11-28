@@ -32,7 +32,7 @@ export default function ProfileScreen({ navigation }) {
       {profile && <Text color={colors.muted} style={{ textAlign: 'center', marginBottom: 12 }}>Downloaded {formatDateTime(profile.downloaded_at)}</Text>}
       {message ? <Text color={colors.danger} style={{ textAlign: 'center', marginBottom: 12 }} accessibilityLiveRegion="polite">{message}</Text> : null}
       {profile && <>
-        <Card compact style={{ marginBottom: 8 }}>
+        <Card style={{ marginBottom: 12 }}>
           <Text size={18} weight="600">Account</Text>
           <Detail label="Name" value={[account.first_name, account.last_name].filter(Boolean).join(' ') || account.username} />
           <Detail label="Email" value={account.email} />
@@ -41,14 +41,14 @@ export default function ProfileScreen({ navigation }) {
           <PlatformActionButton title="Update Account" variant="text" onPress={() => navigation.navigate('ProfileEdit', { section: 'account', values: {
             first_name: account.first_name, last_name: account.last_name, company: account.company } })} />
         </Card>
-        <Card compact style={{ marginBottom: 8 }}>
+        <Card style={{ marginBottom: 12 }}>
           <Text size={18} weight="600">Subscription</Text>
           <Detail label="Status" value={subscription.status} />
           {subscription.plan && <Detail label="Plan" value={subscription.plan} />}
           {freeAccess && <Detail label="Access ends" value="Never" />}
           {!freeAccess && subscription.end_date && <Detail label={['Free trial', 'Expiring soon'].includes(subscription.status) ? 'Trial ends' : subscription.status === 'Active' ? 'Next billing date' : 'Access ends'} value={profileDate(subscription.end_date)} />}
         </Card>
-        <Card compact style={{ marginBottom: 8 }}>
+        <Card style={{ marginBottom: 12 }}>
           <Text size={18} weight="600">Signature</Text>
           {profile.signature?.startsWith('data:image/png;base64,') ? <Sentry.Mask style={{ backgroundColor: isDark ? '#000' : '#fff', borderRadius: 6, marginTop: 12 }}>
             {isDark ? <Svg accessibilityLabel="Your signature" height={120} width="100%" viewBox="0 0 900 300">
@@ -66,7 +66,10 @@ export default function ProfileScreen({ navigation }) {
             onPress={() => navigation.navigate('SignatureEdit', { revision: profile.signature_revision, signature: profile.signature })} />
         </Card>
       </>}
-      <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />
+      <Card style={{ marginBottom: 12 }}>
+        <Text size={18} weight="600">Support</Text>
+        <PlatformActionButton title="Contact Support" variant="text" onPress={() => openContactEmail()} />
+      </Card>
     </ScrollView>
   </SafeAreaView>;
 }

@@ -22,6 +22,7 @@ export default function TailnumberUpdateScreen({ route, navigation }) {
     const response = await api.put(`/api/tailnumbers/${item.id}/`, {
       registration: values.registration, aircraft: values.aircraft,
       is_91: values.is_91, is_135: values.is_135, is_121: values.is_121,
+      is_125: values.is_125, is_137: values.is_137,
     });
     if (await flightScope() !== scope) throw new Error('Account changed while saving.');
     // A successful server save must not be reported as failed just because a
@@ -34,6 +35,6 @@ export default function TailnumberUpdateScreen({ route, navigation }) {
     recordSyncFeedback.record(tailnumberScope(scope), { local_id: item.local_id ?? `server:${item.id}` }, response.data);
     return response.data;
   };
-  return <TailnumberForm initialValues={{ ...item, is_91: Boolean(item.is_91), is_135: Boolean(item.is_135), is_121: Boolean(item.is_121) }}
+  return <TailnumberForm initialValues={{ ...item, is_91: Boolean(item.is_91), is_135: Boolean(item.is_135), is_121: Boolean(item.is_121), is_125: Boolean(item.is_125), is_137: Boolean(item.is_137) }}
     method={update} onSaved={item => navigation.popTo('TailnumberDetail', { item })} aircraft_type={item.aircraft} allowAircraftChange={true} />;
 }

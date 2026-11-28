@@ -13,6 +13,8 @@ function TailnumberCreateScreen({ route }) {
     is_91: false,
     is_135: false,
     is_121: false,
+    is_125: false,
+    is_137: false,
   };
 
   const create = data => saveLocalTailnumber(aircraftType ? { ...data, aircraft: aircraftType } : data);

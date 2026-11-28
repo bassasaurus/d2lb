@@ -32,7 +32,7 @@ function DetailsPanel({ route }) {
             ) : null}
             {route.params.item.landings_night ? (
               <AppText size={16} color={STYLES.black}>
-                Night {route.params.item.landings_night}{" "}
+                Night {route.params.item.landings_night}{route.params.item.night_landings_full_stop ? ' Full Stop' : ''}{" "}
               </AppText>
             ) : null}
           </View>
@@ -94,6 +94,8 @@ function DetailsPanel({ route }) {
         </View>
         <View style={styles.thirdColumn}>
           {route.params.item.hold ? <AppText size={16}>Holding</AppText> : null}
+          {!!route.params.item.simulator && !!route.params.item.training_program && <AppText size={16}>Part {route.params.item.training_program}</AppText>}
+          {route.params.item.intercepting_tracking ? <AppText size={16}>Intercepting and Tracking</AppText> : null}
         </View>
       </View>
       {/* fifth row */}

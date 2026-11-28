@@ -145,6 +145,14 @@ export default function StatsScreen() {
         {snapshot.aircraft.length > 0 && <Text size={18} weight="600" style={{ marginTop: 16, marginBottom: 10 }}>By Type</Text>}
         {snapshot.aircraft.map((row, index) => <Breakdown key={`${row.aircraft_type}:${index}`} row={row} title={row.aircraft_type} />)}
         {snapshot.iacra && <IacraSummary report={snapshot.iacra} />}
+        {!!snapshot.simulator_program_totals?.length && <Card>
+          <Text size={18} weight="600" style={{ marginBottom: 8 }}>Simulator Training Programs</Text>
+          {snapshot.simulator_program_totals.map(row => <View key={row.program} style={{ marginBottom: 10 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Text weight="600">{row.label}</Text><Text>{metricValue('hours', row.total)}</Text></View>
+            <Text color={colors.muted}>FFS {metricValue('hours', row.ffs)} · FTD {metricValue('hours', row.ftd)} · ATD {metricValue('hours', row.atd)}{Number(row.unclassified) > 0 ? ` · Unclassified ${metricValue('hours', row.unclassified)}` : ''}</Text>
+          </View>)}
+          <Text color={colors.muted} size={12}>Logged hours, separate from aircraft flight totals. Course-specific credit is not calculated.</Text>
+        </Card>}
         {snapshot.instrument_device_credit && <InstrumentCredit report={snapshot.instrument_device_credit} />}
       </>}
       {!snapshot && !refreshing && !notice.error && <Text>No summary available yet.</Text>}

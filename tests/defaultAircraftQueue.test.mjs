@@ -120,7 +120,7 @@ test('version-3 upgrade preserves offline default and immutable queued operation
     store = await createFlightStore(adapter(db));
     assert.deepEqual(await store.list('a:aircraft'), rows);
     assert.deepEqual(await store.nextOperation('a:aircraft', 'do-not-replace', 0, 'aircraft-default'), operation);
-    assert.equal(db.prepare('PRAGMA user_version').get().user_version, 4);
+    assert.equal(db.prepare('PRAGMA user_version').get().user_version, 5);
   } finally { db.close(); }
 });
 
